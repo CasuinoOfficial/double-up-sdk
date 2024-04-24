@@ -1,16 +1,17 @@
 {
   "name": "double-up-sdk",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "SDK to integrate with doubleup contracts",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "publish": "tsc && npm publish"
+    "publishts": "tsc && npm publish"
   },
   "author": "degenxdev",
   "license": "ISC",
   "dependencies": {
-    "@mysten/sui.js": "^0.51.2"
+    "@mysten/sui.js": "^0.49.1",
+    "crypto-browserify": "^3.12.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.7"
