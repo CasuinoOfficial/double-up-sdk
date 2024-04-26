@@ -92,6 +92,7 @@ export class DoubleUpClient {
     async getTransactionCoinflipGameId(
         transactionResult,
         coinType,
+        coinPackageId = '0x68417435d459061e9480fe1ca933415ba550f66b241156c065b3fe2f38fc3657',
         pollInterval = 3000,
     ) {
         const objectChanges = transactionResult.objectChanges;
@@ -99,7 +100,7 @@ export class DoubleUpClient {
         .filter((change) => {
           let delta =
             change.objectType ===
-            `${UNIHOUSE_PACKAGE}::bls_settler::BetData<${coinType}, ${COIN_PACKAGE_ID}::${COIN_MODULE_NAME}::Coinflip>`;
+            `${UNIHOUSE_PACKAGE}::bls_settler::BetData<${coinType}, ${coinPackageId}::${COIN_MODULE_NAME}::Coinflip>`;
           return delta;
         })
         .map((change) => {
