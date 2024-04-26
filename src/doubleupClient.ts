@@ -33,16 +33,18 @@ export class DoubleUpClient {
         coinType,
         betType,
         stakeCoin,
+        coinPackageId = '0x68417435d459061e9480fe1ca933415ba550f66b241156c065b3fe2f38fc3657'
     } : {
         txb: any;
         coinType: string;
         betType: 0 | 1;
         stakeCoin: TransactionObjectArgument;
+        coinPackageId: string;
     }) {
         // This adds some extra entropy to the coinflip itself
         const userRandomness = randomBytes(512);
         txb.moveCall({
-            target: `${COIN_PACKAGE_ID}::${COIN_MODULE_NAME}::start_game`,
+            target: `${coinPackageId}::${COIN_MODULE_NAME}::start_game`,
             typeArguments: [coinType],
             arguments: [
               txb.object(UNI_HOUSE_OBJ),
