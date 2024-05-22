@@ -1,8 +1,18 @@
-## DoubleUp SDK
+# DoubleUp SDK
 
-## Example Usage
+### Installation
+
+```sh
+$ npm install double-up-sdk
+```
+
+### Initialization
 
 ```
+import DoubleUp from 'double-up-sdk';
+
+...
+
 const dbclient = new DoubleUpClient({});
 dbclient.createCoinflip({txb, coinType, betType: 1, stakeCoin});
 

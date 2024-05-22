@@ -10,6 +10,7 @@ import { randomBytes } from 'crypto-browserify';
 import { 
   BLS_VERIFIER_OBJ, 
   COIN_MODULE_NAME,
+  LIMBO_CORE_PACKAGE_ID,
   LIMBO_MAX_MULTIPLIER, 
   LIMBO_MIN_MULTIPLIER, 
   LIMBO_MODULE_NAME, 
@@ -27,7 +28,7 @@ export interface CoinFlipInput {
     transactionBlock: TransactionBlockType;
 }
 
-export interface CoinFlipGameIdInput {
+ export interface CoinFlipGameIdInput {
     coinPackageId: string;
     coinType: string;
     pollInterval: number;
@@ -43,6 +44,16 @@ export interface WeightedCoinFlipInput {
     multiplier: number;
     stakeCoin: TransactionObjectArgument;
     transactionBlock: TransactionBlockType;
+}
+
+export interface WeightedCoinFlipGameIdInput {
+    coinType: string;
+    pollInterval: number;
+    transactionResult: any;
+}
+
+interface InternalWeightedCoinFlipGameIdInput extends WeightedCoinFlipGameIdInput {
+    suiClient: SuiClient;
 }
 
 // Add coinflip to the transaction block
@@ -156,3 +167,57 @@ export const getTransactionCoinflipGameId = async ({
     }
     return resultEvent;
 };
+
+// export const getTransactionWeightedCoinflipGameId = async ({
+//     transactionResult,
+//     coinType,
+//     pollInterval = 3000,
+//     suiClient
+// }: InternalWeightedCoinFlipGameIdInput) {
+//     const objectChanges = transactionResult.objectChanges;
+//     const gameInfos = (objectChanges as any[])
+//     .filter(
+//         (change) => {                
+//           let delta = change.objectType === `
+//           ${UNIHOUSE_PACKAGE}::bls_settler::BetData<${coinType}, 
+//           ${LIMBO_CORE_PACKAGE_ID}::limbo::Limbo>`;
+//           return delta;
+//         }
+//       )
+//     .map((change) => {
+//       const gameCoinType = extractGenericTypes(
+//         change.objectType ?? "",
+//       )[0];
+//       const gameStringType = extractGenericTypes(
+//         change.objectType ?? "",
+//       )[1];
+//       const gameId = change.objectId as string;
+//       return { gameId, gameStringType, gameCoinType };
+//     });
+//     let resultEvent: SuiEvent[] = [];
+    
+//     while (resultEvent.length === 0) {
+//         try {
+//             const events = await suiClient.queryEvents({
+//                 query: {
+//                     MoveEventModule: {
+//                         module: "bls_settler",
+//                         package: UNIHOUSE_PACKAGE,
+//                     }
+//                 },
+//                 limit: 50,
+//             });
+//             resultEvent = events.data.filter((event: any) => {
+//                 event.parsedJson.gameId === gameInfos[0].gameId
+//             });
+//         } catch (error) {
+//             console.error("Error querying events:", error);
+//         };
+
+//         if (resultEvent.length === 0) {
+//             console.log(`No events found. Polling again in ${pollInterval * 1000} seconds...`);
+//             await sleep(pollInterval);
+//         }
+//     }
+//     return resultEvent;
+// };
