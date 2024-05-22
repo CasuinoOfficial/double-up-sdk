@@ -1,5 +1,7 @@
-import { DoubleUpClient } from "./doubleupClient";
-export * from "./doubleUpConstants";
+import { DoubleUpClient } from "./client";
+
+export * from "./constants";
+
 export {
     DoubleUpClient,
 };
