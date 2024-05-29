@@ -2,6 +2,7 @@
     "compilerOptions": {
       "module": "commonjs",
       "declaration": true,
+      "jsx": "react-jsx",
       "removeComments": true,
       "allowSyntheticDefaultImports": true,
       "target": "es2017",
