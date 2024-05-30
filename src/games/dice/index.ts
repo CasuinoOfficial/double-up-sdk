@@ -12,8 +12,9 @@ import {
   UNI_HOUSE_OBJ
 } from "../../constants";
 
+// Note: 0 - 5 for dice rolls, and 6 = odd, 7 = even, 8 = small, 9 = big 
 export interface DiceInput {
-    betType: 0 | 1;
+    betType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7| 8 | 9;
     coin: TransactionObjectArgument;
     coinType: string;
     transactionBlock: TransactionBlockType;
