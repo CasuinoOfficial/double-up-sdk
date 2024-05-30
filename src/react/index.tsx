@@ -2,12 +2,12 @@ import { SuiClient } from "@mysten/sui.js/client";
 
 import { ReactElement, ReactNode, createContext, useContext, useEffect, useState } from "react";
 
-import { DoubleUpClient } from "../../client";
+import { DoubleUpClient } from "../client";
 
-import { CoinFlipInput, CoinFlipResponse } from "../../games/coinflip";
-import { DiceInput, DiceResponse } from "../../games/dice";
-import { LimboInput, LimboResponse } from "../../games/limbo";
-import { PlinkoInput, PlinkoResponse } from "../../games/plinko";
+import { CoinFlipInput, CoinFlipResponse } from "../games/coinflip";
+import { DiceInput, DiceResponse } from "../games/dice";
+import { LimboInput, LimboResponse } from "../games/limbo";
+import { PlinkoInput, PlinkoResponse } from "../games/plinko";
 
 interface DoubleUpContextState {
   createCoinflip: (input: CoinFlipInput) => CoinFlipResponse;
