@@ -13,6 +13,12 @@ interface GenericGameResultInput {
   transactionResult: any;
 }
 
+interface GenericGameResultResponse {
+    ok: boolean;
+    err?: Error;
+    events?: SuiEvent[];
+}
+
 // Function to sleep for a specified duration
 export const sleep = (ms: number): any => (
     new Promise(resolve => setTimeout(resolve, ms))
@@ -35,57 +41,67 @@ export const getGenericGameResult = async ({
   suiClient,
   structName,
   transactionResult
-}: GenericGameResultInput): Promise<SuiEvent[]> => {
-  const objectChanges = transactionResult.objectChanges;
+}: GenericGameResultInput): Promise<GenericGameResultResponse> => {
+    const result: GenericGameResultResponse = { ok: true };
 
-  const gameInfos = (objectChanges as any[])
-      .filter((change) => {
-          let delta =
-              change.objectType ===
-              `${UNIHOUSE_PACKAGE}::bls_settler::BetData<${coinType}, ${packageId}::${moduleName}::${structName}>`;
+    try {
+        const objectChanges = transactionResult.objectChanges;
 
-          return delta;
-      })
-      .map((change) => {
-          const gameCoinType = extractGenericTypes(
-              change.objectType ?? "",
-          )[0];
-          const gameStringType = extractGenericTypes(
-              change.objectType ?? "",
-          )[1];
+        const gameInfos = (objectChanges as any[])
+            .filter((change) => {
+                let delta =
+                    change.objectType ===
+                    `${UNIHOUSE_PACKAGE}::bls_settler::BetData<${coinType}, ${packageId}::${moduleName}::${structName}>`;
 
-          const gameId = change.objectId as string;
-          
-          return { gameId, gameStringType, gameCoinType };
-  });
+                return delta;
+            })
+            .map((change) => {
+                const gameCoinType = extractGenericTypes(
+                    change.objectType ?? "",
+                )[0];
+                const gameStringType = extractGenericTypes(
+                    change.objectType ?? "",
+                )[1];
 
-  let resultEvent: SuiEvent[] = [];
+                const gameId = change.objectId as string;
+                
+                return { gameId, gameStringType, gameCoinType };
+        });
+
+        let resultEvents: SuiEvent[] = [];
+
+        while (resultEvents.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventModule: {
+                            module: "bls_settler",
+                            package: UNIHOUSE_PACKAGE,
+                        }
+                    },
+                    limit: 50,
+                });
+
+                resultEvents = events.data.filter((event: any) => {
+                    if (event.parsedJson.bet_id === gameInfos[0].gameId) {
+                    return true;
+                    }
+                });
+            } catch (error) {
+                console.error("Error querying events:", error);
+            };
+
+            if (resultEvents.length === 0) {
+                console.log(`No events found. Polling again in ${pollInterval * 1000} seconds...`);
+                await sleep(pollInterval);
+            }
+        }
+
+        result.events = resultEvents;
+    } catch (err) {
+        result.ok = false;
+        result.err = err;
+    }
   
-  while (resultEvent.length === 0) {
-      try {
-          const events = await suiClient.queryEvents({
-              query: {
-                  MoveEventModule: {
-                      module: "bls_settler",
-                      package: UNIHOUSE_PACKAGE,
-                  }
-              },
-              limit: 50,
-          });
-
-          resultEvent = events.data.filter((event: any) => {
-              if (event.parsedJson.bet_id === gameInfos[0].gameId) {
-                return true;
-              }
-          });
-      } catch (error) {
-          console.error("Error querying events:", error);
-      };
-
-      if (resultEvent.length === 0) {
-          console.log(`No events found. Polling again in ${pollInterval * 1000} seconds...`);
-          await sleep(pollInterval);
-      }
-  }
-  return resultEvent;
+  return result;
 };
