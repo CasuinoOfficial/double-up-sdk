@@ -92,17 +92,32 @@ betType
 |   0   |  Heads  |
 |   1   |  Tails  |
 
+pollInterval
+
+milliseconds
+
+
 ```js
 const coin = txb.splitCoins(
     txb.gas,
     txb.pure(betAmount, "u64")
 );
 
-const { ok, err, receipt } = createCoinflip({
+const coinType = "0x2::sui::SUI";
+
+const { ok: gameOk, err: gameErr, receipt } = createCoinflip({
     betType: 0,
     coin,
-    coinType: "0x2::sui::SUI",
+    coinType,
     transactionBlock: txb
+});
+
+const transactionResult = await signAndExecuteTransactionBlock({ ... });
+
+const { ok: resultOk, err: resultErr, events } = await getCoinflipGameResult({
+    coinType,
+    pollInterval: 3000,
+    transactionResult
 });
 ```
 
@@ -118,17 +133,32 @@ betType
 |   8   | Small      |
 |   9   | Big        |
 
+pollInterval
+
+milliseconds
+
+
 ```js
 const coin = txb.splitCoins(
     txb.gas,
     txb.pure(betAmount, "u64")
 );
 
-const { ok, err, receipt } = createDice({
+const coinType = "0x2::sui::SUI";
+
+const { ok: gameOk, err: gameErr, receipt } = createDice({
     betType: 0,
     coin,
-    coinType: "0x2::sui::SUI",
+    coinType,
     transactionBlock: txb
+});
+
+const transactionResult = await signAndExecuteTransactionBlock({ ... });
+
+const { ok: resultOk, err: resultErr, events } = await getDiceGameResult({
+    coinType,
+    pollInterval: 3000,
+    transactionResult
 });
 ```
 
@@ -138,17 +168,32 @@ multiplier
 
 1.01 - 100
 
+pollInterval
+
+milliseconds
+
+
 ```js
 const coin = txb.splitCoins(
     txb.gas,
     txb.pure(betAmount, "u64")
 );
 
-const { ok, err, receipt } = createLimbo({
+const coinType = "0x2::sui::SUI";
+
+const { ok: gameOk, err: gameErr, receipt } = createLimbo({
     coin,
-    coinType: "0x2::sui::SUI",
+    coinType,
     multiplier: 50,
     transactionBlock: txb
+});
+
+const transactionResult = await signAndExecuteTransactionBlock({ ... });
+
+const { ok: resultOk, err: resultErr, events } = await getLimboGameResult({
+    coinType,
+    pollInterval: 3000,
+    transactionResult
 });
 ```
 
@@ -166,18 +211,33 @@ plinkoType
 |   1   | 9 Rows  |
 |   2   | 12 Rows |
 
+pollInterval
+
+milliseconds
+
+
 ```js
 const coin = txb.splitCoins(
     txb.gas,
     txb.pure(betAmount * numberOfDiscs, "u64")
 );
 
-const { ok, err, receipt } = createPlinko({
+const coinType = "0x2::sui::SUI";
+
+const { ok: gameOk, err: gameErr, receipt } = createPlinko({
     betAmount,
     coin,
-    coinType: "0x2::sui::SUI",
+    coinType,
     numberOfDiscs: 50,
     plinkoType: 1,
     transactionBlock: txb
+});
+
+const transactionResult = await signAndExecuteTransactionBlock({ ... });
+
+const { ok: resultOk, err: resultErr, events } = await getPlinkoGameResult({
+    coinType,
+    pollInterval: 3000,
+    transactionResult
 });
 ```
