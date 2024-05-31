@@ -4,16 +4,22 @@ import { ReactElement, ReactNode, createContext, useContext, useEffect, useState
 
 import { DoubleUpClient } from "../client";
 
-import { CoinFlipInput, CoinFlipResponse } from "../games/coinflip";
-import { DiceInput, DiceResponse } from "../games/dice";
-import { LimboInput, LimboResponse } from "../games/limbo";
-import { PlinkoInput, PlinkoResponse } from "../games/plinko";
+import { CoinflipInput, CoinflipResultInput, CoinflipResponse } from "../games/coinflip";
+import { DiceInput, DiceResultInput, DiceResponse } from "../games/dice";
+import { LimboInput, LimboResultInput, LimboResponse } from "../games/limbo";
+import { PlinkoInput, PlinkoResultInput, PlinkoResponse } from "../games/plinko";
+
+import { GenericGameResultResponse } from "../utils";
 
 interface DoubleUpContextState {
-  createCoinflip: (input: CoinFlipInput) => CoinFlipResponse;
+  createCoinflip: (input: CoinflipInput) => CoinflipResponse;
   createDice: (input: DiceInput) => DiceResponse;
   createLimbo: (input: LimboInput) => LimboResponse;
   createPlinko: (input: PlinkoInput) => PlinkoResponse;
+  getCoinflipResult: (input: CoinflipResultInput) => Promise<GenericGameResultResponse>;
+  getDiceResult: (input: DiceResultInput) => Promise<GenericGameResultResponse>;
+  getLimboResult: (input: LimboResultInput) => Promise<GenericGameResultResponse>;
+  getPlinkoResult: (input: PlinkoResultInput) => Promise<GenericGameResultResponse>;
 }
 
 interface DoubleupProviderProps {
@@ -48,11 +54,20 @@ const DoubleUpProvider = ({
   const createLimbo = dbClient.createLimbo;
   const createPlinko = dbClient.createPlinko;
 
+  const getCoinflipResult = dbClient.getCoinflipResult;
+  const getDiceResult = dbClient.getDiceResult;
+  const getLimboResult = dbClient.getLimboResult;
+  const getPlinkoResult = dbClient.getPlinkoResult;
+
   const state: DoubleUpContextState = {
     createCoinflip,
     createDice,
     createLimbo,
-    createPlinko
+    createPlinko,
+    getCoinflipResult,
+    getDiceResult,
+    getLimboResult,
+    getPlinkoResult
   };
 
   return (

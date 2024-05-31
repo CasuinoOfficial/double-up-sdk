@@ -22,7 +22,7 @@ export interface CoinflipInput {
     transactionBlock: TransactionBlockType;
 }
 
-interface InternalCoinFlipInput extends CoinflipInput {
+interface InternalCoinflipInput extends CoinflipInput {
     coinflipPackageId: string;
 }
 
@@ -37,7 +37,7 @@ interface InternalCoinflipResultInput extends CoinflipResultInput {
     suiClient: SuiClient;
 }
 
-export interface CoinFlipResponse {
+export interface CoinflipResponse {
     ok: boolean;
     err?: Error;
     receipt?: TransactionArgument;
@@ -50,8 +50,8 @@ export const createCoinflip = ({
     coinflipPackageId,
     coinType,
     transactionBlock
-} : InternalCoinFlipInput): CoinFlipResponse => {
-    const res: CoinFlipResponse = { ok: true };
+} : InternalCoinflipInput): CoinflipResponse => {
+    const res: CoinflipResponse = { ok: true };
 
     try {
         // This adds some extra entropy to the coinflip itself

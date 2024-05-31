@@ -52,13 +52,20 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
 JS
 
 ```js
-const { ok, err, receipt } = dbClient.createCoinflip({
+const { ok: gameOk, err: gameErr, receipt } = dbClient.createCoinflip({
     ...
 });
 
 ...
 
-await signAndExecuteTransactionBlock({ ... });
+const tranactionResult = await signAndExecuteTransactionBlock({ ... });
+
+...
+
+const { ok: resultOk, err: resultErr, events } = await dbClient.getCoinflipResult({
+    coinType,
+    transactionResult
+});
 ```
 
 React
@@ -68,17 +75,24 @@ import { useDoubleUp } from 'doubleup';
 
 ...
 
-const { createCoinflip } = useDoubleUp();
+const { createCoinflip, getCoinflipResult } = useDoubleUp();
 
 ...
 
-const { ok, err, receipt } = createCoinflip({
+const { ok: gameOk, err: gameErr, receipt } = createCoinflip({
     ...
 });
 
 ...
 
-await signAndExecuteTransactionBlock({ ... });
+const tranactionResult = await signAndExecuteTransactionBlock({ ... });
+
+...
+
+const { ok: resultOk, err: resultErr, events } = await getCoinflipResult({
+    coinType,
+    transactionResult
+});
 ```
 
 ### Games
