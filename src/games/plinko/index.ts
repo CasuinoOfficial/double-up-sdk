@@ -1,3 +1,4 @@
+import { SuiClient } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -8,9 +9,12 @@ import { randomBytes } from 'crypto-browserify';
 
 import { 
     PLINKO_MODULE_NAME,
+    PLINKO_PACKAGE_ID,
+    PLINKO_STRUCT_NAME,
     PLINKO_VERIFIER_ID,
     UNI_HOUSE_OBJ
 } from "../../constants";
+import { getGenericGameResult } from "../../utils";
 
 type PlinkoType = 0 | 1 | 2;
 
@@ -25,6 +29,16 @@ export interface PlinkoInput {
 
 interface InternalPlinkoInput extends PlinkoInput {
     plinkoPackageId: string;
+}
+
+export interface PlinkoGameIdInput {
+    coinType: string;
+    pollInterval: number;
+    transactionResult: any;
+}
+
+interface InternalPlinkoGameIdInput extends PlinkoGameIdInput {
+    suiClient: SuiClient;
 }
 
 export interface PlinkoResponse {
@@ -68,4 +82,21 @@ export const createPlinko = ({
     }
 
     return res;
+};
+
+export const getPlinkoGameResult = async ({
+    coinType,
+    pollInterval,
+    suiClient,
+    transactionResult
+}: InternalPlinkoGameIdInput) => {
+    return getGenericGameResult({
+        coinType,
+        moduleName: PLINKO_MODULE_NAME,
+        packageId: PLINKO_PACKAGE_ID,
+        pollInterval,
+        suiClient,
+        structName: PLINKO_STRUCT_NAME,
+        transactionResult
+    });
 };

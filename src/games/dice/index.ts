@@ -1,3 +1,4 @@
+import { SuiClient } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -9,8 +10,11 @@ import { randomBytes } from 'crypto-browserify';
 import { 
   BLS_VERIFIER_OBJ, 
   DICE_MODULE_NAME,
+  DICE_PACKAGE_ID,
+  DICE_STRUCT_NAME,
   UNI_HOUSE_OBJ
 } from "../../constants";
+import { getGenericGameResult } from "../../utils";
 
 // Note: 0 - 5 for dice rolls, and 6 = odd, 7 = even, 8 = small, 9 = big 
 export interface DiceInput {
@@ -22,6 +26,16 @@ export interface DiceInput {
 
 interface InternalDiceInput extends DiceInput {
     dicePackageId: string;
+}
+
+export interface DiceGameIdInput {
+    coinType: string;
+    pollInterval?: number;
+    transactionResult: any;
+}
+
+interface InternalDiceGameIdInput extends DiceGameIdInput {
+    suiClient: SuiClient;
 }
 
 export interface DiceResponse {
@@ -63,4 +77,21 @@ export const createDice = ({
     }
 
     return res;
+};
+
+export const getDiceGameResult = async ({
+    coinType,
+    pollInterval,
+    suiClient,
+    transactionResult
+}: InternalDiceGameIdInput) => {
+    return getGenericGameResult({
+        coinType,
+        moduleName: DICE_MODULE_NAME,
+        packageId: DICE_PACKAGE_ID,
+        pollInterval,
+        suiClient,
+        structName: DICE_STRUCT_NAME,
+        transactionResult
+    });
 };

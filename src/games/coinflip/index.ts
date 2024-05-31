@@ -1,4 +1,4 @@
-import { SuiClient, SuiEvent } from "@mysten/sui.js/client";
+import { SuiClient } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -10,10 +10,11 @@ import { randomBytes } from 'crypto-browserify';
 import { 
   BLS_VERIFIER_OBJ, 
   COIN_MODULE_NAME,
-  UNIHOUSE_PACKAGE, 
+  COIN_PACKAGE_ID,
+  COIN_STRUCT_NAME,
   UNI_HOUSE_OBJ
 } from "../../constants";
-import { extractGenericTypes, sleep } from "../../utils";
+import { getGenericGameResult } from "../../utils";
 
 export interface CoinFlipInput {
     betType: 0 | 1;
@@ -26,14 +27,13 @@ interface InternalCoinFlipInput extends CoinFlipInput {
     coinflipPackageId: string;
 }
 
- export interface CoinFlipGameIdInput {
+export interface CoinFlipGameIdInput {
     coinType: string;
-    pollInterval: number;
+    pollInterval?: number;
     transactionResult: any;
 }
 
 interface InternalCoinFlipGameIdInput extends CoinFlipGameIdInput {
-    coinflipPackageId: string;
     suiClient: SuiClient;
 }
 
@@ -78,63 +78,19 @@ export const createCoinflip = ({
     return res;
 };
 
-export const getTransactionCoinflipGameId = async ({
-    coinflipPackageId,
+export const getCoinflipGameResult = async ({
     coinType,
-    pollInterval = 3000,
+    pollInterval,
     suiClient,
     transactionResult
 }: InternalCoinFlipGameIdInput) => {
-    const objectChanges = transactionResult.objectChanges;
-
-    const gameInfos = (objectChanges as any[])
-        .filter((change) => {
-            let delta =
-                change.objectType ===
-                `${UNIHOUSE_PACKAGE}::bls_settler::BetData<${coinType}, ${coinflipPackageId}::${COIN_MODULE_NAME}::Coinflip>`;
-
-            return delta;
-        })
-        .map((change) => {
-            const gameCoinType = extractGenericTypes(
-                change.objectType ?? "",
-            )[0];
-            const gameStringType = extractGenericTypes(
-                change.objectType ?? "",
-            )[1];
-
-            const gameId = change.objectId as string;
-            
-            return { gameId, gameStringType, gameCoinType };
+    return getGenericGameResult({
+        coinType,
+        moduleName: COIN_MODULE_NAME,
+        packageId: COIN_PACKAGE_ID,
+        pollInterval,
+        suiClient,
+        structName: COIN_STRUCT_NAME,
+        transactionResult
     });
-
-    let resultEvent: SuiEvent[] = [];
-    
-    while (resultEvent.length === 0) {
-        try {
-            const events = await suiClient.queryEvents({
-                query: {
-                    MoveEventModule: {
-                        module: "bls_settler",
-                        package: UNIHOUSE_PACKAGE,
-                    }
-                },
-                limit: 50,
-            });
-
-            resultEvent = events.data.filter((event: any) => {
-                if (event.parsedJson.bet_id === gameInfos[0].gameId) {
-                  return true;
-                }
-            });
-        } catch (error) {
-            console.error("Error querying events:", error);
-        };
-
-        if (resultEvent.length === 0) {
-            console.log(`No events found. Polling again in ${pollInterval * 1000} seconds...`);
-            await sleep(pollInterval);
-        }
-    }
-    return resultEvent;
 };

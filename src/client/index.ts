@@ -9,16 +9,31 @@ import {
 
 import {
   createCoinflip,
-  getTransactionCoinflipGameId,
+  getCoinflipGameResult,
   CoinFlipInput,
   CoinFlipGameIdInput
 } from "../games/coinflip";
 
-import { createDice, DiceInput } from "../games/dice";
+import {
+  createDice,
+  getDiceGameResult,
+  DiceInput,
+  DiceGameIdInput
+} from "../games/dice";
 
-import { createLimbo, LimboInput } from "../games/limbo";
+import {
+  createLimbo,
+  getLimboGameResult,
+  LimboInput,
+  LimboGameIdInput
+} from "../games/limbo";
 
-import { createPlinko, PlinkoInput } from "../games/plinko";
+import {
+  createPlinko,
+  getPlinkoGameResult,
+  PlinkoInput,
+  PlinkoGameIdInput
+} from "../games/plinko";
 
 interface DoubleUpClientInput {
   coinflipPackageId: string;
@@ -53,19 +68,29 @@ export class DoubleUpClient {
 
     // coinflip
     createCoinflip = (input: CoinFlipInput) => createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
-    getTransactionCoinflipGameId = (input: CoinFlipGameIdInput) => getTransactionCoinflipGameId({
+    getCoinflipGameResult = (input: CoinFlipGameIdInput) => getCoinflipGameResult({
       ...input,
-      coinflipPackageId: this.coinflipPackageId,
       suiClient: this.suiClient
     });
 
     // dice
     createDice = (input: DiceInput) => createDice({ ...input, dicePackageId: this.dicePackageId });
+    getDiceGameResult = (input: DiceGameIdInput) => getDiceGameResult({
+      ...input,
+      suiClient: this.suiClient
+    });
 
     // limbo
     createLimbo = (input: LimboInput) => createLimbo({ ...input, limboPackageId: this.limboPackageId });
-    // getTransactionLimboGameId = (input: LimboGameIdInput) => this.getTransactionLimboGameId({ ...input, this.suiClient: this.suiClient });
+    getLimboGameResult = (input: LimboGameIdInput) => getLimboGameResult({
+      ...input,
+      suiClient: this.suiClient
+    });
 
     // plinko
     createPlinko = (input: PlinkoInput) => createPlinko({ ...input, plinkoPackageId: this.plinkoPackageId });
+    getPlinkoGameResult = (input: PlinkoGameIdInput) => getPlinkoGameResult({
+      ...input,
+      suiClient: this.suiClient
+    });
 }
