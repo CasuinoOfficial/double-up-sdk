@@ -92,7 +92,7 @@ betType
 |   0   |  Heads  |
 |   1   |  Tails  |
 
-pollInterval
+pollInterval (optional, default: 3000)
 
 milliseconds
 
@@ -133,7 +133,7 @@ betType
 |   8   | Small      |
 |   9   | Big        |
 
-pollInterval
+pollInterval (optional, default: 3000)
 
 milliseconds
 
@@ -168,7 +168,7 @@ multiplier
 
 1.01 - 100
 
-pollInterval
+pollInterval (optional, default: 3000)
 
 milliseconds
 
@@ -211,7 +211,7 @@ plinkoType
 |   1   | 9 Rows  |
 |   2   | 12 Rows |
 
-pollInterval
+pollInterval (optional, default: 3000)
 
 milliseconds
 
