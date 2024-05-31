@@ -13,7 +13,7 @@ interface GenericGameResultInput {
   transactionResult: any;
 }
 
-interface GenericGameResultResponse {
+export interface GenericGameResultResponse {
     ok: boolean;
     err?: Error;
     events?: SuiEvent[];
