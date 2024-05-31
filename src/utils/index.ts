@@ -35,7 +35,7 @@ export const getGenericGameResult = async ({
   suiClient,
   structName,
   transactionResult
-}: GenericGameResultInput) => {
+}: GenericGameResultInput): Promise<SuiEvent[]> => {
   const objectChanges = transactionResult.objectChanges;
 
   const gameInfos = (objectChanges as any[])
