@@ -70,6 +70,7 @@ export class DoubleUpClient {
     createCoinflip = (input: CoinFlipInput) => createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
     getCoinflipGameResult = (input: CoinFlipGameIdInput) => getCoinflipGameResult({
       ...input,
+      coinflipPackageId: this.coinflipPackageId,
       suiClient: this.suiClient
     });
 
@@ -77,6 +78,7 @@ export class DoubleUpClient {
     createDice = (input: DiceInput) => createDice({ ...input, dicePackageId: this.dicePackageId });
     getDiceGameResult = (input: DiceGameIdInput) => getDiceGameResult({
       ...input,
+      dicePackageId: this.dicePackageId,
       suiClient: this.suiClient
     });
 
@@ -84,6 +86,7 @@ export class DoubleUpClient {
     createLimbo = (input: LimboInput) => createLimbo({ ...input, limboPackageId: this.limboPackageId });
     getLimboGameResult = (input: LimboGameIdInput) => getLimboGameResult({
       ...input,
+      limboPackageId: this.limboPackageId,
       suiClient: this.suiClient
     });
 
@@ -91,6 +94,7 @@ export class DoubleUpClient {
     createPlinko = (input: PlinkoInput) => createPlinko({ ...input, plinkoPackageId: this.plinkoPackageId });
     getPlinkoGameResult = (input: PlinkoGameIdInput) => getPlinkoGameResult({
       ...input,
+      plinkoPackageId: this.plinkoPackageId,
       suiClient: this.suiClient
     });
 }

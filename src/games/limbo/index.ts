@@ -12,7 +12,6 @@ import {
   LIMBO_MAX_MULTIPLIER, 
   LIMBO_MIN_MULTIPLIER, 
   LIMBO_MODULE_NAME,
-  LIMBO_PACKAGE_ID,
   LIMBO_STRUCT_NAME,
   UNI_HOUSE_OBJ
 } from "../../constants";
@@ -36,6 +35,7 @@ export interface LimboGameIdInput {
 }
 
 interface InternalLimboGameIdInput extends LimboGameIdInput {
+    limboPackageId: string;
     suiClient: SuiClient;
 }
 
@@ -86,6 +86,7 @@ export const createLimbo = ({
 
 export const getLimboGameResult = async ({
     coinType,
+    limboPackageId,
     pollInterval,
     suiClient,
     transactionResult
@@ -93,7 +94,7 @@ export const getLimboGameResult = async ({
     return getGenericGameResult({
         coinType,
         moduleName: LIMBO_MODULE_NAME,
-        packageId: LIMBO_PACKAGE_ID,
+        packageId: limboPackageId,
         pollInterval,
         suiClient,
         structName: LIMBO_STRUCT_NAME,

@@ -10,7 +10,6 @@ import { randomBytes } from 'crypto-browserify';
 import { 
   BLS_VERIFIER_OBJ, 
   COIN_MODULE_NAME,
-  COIN_PACKAGE_ID,
   COIN_STRUCT_NAME,
   UNI_HOUSE_OBJ
 } from "../../constants";
@@ -34,6 +33,7 @@ export interface CoinFlipGameIdInput {
 }
 
 interface InternalCoinFlipGameIdInput extends CoinFlipGameIdInput {
+    coinflipPackageId: string;
     suiClient: SuiClient;
 }
 
@@ -80,6 +80,7 @@ export const createCoinflip = ({
 
 export const getCoinflipGameResult = async ({
     coinType,
+    coinflipPackageId,
     pollInterval,
     suiClient,
     transactionResult
@@ -87,7 +88,7 @@ export const getCoinflipGameResult = async ({
     return getGenericGameResult({
         coinType,
         moduleName: COIN_MODULE_NAME,
-        packageId: COIN_PACKAGE_ID,
+        packageId: coinflipPackageId,
         pollInterval,
         suiClient,
         structName: COIN_STRUCT_NAME,

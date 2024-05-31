@@ -10,7 +10,6 @@ import { randomBytes } from 'crypto-browserify';
 import { 
   BLS_VERIFIER_OBJ, 
   DICE_MODULE_NAME,
-  DICE_PACKAGE_ID,
   DICE_STRUCT_NAME,
   UNI_HOUSE_OBJ
 } from "../../constants";
@@ -35,6 +34,7 @@ export interface DiceGameIdInput {
 }
 
 interface InternalDiceGameIdInput extends DiceGameIdInput {
+    dicePackageId: string;
     suiClient: SuiClient;
 }
 
@@ -81,6 +81,7 @@ export const createDice = ({
 
 export const getDiceGameResult = async ({
     coinType,
+    dicePackageId,
     pollInterval,
     suiClient,
     transactionResult
@@ -88,7 +89,7 @@ export const getDiceGameResult = async ({
     return getGenericGameResult({
         coinType,
         moduleName: DICE_MODULE_NAME,
-        packageId: DICE_PACKAGE_ID,
+        packageId: dicePackageId,
         pollInterval,
         suiClient,
         structName: DICE_STRUCT_NAME,

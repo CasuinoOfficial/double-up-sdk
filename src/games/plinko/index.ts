@@ -9,7 +9,6 @@ import { randomBytes } from 'crypto-browserify';
 
 import { 
     PLINKO_MODULE_NAME,
-    PLINKO_PACKAGE_ID,
     PLINKO_STRUCT_NAME,
     PLINKO_VERIFIER_ID,
     UNI_HOUSE_OBJ
@@ -38,6 +37,7 @@ export interface PlinkoGameIdInput {
 }
 
 interface InternalPlinkoGameIdInput extends PlinkoGameIdInput {
+    plinkoPackageId: string;
     suiClient: SuiClient;
 }
 
@@ -86,6 +86,7 @@ export const createPlinko = ({
 
 export const getPlinkoGameResult = async ({
     coinType,
+    plinkoPackageId,
     pollInterval,
     suiClient,
     transactionResult
@@ -93,7 +94,7 @@ export const getPlinkoGameResult = async ({
     return getGenericGameResult({
         coinType,
         moduleName: PLINKO_MODULE_NAME,
-        packageId: PLINKO_PACKAGE_ID,
+        packageId: plinkoPackageId,
         pollInterval,
         suiClient,
         structName: PLINKO_STRUCT_NAME,
