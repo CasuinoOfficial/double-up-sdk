@@ -7,7 +7,7 @@ interface GenericGameResultInput {
   coinType: string;
   moduleName: string;
   packageId: string;
-  pollInterval: number;
+  pollInterval?: number;
   structName: string;
   suiClient: SuiClient;
   transactionResult: any;
