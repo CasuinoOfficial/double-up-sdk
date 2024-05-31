@@ -15,24 +15,24 @@ import {
 } from "../../constants";
 import { getGenericGameResult } from "../../utils";
 
-export interface CoinFlipInput {
+export interface CoinflipInput {
     betType: 0 | 1;
     coin: TransactionObjectArgument;
     coinType: string;
     transactionBlock: TransactionBlockType;
 }
 
-interface InternalCoinFlipInput extends CoinFlipInput {
+interface InternalCoinFlipInput extends CoinflipInput {
     coinflipPackageId: string;
 }
 
-export interface CoinFlipGameIdInput {
+export interface CoinflipResultInput {
     coinType: string;
     pollInterval?: number;
     transactionResult: any;
 }
 
-interface InternalCoinFlipGameIdInput extends CoinFlipGameIdInput {
+interface InternalCoinflipResultInput extends CoinflipResultInput {
     coinflipPackageId: string;
     suiClient: SuiClient;
 }
@@ -78,13 +78,13 @@ export const createCoinflip = ({
     return res;
 };
 
-export const getCoinflipGameResult = async ({
+export const getCoinflipResult = async ({
     coinType,
     coinflipPackageId,
     pollInterval,
     suiClient,
     transactionResult
-}: InternalCoinFlipGameIdInput) => {
+}: InternalCoinflipResultInput) => {
     return getGenericGameResult({
         coinType,
         moduleName: COIN_MODULE_NAME,

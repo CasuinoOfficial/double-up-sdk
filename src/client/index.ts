@@ -9,30 +9,30 @@ import {
 
 import {
   createCoinflip,
-  getCoinflipGameResult,
-  CoinFlipInput,
-  CoinFlipGameIdInput
+  getCoinflipResult,
+  CoinflipInput,
+  CoinflipResultInput
 } from "../games/coinflip";
 
 import {
   createDice,
-  getDiceGameResult,
+  getDiceResult,
   DiceInput,
-  DiceGameIdInput
+  DiceResultInput
 } from "../games/dice";
 
 import {
   createLimbo,
-  getLimboGameResult,
+  getLimboResult,
   LimboInput,
-  LimboGameIdInput
+  LimboResultInput
 } from "../games/limbo";
 
 import {
   createPlinko,
-  getPlinkoGameResult,
+  getPlinkoResult,
   PlinkoInput,
-  PlinkoGameIdInput
+  PlinkoResultInput
 } from "../games/plinko";
 
 interface DoubleUpClientInput {
@@ -67,8 +67,8 @@ export class DoubleUpClient {
     suiClient: SuiClient;
 
     // coinflip
-    createCoinflip = (input: CoinFlipInput) => createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
-    getCoinflipGameResult = (input: CoinFlipGameIdInput) => getCoinflipGameResult({
+    createCoinflip = (input: CoinflipInput) => createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
+    getCoinflipResult = (input: CoinflipResultInput) => getCoinflipResult({
       ...input,
       coinflipPackageId: this.coinflipPackageId,
       suiClient: this.suiClient
@@ -76,7 +76,7 @@ export class DoubleUpClient {
 
     // dice
     createDice = (input: DiceInput) => createDice({ ...input, dicePackageId: this.dicePackageId });
-    getDiceGameResult = (input: DiceGameIdInput) => getDiceGameResult({
+    getDiceResult = (input: DiceResultInput) => getDiceResult({
       ...input,
       dicePackageId: this.dicePackageId,
       suiClient: this.suiClient
@@ -84,7 +84,7 @@ export class DoubleUpClient {
 
     // limbo
     createLimbo = (input: LimboInput) => createLimbo({ ...input, limboPackageId: this.limboPackageId });
-    getLimboGameResult = (input: LimboGameIdInput) => getLimboGameResult({
+    getLimboResult = (input: LimboResultInput) => getLimboResult({
       ...input,
       limboPackageId: this.limboPackageId,
       suiClient: this.suiClient
@@ -92,7 +92,7 @@ export class DoubleUpClient {
 
     // plinko
     createPlinko = (input: PlinkoInput) => createPlinko({ ...input, plinkoPackageId: this.plinkoPackageId });
-    getPlinkoGameResult = (input: PlinkoGameIdInput) => getPlinkoGameResult({
+    getPlinkoResult = (input: PlinkoResultInput) => getPlinkoResult({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
       suiClient: this.suiClient

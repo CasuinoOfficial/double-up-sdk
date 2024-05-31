@@ -30,13 +30,13 @@ interface InternalPlinkoInput extends PlinkoInput {
     plinkoPackageId: string;
 }
 
-export interface PlinkoGameIdInput {
+export interface PlinkoResultInput {
     coinType: string;
     pollInterval: number;
     transactionResult: any;
 }
 
-interface InternalPlinkoGameIdInput extends PlinkoGameIdInput {
+interface InternalPlinkoResultInput extends PlinkoResultInput {
     plinkoPackageId: string;
     suiClient: SuiClient;
 }
@@ -84,13 +84,13 @@ export const createPlinko = ({
     return res;
 };
 
-export const getPlinkoGameResult = async ({
+export const getPlinkoResult = async ({
     coinType,
     plinkoPackageId,
     pollInterval,
     suiClient,
     transactionResult
-}: InternalPlinkoGameIdInput) => {
+}: InternalPlinkoResultInput) => {
     return getGenericGameResult({
         coinType,
         moduleName: PLINKO_MODULE_NAME,

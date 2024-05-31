@@ -27,13 +27,13 @@ interface InternalDiceInput extends DiceInput {
     dicePackageId: string;
 }
 
-export interface DiceGameIdInput {
+export interface DiceResultInput {
     coinType: string;
     pollInterval?: number;
     transactionResult: any;
 }
 
-interface InternalDiceGameIdInput extends DiceGameIdInput {
+interface InternalDiceResultInput extends DiceResultInput {
     dicePackageId: string;
     suiClient: SuiClient;
 }
@@ -79,13 +79,13 @@ export const createDice = ({
     return res;
 };
 
-export const getDiceGameResult = async ({
+export const getDiceResult = async ({
     coinType,
     dicePackageId,
     pollInterval,
     suiClient,
     transactionResult
-}: InternalDiceGameIdInput) => {
+}: InternalDiceResultInput) => {
     return getGenericGameResult({
         coinType,
         moduleName: DICE_MODULE_NAME,

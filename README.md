@@ -114,7 +114,7 @@ const { ok: gameOk, err: gameErr, receipt } = createCoinflip({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getCoinflipGameResult({
+const { ok: resultOk, err: resultErr, events } = await getCoinflipResult({
     coinType,
     pollInterval: 3000,
     transactionResult
@@ -155,7 +155,7 @@ const { ok: gameOk, err: gameErr, receipt } = createDice({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getDiceGameResult({
+const { ok: resultOk, err: resultErr, events } = await getDiceResult({
     coinType,
     pollInterval: 3000,
     transactionResult
@@ -190,7 +190,7 @@ const { ok: gameOk, err: gameErr, receipt } = createLimbo({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getLimboGameResult({
+const { ok: resultOk, err: resultErr, events } = await getLimboResult({
     coinType,
     pollInterval: 3000,
     transactionResult
@@ -235,7 +235,7 @@ const { ok: gameOk, err: gameErr, receipt } = createPlinko({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getPlinkoGameResult({
+const { ok: resultOk, err: resultErr, events } = await getPlinkoResult({
     coinType,
     pollInterval: 3000,
     transactionResult

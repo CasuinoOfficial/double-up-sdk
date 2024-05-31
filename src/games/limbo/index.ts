@@ -28,13 +28,13 @@ interface InternalLimboInput extends LimboInput {
     limboPackageId: string;
 }
 
-export interface LimboGameIdInput {
+export interface LimboResultInput {
     coinType: string;
     pollInterval: number;
     transactionResult: any;
 }
 
-interface InternalLimboGameIdInput extends LimboGameIdInput {
+interface InternalLimboResultInput extends LimboResultInput {
     limboPackageId: string;
     suiClient: SuiClient;
 }
@@ -84,13 +84,13 @@ export const createLimbo = ({
     return res;
 };
 
-export const getLimboGameResult = async ({
+export const getLimboResult = async ({
     coinType,
     limboPackageId,
     pollInterval,
     suiClient,
     transactionResult
-}: InternalLimboGameIdInput) => {
+}: InternalLimboResultInput) => {
     return getGenericGameResult({
         coinType,
         moduleName: LIMBO_MODULE_NAME,
