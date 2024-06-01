@@ -8,9 +8,12 @@ interface GenericGameResultInput {
   moduleName: string;
   packageId: string;
   pollInterval?: number;
-  structName: string;
   suiClient: SuiClient;
   transactionResult: any;
+}
+
+interface GenericBlsGameResultInput extends GenericGameResultInput {
+    structName: string;
 }
 
 export interface GenericGameResultResponse {
@@ -34,6 +37,78 @@ export const extractGenericTypes = (typeName: string): string[] => {
 };
 
 export const getGenericGameResult = async ({
+    coinType,
+    moduleName,
+    packageId,
+    pollInterval = 3000,
+    suiClient,
+    transactionResult
+  }: GenericGameResultInput): Promise<GenericGameResultResponse> => {
+      const result: GenericGameResultResponse = { ok: true };
+  
+      try {
+          const objectChanges = transactionResult.objectChanges;
+  
+          const gameInfos = (objectChanges as any[])
+              .filter((change) => {
+                  let delta =
+                      change.objectType ===
+                      `${packageId}::${moduleName}::Game<${coinType}>`;
+  
+                  return delta;
+              })
+              .map((change) => {
+                  const gameCoinType = extractGenericTypes(
+                      change.objectType ?? "",
+                  )[0];
+                  const gameStringType = extractGenericTypes(
+                      change.objectType ?? "",
+                  )[1];
+  
+                  const gameId = change.objectId as string;
+                  
+                  return { gameId, gameStringType, gameCoinType };
+          });
+  
+          let resultEvents: SuiEvent[] = [];
+  
+          while (resultEvents.length === 0) {
+              try {
+                  const events = await suiClient.queryEvents({
+                      query: {
+                          MoveEventModule: {
+                              module: "bls_settler",
+                              package: UNIHOUSE_PACKAGE,
+                          }
+                      },
+                      limit: 50,
+                  });
+  
+                  resultEvents = events.data.filter((event: any) => {
+                      if (event.parsedJson.bet_id === gameInfos[0].gameId) {
+                      return true;
+                      }
+                  });
+              } catch (error) {
+                  console.error("Error querying events:", error);
+              };
+  
+              if (resultEvents.length === 0) {
+                  console.log(`No events found. Polling again in ${pollInterval * 1000} seconds...`);
+                  await sleep(pollInterval);
+              }
+          }
+  
+          result.events = resultEvents;
+      } catch (err) {
+          result.ok = false;
+          result.err = err;
+      }
+    
+    return result;
+  };
+
+export const getGenericBlsGameResult = async ({
   coinType,
   moduleName,
   packageId,
@@ -41,7 +116,7 @@ export const getGenericGameResult = async ({
   suiClient,
   structName,
   transactionResult
-}: GenericGameResultInput): Promise<GenericGameResultResponse> => {
+}: GenericBlsGameResultInput): Promise<GenericGameResultResponse> => {
     const result: GenericGameResultResponse = { ok: true };
 
     try {

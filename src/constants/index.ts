@@ -72,6 +72,8 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
 
 // shared
 // ===============================================================================
+export const DOUBLE_UP_API = "https://www.doubleup.fun/api";
+
 export const BLS_VERIFIER_ID = "0xc85af84c78bebac4fd91d8cc25d66461503258764402b4c06c9f3e8050b5bd2e";
 export const BLS_VERIFIER_OBJ = Inputs.SharedObjectRef({
   objectId: BLS_VERIFIER_ID,
