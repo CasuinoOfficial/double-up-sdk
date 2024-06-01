@@ -1,25 +1,23 @@
 import { SuiClient } from "@mysten/sui.js/client";
 
-import { ReactElement, ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { ReactElement, ReactNode, createContext, useContext } from "react";
 
 import { DoubleUpClient } from "../client";
 
-import { CoinflipInput, CoinflipResultInput, CoinflipResponse } from "../games/coinflip";
-import { DiceInput, DiceResultInput, DiceResponse } from "../games/dice";
-import { LimboInput, LimboResultInput, LimboResponse } from "../games/limbo";
-import { PlinkoInput, PlinkoResultInput, PlinkoResponse } from "../games/plinko";
-
-import { GenericGameResultResponse } from "../utils";
+import { CoinflipInput, CoinflipResultInput, CoinflipResponse, CoinflipResultResponse } from "../games/coinflip";
+import { DiceInput, DiceResultInput, DiceResponse, DiceResultResponse } from "../games/dice";
+import { LimboInput, LimboResultInput, LimboResponse, LimboResultResponse } from "../games/limbo";
+import { PlinkoInput, PlinkoResultInput, PlinkoResponse, PlinkoResultResponse } from "../games/plinko";
 
 interface DoubleUpContextState {
   createCoinflip: (input: CoinflipInput) => CoinflipResponse;
   createDice: (input: DiceInput) => DiceResponse;
   createLimbo: (input: LimboInput) => LimboResponse;
   createPlinko: (input: PlinkoInput) => PlinkoResponse;
-  getCoinflipResult: (input: CoinflipResultInput) => Promise<GenericGameResultResponse>;
-  getDiceResult: (input: DiceResultInput) => Promise<GenericGameResultResponse>;
-  getLimboResult: (input: LimboResultInput) => Promise<GenericGameResultResponse>;
-  getPlinkoResult: (input: PlinkoResultInput) => Promise<GenericGameResultResponse>;
+  getCoinflipResult: (input: CoinflipResultInput) => Promise<CoinflipResultResponse>;
+  getDiceResult: (input: DiceResultInput) => Promise<DiceResultResponse>;
+  getLimboResult: (input: LimboResultInput) => Promise<LimboResultResponse>;
+  getPlinkoResult: (input: PlinkoResultInput) => Promise<PlinkoResultResponse>;
 }
 
 interface DoubleupProviderProps {
