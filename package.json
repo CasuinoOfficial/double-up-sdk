@@ -6,7 +6,11 @@
   "scripts": {
     "build": "tsc",
     "publishts": "tsc && npm publish",
-    "test": "node -r ts-node/register --env-file=.env ./src/run/test.ts"
+    "test": "node -r ts-node/register --env-file=.env ./src/run/test.ts",
+    "test:coinflip": "FUNCTION=coinflip pnpm test",
+    "test:dice": "FUNCTION=dice pnpm test",
+    "test:limbo": "FUNCTION=limbo pnpm test",
+    "test:plinko": "FUNCTION=plinko pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

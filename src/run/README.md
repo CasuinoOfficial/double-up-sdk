@@ -1,7 +1,19 @@
-### Test
+# Testing implementations
 
-Call function in file, and run:
+### Coinflip
 
 ```sh
-$ pnpm test
+$ pnpm test:coinflip
+```
+
+### Limbo
+
+```sh
+$ pnpm test:limbo
+```
+
+### Plinko
+
+```sh
+$ pnpm test:plinko
 ```

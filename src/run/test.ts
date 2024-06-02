@@ -8,7 +8,7 @@ import {
     PLINKO_PACKAGE_ID
 } from "../constants";
 
-const { MNEMONICS = "" } = process.env;
+const { FUNCTION = "", MNEMONICS = "" } = process.env;
 
 const suiKit = new SuiKit({ mnemonics: MNEMONICS });
 
@@ -20,7 +20,7 @@ const dbClient = new DoubleUpClient({
     suiClient: suiKit.client()
 });
 
-export const testCoinflip = async () => {
+const testCoinflip = async () => {
     // heads
     const betType = 0;
     const betAmount = 500000000;
@@ -126,7 +126,7 @@ const testDice = async () => {
     }
 };
 
-export const testLimbo = async () => {
+const testLimbo = async () => {
     const betAmount = 500000000;
     const multiplier = 1.1;
 
@@ -176,7 +176,7 @@ export const testLimbo = async () => {
     }
 };
 
-export const testPlinko = async () => {
+const testPlinko = async () => {
     const betAmount = 500000000;
     const numberOfDiscs = 1;
     
@@ -231,6 +231,21 @@ export const testPlinko = async () => {
     }
 };
 
-// testCoinflip();
-// testLimbo();
-testPlinko();
+((fnName) => {
+    switch (fnName) {
+        case 'coinflip':
+            testCoinflip();
+            break;
+        case 'dice':
+            testDice();
+            break;
+        case 'limbo':
+            testLimbo();
+            break;
+        case 'plinko':
+            testPlinko();
+            break;
+        default:
+            console.error("Use dedicated test function to test an individual game.\n");
+    }
+})(FUNCTION);
