@@ -1,4 +1,4 @@
-import { SuiClient } from "@mysten/sui.js/client";
+import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -11,15 +11,16 @@ import { randomBytes } from 'crypto-browserify';
 import { 
   BLS_VERIFIER_OBJ,
   DOUBLE_UP_API,
+  LIMBO_CORE_PACKAGE_ID,
   LIMBO_MAX_MULTIPLIER, 
   LIMBO_MIN_MULTIPLIER, 
   LIMBO_MODULE_NAME,
   LIMBO_STRUCT_NAME,
   UNI_HOUSE_OBJ
 } from "../../constants";
-import { getGenericBlsGameResult } from "../../utils";
+import { getBlsGameInfos } from "../../utils";
 
-type LimboResult = any;
+type LimboResult = number;
 
 export interface LimboInput {
     coin: TransactionObjectArgument;
@@ -34,18 +35,14 @@ interface InternalLimboInput extends LimboInput {
 
 export interface LimboResultInput {
     coinType: string;
-    pollInterval: number;
-    transactionResult: any;
-}
-
-interface InternalLimboResultInput extends LimboResultInput {
-    limboPackageId: string;
-    suiClient: SuiClient;
+    gameSeed: string;
+    transactionResult: SuiTransactionBlockResponse;
 }
 
 export interface LimboResponse {
     ok: boolean;
     err?: Error;
+    gameSeed?: string;
     receipt?: TransactionArgument;
 }
 
@@ -97,6 +94,7 @@ export const createLimbo = ({
             ],
         });
     
+        res.gameSeed = Buffer.from(userRandomness).toString("hex");
         res.receipt = receipt;
     } catch (err) {
         res.ok = false;
@@ -108,31 +106,24 @@ export const createLimbo = ({
 
 export const getLimboResult = async ({
     coinType,
-    limboPackageId,
-    pollInterval,
-    suiClient,
+    gameSeed,
     transactionResult
-}: InternalLimboResultInput): Promise<LimboResultResponse> => {
+}: LimboResultInput): Promise<LimboResultResponse> => {
     const res: LimboResultResponse = { ok: true };
 
     try {
-        const { ok, err, events } = await getGenericBlsGameResult({
+        const gameInfos = getBlsGameInfos({
             coinType,
+            corePackageId: LIMBO_CORE_PACKAGE_ID,
+            gameSeed,
             moduleName: LIMBO_MODULE_NAME,
-            packageId: limboPackageId,
-            pollInterval,
-            suiClient,
             structName: LIMBO_STRUCT_NAME,
             transactionResult
         });
 
-        if (!ok) {
-            throw err;
-        }
-
         const settlement = await axios.post(`${DOUBLE_UP_API}/settle`, {
             coinType,
-            gameInfos: events,
+            gameInfos,
             gameName: LIMBO_MODULE_NAME
         });
 
@@ -143,7 +134,6 @@ export const getLimboResult = async ({
         const results = [];
 
         for (const gameResult of settlement.data.results) {
-            console.log(gameResult)
             if (Number(gameResult[0].outcome) % 69 === 0) {
                 results.push(1);
             } else {

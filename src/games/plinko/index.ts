@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -10,14 +10,20 @@ import { randomBytes } from 'crypto-browserify';
 
 import {
     DOUBLE_UP_API,
+    PLINKO_CORE_PACKAGE_ID,
     PLINKO_MODULE_NAME,
     PLINKO_VERIFIER_ID,
     UNI_HOUSE_OBJ
 } from "../../constants";
-import { getGenericGameResult } from "../../utils";
+import { getGameInfos } from "../../utils";
 
-type PlinkoResult = any;
+interface PlinkoResult {
+    ballCount: string;
+    betSize: string;
+    pnl: string;
+}
 
+// 0: 6 Rows, 1: 9 Rows, 2: 12 Rows
 type PlinkoType = 0 | 1 | 2;
 
 export interface PlinkoInput {
@@ -35,18 +41,14 @@ interface InternalPlinkoInput extends PlinkoInput {
 
 export interface PlinkoResultInput {
     coinType: string;
-    pollInterval: number;
+    gameSeed: string;
     transactionResult: SuiTransactionBlockResponse;
-}
-
-interface InternalPlinkoResultInput extends PlinkoResultInput {
-    plinkoPackageId: string;
-    suiClient: SuiClient;
 }
 
 export interface PlinkoResponse {
     ok: boolean;
     err?: Error;
+    gameSeed?: string;
     receipt?: TransactionArgument;
 }
 
@@ -65,7 +67,7 @@ export const createPlinko = ({
     plinkoType,
     transactionBlock,
 }: InternalPlinkoInput): PlinkoResponse => {
-    const res: PlinkoResponse = { ok: false };
+    const res: PlinkoResponse = { ok: true };
 
     try {
         const userRandomness = randomBytes(512);
@@ -84,6 +86,7 @@ export const createPlinko = ({
             ],
         });
 
+        res.gameSeed = Buffer.from(userRandomness).toString("hex");
         res.receipt = receipt;
     } catch (err) {
         res.ok = false;
@@ -95,30 +98,23 @@ export const createPlinko = ({
 
 export const getPlinkoResult = async ({
     coinType,
-    plinkoPackageId,
-    pollInterval,
-    suiClient,
+    gameSeed,
     transactionResult
-}: InternalPlinkoResultInput): Promise<PlinkoResultResponse> => {
+}: PlinkoResultInput): Promise<PlinkoResultResponse> => {
     const res: PlinkoResultResponse = { ok: true };
 
     try {
-        const { ok, err, events } = await getGenericGameResult({
+        const gameInfos = getGameInfos({
             coinType,
+            corePackageId: PLINKO_CORE_PACKAGE_ID,
+            gameSeed,
             moduleName: PLINKO_MODULE_NAME,
-            packageId: plinkoPackageId,
-            pollInterval,
-            suiClient,
             transactionResult
         });
 
-        if (!ok) {
-            throw err;
-        }
-
         const settlement = await axios.post(`${DOUBLE_UP_API}/plinko`, {
             coinType,
-            gameInfos: events,
+            gameInfos,
             gameName: PLINKO_MODULE_NAME
         });
 

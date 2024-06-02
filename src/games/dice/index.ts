@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -9,13 +9,14 @@ import axios from "axios";
 import { randomBytes } from 'crypto-browserify';
 
 import { 
-  BLS_VERIFIER_OBJ, 
+  BLS_VERIFIER_OBJ,
+  DICE_CORE_PACKAGE_ID,
   DICE_MODULE_NAME,
   DICE_STRUCT_NAME,
   DOUBLE_UP_API,
   UNI_HOUSE_OBJ
 } from "../../constants";
-import { getGenericBlsGameResult } from "../../utils";
+import { getBlsGameInfos } from "../../utils";
 
 // Note: 0 - 5 for dice rolls, and 6 = odd, 7 = even, 8 = small, 9 = big
 type BetType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -36,18 +37,14 @@ interface InternalDiceInput extends DiceInput {
 export interface DiceResultInput {
     betType: BetType;
     coinType: string;
-    pollInterval?: number;
+    gameSeed: string;
     transactionResult: SuiTransactionBlockResponse;
-}
-
-interface InternalDiceResultInput extends DiceResultInput {
-    dicePackageId: string;
-    suiClient: SuiClient;
 }
 
 export interface DiceResponse {
     ok: boolean;
     err?: Error;
+    gameSeed?: string;
     receipt?: TransactionArgument;
 }
 
@@ -83,6 +80,7 @@ export const createDice = ({
             ],    
         });
 
+        res.gameSeed = Buffer.from(userRandomness).toString("hex");
         res.receipt = receipt;
     } catch (err) {
         res.ok = false;
@@ -95,33 +93,28 @@ export const createDice = ({
 export const getDiceResult = async ({
     betType,
     coinType,
-    dicePackageId,
-    pollInterval,
-    suiClient,
+    gameSeed,
     transactionResult
-}: InternalDiceResultInput): Promise<DiceResultResponse> => {
+}: DiceResultInput): Promise<DiceResultResponse> => {
     const res: DiceResultResponse = { ok: true };
 
     try {
-        const { ok, err, events } = await getGenericBlsGameResult({
+        const gameInfos = getBlsGameInfos({
             coinType,
+            corePackageId: DICE_CORE_PACKAGE_ID,
+            gameSeed,
             moduleName: DICE_MODULE_NAME,
-            packageId: dicePackageId,
-            pollInterval,
-            suiClient,
             structName: DICE_STRUCT_NAME,
             transactionResult
         });
 
-        if (!ok) {
-            throw err;
-        }
-
         const settlement = await axios.post(`${DOUBLE_UP_API}/bls`, {
             coinType,
-            gameInfos: events,
+            gameInfos,
             gameName: DICE_MODULE_NAME
         });
+
+        console.log(settlement)
 
         if (!settlement.data.results) {
             throw new Error('could not determine results');

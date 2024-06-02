@@ -9,8 +9,8 @@ interface RouletteConfig {
 
 // coinflip
 // ===============================================================================
-export const COIN_PACKAGE_ID = "0x5dbdbc296218351bb0a728118c910457368b95d60dd7afbe4a47c7fc73871352";
-export const CORE_COIN_PACKAGE_ID = "0xb6c26aa0109aac946d1f9151580ce2fe8a388b489bf5664d7a751718fcefee1f";
+export const COIN_PACKAGE_ID = "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
+export const COIN_CORE_PACKAGE_ID = "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 // ===============================================================================
@@ -18,6 +18,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 // dice
 // ===============================================================================
 export const DICE_PACKAGE_ID = "0xca4106112a29fffdf8d8b39774535abd05896573dfbeda5ab176e1cb76a334ea";
+export const DICE_CORE_PACKAGE_ID = "0xca4106112a29fffdf8d8b39774535abd05896573dfbeda5ab176e1cb76a334ea";
 export const DICE_MODULE_NAME = "dice";
 export const DICE_STRUCT_NAME = "Dice";
 // ===============================================================================
@@ -28,7 +29,7 @@ export const LIMBO_CORE_PACKAGE_ID = "0xbca3313d753bba2e3b3d911d2306c5024de99dfd
 export const LIMBO_PACKAGE_ID = "0x26f5edaef93c8195cd5f96cdf54d96051088948ce2cb740d6c8803a53b0be3f9";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
-export const LIMBO_RESOLVE_OUTCOME = `${LIMBO_PACKAGE_ID}::${LIMBO_MODULE_NAME}::resolve_bet_outcome`;
+
 export const LIMBO_MIN_MULTIPLIER = "1.01";
 export const LIMBO_MAX_MULTIPLIER = "100";
 // ===============================================================================
@@ -39,14 +40,13 @@ export const PLINKO_PACKAGE_ID = "0xe1956df956df4d2f3ec2dc4319e03b037d95db97a6f9
 export const PLINKO_CORE_PACKAGE_ID = "0x1513ee1a47bb1e3b78162f42510f3eece3c6ab0b246bdafda47f939cf7a81c07"
 export const PLINKO_MODULE_NAME = "plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
+
 export const PLINKO_VERIFIER_ID = "0x898207c059a7e5d4e82cc7258ca6f1876f439265776efa502e8d1616cf198e37";
 export const PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
   objectId: PLINKO_VERIFIER_ID,
   initialSharedVersion: 91929635,
   mutable: true,
 });
-export const PLINKO_SETTLE_TARGET = `${PLINKO_PACKAGE_ID}::${PLINKO_MODULE_NAME}::settle`;
-export const PLINKO_OUTCOME_EVENT = `${PLINKO_CORE_PACKAGE_ID}::${PLINKO_MODULE_NAME}::Outcome`;
 // ===============================================================================
 
 // roulette

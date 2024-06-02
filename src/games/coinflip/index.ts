@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
@@ -10,14 +10,15 @@ import { randomBytes } from 'crypto-browserify';
 
 import { 
   BLS_VERIFIER_OBJ,
+  COIN_CORE_PACKAGE_ID,
   COIN_MODULE_NAME,
   COIN_STRUCT_NAME,
   DOUBLE_UP_API,
   UNI_HOUSE_OBJ
 } from "../../constants";
-import { getGenericBlsGameResult } from "../../utils";
+import { getBlsGameInfos } from "../../utils";
 
-// Note: 0 - Heads / 1 - Tails
+// 0: Heads, 1: Tails
 type BetType = 0 | 1;
 
 type CoinflipResult = "heads" | "tails";
@@ -36,18 +37,14 @@ interface InternalCoinflipInput extends CoinflipInput {
 export interface CoinflipResultInput {
     betType: BetType;
     coinType: string;
-    pollInterval?: number;
+    gameSeed: string;
     transactionResult: SuiTransactionBlockResponse;
-}
-
-interface InternalCoinflipResultInput extends CoinflipResultInput {
-    coinflipPackageId: string;
-    suiClient: SuiClient;
 }
 
 export interface CoinflipResponse {
     ok: boolean;
     err?: Error;
+    gameSeed?: string;
     receipt?: TransactionArgument;
 }
 
@@ -83,6 +80,7 @@ export const createCoinflip = ({
             ],    
         });
 
+        res.gameSeed = Buffer.from(userRandomness).toString("hex");
         res.receipt = receipt;
     } catch (err) {
         res.ok = false;
@@ -95,31 +93,24 @@ export const createCoinflip = ({
 export const getCoinflipResult = async ({
     betType,
     coinType,
-    coinflipPackageId,
-    pollInterval,
-    suiClient,
+    gameSeed,
     transactionResult
-}: InternalCoinflipResultInput): Promise<CoinflipResultResponse> => {
+}: CoinflipResultInput): Promise<CoinflipResultResponse> => {
     const res: CoinflipResultResponse = { ok: true };
 
     try {
-        const { ok, err, events } = await getGenericBlsGameResult({
+        const gameInfos = getBlsGameInfos({
             coinType,
+            corePackageId: COIN_CORE_PACKAGE_ID,
+            gameSeed,
             moduleName: COIN_MODULE_NAME,
-            packageId: coinflipPackageId,
-            pollInterval,
-            suiClient,
             structName: COIN_STRUCT_NAME,
             transactionResult
         });
 
-        if (!ok) {
-            throw err;
-        }
-
         const settlement = await axios.post(`${DOUBLE_UP_API}/bls`, {
             coinType,
-            gameInfos: events,
+            gameInfos,
             gameName: COIN_MODULE_NAME
         });
 

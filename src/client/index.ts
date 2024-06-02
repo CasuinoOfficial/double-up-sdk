@@ -10,29 +10,25 @@ import {
 import {
   createCoinflip,
   getCoinflipResult,
-  CoinflipInput,
-  CoinflipResultInput
+  CoinflipInput
 } from "../games/coinflip";
 
 import {
   createDice,
   getDiceResult,
-  DiceInput,
-  DiceResultInput
+  DiceInput
 } from "../games/dice";
 
 import {
   createLimbo,
   getLimboResult,
-  LimboInput,
-  LimboResultInput
+  LimboInput
 } from "../games/limbo";
 
 import {
   createPlinko,
   getPlinkoResult,
-  PlinkoInput,
-  PlinkoResultInput
+  PlinkoInput
 } from "../games/plinko";
 
 interface DoubleUpClientInput {
@@ -68,33 +64,17 @@ export class DoubleUpClient {
 
     // coinflip
     createCoinflip = (input: CoinflipInput) => createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
-    getCoinflipResult = (input: CoinflipResultInput) => getCoinflipResult({
-      ...input,
-      coinflipPackageId: this.coinflipPackageId,
-      suiClient: this.suiClient
-    });
+    getCoinflipResult = getCoinflipResult;
 
     // dice
     createDice = (input: DiceInput) => createDice({ ...input, dicePackageId: this.dicePackageId });
-    getDiceResult = (input: DiceResultInput) => getDiceResult({
-      ...input,
-      dicePackageId: this.dicePackageId,
-      suiClient: this.suiClient
-    });
+    getDiceResult = getDiceResult;
 
     // limbo
     createLimbo = (input: LimboInput) => createLimbo({ ...input, limboPackageId: this.limboPackageId });
-    getLimboResult = (input: LimboResultInput) => getLimboResult({
-      ...input,
-      limboPackageId: this.limboPackageId,
-      suiClient: this.suiClient
-    });
+    getLimboResult = getLimboResult;
 
     // plinko
     createPlinko = (input: PlinkoInput) => createPlinko({ ...input, plinkoPackageId: this.plinkoPackageId });
-    getPlinkoResult = (input: PlinkoResultInput) => getPlinkoResult({
-      ...input,
-      plinkoPackageId: this.plinkoPackageId,
-      suiClient: this.suiClient
-    });
+    getPlinkoResult = getPlinkoResult;
 }
