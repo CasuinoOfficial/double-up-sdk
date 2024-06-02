@@ -132,7 +132,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createCoinflip({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getCoinflipResult({
+const { ok: resultOk, err: resultErr, results } = await getCoinflipResult({
     betType,
     coinType,
     gameSeed,
@@ -178,7 +178,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createDice({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getDiceResult({
+const { ok: resultOk, err: resultErr, results } = await getDiceResult({
     ???
 });
 ```
@@ -211,7 +211,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createLimbo({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getLimboResult({
+const { ok: resultOk, err: resultErr, results } = await getLimboResult({
     coinType,
     gameSeed,
     transactionResult
@@ -256,7 +256,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createPlinko({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, events } = await getPlinkoResult({
+const { ok: resultOk, err: resultErr, results } = await getPlinkoResult({
     coinType,
     gameSeed,
     transactionResult
