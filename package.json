@@ -5,20 +5,21 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "publishts": "tsc && npm publish"
+    "publishts": "tsc && npm publish",
+    "test": "node -r ts-node/register --env-file=.env ./src/run/test.ts"
   },
   "author": "degenxdev",
   "license": "ISC",
   "dependencies": {
     "@mysten/sui.js": "^0.49.1",
-    "@noble/bls12-381": "^1.4.0",
+    "@scallop-io/sui-kit": "^0.45.0",
     "axios": "^1.7.2",
     "crypto-browserify": "^3.12.0",
-    "futoin-hkdf": "^1.5.3",
     "react": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
