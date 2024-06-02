@@ -231,21 +231,25 @@ const testPlinko = async () => {
     }
 };
 
-((fnName) => {
-    switch (fnName) {
-        case 'coinflip':
-            testCoinflip();
-            break;
-        case 'dice':
-            testDice();
-            break;
-        case 'limbo':
-            testLimbo();
-            break;
-        case 'plinko':
-            testPlinko();
-            break;
-        default:
-            console.error("Use dedicated test function to test an individual game.\n");
+((fnName, mnemonic) => {
+    if (mnemonic !== "") {
+        switch (fnName) {
+            case 'coinflip':
+                testCoinflip();
+                break;
+            // case 'dice':
+            //     testDice();
+            //     break;
+            case 'limbo':
+                testLimbo();
+                break;
+            case 'plinko':
+                testPlinko();
+                break;
+            default:
+                console.error("Use dedicated test function to test an individual game.\n");
+        }
+    } else {
+        console.error("You must supply your wallet mnemonics in the .env file to test.\n");
     }
-})(FUNCTION);
+})(FUNCTION, MNEMONICS);
