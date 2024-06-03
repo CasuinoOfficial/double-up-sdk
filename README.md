@@ -19,9 +19,14 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
 
 const dbClient = new DoubleUpClient({
     coinflipPackageId: "",
+    coinflipCorePackageId: "",
     dicePackageId: "",
+    diceCorePackageId: "",
     limboPackageId: "",
+    limboCorePackageId: "",
     plinkoPackageId: "",
+    plinkoCorePackageId: "",
+    plinkoVerifierId: "",
     suiClient
 });
 ```
@@ -38,9 +43,14 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
 
 <DoubleUpProvider
     coinflipPackageId=""
+    coinflipCorePackageId=""
     dicePackageId=""
+    diceCorePackageId=""
     limboPackageId=""
+    limboCorePackageId=""
     plinkoPackageId=""
+    plinkoCorePackageId=""
+    plinkoVerifierId=""
     suiClient={suiClient}
 >
     <App />
