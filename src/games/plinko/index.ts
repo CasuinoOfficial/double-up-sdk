@@ -1,26 +1,48 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient, SuiEvent, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import axios from "axios";
 import { randomBytes } from 'crypto-browserify';
 
 import {
-    DOUBLE_UP_API,
-    PLINKO_CORE_PACKAGE_ID,
     PLINKO_MODULE_NAME,
-    PLINKO_VERIFIER_ID,
     UNI_HOUSE_OBJ
 } from "../../constants";
-import { getGameInfos } from "../../utils";
+import { getGameInfos, sleep } from "../../utils";
+
+interface PlinkoGameResults {
+    ballIndex: string;
+    ballPath: number[];
+}
+
+interface PlinkoParsedGameResults {
+    ball_index: string;
+    ball_path: number[];
+}
 
 interface PlinkoResult {
     ballCount: string;
     betSize: string;
+    challenged: boolean;
+    gameId: string;
+    gameType: PlinkoType;
+    player: string;
     pnl: string;
+    results: PlinkoGameResults[];
+}
+
+interface PlinkoParsedJson {
+    ball_count: string;
+    bet_size: string;
+    challenged: boolean;
+    game_id: string;
+    game_type: PlinkoType;
+    player: string;
+    pnl: string;
+    results: PlinkoParsedGameResults[];
 }
 
 // 0: 6 Rows, 1: 9 Rows, 2: 12 Rows
@@ -37,12 +59,20 @@ export interface PlinkoInput {
 
 interface InternalPlinkoInput extends PlinkoInput {
     plinkoPackageId: string;
+    plinkoVerifierId: string;
 }
 
 export interface PlinkoResultInput {
     coinType: string;
     gameSeed: string;
+    pollInterval?: number;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalPlinkoResultInput extends PlinkoResultInput {
+    plinkoPackageId: string;
+    plinkoCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface PlinkoResponse {
@@ -65,6 +95,7 @@ export const createPlinko = ({
     numberOfDiscs,
     plinkoPackageId,
     plinkoType,
+    plinkoVerifierId,
     transactionBlock,
 }: InternalPlinkoInput): PlinkoResponse => {
     const res: PlinkoResponse = { ok: true };
@@ -77,7 +108,7 @@ export const createPlinko = ({
             typeArguments: [coinType],
             arguments: [
                 transactionBlock.object(UNI_HOUSE_OBJ),
-                transactionBlock.object(PLINKO_VERIFIER_ID),
+                transactionBlock.object(plinkoVerifierId),
                 transactionBlock.pure(numberOfDiscs),
                 transactionBlock.pure(betAmount),
                 transactionBlock.pure(plinkoType),
@@ -99,37 +130,71 @@ export const createPlinko = ({
 export const getPlinkoResult = async ({
     coinType,
     gameSeed,
+    plinkoPackageId,
+    plinkoCorePackageId,
+    pollInterval = 3000,
+    suiClient,
     transactionResult
-}: PlinkoResultInput): Promise<PlinkoResultResponse> => {
+}: InternalPlinkoResultInput): Promise<PlinkoResultResponse> => {
     const res: PlinkoResultResponse = { ok: true };
 
     try {
         const gameInfos = getGameInfos({
             coinType,
-            corePackageId: PLINKO_CORE_PACKAGE_ID,
+            corePackageId: plinkoCorePackageId,
             gameSeed,
             moduleName: PLINKO_MODULE_NAME,
             transactionResult
         });
 
-        const settlement = await axios.post(`${DOUBLE_UP_API}/plinko`, {
-            coinType,
-            gameInfos,
-            gameName: PLINKO_MODULE_NAME
-        });
+        let results: PlinkoResult[] = [];
 
-        if (!settlement.data.results) {
-            throw new Error('could not determine results');
-        }
+        while (results.length ===0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    /// This is one option, another one is actually querying the event type specifically and hard coding for that.
+                    query: {
+                        MoveEventType: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::Outcome<${coinType}>`
+                    },
+                    limit: 5,
+                    order: 'descending'
+                });
 
-        const results = [];
+                results = events.data.reduce((acc, current) => {
+                    const {
+                        ball_count,
+                        bet_size,
+                        challenged,
+                        game_id,
+                        game_type,
+                        player,
+                        pnl,
+                        results = []
+                    } = current.parsedJson as PlinkoParsedJson;
 
-        for (const gameResult of settlement.data.results) {
-            results.push({
-                ballCount: gameResult.ball_count,
-                betSize: gameResult.bet_size,
-                pnl: gameResult.pnl
-            });
+                    if (game_id === gameInfos[0].gameId) {
+                        acc.push({
+                            ballCount: ball_count,
+                            betSize: bet_size,
+                            challenged,
+                            gameId: game_id,
+                            gameType: game_type,
+                            player,
+                            pnl,
+                            results: results.map(({ ball_index, ball_path }) => ({ ballIndex: ball_index, ballPath: ball_path }))
+                        });
+                    }
+
+                    return acc;
+                }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+            
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
+            }
         }
 
         res.results = results;
