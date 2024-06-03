@@ -1,22 +1,16 @@
 import { SuiKit, SuiTxBlock } from '@scallop-io/sui-kit';
 
 import { DoubleUpClient } from '../client';
-import {
-    COIN_PACKAGE_ID,
-    DICE_PACKAGE_ID,
-    LIMBO_PACKAGE_ID,
-    PLINKO_PACKAGE_ID
-} from "../constants";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 
 const suiKit = new SuiKit({ mnemonics: MNEMONICS });
 
+// const DESUI_PLINKO_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
+// const DESUI_PLINKO_CORE_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
+// const DESUI_PLINKO_VERIFIER_ID = "0x85fed939bc09d61a314a9c0d4d16370be788a538f351b82b6b3db1ae4f1c7374";
+
 const dbClient = new DoubleUpClient({
-    coinflipPackageId: COIN_PACKAGE_ID,
-    dicePackageId: DICE_PACKAGE_ID,
-    limboPackageId: LIMBO_PACKAGE_ID,
-    plinkoPackageId: PLINKO_PACKAGE_ID,
     suiClient: suiKit.client()
 });
 
