@@ -47,6 +47,18 @@ export const PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
   initialSharedVersion: 91929635,
   mutable: true,
 });
+
+export const DESUI_PLINKO_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
+export const DESUI_PLINKO_CORE_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3"
+export const DESUI_PLINKO_MODULE_NAME = "plinko";
+export const DESUI_PLINKO_STRUCT_NAME = "Plinko";
+
+export const DESUI_PLINKO_VERIFIER_ID = "0x85fed939bc09d61a314a9c0d4d16370be788a538f351b82b6b3db1ae4f1c7374";
+export const DESUI_PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
+  objectId: PLINKO_VERIFIER_ID,
+  initialSharedVersion: 137104129,
+  mutable: true,
+});
 // ===============================================================================
 
 // roulette

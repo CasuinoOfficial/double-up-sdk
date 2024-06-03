@@ -210,9 +210,9 @@ const testPlinko = async () => {
         if (transactionResult.effects.status.status === 'failure') {
             throw new Error(transactionResult.effects.status.error);
         }
-
+        
         console.log("Signed and sent transaction.");
-        console.log(transactionResult);
+        // console.log(transactionResult);
 
         const { ok: resultsOk, err: resultsErr, results } = await dbClient.getPlinkoResult({
             coinType,
