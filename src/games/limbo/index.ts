@@ -6,7 +6,7 @@ import {
 } from "@mysten/sui.js/transactions";
 
 import axios from "axios";
-import { randomBytes } from 'crypto-browserify';
+import { nanoid } from 'nanoid';
 
 import { 
   BLS_VERIFIER_OBJ,
@@ -80,7 +80,7 @@ export const createLimbo = ({
         };
         
         // This adds some extra entropy to the coinflip itself.
-        const userRandomness = randomBytes(512);
+        const userRandomness = Buffer.from(nanoid(512), 'utf8');
     
         const [receipt] = transactionBlock.moveCall({
             target: `${limboPackageId}::${LIMBO_MODULE_NAME}::start_game`,

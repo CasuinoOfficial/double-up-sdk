@@ -1,12 +1,12 @@
 {
   "name": "doubleup",
-  "version": "1.1.1",
+  "version": "1.1.5",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "publishts": "tsc && npm publish",
-    "test": "node -r ts-node/register --env-file=.env ./src/run/test.ts",
+    "test": "node --experimental-require-module -r ts-node/register --env-file=.env ./src/run/test.ts",
     "test:coinflip": "FUNCTION=coinflip pnpm test",
     "test:dice": "FUNCTION=dice pnpm test",
     "test:limbo": "FUNCTION=limbo pnpm test",
@@ -18,18 +18,17 @@
     "@mysten/sui.js": "^0.49.1",
     "@scallop-io/sui-kit": "^0.45.0",
     "axios": "^1.7.2",
-    "crypto-browserify": "^3.12.0",
+    "nanoid": "^5.0.7",
     "react": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.14.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "@mysten/sui.js": "^0.49.1",
     "axios": "^1.7.2",
-    "crypto-browserify": "^3.12.0",
-    "react": "^18.3.1"
+    "nanoid": "^5.0.7"
   }
 }

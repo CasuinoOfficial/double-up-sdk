@@ -23,9 +23,14 @@ interface DoubleUpContextState {
 interface DoubleupProviderProps {
   children: ReactNode;
   coinflipPackageId?: string;
+  coinflipCorePackageId?: string;
   dicePackageId?: string;
+  diceCorePackageId?: string;
   limboPackageId?: string;
+  limboCorePackageId?: string;
   plinkoPackageId?: string;
+  plinkoCorePackageId?: string;
+  plinkoVerifierId?: string;
   suiClient?: SuiClient;
 }
 
@@ -34,16 +39,26 @@ const DoubleUpContext = createContext<DoubleUpContextState>();
 const DoubleUpProvider = ({
   children,
   coinflipPackageId,
+  coinflipCorePackageId,
   dicePackageId,
+  diceCorePackageId,
   limboPackageId,
+  limboCorePackageId,
   plinkoPackageId,
+  plinkoCorePackageId,
+  plinkoVerifierId,
   suiClient
 }: DoubleupProviderProps): ReactElement => {
   const dbClient = new DoubleUpClient({
     coinflipPackageId,
+    coinflipCorePackageId,
     dicePackageId,
+    diceCorePackageId,
     limboPackageId,
+    limboCorePackageId,
     plinkoPackageId,
+    plinkoCorePackageId,
+    plinkoVerifierId,
     suiClient
   });
 
