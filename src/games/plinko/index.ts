@@ -5,7 +5,7 @@ import {
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import { randomBytes } from 'crypto-browserify';
+import { nanoid } from 'nanoid';
 
 import {
     PLINKO_MODULE_NAME,
@@ -101,7 +101,7 @@ export const createPlinko = ({
     const res: PlinkoResponse = { ok: true };
 
     try {
-        const userRandomness = randomBytes(512);
+        const userRandomness = Buffer.from(nanoid(512), 'utf8');
 
         const [_, receipt] = transactionBlock.moveCall({
             target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::start_game`,
