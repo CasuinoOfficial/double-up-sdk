@@ -72,7 +72,7 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
 
 // shared
 // ===============================================================================
-export const DOUBLE_UP_API = "https://www.doubleup.fun/api";
+export const BLS_SETTLER_MODULE_NAME = "bls_settler";
 
 export const BLS_VERIFIER_ID = "0xc85af84c78bebac4fd91d8cc25d66461503258764402b4c06c9f3e8050b5bd2e";
 export const BLS_VERIFIER_OBJ = Inputs.SharedObjectRef({
@@ -95,5 +95,5 @@ export const UNI_HOUSE_OBJ = Inputs.SharedObjectRef({
 });
 
 export const UNIHOUSE_PACKAGE = "0x7d1e81394129c8c3cbcd012e988a30ec3134a7787fe891c6c581e23dbd57ec01";
-export const UNIHOUSE_CORE_PACKAGE = '0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf';
+export const UNIHOUSE_CORE_PACKAGE = '0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf';       
 // ===============================================================================
