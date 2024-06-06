@@ -1,11 +1,10 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import axios from "axios";
 import { nanoid } from 'nanoid';
 
 import { 
@@ -13,7 +12,6 @@ import {
   DICE_CORE_PACKAGE_ID,
   DICE_MODULE_NAME,
   DICE_STRUCT_NAME,
-  DOUBLE_UP_API,
   UNI_HOUSE_OBJ
 } from "../../constants";
 import { getBlsGameInfos } from "../../utils";
@@ -39,6 +37,11 @@ export interface DiceResultInput {
     coinType: string;
     gameSeed: string;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalDiceResultInput extends DiceResultInput {
+    diceCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface DiceResponse {
@@ -93,9 +96,11 @@ export const createDice = ({
 export const getDiceResult = async ({
     betType,
     coinType,
+    diceCorePackageId,
     gameSeed,
+    suiClient,
     transactionResult
-}: DiceResultInput): Promise<DiceResultResponse> => {
+}: InternalDiceResultInput): Promise<DiceResultResponse> => {
     const res: DiceResultResponse = { ok: true };
 
     try {
@@ -108,23 +113,9 @@ export const getDiceResult = async ({
             transactionResult
         });
 
-        const settlement = await axios.post(`${DOUBLE_UP_API}/bls`, {
-            coinType,
-            gameInfos,
-            gameName: DICE_MODULE_NAME
-        });
-
-        console.log(settlement)
-
-        if (!settlement.data.results) {
-            throw new Error('could not determine results');
-        }
-
         const results = [];
 
-        for (const gameResult of settlement.data.results) {
-            console.log(gameResult);
-        }
+        // fill in
 
         res.results = results;
     } catch (err) {
