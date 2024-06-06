@@ -1,24 +1,24 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import axios from "axios";
 import { nanoid } from 'nanoid';
 
 import { 
-  BLS_VERIFIER_OBJ,
-  DOUBLE_UP_API,
-  LIMBO_CORE_PACKAGE_ID,
-  LIMBO_MAX_MULTIPLIER, 
-  LIMBO_MIN_MULTIPLIER, 
-  LIMBO_MODULE_NAME,
-  LIMBO_STRUCT_NAME,
-  UNI_HOUSE_OBJ
+    BLS_SETTLER_MODULE_NAME,
+    BLS_VERIFIER_OBJ,
+    LIMBO_CORE_PACKAGE_ID,
+    LIMBO_MAX_MULTIPLIER, 
+    LIMBO_MIN_MULTIPLIER, 
+    LIMBO_MODULE_NAME,
+    LIMBO_STRUCT_NAME,
+    UNI_HOUSE_OBJ,
+    UNIHOUSE_CORE_PACKAGE
 } from "../../constants";
-import { getBlsGameInfos } from "../../utils";
+import { getBlsGameInfos, sleep } from "../../utils";
 
 type LimboResult = number;
 
@@ -29,6 +29,13 @@ export interface LimboInput {
     transactionBlock: TransactionBlockType;
 }
 
+interface LimboParsedJson {
+    bet_id: string;
+    outcome: string;
+    player: string;
+    // settlements: CoinflipSettlement[];
+}
+
 interface InternalLimboInput extends LimboInput {
     limboPackageId: string;
 }
@@ -36,7 +43,13 @@ interface InternalLimboInput extends LimboInput {
 export interface LimboResultInput {
     coinType: string;
     gameSeed: string;
+    pollInterval?: number;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalLimboResultInput extends LimboResultInput {
+    limboCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface LimboResponse {
@@ -107,8 +120,11 @@ export const createLimbo = ({
 export const getLimboResult = async ({
     coinType,
     gameSeed,
+    limboCorePackageId,
+    pollInterval = 3000,
+    suiClient,
     transactionResult
-}: LimboResultInput): Promise<LimboResultResponse> => {
+}: InternalLimboResultInput): Promise<LimboResultResponse> => {
     const res: LimboResultResponse = { ok: true };
 
     try {
@@ -121,25 +137,68 @@ export const getLimboResult = async ({
             transactionResult
         });
 
-        const settlement = await axios.post(`${DOUBLE_UP_API}/settle`, {
-            coinType,
-            gameInfos,
-            gameName: LIMBO_MODULE_NAME
-        });
+        // const settlement = await axios.post(`${DOUBLE_UP_API}/settle`, {
+        //     coinType,
+        //     gameInfos,
+        //     gameName: LIMBO_MODULE_NAME
+        // });
 
-        if (!settlement.data.results) {
-            throw new Error('could not determine results');
-        }
+        // if (!settlement.data.results) {
+        //     throw new Error('could not determine results');
+        // }
 
-        const results = [];
+        let results: LimboResult[] = [];
 
-        for (const gameResult of settlement.data.results) {
-            if (Number(gameResult[0].outcome) % 69 === 0) {
-                results.push(1);
-            } else {
-                results.push(distanceToMultiplier(Number(gameResult[0].outcome)));
+        while (results.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventType: `${limboCorePackageId}::${LIMBO_MODULE_NAME}::LimboResults<${coinType}>`
+                        // MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetKeyEvent<${coinType}, ${limboCorePackageId}::${LIMBO_MODULE_NAME}::${LIMBO_STRUCT_NAME}>`
+                    },
+                    limit: 50,
+                    order: 'descending'
+                });
+
+                results = events.data.reduce((acc, current) => {
+                    // const {
+                    //     bet_id,
+                    //     settlements
+                    // } = current.parsedJson as CoinflipParsedJson;
+
+                    // if (bet_id == gameInfos[0].gameId) {
+                    //     const { player_won } = settlements[0];
+
+                    //     if (player_won) {
+                    //         acc.push(betType === 0 ? "heads" : "tails");
+                    //     } else {
+                    //         acc.push(betType === 1 ? "tails" : "heads");
+                    //     }
+                    // }
+
+                    console.log(gameInfos[0].gameId)
+                    console.log(current)
+                    console.log(current.parsedJson)
+
+                    return acc;
+                }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
             }
         }
+
+        // for (const gameResult of settlement.data.results) {
+        //     if (Number(gameResult[0].outcome) % 69 === 0) {
+        //         results.push(1);
+        //     } else {
+        //         results.push(distanceToMultiplier(Number(gameResult[0].outcome)));
+        //     }
+        // }
 
         res.results = results;
     } catch (err) {
