@@ -13,7 +13,6 @@ export const COIN_PACKAGE_ID = "0x57c3008880285085e5fd94092f21923158e3d8906161cf
 export const COIN_CORE_PACKAGE_ID = "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
-// ===============================================================================
 
 // dice
 // ===============================================================================
@@ -21,7 +20,6 @@ export const DICE_PACKAGE_ID = "0xca4106112a29fffdf8d8b39774535abd05896573dfbeda
 export const DICE_CORE_PACKAGE_ID = "0xca4106112a29fffdf8d8b39774535abd05896573dfbeda5ab176e1cb76a334ea";
 export const DICE_MODULE_NAME = "dice";
 export const DICE_STRUCT_NAME = "Dice";
-// ===============================================================================
 
 // limbo
 // ===============================================================================
@@ -32,7 +30,6 @@ export const LIMBO_STRUCT_NAME = "Limbo";
 
 export const LIMBO_MIN_MULTIPLIER = "1.01";
 export const LIMBO_MAX_MULTIPLIER = "100";
-// ===============================================================================
 
 // plinko
 // ===============================================================================
@@ -47,7 +44,13 @@ export const PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
   initialSharedVersion: 91929635,
   mutable: true,
 });
+
+// range dice
 // ===============================================================================
+export const RANGE_DICE_PACKAGE_ID = "";
+export const RANGE_DICE_CORE_PACKAGE_ID = "";
+export const RANGE_DICE_MODULE_NAME = "dice_range";
+export const RANGE_DICE_STRUCT_NAME = "DiceRange";
 
 // roulette
 // ===============================================================================
@@ -68,7 +71,6 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
     mutable: true,
   }
 ];
-// ===============================================================================
 
 // shared
 // ===============================================================================
@@ -95,5 +97,4 @@ export const UNI_HOUSE_OBJ = Inputs.SharedObjectRef({
 });
 
 export const UNIHOUSE_PACKAGE = "0x7d1e81394129c8c3cbcd012e988a30ec3134a7787fe891c6c581e23dbd57ec01";
-export const UNIHOUSE_CORE_PACKAGE = '0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf';       
-// ===============================================================================
+export const UNIHOUSE_CORE_PACKAGE = '0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf';
