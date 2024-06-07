@@ -152,7 +152,6 @@ export const getPlinkoResult = async ({
         while (results.length === 0) {
             try {
                 const events = await suiClient.queryEvents({
-                    /// This is one option, another one is actually querying the event type specifically and hard coding for that.
                     query: {
                         MoveEventType: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::Outcome<${coinType}>`
                     },

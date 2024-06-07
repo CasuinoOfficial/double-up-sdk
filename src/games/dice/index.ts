@@ -1,24 +1,24 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import axios from "axios";
 import { nanoid } from 'nanoid';
 
-import { 
-  BLS_VERIFIER_OBJ,
-  DICE_CORE_PACKAGE_ID,
-  DICE_MODULE_NAME,
-  DICE_STRUCT_NAME,
-  DOUBLE_UP_API,
-  UNI_HOUSE_OBJ
+import {
+    BLS_SETTLER_MODULE_NAME,
+    BLS_VERIFIER_OBJ,
+    DICE_CORE_PACKAGE_ID,
+    DICE_MODULE_NAME,
+    DICE_STRUCT_NAME,
+    UNI_HOUSE_OBJ,
+    UNIHOUSE_CORE_PACKAGE
 } from "../../constants";
-import { getBlsGameInfos } from "../../utils";
+import { getBlsGameInfos, sleep } from "../../utils";
 
-// Note: 0 - 5 for dice rolls, and 6 = odd, 7 = even, 8 = small, 9 = big
+// Note: 0 - 5 for dice rolls, and 6 = even, 7 = odd, 8 = small, 9 = big
 type BetType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 type DiceResult = any;
@@ -38,7 +38,13 @@ export interface DiceResultInput {
     betType: BetType;
     coinType: string;
     gameSeed: string;
+    pollInterval?: number;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalDiceResultInput extends DiceResultInput {
+    diceCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface DiceResponse {
@@ -72,11 +78,11 @@ export const createDice = ({
             target: `${dicePackageId}::${DICE_MODULE_NAME}::start_game`,
             typeArguments: [coinType],
             arguments: [
-            transactionBlock.object(UNI_HOUSE_OBJ),
-            transactionBlock.object(BLS_VERIFIER_OBJ),
-            transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-            transactionBlock.pure(betType),
-            coin,
+                transactionBlock.object(UNI_HOUSE_OBJ),
+                transactionBlock.object(BLS_VERIFIER_OBJ),
+                transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                transactionBlock.pure(betType),
+                coin,
             ],    
         });
 
@@ -93,9 +99,12 @@ export const createDice = ({
 export const getDiceResult = async ({
     betType,
     coinType,
+    diceCorePackageId,
     gameSeed,
+    pollInterval = 3000,
+    suiClient,
     transactionResult
-}: DiceResultInput): Promise<DiceResultResponse> => {
+}: InternalDiceResultInput): Promise<DiceResultResponse> => {
     const res: DiceResultResponse = { ok: true };
 
     try {
@@ -108,22 +117,49 @@ export const getDiceResult = async ({
             transactionResult
         });
 
-        const settlement = await axios.post(`${DOUBLE_UP_API}/bls`, {
-            coinType,
-            gameInfos,
-            gameName: DICE_MODULE_NAME
-        });
-
-        console.log(settlement)
-
-        if (!settlement.data.results) {
-            throw new Error('could not determine results');
-        }
-
         const results = [];
 
-        for (const gameResult of settlement.data.results) {
-            console.log(gameResult);
+        while (results.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::SettlementEvent<${coinType}, ${diceCorePackageId}::${DICE_MODULE_NAME}::${DICE_STRUCT_NAME}>`
+                    },
+                    limit: 50,
+                    order: 'descending'
+                });
+
+                events.data.map(event => {
+                    console.log(event)
+                    console.log(event.parsedJson)
+                })
+
+                // results = events.data.reduce((acc, current) => {
+                //     const {
+                //         bet_id,
+                //         settlements
+                //     } = current.parsedJson as CoinflipParsedJson;
+
+                //     if (bet_id == gameInfos[0].gameId) {
+                //         const { player_won } = settlements[0];
+
+                //         if (player_won) {
+                //             acc.push(betType === 0 ? 0 : 1);
+                //         } else {
+                //             acc.push(betType === 0 ? 1 : 0);
+                //         }
+                //     }
+
+                //     return acc;
+                // }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
+            }
         }
 
         res.results = results;

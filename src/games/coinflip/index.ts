@@ -1,27 +1,24 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import axios from 'axios';
 import { nanoid } from 'nanoid';
 
 import { 
-  BLS_VERIFIER_OBJ,
-  COIN_CORE_PACKAGE_ID,
-  COIN_MODULE_NAME,
-  COIN_STRUCT_NAME,
-  DOUBLE_UP_API,
-  UNI_HOUSE_OBJ
+    BLS_SETTLER_MODULE_NAME,
+    BLS_VERIFIER_OBJ,
+    COIN_MODULE_NAME,
+    COIN_STRUCT_NAME,
+    UNI_HOUSE_OBJ,
+    UNIHOUSE_CORE_PACKAGE
 } from "../../constants";
-import { getBlsGameInfos } from "../../utils";
+import { getBlsGameInfos, sleep } from "../../utils";
 
 // 0: Heads, 1: Tails
 type BetType = 0 | 1;
-
-type CoinflipResult = "heads" | "tails";
 
 export interface CoinflipInput {
     betType: BetType;
@@ -34,11 +31,31 @@ interface InternalCoinflipInput extends CoinflipInput {
     coinflipPackageId: string;
 }
 
+interface CoinflipSettlement {
+    bet_size: string;
+    payout_amount: string;
+    player_won: boolean;
+    win_condition: WinCondition;
+}
+
+interface CoinflipParsedJson {
+    bet_id: string;
+    outcome: string;
+    player: string;
+    settlements: CoinflipSettlement[];
+}
+
 export interface CoinflipResultInput {
     betType: BetType;
     coinType: string;
     gameSeed: string;
+    pollInterval?: number;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalCoinflipResultInput extends CoinflipResultInput {
+    coinflipCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface CoinflipResponse {
@@ -51,7 +68,16 @@ export interface CoinflipResponse {
 export interface CoinflipResultResponse {
     ok: boolean;
     err?: Error;
-    results?: CoinflipResult[];
+    results?: BetType[];
+}
+
+interface WinCondition {
+    vec: WinRange[];
+}
+
+interface WinRange {
+    from: string;
+    to: string;
 }
 
 // Add coinflip to the transaction block
@@ -92,43 +118,62 @@ export const createCoinflip = ({
 
 export const getCoinflipResult = async ({
     betType,
+    coinflipCorePackageId,
     coinType,
     gameSeed,
+    pollInterval = 3000,
+    suiClient,
     transactionResult
-}: CoinflipResultInput): Promise<CoinflipResultResponse> => {
+}: InternalCoinflipResultInput): Promise<CoinflipResultResponse> => {
     const res: CoinflipResultResponse = { ok: true };
 
     try {
         const gameInfos = getBlsGameInfos({
             coinType,
-            corePackageId: COIN_CORE_PACKAGE_ID,
+            corePackageId: coinflipCorePackageId,
             gameSeed,
             moduleName: COIN_MODULE_NAME,
             structName: COIN_STRUCT_NAME,
             transactionResult
         });
 
-        const settlement = await axios.post(`${DOUBLE_UP_API}/bls`, {
-            coinType,
-            gameInfos,
-            gameName: COIN_MODULE_NAME
-        });
+        let results: BetType[] = [];
 
-        if (!settlement.data.results) {
-            throw new Error('could not determine results');
-        }
+        while (results.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::SettlementEvent<${coinType}, ${coinflipCorePackageId}::${COIN_MODULE_NAME}::${COIN_STRUCT_NAME}>`
+                    },
+                    limit: 50,
+                    order: 'descending'
+                });
 
-        const results = [];
+                results = events.data.reduce((acc, current) => {
+                    const {
+                        bet_id,
+                        settlements
+                    } = current.parsedJson as CoinflipParsedJson;
 
-        for (const gameResult of settlement.data.results) {
-            const roll = +gameResult;
+                    if (bet_id == gameInfos[0].gameId) {
+                        const { player_won } = settlements[0];
 
-            if (roll >= 0 && roll <= 495) {
-                results.push("heads");
-            } else if (roll >= 500 && roll <= 995) {
-                results.push("tails");
-            } else {
-                results.push(betType === 0 ? "tails" : "heads");
+                        if (player_won) {
+                            acc.push(betType === 0 ? 0 : 1);
+                        } else {
+                            acc.push(betType === 0 ? 1 : 0);
+                        }
+                    }
+
+                    return acc;
+                }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
             }
         }
 

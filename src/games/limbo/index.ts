@@ -1,32 +1,41 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import axios from "axios";
 import { nanoid } from 'nanoid';
 
-import { 
-  BLS_VERIFIER_OBJ,
-  DOUBLE_UP_API,
-  LIMBO_CORE_PACKAGE_ID,
-  LIMBO_MAX_MULTIPLIER, 
-  LIMBO_MIN_MULTIPLIER, 
-  LIMBO_MODULE_NAME,
-  LIMBO_STRUCT_NAME,
-  UNI_HOUSE_OBJ
+import {
+    BLS_VERIFIER_OBJ,
+    LIMBO_MAX_MULTIPLIER, 
+    LIMBO_MIN_MULTIPLIER, 
+    LIMBO_MODULE_NAME,
+    LIMBO_STRUCT_NAME,
+    UNI_HOUSE_OBJ
 } from "../../constants";
-import { getBlsGameInfos } from "../../utils";
+import { getBlsGameInfos, sleep } from "../../utils";
 
 type LimboResult = number;
+
+interface LimboGameResults {
+    bet_returned: string;
+    bet_size: string;
+    outcome: string;
+}
 
 export interface LimboInput {
     coin: TransactionObjectArgument;
     coinType: string;
     multiplier: number;
     transactionBlock: TransactionBlockType;
+}
+
+interface LimboParsedJson {
+    game_id: string;
+    player: string;
+    results: LimboGameResults[];
 }
 
 interface InternalLimboInput extends LimboInput {
@@ -36,7 +45,13 @@ interface InternalLimboInput extends LimboInput {
 export interface LimboResultInput {
     coinType: string;
     gameSeed: string;
+    pollInterval?: number;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalLimboResultInput extends LimboResultInput {
+    limboCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface LimboResponse {
@@ -107,37 +122,60 @@ export const createLimbo = ({
 export const getLimboResult = async ({
     coinType,
     gameSeed,
+    limboCorePackageId,
+    pollInterval = 3000,
+    suiClient,
     transactionResult
-}: LimboResultInput): Promise<LimboResultResponse> => {
+}: InternalLimboResultInput): Promise<LimboResultResponse> => {
     const res: LimboResultResponse = { ok: true };
 
     try {
         const gameInfos = getBlsGameInfos({
             coinType,
-            corePackageId: LIMBO_CORE_PACKAGE_ID,
+            corePackageId: limboCorePackageId,
             gameSeed,
             moduleName: LIMBO_MODULE_NAME,
             structName: LIMBO_STRUCT_NAME,
             transactionResult
         });
 
-        const settlement = await axios.post(`${DOUBLE_UP_API}/settle`, {
-            coinType,
-            gameInfos,
-            gameName: LIMBO_MODULE_NAME
-        });
+        let results: LimboResult[] = [];
 
-        if (!settlement.data.results) {
-            throw new Error('could not determine results');
-        }
+        while (results.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventType: `${limboCorePackageId}::${LIMBO_MODULE_NAME}::LimboResults<${coinType}>`
+                    },
+                    limit: 50,
+                    order: 'descending'
+                });
 
-        const results = [];
+                results = events.data.reduce((acc, current) => {
+                    const {
+                        game_id,
+                        results
+                    } = current.parsedJson as LimboParsedJson;
 
-        for (const gameResult of settlement.data.results) {
-            if (Number(gameResult[0].outcome) % 69 === 0) {
-                results.push(1);
-            } else {
-                results.push(distanceToMultiplier(Number(gameResult[0].outcome)));
+                    if (game_id === gameInfos[0].gameId) {
+                        const { outcome } = results[0];
+
+                        if (+outcome % 69 === 0) {
+                            acc.push(1);
+                        } else {
+                            acc.push(distanceToMultiplier(+outcome));
+                        }
+                    }
+
+                    return acc;
+                }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
             }
         }
 
