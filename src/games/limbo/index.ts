@@ -7,20 +7,23 @@ import {
 
 import { nanoid } from 'nanoid';
 
-import { 
-    BLS_SETTLER_MODULE_NAME,
+import {
     BLS_VERIFIER_OBJ,
-    LIMBO_CORE_PACKAGE_ID,
     LIMBO_MAX_MULTIPLIER, 
     LIMBO_MIN_MULTIPLIER, 
     LIMBO_MODULE_NAME,
     LIMBO_STRUCT_NAME,
-    UNI_HOUSE_OBJ,
-    UNIHOUSE_CORE_PACKAGE
+    UNI_HOUSE_OBJ
 } from "../../constants";
 import { getBlsGameInfos, sleep } from "../../utils";
 
 type LimboResult = number;
+
+interface LimboGameResults {
+    bet_returned: string;
+    bet_size: string;
+    outcome: string;
+}
 
 export interface LimboInput {
     coin: TransactionObjectArgument;
@@ -30,10 +33,9 @@ export interface LimboInput {
 }
 
 interface LimboParsedJson {
-    bet_id: string;
-    outcome: string;
+    game_id: string;
     player: string;
-    // settlements: CoinflipSettlement[];
+    results: LimboGameResults[];
 }
 
 interface InternalLimboInput extends LimboInput {
@@ -130,22 +132,12 @@ export const getLimboResult = async ({
     try {
         const gameInfos = getBlsGameInfos({
             coinType,
-            corePackageId: LIMBO_CORE_PACKAGE_ID,
+            corePackageId: limboCorePackageId,
             gameSeed,
             moduleName: LIMBO_MODULE_NAME,
             structName: LIMBO_STRUCT_NAME,
             transactionResult
         });
-
-        // const settlement = await axios.post(`${DOUBLE_UP_API}/settle`, {
-        //     coinType,
-        //     gameInfos,
-        //     gameName: LIMBO_MODULE_NAME
-        // });
-
-        // if (!settlement.data.results) {
-        //     throw new Error('could not determine results');
-        // }
 
         let results: LimboResult[] = [];
 
@@ -154,31 +146,26 @@ export const getLimboResult = async ({
                 const events = await suiClient.queryEvents({
                     query: {
                         MoveEventType: `${limboCorePackageId}::${LIMBO_MODULE_NAME}::LimboResults<${coinType}>`
-                        // MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetKeyEvent<${coinType}, ${limboCorePackageId}::${LIMBO_MODULE_NAME}::${LIMBO_STRUCT_NAME}>`
                     },
                     limit: 50,
                     order: 'descending'
                 });
 
                 results = events.data.reduce((acc, current) => {
-                    // const {
-                    //     bet_id,
-                    //     settlements
-                    // } = current.parsedJson as CoinflipParsedJson;
+                    const {
+                        game_id,
+                        results
+                    } = current.parsedJson as LimboParsedJson;
 
-                    // if (bet_id == gameInfos[0].gameId) {
-                    //     const { player_won } = settlements[0];
+                    if (game_id === gameInfos[0].gameId) {
+                        const { outcome } = results[0];
 
-                    //     if (player_won) {
-                    //         acc.push(betType === 0 ? "heads" : "tails");
-                    //     } else {
-                    //         acc.push(betType === 1 ? "tails" : "heads");
-                    //     }
-                    // }
-
-                    console.log(gameInfos[0].gameId)
-                    console.log(current)
-                    console.log(current.parsedJson)
+                        if (+outcome % 69 === 0) {
+                            acc.push(1);
+                        } else {
+                            acc.push(distanceToMultiplier(+outcome));
+                        }
+                    }
 
                     return acc;
                 }, []);
@@ -191,14 +178,6 @@ export const getLimboResult = async ({
                 await sleep(pollInterval);
             }
         }
-
-        // for (const gameResult of settlement.data.results) {
-        //     if (Number(gameResult[0].outcome) % 69 === 0) {
-        //         results.push(1);
-        //     } else {
-        //         results.push(distanceToMultiplier(Number(gameResult[0].outcome)));
-        //     }
-        // }
 
         res.results = results;
     } catch (err) {
