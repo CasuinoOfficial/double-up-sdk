@@ -86,6 +86,8 @@ export interface PlinkoResultResponse {
     ok: boolean;
     err?: Error;
     results?: PlinkoResult[];
+    rawResults?: PlinkoParsedJson[];
+    txDigests?: string[];
 }
 
 export const createPlinko = ({
@@ -148,6 +150,8 @@ export const getPlinkoResult = async ({
         });
 
         let results: PlinkoResult[] = [];
+        let rawResults: PlinkoParsedJson[] = [];
+        let txDigests: string[] = [];
 
         while (results.length === 0) {
             try {
@@ -172,6 +176,10 @@ export const getPlinkoResult = async ({
                     } = current.parsedJson as PlinkoParsedJson;
 
                     if (game_id === gameInfos[0].gameId) {
+                        rawResults.push(current.parsedJson as PlinkoParsedJson);
+
+                        txDigests.push(current.id.txDigest);
+
                         acc.push({
                             ballCount: ball_count,
                             betSize: bet_size,
@@ -197,6 +205,8 @@ export const getPlinkoResult = async ({
         }
 
         res.results = results;
+        res.rawResults = rawResults;
+        res.txDigests = txDigests;
     } catch (err) {
         res.ok = false;
         res.err = err;
