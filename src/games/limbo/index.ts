@@ -16,6 +16,7 @@ import {
     UNI_HOUSE_OBJ
 } from "../../constants";
 import { getBlsGameInfos, sleep } from "../../utils";
+import { rawListeners } from "process";
 
 type LimboResult = number;
 
@@ -65,6 +66,8 @@ export interface LimboResultResponse {
     ok: boolean;
     err?: Error;
     results?: LimboResult[];
+    rawResults?: LimboParsedJson[];
+    txDigests?: string[];
 }
 
 
@@ -140,6 +143,8 @@ export const getLimboResult = async ({
         });
 
         let results: LimboResult[] = [];
+        let rawResults: LimboParsedJson[] = [];
+        let txDigests: string[] = [];
 
         while (results.length === 0) {
             try {
@@ -158,6 +163,10 @@ export const getLimboResult = async ({
                     } = current.parsedJson as LimboParsedJson;
 
                     if (game_id === gameInfos[0].gameId) {
+                        rawResults.push(current.parsedJson as LimboParsedJson);
+
+                        txDigests.push(current.id.txDigest);
+
                         const { outcome } = results[0];
 
                         if (+outcome % 69 === 0) {
@@ -180,6 +189,8 @@ export const getLimboResult = async ({
         }
 
         res.results = results;
+        res.rawResults = rawResults;
+        res.txDigests = txDigests;
     } catch (err) {
         res.ok = false;
         res.err = err;

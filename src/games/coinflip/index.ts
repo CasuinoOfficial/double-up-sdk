@@ -69,6 +69,8 @@ export interface CoinflipResultResponse {
     ok: boolean;
     err?: Error;
     results?: BetType[];
+    rawResults?: CoinflipParsedJson[];
+    txDigests?: string[];
 }
 
 interface WinCondition {
@@ -138,6 +140,8 @@ export const getCoinflipResult = async ({
         });
 
         let results: BetType[] = [];
+        let rawResults: CoinflipParsedJson[] = [];
+        let txDigests: string[] = [];
 
         while (results.length === 0) {
             try {
@@ -152,10 +156,16 @@ export const getCoinflipResult = async ({
                 results = events.data.reduce((acc, current) => {
                     const {
                         bet_id,
+                        outcome,
+                        player,
                         settlements
                     } = current.parsedJson as CoinflipParsedJson;
 
                     if (bet_id == gameInfos[0].gameId) {
+                        rawResults.push(current.parsedJson as CoinflipParsedJson);
+
+                        txDigests.push(current.id.txDigest);
+
                         const { player_won } = settlements[0];
 
                         if (player_won) {
@@ -178,6 +188,8 @@ export const getCoinflipResult = async ({
         }
 
         res.results = results;
+        res.rawResults = rawResults;
+        res.txDigests = txDigests;
     } catch (err) {
         res.ok = false;
         res.err = err;
