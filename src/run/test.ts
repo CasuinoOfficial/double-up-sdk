@@ -6,17 +6,19 @@ const { FUNCTION = "", MNEMONICS = "" } = process.env;
 
 const suiKit = new SuiKit({ mnemonics: MNEMONICS });
 
-const DESUI_LIMBO_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
-// const DESUI_LIMBO_CORE_PACKAGE_ID = "0x1dca00f307864afee72bb2ba1efc3a3d3ba27b38382b5db7635d8be370467dd7";
-const DESUI_LIMBO_CORE_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
+// const DESUI_LIMBO_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
+// const DESUI_LIMBO_CORE_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
 
 // const DESUI_PLINKO_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
 // const DESUI_PLINKO_CORE_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
 // const DESUI_PLINKO_VERIFIER_ID = "0x85fed939bc09d61a314a9c0d4d16370be788a538f351b82b6b3db1ae4f1c7374";
 
 const dbClient = new DoubleUpClient({
-    limboCorePackageId: DESUI_LIMBO_CORE_PACKAGE_ID,
-    limboPackageId: DESUI_LIMBO_PACKAGE_ID,
+    // limboCorePackageId: DESUI_LIMBO_CORE_PACKAGE_ID,
+    // limboPackageId: DESUI_LIMBO_PACKAGE_ID,
+    // plinkoCorePackageId: DESUI_PLINKO_CORE_PACKAGE_ID,
+    // plinkoPackageId: DESUI_PLINKO_PACKAGE_ID,
+    // plinkoVerifierId: DESUI_PLINKO_VERIFIER_ID,
 
     suiClient: suiKit.client()
 });
@@ -42,7 +44,7 @@ const testCoinflip = async () => {
 
         console.log("Added coinflip to transaction block.");
 
-        if (!gameOk) {
+        if (!gameOk || !gameSeed) {
             throw gameErr;
         }
 
@@ -53,9 +55,15 @@ const testCoinflip = async () => {
         }
 
         console.log("Signed and sent transaction.");
-        console.log(transactionResult);
+        // console.log(transactionResult);
 
-        const { ok: resultsOk, err: resultsErr, results } = await dbClient.getCoinflipResult({
+        const {
+            ok: resultsOk,
+            err: resultsErr,
+            results,
+            rawResults,
+            txDigests
+        } = await dbClient.getCoinflipResult({
             betType,
             coinType,
             gameSeed,
@@ -68,6 +76,8 @@ const testCoinflip = async () => {
 
         console.log("Retrieved coinflip results.");
         console.log(results);
+        console.log(rawResults);
+        console.log(txDigests);
     } catch (err) {
         console.error(err);
     }
@@ -147,7 +157,7 @@ const testLimbo = async () => {
 
         console.log("Added limbo to transaction block.");
 
-        if (!gameOk) {
+        if (!gameOk || !gameSeed) {
             throw gameErr;
         }
 
@@ -158,9 +168,15 @@ const testLimbo = async () => {
         }
 
         console.log("Signed and sent transaction.");
-        console.log(transactionResult);
+        // console.log(transactionResult);
 
-        const { ok: resultsOk, err: resultsErr, results } = await dbClient.getLimboResult({
+        const {
+            ok: resultsOk,
+            err: resultsErr,
+            results,
+            rawResults,
+            txDigests
+        } = await dbClient.getLimboResult({
             coinType,
             gameSeed,
             transactionResult
@@ -172,6 +188,8 @@ const testLimbo = async () => {
 
         console.log("Retrieved limbo results.");
         console.log(results);
+        console.log(rawResults);
+        console.log(txDigests);
     } catch (err) {
         console.log(err);
     }
@@ -202,7 +220,7 @@ const testPlinko = async () => {
 
         console.log("Added plinko to transaction block.");
 
-        if (!gameOk) {
+        if (!gameOk || !gameSeed) {
             throw gameErr;
         }
 
@@ -213,9 +231,15 @@ const testPlinko = async () => {
         }
 
         console.log("Signed and sent transaction.");
-        console.log(transactionResult);
+        // console.log(transactionResult);
 
-        const { ok: resultsOk, err: resultsErr, results } = await dbClient.getPlinkoResult({
+        const {
+            ok: resultsOk,
+            err: resultsErr,
+            results,
+            rawResults,
+            txDigests
+        } = await dbClient.getPlinkoResult({
             coinType,
             gameSeed,
             transactionResult
@@ -227,6 +251,8 @@ const testPlinko = async () => {
 
         console.log("Retrieved plinko results.");
         console.log(results);
+        console.log(rawResults);
+        console.log(txDigests);
     } catch (err) {
         console.log(err);
     }
