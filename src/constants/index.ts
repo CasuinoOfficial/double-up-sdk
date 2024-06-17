@@ -78,6 +78,15 @@ export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 // ===============================================================================
 
+// range dice
+// ===============================================================================
+export const RANGE_DICE_PACKAGE_ID = "";
+export const RANGE_DICE_CORE_PACKAGE_ID = "";
+export const RANGE_DICE_MODULE_NAME = "dice_range";
+export const RANGE_DICE_STRUCT_NAME = "DiceRange";
+
+// ===============================================================================
+
 // shared
 // ===============================================================================
 export const BLS_SETTLER_MODULE_NAME = "bls_settler";
