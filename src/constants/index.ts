@@ -70,6 +70,14 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
 ];
 // ===============================================================================
 
+// rock paper scissors
+// ===============================================================================
+export const RPS_PACKAGE_ID = "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
+export const RPS_CORE_PACKAGE_ID = "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
+export const RPS_MODULE_NAME = "rock_paper_scissors";
+export const RPS_STRUCT_NAME = "RockPaperScissors";
+// ===============================================================================
+
 // shared
 // ===============================================================================
 export const BLS_SETTLER_MODULE_NAME = "bls_settler";
