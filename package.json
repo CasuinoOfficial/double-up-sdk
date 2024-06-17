@@ -11,7 +11,9 @@
     "test:dice": "FUNCTION=dice pnpm test",
     "test:limbo": "FUNCTION=limbo pnpm test",
     "test:plinko": "FUNCTION=plinko pnpm test",
-    "test:rps": "FUNCTION=rps pnpm test"
+    "test:rps": "FUNCTION=rps pnpm test",
+    "test:range:overunder": "FUNCTION=overunder pnpm test",
+    "test:range:insideoutside": "FUNCTION=insideoutside pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
