@@ -1,51 +1,68 @@
-// import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
-// import {
-//     TransactionArgument,
-//     TransactionBlock as TransactionBlockType,
-//     TransactionObjectArgument
-// } from "@mysten/sui.js/transactions";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import {
+    TransactionArgument,
+    TransactionBlock as TransactionBlockType,
+    TransactionObjectArgument
+} from "@mysten/sui.js/transactions";
 
-// import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid';
 
-// import {
-//     BLS_SETTLER_MODULE_NAME,
-//     BLS_VERIFIER_OBJ,
-//     DICE_CORE_PACKAGE_ID,
-//     DICE_MODULE_NAME,
-//     DICE_STRUCT_NAME,
-//     UNI_HOUSE_OBJ,
-//     UNIHOUSE_CORE_PACKAGE
-// } from "../../constants";
-// import { getBlsGameInfos, sleep } from "../../utils";
+import {
+    BLS_SETTLER_MODULE_NAME,
+    BLS_VERIFIER_OBJ,
+    RANGE_DICE_MODULE_NAME,
+    RANGE_DICE_STRUCT_NAME,
+    UNI_HOUSE_OBJ,
+    UNIHOUSE_CORE_PACKAGE
+} from "../../constants";
+import { getBlsGameInfos, sleep } from "../../utils";
 
-// // Note: 0 - 5 for dice rolls, and 6 = even, 7 = odd, 8 = small, 9 = big
-// type BetType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+// Note: 0 = Over, 1 = Under
+type OverUnderBet = 0 | 1;
 
-// type RangeDiceResult = any;
+// Note: 2 = Inside, 3 = Outside
+type InsideOutsideBet = 2 | 3;
 
-// export interface DiceInput {
-//     betType: BetType;
-//     coin: TransactionObjectArgument;
-//     coinType: string;
-//     transactionBlock: TransactionBlockType;
-// }
+type RangeDiceResult = any;
 
-// interface InternalDiceInput extends DiceInput {
-//     dicePackageId: string;
-// }
+export interface RangeDiceInput {
+    betType: OverUnderBet | InsideOutsideBet;
+    coin: TransactionObjectArgument;
+    coinType: string;
+    range: number | number[];
+    transactionBlock: TransactionBlockType;
+}
 
-// export interface DiceResultInput {
-//     betType: BetType;
-//     coinType: string;
-//     gameSeed: string;
-//     pollInterval?: number;
-//     transactionResult: SuiTransactionBlockResponse;
-// }
+interface InternalRangeDiceInput extends RangeDiceInput {
+    rangeDicePackageId: string;
+}
 
-// interface InternalDiceResultInput extends DiceResultInput {
-//     diceCorePackageId: string;
-//     suiClient: SuiClient;
-// }
+interface RangeDiceParsedJson {
+    bet_id: string;
+    outcome: string;
+    player: string;
+    settlements: RangeDiceSettlement[];
+}
+
+interface RangeDiceSettlement {
+    bet_size: string;
+    payout_amount: string;
+    player_won: boolean;
+    win_condition: WinCondition;
+}
+
+export interface RangeDiceResultInput {
+    betType: OverUnderBet | InsideOutsideBet;
+    coinType: string;
+    gameSeed: string;
+    pollInterval?: number;
+    transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalRangeDiceResultInput extends RangeDiceResultInput {
+    rangeDiceCorePackageId: string;
+    suiClient: SuiClient;
+}
 
 // export interface DiceResponse {
 //     ok: boolean;
@@ -54,119 +71,189 @@
 //     receipt?: TransactionArgument;
 // }
 
-// export interface DiceResultResponse {
-//     ok: boolean;
-//     err?: Error;
-//     results?: DiceResult[];
-// }
+export interface RangeDiceResponse {
+    ok: boolean;
+    err?: Error;
+    gameSeed?: string;
+    receipt?: TransactionArgument;
+}
 
-// // Add dice to the transaction block
-// export const createDice = ({
-//     betType,
-//     coin,
-//     coinType,
-//     dicePackageId,
-//     transactionBlock
-// }: InternalDiceInput): DiceResponse => {
-//     const res: DiceResponse = { ok: true };
+export interface RangeDiceResultResponse {
+    ok: boolean;
+    err?: Error;
+    results?: RangeDiceResult[];
+    rawResults?: RangeDiceParsedJson[];
+    txDigests?: string[];
+}
 
-//     try {
-//         // This adds some extra entropy to the dice itself
-//         const userRandomness = Buffer.from(nanoid(512), 'utf8');
+interface WinCondition {
+    vec: WinRange[];
+}
 
-//         const [receipt] = transactionBlock.moveCall({
-//             target: `${dicePackageId}::${DICE_MODULE_NAME}::start_game`,
-//             typeArguments: [coinType],
-//             arguments: [
-//                 transactionBlock.object(UNI_HOUSE_OBJ),
-//                 transactionBlock.object(BLS_VERIFIER_OBJ),
-//                 transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-//                 transactionBlock.pure(betType),
-//                 coin,
-//             ],    
-//         });
+interface WinRange {
+    from: string;
+    to: string;
+}
 
-//         res.gameSeed = Buffer.from(userRandomness).toString("hex");
-//         res.receipt = receipt;
-//     } catch (err) {
-//         res.ok = false;
-//         res.err = err;
-//     }
+const isOverUnder = (betType: OverUnderBet | InsideOutsideBet): betType is OverUnderBet =>
+    betType === 0 || betType === 1;
 
-//     return res;
-// };
+const isInsideOutside = (betType: OverUnderBet | InsideOutsideBet): betType is InsideOutsideBet =>
+    betType === 2 || betType === 3;
 
-// export const getDiceResult = async ({
-//     betType,
-//     coinType,
-//     diceCorePackageId,
-//     gameSeed,
-//     pollInterval = 3000,
-//     suiClient,
-//     transactionResult
-// }: InternalDiceResultInput): Promise<DiceResultResponse> => {
-//     const res: DiceResultResponse = { ok: true };
+const isRangeNumber = (range: number | number[]): range is number => typeof range === 'number';
 
-//     try {
-//         const gameInfos = getBlsGameInfos({
-//             coinType,
-//             corePackageId: DICE_CORE_PACKAGE_ID,
-//             gameSeed,
-//             moduleName: DICE_MODULE_NAME,
-//             structName: DICE_STRUCT_NAME,
-//             transactionResult
-//         });
+const isRangeArray = (range: number | number[]): range is number[] => typeof range[0] === 'number';
 
-//         const results = [];
+// Start ranged dice game
+export const createRangeDice = ({
+    betType,
+    coin,
+    coinType,
+    range,
+    transactionBlock,
+    rangeDicePackageId
+}: InternalRangeDiceInput): RangeDiceResponse => {
+    let res: RangeDiceResponse = { ok: true };
 
-//         while (results.length === 0) {
-//             try {
-//                 const events = await suiClient.queryEvents({
-//                     query: {
-//                         MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::SettlementEvent<${coinType}, ${diceCorePackageId}::${DICE_MODULE_NAME}::${DICE_STRUCT_NAME}>`
-//                     },
-//                     limit: 50,
-//                     order: 'descending'
-//                 });
+    try {
+        // This adds some extra entropy to the weighted dice itself
+        const userRandomness = Buffer.from(nanoid(512), 'utf8');
 
-//                 events.data.map(event => {
-//                     console.log(event)
-//                     console.log(event.parsedJson)
-//                 })
+        if (isOverUnder(betType) && isRangeNumber(range)) {
+            const [receipt] = transactionBlock.moveCall({
+                target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_over_under_game`,
+                typeArguments: [coinType],
+                arguments: [
+                    transactionBlock.object(UNI_HOUSE_OBJ),
+                    transactionBlock.object(BLS_VERIFIER_OBJ),
+                    transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                    transactionBlock.pure(range),
+                    transactionBlock.pure(betType),
+                    coin,
+                ]
+            });
 
-//                 // results = events.data.reduce((acc, current) => {
-//                 //     const {
-//                 //         bet_id,
-//                 //         settlements
-//                 //     } = current.parsedJson as CoinflipParsedJson;
+            res.receipt = receipt;
+        } else if (isInsideOutside(betType) && isRangeArray(range) && range.length === 2) {
+            const [receipt] = transactionBlock.moveCall({
+                target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_range_game`,
+                typeArguments: [coinType],
+                arguments: [
+                    transactionBlock.object(UNI_HOUSE_OBJ),
+                    transactionBlock.object(BLS_VERIFIER_OBJ),
+                    transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                    transactionBlock.pure(range[0]),
+                    transactionBlock.pure(range[1]),
+                    transactionBlock.pure(betType),
+                    coin,
+                ]
+            });
 
-//                 //     if (bet_id == gameInfos[0].gameId) {
-//                 //         const { player_won } = settlements[0];
+            res.receipt = receipt;
+        } else {
+            throw new Error('invalid bet type or range');
+        }
 
-//                 //         if (player_won) {
-//                 //             acc.push(betType === 0 ? 0 : 1);
-//                 //         } else {
-//                 //             acc.push(betType === 0 ? 1 : 0);
-//                 //         }
-//                 //     }
+        res.gameSeed = Buffer.from(userRandomness).toString("hex");
+    } catch (err) {
+        res.ok = false;
+        res.err = err;
+    }
 
-//                 //     return acc;
-//                 // }, []);
-//             } catch (err) {
-//                 console.error(`DOUBLEUP - Error querying events: ${err}`);
-//             }
+    return res;
+};
 
-//             if (results.length === 0) {
-//                 console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
-//                 await sleep(pollInterval);
-//             }
-//         }
+export const getRangeDiceResult = async ({
+    betType,
+    coinType,
+    gameSeed,
+    pollInterval = 3000,
+    rangeDiceCorePackageId,
+    suiClient,
+    transactionResult
+}: InternalRangeDiceResultInput): Promise<RangeDiceResultResponse> => {
+    let res: RangeDiceResultResponse = { ok: true };
 
-//         res.results = results;
-//     } catch (err) {
-//         res.ok = false;
-//         res.err = err;
-//     }
+    try {
+        const gameInfos = getBlsGameInfos({
+            coinType,
+            corePackageId: rangeDiceCorePackageId,
+            gameSeed,
+            moduleName: RANGE_DICE_MODULE_NAME,
+            structName: RANGE_DICE_STRUCT_NAME,
+            transactionResult
+        });
 
-//     return res;
-// };
+        let results: (OverUnderBet | InsideOutsideBet)[] = [];
+        let rawResults: RangeDiceParsedJson[] = [];
+        let txDigests: string[] = [];
+
+        while (results.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::SettlementEvent<${coinType}, ${rangeDiceCorePackageId}::${RANGE_DICE_MODULE_NAME}::${RANGE_DICE_STRUCT_NAME}>`
+                    },
+                    limit: 50,
+                    order: 'descending'
+                });
+
+                results = events.data.reduce((acc, current) => {
+                    const {
+                        bet_id,
+                        settlements
+                    } = current.parsedJson as RangeDiceParsedJson;
+
+                    if (bet_id == gameInfos[0].gameId) {
+                        const { player_won } = settlements[0];
+
+                        rawResults.push(current.parsedJson as RangeDiceParsedJson);
+                        txDigests.push(current.id.txDigest);
+
+                        let res: OverUnderBet | InsideOutsideBet;
+
+                        if (player_won) {
+                            res = betType;
+                        } else {
+                            switch (betType) {
+                                case 0:
+                                    res = 1;
+                                    break;
+                                case 1:
+                                    res = 0;
+                                    break;
+                                case 2:
+                                    res = 3;
+                                    break;
+                                case 3:
+                                    res = 2;
+                                    break;
+                            }
+                        }
+
+                        acc.push(res);
+                    }
+
+                    return acc;
+                }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
+            }
+        }
+
+        res.results = results;
+        res.rawResults = rawResults;
+        res.txDigests = txDigests;
+    } catch (err) {
+        res.ok = false;
+        res.err = err;
+    }
+
+    return res;
+};
