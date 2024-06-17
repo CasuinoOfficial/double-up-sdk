@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -10,7 +10,8 @@
     "test:coinflip": "FUNCTION=coinflip pnpm test",
     "test:dice": "FUNCTION=dice pnpm test",
     "test:limbo": "FUNCTION=limbo pnpm test",
-    "test:plinko": "FUNCTION=plinko pnpm test"
+    "test:plinko": "FUNCTION=plinko pnpm test",
+    "test:rps": "FUNCTION=rps pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

@@ -1,6 +1,6 @@
 import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 
-import { BLS_SETTLER_MODULE_NAME, UNIHOUSE_CORE_PACKAGE } from "../constants";
+import { BLS_SETTLER_MODULE_NAME, UNIHOUSE_PACKAGE, UNIHOUSE_CORE_PACKAGE } from "../constants";
 
 interface GameInfo {
     gameCoinType: string;
@@ -85,6 +85,24 @@ export const getBlsGameInfos = ({
     transactionResult
 }: BlsGameInfosInput): GameInfo[] => {
     const filterString = `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetData<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
+
+    return getGenericGameInfos({
+        filterString,
+        gameSeed,
+        transactionResult
+    });
+};
+
+export const getBlsGameInfosWithDraw = ({
+    coinType,
+    corePackageId,
+    gameSeed,
+    moduleName,
+    structName,
+    transactionResult
+}: BlsGameInfosInput): GameInfo[] => {
+    // UNIHOUSE_PACKAGE - BetDataWithDraw did not exist until unihouse v4
+    const filterString = `${UNIHOUSE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetDataWithDraw<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
 
     return getGenericGameInfos({
         filterString,

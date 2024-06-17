@@ -9,7 +9,9 @@ import {
   LIMBO_CORE_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
   PLINKO_CORE_PACKAGE_ID,
-  PLINKO_VERIFIER_ID
+  PLINKO_VERIFIER_ID,
+  RPS_CORE_PACKAGE_ID,
+  RPS_PACKAGE_ID
 } from "../constants";
 
 import {
@@ -40,6 +42,13 @@ import {
   PlinkoResultInput
 } from "../games/plinko";
 
+import {
+  createRockPaperScissors,
+  getRockPaperScissorsResult,
+  RPSInput,
+  RPSResultInput
+} from "../games/rps";
+
 interface DoubleUpClientInput {
   coinflipPackageId?: string;
   coinflipCorePackageId?: string;
@@ -50,6 +59,8 @@ interface DoubleUpClientInput {
   plinkoPackageId?: string;
   plinkoCorePackageId?: string;
   plinkoVerifierId?: string;
+  rpsPackageId?: string;
+  rpsCorePackageId?: string;
   suiClient?: SuiClient;
 }
 
@@ -64,6 +75,8 @@ export class DoubleUpClient {
       plinkoPackageId = PLINKO_PACKAGE_ID,
       plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
       plinkoVerifierId = PLINKO_VERIFIER_ID,
+      rpsPackageId = RPS_PACKAGE_ID,
+      rpsCorePackageId = RPS_CORE_PACKAGE_ID,
       suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") })
     }: DoubleUpClientInput) {
       this.coinflipPackageId = coinflipPackageId;
@@ -78,6 +91,9 @@ export class DoubleUpClient {
       this.plinkoPackageId = plinkoPackageId;
       this.plinkoCorePackageId = plinkoCorePackageId;
       this.plinkoVerifierId = plinkoVerifierId;
+
+      this.rpsPackageId = rpsPackageId;
+      this.rpsCorePackageId = rpsCorePackageId;
 
       this.suiClient = suiClient;
     }
@@ -94,6 +110,9 @@ export class DoubleUpClient {
     plinkoPackageId: string;
     plinkoCorePackageId: string;
     plinkoVerifierId: string;
+
+    rpsPackageId: string;
+    rpsCorePackageId: string;
 
     suiClient: SuiClient;
 
@@ -131,6 +150,17 @@ export class DoubleUpClient {
       ...input,
       plinkoPackageId: this.plinkoPackageId,
       plinkoCorePackageId: this.plinkoCorePackageId,
+      suiClient: this.suiClient
+    });
+
+    // rps
+    createRockPaperScissors = (input: RPSInput) => createRockPaperScissors({
+      ...input,
+      rpsPackageId: this.rpsPackageId
+    });
+    getRockPaperScissorsResult = (input: RPSResultInput) => getRockPaperScissorsResult({
+      ...input,
+      rpsCorePackageId: this.rpsCorePackageId,
       suiClient: this.suiClient
     });
 }

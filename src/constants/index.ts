@@ -70,6 +70,14 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
 ];
 // ===============================================================================
 
+// rock paper scissors
+// ===============================================================================
+export const RPS_PACKAGE_ID = "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
+export const RPS_CORE_PACKAGE_ID = "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
+export const RPS_MODULE_NAME = "rock_paper_scissors";
+export const RPS_STRUCT_NAME = "RockPaperScissors";
+// ===============================================================================
+
 // shared
 // ===============================================================================
 export const BLS_SETTLER_MODULE_NAME = "bls_settler";
@@ -94,6 +102,6 @@ export const UNI_HOUSE_OBJ = Inputs.SharedObjectRef({
   mutable: true,
 });
 
-export const UNIHOUSE_PACKAGE = "0x7d1e81394129c8c3cbcd012e988a30ec3134a7787fe891c6c581e23dbd57ec01";
+export const UNIHOUSE_PACKAGE = "0x2f37aa549ecd1283708d487267f93a5e4c8a759d0c2b5ddddb2162f314e6aa49";
 export const UNIHOUSE_CORE_PACKAGE = '0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf';       
 // ===============================================================================
