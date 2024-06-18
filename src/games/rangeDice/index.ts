@@ -105,6 +105,8 @@ const isRangeNumber = (range: number | number[]): range is number => typeof rang
 
 const isRangeArray = (range: number | number[]): range is number[] => typeof range[0] === 'number';
 
+const MULTIPLIER = 100;
+
 // Start ranged dice game
 export const createRangeDice = ({
     betType,
@@ -121,6 +123,12 @@ export const createRangeDice = ({
         const userRandomness = Buffer.from(nanoid(512), 'utf8');
 
         if (isOverUnder(betType) && isRangeNumber(range)) {
+            if (range < 1 || range > 100) {
+                throw new Error('range must be between 1 - 100');
+            }
+
+            const rangeMult = Math.trunc(range * MULTIPLIER);
+
             const [receipt] = transactionBlock.moveCall({
                 target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_over_under_game`,
                 typeArguments: [coinType],
@@ -128,7 +136,7 @@ export const createRangeDice = ({
                     transactionBlock.object(UNI_HOUSE_OBJ),
                     transactionBlock.object(BLS_VERIFIER_OBJ),
                     transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-                    transactionBlock.pure(range),
+                    transactionBlock.pure(rangeMult),
                     transactionBlock.pure(betType),
                     coin,
                 ]
@@ -136,6 +144,19 @@ export const createRangeDice = ({
 
             res.receipt = receipt;
         } else if (isInsideOutside(betType) && isRangeArray(range) && range.length === 2) {
+            const [lower, upper] = range;
+
+            if (lower < 1 || lower > 100 || upper < 1 || upper > 100) {
+                throw new Error('range must be between 1 - 100');
+            }
+
+            if (lower > upper) {
+                throw new Error('upper bound must be greater than lower bound');
+            }
+
+            const lowerMult = Math.trunc(lower * MULTIPLIER);
+            const upperMult = Math.trunc(upper * MULTIPLIER);
+
             const [receipt] = transactionBlock.moveCall({
                 target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_range_game`,
                 typeArguments: [coinType],
@@ -143,8 +164,8 @@ export const createRangeDice = ({
                     transactionBlock.object(UNI_HOUSE_OBJ),
                     transactionBlock.object(BLS_VERIFIER_OBJ),
                     transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-                    transactionBlock.pure(range[0]),
-                    transactionBlock.pure(range[1]),
+                    transactionBlock.pure(lowerMult),
+                    transactionBlock.pure(upperMult),
                     transactionBlock.pure(betType),
                     coin,
                 ]
