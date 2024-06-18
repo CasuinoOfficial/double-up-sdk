@@ -86,12 +86,12 @@ const ROCK = 0;
 const PAPER = 1;
 const SCISSORS = 2;
 
-// Add coinflip to the transaction block
+// Add rps to the transaction block
 export const createRockPaperScissors = ({
     betType,
     coin,
-    rpsPackageId,
     coinType,
+    rpsPackageId,
     transactionBlock
 } : InternalRPSInput): RPSResponse => {
     const res: RPSResponse = { ok: true };
@@ -124,10 +124,10 @@ export const createRockPaperScissors = ({
 
 export const getRockPaperScissorsResult = async ({
     betType,
-    rpsCorePackageId,
     coinType,
     gameSeed,
     pollInterval = 3000,
+    rpsCorePackageId,
     suiClient,
     transactionResult
 }: InternalRPSResultInput): Promise<RPSResultResponse> => {

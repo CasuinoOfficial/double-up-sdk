@@ -11,7 +11,9 @@ import {
   PLINKO_CORE_PACKAGE_ID,
   PLINKO_VERIFIER_ID,
   RPS_CORE_PACKAGE_ID,
-  RPS_PACKAGE_ID
+  RPS_PACKAGE_ID,
+  RANGE_DICE_PACKAGE_ID,
+  RANGE_DICE_CORE_PACKAGE_ID
 } from "../constants";
 
 import {
@@ -43,6 +45,13 @@ import {
 } from "../games/plinko";
 
 import {
+  createRangeDice,
+  getRangeDiceResult,
+  RangeDiceInput,
+  RangeDiceResultInput
+} from "../games/rangeDice";
+
+import {
   createRockPaperScissors,
   getRockPaperScissorsResult,
   RPSInput,
@@ -59,6 +68,8 @@ interface DoubleUpClientInput {
   plinkoPackageId?: string;
   plinkoCorePackageId?: string;
   plinkoVerifierId?: string;
+  rangeDicePackageId?: string;
+  rangeDiceCorePackageId?: string;
   rpsPackageId?: string;
   rpsCorePackageId?: string;
   suiClient?: SuiClient;
@@ -75,6 +86,8 @@ export class DoubleUpClient {
       plinkoPackageId = PLINKO_PACKAGE_ID,
       plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
       plinkoVerifierId = PLINKO_VERIFIER_ID,
+      rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
+      rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
       rpsPackageId = RPS_PACKAGE_ID,
       rpsCorePackageId = RPS_CORE_PACKAGE_ID,
       suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") })
@@ -91,6 +104,9 @@ export class DoubleUpClient {
       this.plinkoPackageId = plinkoPackageId;
       this.plinkoCorePackageId = plinkoCorePackageId;
       this.plinkoVerifierId = plinkoVerifierId;
+
+      this.rangeDicePackageId = rangeDicePackageId;
+      this.rangeDiceCorePackageId = rangeDiceCorePackageId;
 
       this.rpsPackageId = rpsPackageId;
       this.rpsCorePackageId = rpsCorePackageId;
@@ -110,6 +126,9 @@ export class DoubleUpClient {
     plinkoPackageId: string;
     plinkoCorePackageId: string;
     plinkoVerifierId: string;
+
+    rangeDicePackageId: string;
+    rangeDiceCorePackageId: string;
 
     rpsPackageId: string;
     rpsCorePackageId: string;
@@ -150,6 +169,17 @@ export class DoubleUpClient {
       ...input,
       plinkoPackageId: this.plinkoPackageId,
       plinkoCorePackageId: this.plinkoCorePackageId,
+      suiClient: this.suiClient
+    });
+
+    // range dice
+    createRangeDice = (input: RangeDiceInput) => createRangeDice({
+      ...input,
+      rangeDicePackageId: this.rangeDicePackageId
+    });
+    getRangeDiceResult = (input: RangeDiceResultInput) => getRangeDiceResult({
+      ...input,
+      rangeDiceCorePackageId: this.rangeDiceCorePackageId,
       suiClient: this.suiClient
     });
 

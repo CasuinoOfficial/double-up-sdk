@@ -272,3 +272,107 @@ const { ok: resultOk, err: resultErr, results } = await getPlinkoResult({
     transactionResult
 });
 ```
+
+##### Range Dice
+
+** If over/under, `range` must be a number. **
+** If inside/outside, `range` must be an array of two numbers. **
+
+range
+
+1 - 100
+
+OR
+
+[1 - 100, 1 - 100]
+
+betType
+
+| Value | Meaning |
+| ----- | ------- |
+|   0   | Over    |
+|   1   | Under   |
+|   2   | Inside  |
+|   3   | Outside |
+
+pollInterval (optional, default: 3000)
+
+milliseconds
+
+
+```js
+const [coin] = txb.splitCoins(
+    txb.gas,
+    txb.pure(betAmount * numberOfDiscs, "u64")
+);
+
+const coinType = "0x2::sui::SUI";
+
+// EXAMPLE: over
+const betType = 0;
+const range = 25;
+
+// EXAMPLE: inside
+const betType = 2;
+const range = [25, 50];
+
+const { ok: gameOk, err: gameErr, gameSeed } = createRangeDice({
+    betType,
+    coin,
+    coinType,
+    range,
+    transactionBlock: txb
+});
+
+const transactionResult = await signAndExecuteTransactionBlock({ ... });
+
+const { ok: resultOk, err: resultErr, results } = await getRangeDiceResult({
+    betType,
+    coinType,
+    gameSeed,
+    transactionResult
+});
+```
+
+##### Rock, Paper, Scissors
+
+betType
+
+| Value | Meaning  |
+| ----- | -------- |
+|   0   | Rock     |
+|   1   | Paper    |
+|   2   | Scissors |
+
+pollInterval (optional, default: 3000)
+
+milliseconds
+
+
+```js
+const [coin] = txb.splitCoins(
+    txb.gas,
+    txb.pure(betAmount * numberOfDiscs, "u64")
+);
+
+const coinType = "0x2::sui::SUI";
+
+// rock
+const betType = 0;
+
+const { ok: gameOk, err: gameErr, gameSeed } = createRockPaperScissors({
+    betType,
+    coin,
+    coinType,
+    transactionBlock: txb
+});
+
+const transactionResult = await signAndExecuteTransactionBlock({ ... });
+
+const { ok: resultOk, err: resultErr, results } = await getRockPaperScissorsResult({
+    betType,
+    coinType,
+    gameSeed,
+    transactionResult
+});
+```

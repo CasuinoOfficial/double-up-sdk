@@ -119,6 +119,8 @@ export const getDiceResult = async ({
 
         const results = [];
 
+        console.log(gameInfos)
+
         while (results.length === 0) {
             try {
                 const events = await suiClient.queryEvents({
