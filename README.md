@@ -27,6 +27,10 @@ const dbClient = new DoubleUpClient({
     plinkoPackageId: "",
     plinkoCorePackageId: "",
     plinkoVerifierId: "",
+    rangeDicePackageId: "",
+    rangeDiceCorePackageId: "",
+    rpsPackageId: "",
+    rpsCorePackageId: "",
     suiClient
 });
 ```
@@ -51,6 +55,10 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
     plinkoPackageId=""
     plinkoCorePackageId=""
     plinkoVerifierId=""
+    rangeDicePackageId=""
+    rangeDiceCorePackageId=""
+    rpsPackageId=""
+    rpsCorePackageId=""
     suiClient={suiClient}
 >
     <App />
