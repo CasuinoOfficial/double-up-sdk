@@ -1,25 +1,18 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
+import { SuiClient } from "@mysten/sui.js/client";
 import {
-    TransactionArgument,
     TransactionBlock as TransactionBlockType,
     TransactionObjectArgument
 } from "@mysten/sui.js/transactions";
 
-import { nanoid } from 'nanoid';
-
 import {
     CLOCK_OBJ,
-    LOTTERY_CORE_PACKAGE_ID,
     LOTTERY_ID,
     LOTTERY_MODULE_NAME,
     LOTTERY_PACKAGE_ID,
     LOTTERY_STORE_ID,
-    LOTTERY_STRUCT_NAME,
-    SUI_COIN_TYPE,
-    UNI_HOUSE_OBJ,
-    UNIHOUSE_CORE_PACKAGE
+    SUI_COIN_TYPE
 } from "../../constants";
-import { getConvertedUTC, sleep } from "../../utils";
+import { sleep } from "../../utils";
 
 export interface BuyTicketsInput {
     address: string;
