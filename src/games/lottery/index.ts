@@ -116,7 +116,7 @@ export interface LotteryInput {
 export interface LotteryResponse {
     ok: boolean;
     err?: Error;
-    results?: LotteryData;
+    result?: LotteryData;
 }
 
 interface LotteryHistoryItem {
@@ -239,7 +239,7 @@ export const getLottery = async ({
 
         const lotteryData = lottery.data.content.fields as unknown;
 
-        res.results = lotteryData as LotteryData;
+        res.result = lotteryData as LotteryData;
     } catch (err) {
         res.ok = false;
         res.err = err;
