@@ -6,12 +6,25 @@ import { DoubleUpClient } from "../client";
 
 import { CoinflipInput, CoinflipResultInput, CoinflipResponse, CoinflipResultResponse } from "../games/coinflip";
 import { DiceInput, DiceResultInput, DiceResponse, DiceResultResponse } from "../games/dice";
+import {
+  BuyTicketsInput,
+  BuyTicketsResponse,
+  DrawingResultInput,
+  DrawingResultResponse,
+  LotteryResponse,
+  LotteryHistoryResponse,
+  LotteryTicketsInput,
+  LotteryTicketsResponse,
+  RedeemTicketsInput,
+  RedeemTicketsResponse
+} from "../games/lottery";
 import { LimboInput, LimboResultInput, LimboResponse, LimboResultResponse } from "../games/limbo";
 import { PlinkoInput, PlinkoResultInput, PlinkoResponse, PlinkoResultResponse } from "../games/plinko";
 import { RangeDiceInput, RangeDiceResultInput, RangeDiceResponse, RangeDiceResultResponse } from "src/games/rangeDice";
 import { RPSInput, RPSResultInput, RPSResponse, RPSResultResponse } from "src/games/rps";
 
 interface DoubleUpContextState {
+  buyLotteryTickets: (input: BuyTicketsInput) => BuyTicketsResponse;
   createCoinflip: (input: CoinflipInput) => CoinflipResponse;
   createDice: (input: DiceInput) => DiceResponse;
   createLimbo: (input: LimboInput) => LimboResponse;
@@ -20,10 +33,15 @@ interface DoubleUpContextState {
   createRockPaperScissors: (input: RPSInput) => RPSResponse;
   getCoinflipResult: (input: CoinflipResultInput) => Promise<CoinflipResultResponse>;
   getDiceResult: (input: DiceResultInput) => Promise<DiceResultResponse>;
+  getLottery: () => Promise<LotteryResponse>;
+  getLotteryDrawingResult: (input: DrawingResultInput) => Promise<DrawingResultResponse>;
+  getLotteryHistory: () => Promise<LotteryHistoryResponse>;
+  getLotteryTickets: (input: LotteryTicketsInput) => Promise<LotteryTicketsResponse>;
   getLimboResult: (input: LimboResultInput) => Promise<LimboResultResponse>;
   getPlinkoResult: (input: PlinkoResultInput) => Promise<PlinkoResultResponse>;
   getRangeDiceResult: (input: RangeDiceResultInput) => Promise<RangeDiceResultResponse>;
   getRockPaperScissorsResult: (input: RPSResultInput) => Promise<RPSResultResponse>;
+  redeemLotteryTickets: (input: RedeemTicketsInput) => RedeemTicketsResponse;
 }
 
 interface DoubleupProviderProps {
@@ -80,6 +98,9 @@ const DoubleUpProvider = ({
     suiClient
   });
 
+  const buyLotteryTickets = dbClient.buyLotteryTickets;
+  const redeemLotteryTickets = dbClient.redeemLotteryTickets;
+
   const createCoinflip = dbClient.createCoinflip;
   const createDice = dbClient.createDice;
   const createLimbo = dbClient.createLimbo;
@@ -90,11 +111,16 @@ const DoubleUpProvider = ({
   const getCoinflipResult = dbClient.getCoinflipResult;
   const getDiceResult = dbClient.getDiceResult;
   const getLimboResult = dbClient.getLimboResult;
+  const getLottery = dbClient.getLottery;
+  const getLotteryDrawingResult = dbClient.getLotteryDrawingResult;
+  const getLotteryHistory = dbClient.getLotteryHistory;
+  const getLotteryTickets = dbClient.getLotteryTickets;
   const getPlinkoResult = dbClient.getPlinkoResult;
   const getRangeDiceResult = dbClient.getRangeDiceResult;
   const getRockPaperScissorsResult = dbClient.getRockPaperScissorsResult;
 
   const state: DoubleUpContextState = {
+    buyLotteryTickets,
     createCoinflip,
     createDice,
     createLimbo,
@@ -104,9 +130,14 @@ const DoubleUpProvider = ({
     getCoinflipResult,
     getDiceResult,
     getLimboResult,
+    getLottery,
+    getLotteryDrawingResult,
+    getLotteryHistory,
+    getLotteryTickets,
     getPlinkoResult,
     getRangeDiceResult,
-    getRockPaperScissorsResult
+    getRockPaperScissorsResult,
+    redeemLotteryTickets
   };
 
   return (

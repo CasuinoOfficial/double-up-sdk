@@ -1,12 +1,12 @@
 # DoubleUp SDK
 
-### Installation
+## Installation
 
 ```sh
 $ npm install doubleup
 ```
 
-### Initialization
+## Initialization
 
 JS
 
@@ -27,6 +27,10 @@ const dbClient = new DoubleUpClient({
     plinkoPackageId: "",
     plinkoCorePackageId: "",
     plinkoVerifierId: "",
+    rangeDicePackageId: "",
+    rangeDiceCorePackageId: "",
+    rpsPackageId: "",
+    rpsCorePackageId: "",
     suiClient
 });
 ```
@@ -51,13 +55,17 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
     plinkoPackageId=""
     plinkoCorePackageId=""
     plinkoVerifierId=""
+    rangeDicePackageId=""
+    rangeDiceCorePackageId=""
+    rpsPackageId=""
+    rpsCorePackageId=""
     suiClient={suiClient}
 >
     <App />
 </DoubleUpProvider>
 ```
 
-### Basic Usage
+## Basic Usage
 
 JS
 
@@ -107,9 +115,9 @@ const { ok: resultOk, err: resultErr, results } = await getCoinflipResult({
 });
 ```
 
-### Games
+## Games
 
-##### Coinflip
+### Coinflip
 
 betType
 
@@ -150,7 +158,7 @@ const { ok: resultOk, err: resultErr, results } = await getCoinflipResult({
 });
 ```
 
-##### Dice
+### Dice
 
 NOTE: NOT CURRENTLY IMPLEMENTED
 
@@ -193,7 +201,7 @@ const { ok: resultOk, err: resultErr, results } = await getDiceResult({
 });
 ```
 
-##### Limbo
+### Limbo
 
 multiplier
 
@@ -228,7 +236,77 @@ const { ok: resultOk, err: resultErr, results } = await getLimboResult({
 });
 ```
 
-##### Plinko
+### Lottery
+
+#### Buy Ticket
+
+```js
+const address = '0x...';
+
+const [coin] = txb.splitCoins(
+    txb.gas,
+    txb.pure(betAmount * numberOfDiscs, "u64")
+);
+
+const tickets = [{
+    numbers: [27, 15, 30, 7, 11],
+    specialNumber: 2
+}];
+
+ const { ok, err } = buyLotteryTickets({
+    address,
+    coin,
+    tickets,
+    transactionBlock: txb
+});
+```
+
+#### Get Lottery
+
+```js
+const { ok, err, result } = await getLottery();
+```
+
+#### Get Lottery History
+
+```js
+const { ok, err, results } = await getLotteryHistory();
+```
+
+#### Get Lottery Result
+
+```js
+const { ok, err, result } = await getLotteryDrawingResult({
+    round: 8679412
+});
+```
+
+#### Get Lottery Tickets
+
+```js
+const { ok, err, results } = await getLotteryTickets({
+    address: '0x...'
+});
+```
+
+#### Redeem Lottery Tickets
+
+```js
+const ticketIds = [
+    '0x...',
+    '0x...'
+];
+
+const { ok, err, results } = await redeemLotteryTickets({
+    ticketIds
+});
+```
+
+#### 
+
+#### 
+
+### Plinko
 
 numberOfDiscs
 
@@ -273,7 +351,7 @@ const { ok: resultOk, err: resultErr, results } = await getPlinkoResult({
 });
 ```
 
-##### Range Dice
+### Range Dice
 
 ** If over/under, `range` must be a number. **
 ** If inside/outside, `range` must be an array of two numbers. **
@@ -334,7 +412,7 @@ const { ok: resultOk, err: resultErr, results } = await getRangeDiceResult({
 });
 ```
 
-##### Rock, Paper, Scissors
+### Rock, Paper, Scissors
 
 betType
 

@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -10,6 +10,11 @@
     "test:coinflip": "FUNCTION=coinflip pnpm test",
     "test:dice": "FUNCTION=dice pnpm test",
     "test:limbo": "FUNCTION=limbo pnpm test",
+    "test:lottery:buy": "FUNCTION=lottery:buy pnpm test",
+    "test:lottery:get": "FUNCTION=lottery:get pnpm test",
+    "test:lottery:redeem": "FUNCTION=lottery:redeem pnpm test",
+    "test:lottery:results": "FUNCTION=lottery:results pnpm test",
+    "test:lottery:tickets": "FUNCTION=lottery:tickets pnpm test",
     "test:plinko": "FUNCTION=plinko pnpm test",
     "test:rps": "FUNCTION=rps pnpm test",
     "test:range:overunder": "FUNCTION=overunder pnpm test",

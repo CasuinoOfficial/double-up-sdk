@@ -200,6 +200,118 @@ const testLimbo = async () => {
     }
 };
 
+const testLotteryBuy = async () => {
+    const amount = 2000000000;
+
+    try {
+        const address = suiKit.currentAddress();
+        const txb = new SuiTxBlock();
+
+        const [coin] = txb.splitCoins(txb.gas, [txb.pure(amount, "u64")]);
+
+        const tickets = [{
+            numbers: [27, 15, 30, 7, 11],
+            specialNumber: 2
+        }];
+
+        const { ok, err } = dbClient.buyLotteryTickets({
+            address,
+            coin,
+            tickets,
+            transactionBlock: txb.txBlock
+        });
+
+        if (!ok) {
+            throw err;
+        }
+
+        const transactionResult = await suiKit.signAndSendTxn(txb);
+
+        if (transactionResult.effects.status.status === 'failure') {
+            throw new Error(transactionResult.effects.status.error);
+        }
+
+        console.log("Signed and sent transaction.");
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const testLotteryGet = async () => {
+    try {
+        const lottery = await dbClient.getLottery();
+
+        console.log(lottery);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const testLotteryRedeem = async () => {
+    const ticketIds = [
+        '0x2532e79226865b41b43781c627a0b11cef15a28267ad971d32fa99c0d2ea956b'
+    ];
+
+    try {
+        const txb = new SuiTxBlock();
+
+        const { ok, err } = dbClient.redeemLotteryTickets({
+            ticketIds,
+            transactionBlock: txb.txBlock
+        });
+
+        if (!ok) {
+            throw err;
+        }
+
+        const transactionResult = await suiKit.signAndSendTxn(txb);
+
+        if (transactionResult.effects.status.status === 'failure') {
+            throw new Error(transactionResult.effects.status.error);
+        }
+
+        console.log("Signed and sent transaction.");
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const testLotteryResults = async () => {
+    const round = 8679412;
+
+    try {
+        const { ok, err, result } = await dbClient.getLotteryDrawingResult({
+            round
+        });
+
+        if (!ok) {
+            throw err;
+        }
+
+        console.log(result);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const testLotteryTickets = async () => {
+    try {
+        const address = suiKit.currentAddress();
+
+        const { ok, err, results } = await dbClient.getLotteryTickets({
+            address
+        });
+
+        if (!ok) {
+            throw err;
+        }
+
+        console.log(results);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 const testPlinko = async () => {
     const betAmount = 500000000;
     const numberOfDiscs = 1;
@@ -450,6 +562,21 @@ const testRPS = async () => {
                 break;
             case 'overunder':
                 testRangeDiceOverUnder();
+                break;
+            case 'lottery:get':
+                testLotteryGet();
+                break;
+            case 'lottery:buy':
+                testLotteryBuy();
+                break;
+            case 'lottery:redeem':
+                testLotteryRedeem();
+                break;
+            case 'lottery:results':
+                testLotteryResults();
+                break;
+            case 'lottery:tickets':
+                testLotteryTickets();
                 break;
             case 'plinko':
                 testPlinko();
