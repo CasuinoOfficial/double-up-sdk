@@ -7,6 +7,11 @@ interface RouletteConfig {
   objectId: string;
 };
 
+// coins
+// ===============================================================================
+export const SUI_COIN_TYPE = "0x2::sui::SUI";
+// ===============================================================================
+
 // coinflip
 // ===============================================================================
 export const COIN_PACKAGE_ID = "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
@@ -32,6 +37,17 @@ export const LIMBO_STRUCT_NAME = "Limbo";
 
 export const LIMBO_MIN_MULTIPLIER = "1.01";
 export const LIMBO_MAX_MULTIPLIER = "100";
+// ===============================================================================
+
+// lottery
+// ===============================================================================
+export const LOTTERY_CORE_PACKAGE_ID = "";
+export const LOTTERY_PACKAGE_ID = "0x5fad208418200537f2785aefdca3c8e15e2843ebdffd524956e6d6d6aca845a9";
+export const LOTTERY_MODULE_NAME = "lottery";
+export const LOTTERY_STRUCT_NAME = "Lottery";
+
+export const LOTTERY_ID = "0x447953794edc1dd42891ca3cfbcc21ef510d42fc90db9a6d9189a2913c570f23";
+export const LOTTERY_STORE_ID = "0x212509ffef4a7615c8e0f26d70ac84c93cbf88d6eb3f9f363a27d5ba2526f684";
 // ===============================================================================
 
 // plinko
@@ -84,7 +100,6 @@ export const RANGE_DICE_PACKAGE_ID = "";
 export const RANGE_DICE_CORE_PACKAGE_ID = "";
 export const RANGE_DICE_MODULE_NAME = "dice_range";
 export const RANGE_DICE_STRUCT_NAME = "DiceRange";
-
 // ===============================================================================
 
 // shared

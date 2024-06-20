@@ -38,6 +38,17 @@ import {
 } from "../games/limbo";
 
 import {
+  buyLotteryTickets,
+  getLottery,
+  getLotteryDrawingResult,
+  getLotteryHistory,
+  getLotteryTickets,
+  redeemLotteryTickets,
+  DrawingResultInput,
+  LotteryTicketsInput
+} from "../games/lottery";
+
+import {
   createPlinko,
   getPlinkoResult,
   PlinkoInput,
@@ -148,6 +159,20 @@ export class DoubleUpClient {
     getDiceResult = (input: DiceResultInput) => getDiceResult({
       ...input,
       diceCorePackageId: this.diceCorePackageId,
+      suiClient: this.suiClient
+    });
+
+    // lottery
+    buyLotteryTickets = buyLotteryTickets;
+    redeemLotteryTickets = redeemLotteryTickets;
+    getLottery = () => getLottery({ suiClient: this.suiClient });
+    getLotteryHistory = () => getLotteryHistory({ suiClient: this.suiClient });
+    getLotteryDrawingResult = (input: DrawingResultInput) => getLotteryDrawingResult({
+      ...input,
+      suiClient: this.suiClient
+    });
+    getLotteryTickets = (input: LotteryTicketsInput) => getLotteryTickets({
+      ...input,
       suiClient: this.suiClient
     });
 
