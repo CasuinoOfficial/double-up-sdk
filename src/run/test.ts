@@ -13,8 +13,8 @@ const suiKit = new SuiKit({ mnemonics: MNEMONICS });
 // const DESUI_PLINKO_CORE_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
 // const DESUI_PLINKO_VERIFIER_ID = "0x85fed939bc09d61a314a9c0d4d16370be788a538f351b82b6b3db1ae4f1c7374";
 
-const DESUI_RANGE_DICE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
-const DESUI_RANGE_DICE_CORE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
+// const DESUI_RANGE_DICE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
+// const DESUI_RANGE_DICE_CORE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
 
 const dbClient = new DoubleUpClient({
     // limboCorePackageId: DESUI_LIMBO_CORE_PACKAGE_ID,
@@ -22,8 +22,8 @@ const dbClient = new DoubleUpClient({
     // plinkoCorePackageId: DESUI_PLINKO_CORE_PACKAGE_ID,
     // plinkoPackageId: DESUI_PLINKO_PACKAGE_ID,
     // plinkoVerifierId: DESUI_PLINKO_VERIFIER_ID,
-    rangeDicePackageId: DESUI_RANGE_DICE_PACKAGE_ID,
-    rangeDiceCorePackageId: DESUI_RANGE_DICE_CORE_PACKAGE_ID,
+    // rangeDicePackageId: DESUI_RANGE_DICE_PACKAGE_ID,
+    // rangeDiceCorePackageId: DESUI_RANGE_DICE_CORE_PACKAGE_ID,
 
     suiClient: suiKit.client()
 });
