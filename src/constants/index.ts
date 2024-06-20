@@ -1,15 +1,14 @@
 import { Inputs } from "@mysten/sui.js/transactions";
 
-interface RouletteConfig {
-  coinType: string;
-  initialSharedVersion: number;
-  mutable: boolean;
-  objectId: string;
-};
-
 // coins
 // ===============================================================================
+export const BUCK_COIN_TYPE = "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK";
+export const FUD_COIN_TYPE = "0x76cb819b01abed502bee8a702b4c2d547532c12f25001c9dea795a5e631c26f1::fud::FUD";
+export const NAVX_COIN_TYPE="0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX"
+export const PUP_COIN_TYPE = "0x980ec1e7d5a3d11c95039cab901f02a044df2d82bc79d99b60455c02524fad83::pup::PUP";
+export const STASH_COIN_TYPE="0x2cff601fe16f622fd6203f8f64bef4e68d687f51f4d06f13c2bbba17cb84c87e::stash::STASH"
 export const SUI_COIN_TYPE = "0x2::sui::SUI";
+export const SUICANE_COIN_TYPE = "0x8c47c0bde84b7056520a44f46c56383e714cc9b6a55e919d8736a34ec7ccb533::suicune::SUICUNE";
 // ===============================================================================
 
 // coinflip
@@ -67,23 +66,66 @@ export const PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
 
 // roulette
 // ===============================================================================
+interface RouletteConfig {
+  coinType: string;
+  initialSharedVersion: number;
+  mutable: boolean;
+  objectId: string;
+};
+
 export const ROULETTE_PACKAGE_ID = "0xf4d8d82cd78b54759c962b50b4b434d86f0865cddb0631e939eb10d8bcaa1fd9";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
+
 export const ROULETTE_CONFIGS: RouletteConfig[] = [
   {
-    coinType: "0x2::sui::SUI",
+    coinType: SUI_COIN_TYPE,
     objectId: "0x8d51882ebf6e1b028a2c55484f748bb046c41dbb6cd6b882a45531eef7b0b59f",
     initialSharedVersion: 91929636,
-    mutable: true,
+    mutable: true
   },
   {
-    coinType: "0x76cb819b01abed502bee8a702b4c2d547532c12f25001c9dea795a5e631c26f1::fud::FUD",
+    coinType: BUCK_COIN_TYPE,
+    objectId: "0x13d5ddb9fb5a4ed750418bb33c4fb3624b9e216d40328af2257138afd3fc7f8f",
+    initialSharedVersion: 91929637,
+    mutable: true
+  },
+  {
+    coinType: FUD_COIN_TYPE,
     objectId: "0xb5801fddf758acc8576ebd6988dc9150baf80be78036279aab4afc04a004a5e3",
     initialSharedVersion: 92390311,
-    mutable: true,
+    mutable: true
+  },
+  {
+    coinType: PUP_COIN_TYPE,
+    objectId: "0x0fe8cacaeecf7462dbe952a190c2d130ea191637e06e015896e8f65106b4ce0f",
+    initialSharedVersion: 214343544,
+    mutable: true
+  },
+  {
+    coinType: NAVX_COIN_TYPE,
+    objectId: "0xc4f56c31b71b2e4c367bebfb7cb7a3caf5156ee6c02db64b4aef75d294b5769f",
+    initialSharedVersion: 214343544,
+    mutable: true
+  },
+  {
+    coinType: STASH_COIN_TYPE,
+    objectId: "0xeaf9087aca7ab406cb520a5ab229bffca3f6931544f5a51ae5d0281653aa0855",
+    initialSharedVersion: 214343544,
+    mutable: true
+  },
+  {
+    coinType: SUICANE_COIN_TYPE,
+    objectId: "0xe295e13bd9d84e3c1ae2a3f7f9986fac733d64bfeb5bf79346688032042295e1",
+    initialSharedVersion: 92390320,
+    mutable: true
   }
 ];
+
+export const getRouletteConfig = (coinType: string): RouletteConfig | undefined => (
+  ROULETTE_CONFIGS.find(config => config.coinType === coinType)
+);
+
 // ===============================================================================
 
 // rock paper scissors
@@ -110,7 +152,7 @@ export const BLS_VERIFIER_ID = "0xc85af84c78bebac4fd91d8cc25d66461503258764402b4
 export const BLS_VERIFIER_OBJ = Inputs.SharedObjectRef({
   objectId: BLS_VERIFIER_ID,
   initialSharedVersion: 89762028,
-  mutable: true,
+  mutable: true
 });
 
 export const CLOCK_OBJ = Inputs.SharedObjectRef({
@@ -123,7 +165,7 @@ export const UNI_HOUSE_ID = "0x44d587c7f6b55fdf35d30143c67bc81911140e73e1ad9c7c1
 export const UNI_HOUSE_OBJ = Inputs.SharedObjectRef({
   objectId: UNI_HOUSE_ID,
   initialSharedVersion: 89762024,
-  mutable: true,
+  mutable: true
 });
 
 export const UNIHOUSE_PACKAGE = "0x2f37aa549ecd1283708d487267f93a5e4c8a759d0c2b5ddddb2162f314e6aa49";
