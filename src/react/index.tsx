@@ -52,6 +52,7 @@ interface DoubleupProviderProps {
   diceCorePackageId?: string;
   limboPackageId?: string;
   limboCorePackageId?: string;
+  partnerNftListId?: string;
   plinkoPackageId?: string;
   plinkoCorePackageId?: string;
   plinkoVerifierId?: string;
@@ -72,6 +73,7 @@ const DoubleUpProvider = ({
   diceCorePackageId,
   limboPackageId,
   limboCorePackageId,
+  partnerNftListId,
   plinkoPackageId,
   plinkoCorePackageId,
   plinkoVerifierId,
@@ -88,6 +90,7 @@ const DoubleUpProvider = ({
     diceCorePackageId,
     limboPackageId,
     limboCorePackageId,
+    partnerNftListId,
     plinkoPackageId,
     plinkoCorePackageId,
     plinkoVerifierId,
