@@ -24,6 +24,7 @@ const dbClient = new DoubleUpClient({
     diceCorePackageId: "",
     limboPackageId: "",
     limboCorePackageId: "",
+    partnerNftListId: "",
     plinkoPackageId: "",
     plinkoCorePackageId: "",
     plinkoVerifierId: "",
@@ -52,6 +53,7 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
     diceCorePackageId=""
     limboPackageId=""
     limboCorePackageId=""
+    partnerNftListId=""
     plinkoPackageId=""
     plinkoCorePackageId=""
     plinkoVerifierId=""
@@ -114,6 +116,39 @@ const { ok: resultOk, err: resultErr, results } = await getCoinflipResult({
     transactionResult
 });
 ```
+
+## Partner NFTs
+
+The following games are enabled for a reduced house edge for holders of selected NFT projects:
+
+- Range Dice
+- Rock, Paper, Scissors
+
+When initializing the client or react provider, include the `partnerNftListId` option or prop.
+
+Then, include `partnerNftId` in the call to the game. For example:
+
+```js
+<DoubleUpProvider
+    {...otherProps},
+    partnerNftListId="" <<<<<<<<<<<<
+>
+    <App />
+</DoubleUpProvider>
+
+...
+
+const { ok: gameOk, err: gameErr, gameSeed } = createRangeDice({
+    betType,
+    coin,
+    coinType,
+    partnerNftId, <<<<<<<<<<<<
+    range,
+    transactionBlock: txb
+});
+```
+
+If the player does not own the NFT passed in, then the call to the contract will fail.
 
 ## Games
 
@@ -245,7 +280,7 @@ const address = '0x...';
 
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount * numberOfDiscs, "u64")
+    txb.pure(lottery.ticket_cost, "u64")
 );
 
 const tickets = [{

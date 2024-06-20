@@ -13,8 +13,10 @@ const suiKit = new SuiKit({ mnemonics: MNEMONICS });
 // const DESUI_PLINKO_CORE_PACKAGE_ID = "0xe73647314c4d0d007d3e65c9eb0c609104a4d03a0743b4b7177752bcb1586ac3";
 // const DESUI_PLINKO_VERIFIER_ID = "0x85fed939bc09d61a314a9c0d4d16370be788a538f351b82b6b3db1ae4f1c7374";
 
-// const DESUI_RANGE_DICE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
-// const DESUI_RANGE_DICE_CORE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
+const DESUI_RANGE_DICE_PACKAGE_ID = "0x5a84080100343d7d027737e6f09057f8a3fb036414e25435d46bc7cff9fc7488";
+const DESUI_RANGE_DICE_CORE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
+
+// const DESUI_PARTNER_NFT_ID = "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
 
 const dbClient = new DoubleUpClient({
     // limboCorePackageId: DESUI_LIMBO_CORE_PACKAGE_ID,
@@ -22,8 +24,9 @@ const dbClient = new DoubleUpClient({
     // plinkoCorePackageId: DESUI_PLINKO_CORE_PACKAGE_ID,
     // plinkoPackageId: DESUI_PLINKO_PACKAGE_ID,
     // plinkoVerifierId: DESUI_PLINKO_VERIFIER_ID,
-    // rangeDicePackageId: DESUI_RANGE_DICE_PACKAGE_ID,
-    // rangeDiceCorePackageId: DESUI_RANGE_DICE_CORE_PACKAGE_ID,
+    // partnerNftListId: DESUI_PARTNER_NFT_ID,
+    rangeDicePackageId: DESUI_RANGE_DICE_PACKAGE_ID,
+    rangeDiceCorePackageId: DESUI_RANGE_DICE_CORE_PACKAGE_ID,
 
     suiClient: suiKit.client()
 });
@@ -554,14 +557,8 @@ const testRPS = async () => {
             case 'dice':
                 testDice();
                 break;
-            case 'insideoutside':
-                testRangeDiceInsideOutside();
-                break;
             case 'limbo':
                 testLimbo();
-                break;
-            case 'overunder':
-                testRangeDiceOverUnder();
                 break;
             case 'lottery:get':
                 testLotteryGet();
@@ -580,6 +577,12 @@ const testRPS = async () => {
                 break;
             case 'plinko':
                 testPlinko();
+                break;
+            case 'range:io':
+                testRangeDiceInsideOutside();
+                break;
+            case 'range:ou':
+                testRangeDiceOverUnder();
                 break;
             case 'rps':
                 testRPS();
