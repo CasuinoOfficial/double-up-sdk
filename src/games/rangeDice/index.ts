@@ -29,11 +29,13 @@ export interface RangeDiceInput {
     betType: OverUnderBet | InsideOutsideBet;
     coin: TransactionObjectArgument;
     coinType: string;
+    partnerNftId?: string;
     range: number | number[];
     transactionBlock: TransactionBlockType;
 }
 
 interface InternalRangeDiceInput extends RangeDiceInput {
+    partnerNftListId?: string;
     rangeDicePackageId: string;
 }
 
@@ -112,11 +114,15 @@ export const createRangeDice = ({
     betType,
     coin,
     coinType,
+    partnerNftId,
+    partnerNftListId,
     range,
     transactionBlock,
     rangeDicePackageId
 }: InternalRangeDiceInput): RangeDiceResponse => {
     let res: RangeDiceResponse = { ok: true };
+
+    const shouldUsePartnerEdge = typeof partnerNftId === 'string' && typeof partnerNftListId === 'string';
 
     try {
         // This adds some extra entropy to the weighted dice itself
@@ -129,20 +135,39 @@ export const createRangeDice = ({
 
             const rangeMult = Math.trunc(range * MULTIPLIER);
 
-            const [receipt] = transactionBlock.moveCall({
-                target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_over_under_game`,
-                typeArguments: [coinType],
-                arguments: [
-                    transactionBlock.object(UNI_HOUSE_OBJ),
-                    transactionBlock.object(BLS_VERIFIER_OBJ),
-                    transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-                    transactionBlock.pure(rangeMult),
-                    transactionBlock.pure(betType),
-                    coin,
-                ]
-            });
-
-            res.receipt = receipt;
+            if (shouldUsePartnerEdge) {
+                const [receipt] = transactionBlock.moveCall({
+                    target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_over_under_game_with_partner`,
+                    typeArguments: [coinType],
+                    arguments: [
+                        transactionBlock.object(UNI_HOUSE_OBJ),
+                        transactionBlock.object(BLS_VERIFIER_OBJ),
+                        transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                        transactionBlock.pure(rangeMult),
+                        transactionBlock.pure(betType),
+                        coin,
+                        transactionBlock.object(partnerNftId),
+                        transactionBlock.object(partnerNftListId)
+                    ]
+                });
+    
+                res.receipt = receipt;
+            } else {
+                const [receipt] = transactionBlock.moveCall({
+                    target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_over_under_game`,
+                    typeArguments: [coinType],
+                    arguments: [
+                        transactionBlock.object(UNI_HOUSE_OBJ),
+                        transactionBlock.object(BLS_VERIFIER_OBJ),
+                        transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                        transactionBlock.pure(rangeMult),
+                        transactionBlock.pure(betType),
+                        coin,
+                    ]
+                });
+    
+                res.receipt = receipt;
+            }
         } else if (isInsideOutside(betType) && isRangeArray(range) && range.length === 2) {
             const [lower, upper] = range;
 
@@ -157,21 +182,41 @@ export const createRangeDice = ({
             const lowerMult = Math.trunc(lower * MULTIPLIER);
             const upperMult = Math.trunc(upper * MULTIPLIER);
 
-            const [receipt] = transactionBlock.moveCall({
-                target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_range_game`,
-                typeArguments: [coinType],
-                arguments: [
-                    transactionBlock.object(UNI_HOUSE_OBJ),
-                    transactionBlock.object(BLS_VERIFIER_OBJ),
-                    transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-                    transactionBlock.pure(lowerMult),
-                    transactionBlock.pure(upperMult),
-                    transactionBlock.pure(betType),
-                    coin,
-                ]
-            });
+            if (shouldUsePartnerEdge) {
+                const [receipt] = transactionBlock.moveCall({
+                    target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_range_game_with_partner`,
+                    typeArguments: [coinType],
+                    arguments: [
+                        transactionBlock.object(UNI_HOUSE_OBJ),
+                        transactionBlock.object(BLS_VERIFIER_OBJ),
+                        transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                        transactionBlock.pure(lowerMult),
+                        transactionBlock.pure(upperMult),
+                        transactionBlock.pure(betType),
+                        coin,
+                        transactionBlock.object(partnerNftId),
+                        transactionBlock.object(partnerNftListId)
+                    ]
+                });
 
-            res.receipt = receipt;
+                res.receipt = receipt;
+            } else {
+                const [receipt] = transactionBlock.moveCall({
+                    target: `${rangeDicePackageId}::${RANGE_DICE_MODULE_NAME}::start_range_game`,
+                    typeArguments: [coinType],
+                    arguments: [
+                        transactionBlock.object(UNI_HOUSE_OBJ),
+                        transactionBlock.object(BLS_VERIFIER_OBJ),
+                        transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                        transactionBlock.pure(lowerMult),
+                        transactionBlock.pure(upperMult),
+                        transactionBlock.pure(betType),
+                        coin,
+                    ]
+                });
+
+                res.receipt = receipt;
+            }
         } else {
             throw new Error('invalid bet type or range');
         }

@@ -76,6 +76,7 @@ interface DoubleUpClientInput {
   diceCorePackageId?: string;
   limboPackageId?: string;
   limboCorePackageId?: string;
+  partnerNftListId?: string;
   plinkoPackageId?: string;
   plinkoCorePackageId?: string;
   plinkoVerifierId?: string;
@@ -94,6 +95,7 @@ export class DoubleUpClient {
       diceCorePackageId = DICE_CORE_PACKAGE_ID,
       limboPackageId = LIMBO_PACKAGE_ID,
       limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
+      partnerNftListId,
       plinkoPackageId = PLINKO_PACKAGE_ID,
       plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
       plinkoVerifierId = PLINKO_VERIFIER_ID,
@@ -111,6 +113,8 @@ export class DoubleUpClient {
 
       this.limboPackageId = limboPackageId;
       this.limboCorePackageId = limboCorePackageId;
+
+      this.partnerNftListId = partnerNftListId;
 
       this.plinkoPackageId = plinkoPackageId;
       this.plinkoCorePackageId = plinkoCorePackageId;
@@ -133,6 +137,8 @@ export class DoubleUpClient {
 
     limboPackageId: string;
     limboCorePackageId: string;
+
+    partnerNftListId: string | undefined;
 
     plinkoPackageId: string;
     plinkoCorePackageId: string;
@@ -200,6 +206,7 @@ export class DoubleUpClient {
     // range dice
     createRangeDice = (input: RangeDiceInput) => createRangeDice({
       ...input,
+      partnerNftListId: this.partnerNftListId,
       rangeDicePackageId: this.rangeDicePackageId
     });
     getRangeDiceResult = (input: RangeDiceResultInput) => getRangeDiceResult({
@@ -211,6 +218,7 @@ export class DoubleUpClient {
     // rps
     createRockPaperScissors = (input: RPSInput) => createRockPaperScissors({
       ...input,
+      partnerNftListId: this.partnerNftListId,
       rpsPackageId: this.rpsPackageId
     });
     getRockPaperScissorsResult = (input: RPSResultInput) => getRockPaperScissorsResult({

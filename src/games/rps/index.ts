@@ -24,10 +24,12 @@ export interface RPSInput {
     betType: BetType;
     coin: TransactionObjectArgument;
     coinType: string;
+    partnerNftId?: string;
     transactionBlock: TransactionBlockType;
 }
 
 interface InternalRPSInput extends RPSInput {
+    partnerNftListId?: string;
     rpsPackageId: string;
 }
 
@@ -91,6 +93,8 @@ export const createRockPaperScissors = ({
     betType,
     coin,
     coinType,
+    partnerNftId,
+    partnerNftListId,
     rpsPackageId,
     transactionBlock
 } : InternalRPSInput): RPSResponse => {
@@ -100,20 +104,39 @@ export const createRockPaperScissors = ({
         // This adds some extra entropy to the coinflip itself
         const userRandomness = Buffer.from(nanoid(512), 'utf8');
 
-        const [receipt] = transactionBlock.moveCall({
-            target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game`,
-            typeArguments: [coinType],
-            arguments: [
-                transactionBlock.object(UNI_HOUSE_OBJ),
-                transactionBlock.object(BLS_VERIFIER_OBJ),
-                transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
-                transactionBlock.pure(betType),
-                coin,
-            ],    
-        });
+        if (typeof partnerNftId === 'string' && typeof partnerNftListId === 'string') {
+            const [receipt] = transactionBlock.moveCall({
+                target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game_with_partner`,
+                typeArguments: [coinType],
+                arguments: [
+                    transactionBlock.object(UNI_HOUSE_OBJ),
+                    transactionBlock.object(BLS_VERIFIER_OBJ),
+                    transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                    transactionBlock.pure(betType),
+                    coin,
+                    transactionBlock.object(partnerNftId),
+                    transactionBlock.object(partnerNftListId)
+                ],    
+            });
+            
+            res.receipt = receipt;
+        } else {
+            const [receipt] = transactionBlock.moveCall({
+                target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game`,
+                typeArguments: [coinType],
+                arguments: [
+                    transactionBlock.object(UNI_HOUSE_OBJ),
+                    transactionBlock.object(BLS_VERIFIER_OBJ),
+                    transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                    transactionBlock.pure(betType),
+                    coin,
+                ],    
+            });
+            
+            res.receipt = receipt;
+        }
 
         res.gameSeed = Buffer.from(userRandomness).toString("hex");
-        res.receipt = receipt;
     } catch (err) {
         res.ok = false;
         res.err = err;
