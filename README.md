@@ -245,7 +245,7 @@ const address = '0x...';
 
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount * numberOfDiscs, "u64")
+    txb.pure(lottery.ticket_cost, "u64")
 );
 
 const tickets = [{
