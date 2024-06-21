@@ -66,7 +66,7 @@ export const PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
 
 // roulette
 // ===============================================================================
-interface RouletteConfig {
+export interface RouletteConfig {
   coinType: string;
   initialSharedVersion: number;
   mutable: boolean;
@@ -74,57 +74,54 @@ interface RouletteConfig {
 };
 
 export const ROULETTE_PACKAGE_ID = "0xf4d8d82cd78b54759c962b50b4b434d86f0865cddb0631e939eb10d8bcaa1fd9";
-export const ROULETTE_MODULE_NAME = "roulette";
-export const ROULETTE_STRUCT_NAME = "Roulette";
+export const ROULETTE_CORE_PACKAGE_ID = "0xf4d8d82cd78b54759c962b50b4b434d86f0865cddb0631e939eb10d8bcaa1fd9";
+export const ROULETTE_MODULE_NAME = "single_roulette";
+export const ROULETTE_STRUCT_NAME = "SingleRoulette";
 
 export const ROULETTE_CONFIGS: RouletteConfig[] = [
   {
     coinType: SUI_COIN_TYPE,
-    objectId: "0x8d51882ebf6e1b028a2c55484f748bb046c41dbb6cd6b882a45531eef7b0b59f",
+    objectId: "0x687a904bfebe390e517617a5d00271f55879116d62bff9f404bea4bed4a8cc59",
     initialSharedVersion: 91929636,
     mutable: true
   },
   {
     coinType: BUCK_COIN_TYPE,
-    objectId: "0x13d5ddb9fb5a4ed750418bb33c4fb3624b9e216d40328af2257138afd3fc7f8f",
+    objectId: "0x631877abeb1dd9d1c7294b77bc5ad63f38a3de2e69133b6a0b037b14de0ca39c",
     initialSharedVersion: 91929637,
     mutable: true
   },
   {
     coinType: FUD_COIN_TYPE,
-    objectId: "0xb5801fddf758acc8576ebd6988dc9150baf80be78036279aab4afc04a004a5e3",
-    initialSharedVersion: 92390311,
+    objectId: "0x2cf3cc5006558f99fee797c46f3ebac33f2f520e7773c27e37cab976aaddbc08",
+    initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: PUP_COIN_TYPE,
-    objectId: "0x0fe8cacaeecf7462dbe952a190c2d130ea191637e06e015896e8f65106b4ce0f",
+    objectId: "0xfc964d514556d940e533cc4dfbbc16b77a9afa0cfd8aae013227ff4381058a2a",
     initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: NAVX_COIN_TYPE,
-    objectId: "0xc4f56c31b71b2e4c367bebfb7cb7a3caf5156ee6c02db64b4aef75d294b5769f",
+    objectId: "0xc321edfbac25b2750e34dfc77a35ec91d201d2f9d5ca2e0f7ae46dd0bf25da42",
     initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: STASH_COIN_TYPE,
-    objectId: "0xeaf9087aca7ab406cb520a5ab229bffca3f6931544f5a51ae5d0281653aa0855",
+    objectId: "0x32b44c66043c83c35db3c0c5e5bab2d7577bfe6383966dc83ac3c202da9b3d6d",
     initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: SUICANE_COIN_TYPE,
-    objectId: "0xe295e13bd9d84e3c1ae2a3f7f9986fac733d64bfeb5bf79346688032042295e1",
+    objectId: "0xf2ec81f41b065d47d568e956caf085446c43d10f7396c9b29914b65b8be37413",
     initialSharedVersion: 92390320,
     mutable: true
   }
 ];
-
-export const getRouletteConfig = (coinType: string): RouletteConfig | undefined => (
-  ROULETTE_CONFIGS.find(config => config.coinType === coinType)
-);
 
 // ===============================================================================
 
