@@ -8,7 +8,7 @@ import { testLimbo } from './limbo';
 import { testLotteryBuy, testLotteryGet, testLotteryTickets, testLotteryRedeem, testLotteryResults } from './lottery';
 import { testPlinko } from './plinko';
 import { testRangeDiceInsideOutside, testRangeDiceOverUnder } from './rangeDice';
-import { testRouletteCreate, testRouletteExists } from './roulette';
+import { testRouletteAdd, testRouletteCreate, testRouletteExists } from './roulette';
 import { testRPS } from './rps';
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -80,6 +80,9 @@ const dbClient = new DoubleUpClient({
                 break;
             case 'range:ou':
                 testRangeDiceOverUnder(dbClient, suiKit);
+                break;
+            case 'roulette:add':
+                testRouletteAdd(dbClient, suiKit);
                 break;
             case 'roulette:create':
                 testRouletteCreate(dbClient, suiKit);

@@ -16,9 +16,12 @@
     "test:lottery:results": "FUNCTION=lottery:results pnpm test",
     "test:lottery:tickets": "FUNCTION=lottery:tickets pnpm test",
     "test:plinko": "FUNCTION=plinko pnpm test",
-    "test:rps": "FUNCTION=rps pnpm test",
     "test:range:io": "FUNCTION=range:io pnpm test",
-    "test:range:ou": "FUNCTION=range:ou pnpm test"
+    "test:range:ou": "FUNCTION=range:ou pnpm test",
+    "test:roulette:add": "FUNCTION=roulette:add pnpm test",
+    "test:roulette:create": "FUNCTION=roulette:create pnpm test",
+    "test:roulette:exists": "FUNCTION=roulette:exists pnpm test",
+    "test:rps": "FUNCTION=rps pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
