@@ -10,6 +10,8 @@ import {
   PLINKO_PACKAGE_ID,
   PLINKO_CORE_PACKAGE_ID,
   PLINKO_VERIFIER_ID,
+  ROULETTE_PACKAGE_ID,
+  ROULETTE_CORE_PACKAGE_ID,
   RPS_CORE_PACKAGE_ID,
   RPS_PACKAGE_ID,
   RANGE_DICE_PACKAGE_ID,
@@ -63,6 +65,17 @@ import {
 } from "../games/rangeDice";
 
 import {
+  addRouletteBet,
+  createRouletteTable,
+  doesRouletteTableExist,
+  getCreatedRouletteTable,
+  CreatedRouletteTableInput,
+  RouletteAddBetInput,
+  RouletteTableInput,
+  RouletteTableExistsInput
+} from "../games/roulette";
+
+import {
   createRockPaperScissors,
   getRockPaperScissorsResult,
   RPSInput,
@@ -76,12 +89,15 @@ interface DoubleUpClientInput {
   diceCorePackageId?: string;
   limboPackageId?: string;
   limboCorePackageId?: string;
+  origin?: string;
   partnerNftListId?: string;
   plinkoPackageId?: string;
   plinkoCorePackageId?: string;
   plinkoVerifierId?: string;
   rangeDicePackageId?: string;
   rangeDiceCorePackageId?: string;
+  roulettePackageId?: string;
+  rouletteCorePackageId?: string;
   rpsPackageId?: string;
   rpsCorePackageId?: string;
   suiClient?: SuiClient;
@@ -95,12 +111,15 @@ export class DoubleUpClient {
       diceCorePackageId = DICE_CORE_PACKAGE_ID,
       limboPackageId = LIMBO_PACKAGE_ID,
       limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
+      origin = '',
       partnerNftListId,
       plinkoPackageId = PLINKO_PACKAGE_ID,
       plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
       plinkoVerifierId = PLINKO_VERIFIER_ID,
       rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
       rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
+      roulettePackageId = ROULETTE_PACKAGE_ID,
+      rouletteCorePackageId = ROULETTE_CORE_PACKAGE_ID,
       rpsPackageId = RPS_PACKAGE_ID,
       rpsCorePackageId = RPS_CORE_PACKAGE_ID,
       suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") })
@@ -114,6 +133,8 @@ export class DoubleUpClient {
       this.limboPackageId = limboPackageId;
       this.limboCorePackageId = limboCorePackageId;
 
+      this.origin = origin;
+
       this.partnerNftListId = partnerNftListId;
 
       this.plinkoPackageId = plinkoPackageId;
@@ -122,6 +143,9 @@ export class DoubleUpClient {
 
       this.rangeDicePackageId = rangeDicePackageId;
       this.rangeDiceCorePackageId = rangeDiceCorePackageId;
+
+      this.roulettePackageId = roulettePackageId;
+      this.rouletteCorePackageId = rouletteCorePackageId;
 
       this.rpsPackageId = rpsPackageId;
       this.rpsCorePackageId = rpsCorePackageId;
@@ -138,6 +162,8 @@ export class DoubleUpClient {
     limboPackageId: string;
     limboCorePackageId: string;
 
+    origin: string;
+
     partnerNftListId: string | undefined;
 
     plinkoPackageId: string;
@@ -146,6 +172,9 @@ export class DoubleUpClient {
 
     rangeDicePackageId: string;
     rangeDiceCorePackageId: string;
+
+    roulettePackageId: string;
+    rouletteCorePackageId: string;
 
     rpsPackageId: string;
     rpsCorePackageId: string;
@@ -213,6 +242,25 @@ export class DoubleUpClient {
       ...input,
       rangeDiceCorePackageId: this.rangeDiceCorePackageId,
       suiClient: this.suiClient
+    });
+
+    // roulette
+    addRouletteBet = (input: RouletteAddBetInput) => addRouletteBet({
+      ...input,
+      origin: this.origin,
+      roulettePackageId: this.roulettePackageId
+    });
+    createRouletteTable = (input: RouletteTableInput) => createRouletteTable({
+      ...input,
+      roulettePackageId: this.roulettePackageId
+    });
+    doesRouletteTableExist = (input: RouletteTableExistsInput) => doesRouletteTableExist({
+      ...input,
+      roulettePackageId: this.roulettePackageId
+    });
+    getCreatedRouletteTable = (input: CreatedRouletteTableInput) => getCreatedRouletteTable({
+      ...input,
+      roulettePackageId: this.roulettePackageId
     });
 
     // rps
