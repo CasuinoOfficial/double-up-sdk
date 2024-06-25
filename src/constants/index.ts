@@ -9,6 +9,7 @@ export const PUP_COIN_TYPE = "0x980ec1e7d5a3d11c95039cab901f02a044df2d82bc79d99b
 export const STASH_COIN_TYPE="0x2cff601fe16f622fd6203f8f64bef4e68d687f51f4d06f13c2bbba17cb84c87e::stash::STASH"
 export const SUI_COIN_TYPE = "0x2::sui::SUI";
 export const SUICANE_COIN_TYPE = "0x8c47c0bde84b7056520a44f46c56383e714cc9b6a55e919d8736a34ec7ccb533::suicune::SUICUNE";
+export const VSUI_COIN_TYPE = "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT";
 // ===============================================================================
 
 // coinflip
@@ -73,52 +74,58 @@ export interface RouletteConfig {
   objectId: string;
 };
 
-export const ROULETTE_PACKAGE_ID = "0xf4d8d82cd78b54759c962b50b4b434d86f0865cddb0631e939eb10d8bcaa1fd9";
-export const ROULETTE_CORE_PACKAGE_ID = "0xf4d8d82cd78b54759c962b50b4b434d86f0865cddb0631e939eb10d8bcaa1fd9";
+export const ROULETTE_PACKAGE_ID = "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
+export const ROULETTE_CORE_PACKAGE_ID = "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
 export const ROULETTE_MODULE_NAME = "single_roulette";
 export const ROULETTE_STRUCT_NAME = "SingleRoulette";
 
 export const ROULETTE_CONFIGS: RouletteConfig[] = [
   {
     coinType: SUI_COIN_TYPE,
-    objectId: "0x687a904bfebe390e517617a5d00271f55879116d62bff9f404bea4bed4a8cc59",
+    objectId: "0x3401a61166a84e6431b00def26f8cc2b87f78737a8d5a94c474afc1f28484629",
     initialSharedVersion: 91929636,
     mutable: true
   },
   {
     coinType: BUCK_COIN_TYPE,
-    objectId: "0x631877abeb1dd9d1c7294b77bc5ad63f38a3de2e69133b6a0b037b14de0ca39c",
+    objectId: "0x366ec05b281fdb99e5005432a914dbbacb3ab7d3fea87926540b36859b42870e",
     initialSharedVersion: 91929637,
     mutable: true
   },
   {
     coinType: FUD_COIN_TYPE,
-    objectId: "0x2cf3cc5006558f99fee797c46f3ebac33f2f520e7773c27e37cab976aaddbc08",
-    initialSharedVersion: 214343544,
+    objectId: "0x739fc1368d7b358b76a693435b874f594e3e05ff0f942ea9d62cb62754c65c3c",
+    initialSharedVersion: 92390311,
     mutable: true
   },
   {
     coinType: PUP_COIN_TYPE,
-    objectId: "0xfc964d514556d940e533cc4dfbbc16b77a9afa0cfd8aae013227ff4381058a2a",
+    objectId: "0x6e3f060a29490bc82d9c3d52a42f7e4e549d8d1fd89ecd769a3311a3c60f6fef",
     initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: NAVX_COIN_TYPE,
-    objectId: "0xc321edfbac25b2750e34dfc77a35ec91d201d2f9d5ca2e0f7ae46dd0bf25da42",
+    objectId: "0x8d7e9a860968f8c2b0dd3ffe47ff184f43c07ee764bba1ac1855012a3860bc68",
     initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: STASH_COIN_TYPE,
-    objectId: "0x32b44c66043c83c35db3c0c5e5bab2d7577bfe6383966dc83ac3c202da9b3d6d",
+    objectId: "0x955e47ef974d82af3f5b42e7c04137e38f0e5f358abaf97cb932653237d9813a",
     initialSharedVersion: 214343544,
     mutable: true
   },
   {
     coinType: SUICANE_COIN_TYPE,
-    objectId: "0xf2ec81f41b065d47d568e956caf085446c43d10f7396c9b29914b65b8be37413",
+    objectId: "0xf3a3a1f0223e20a195ac5f3db3097e2b004f8d74cac4c170489d6aa91ac892ad",
     initialSharedVersion: 92390320,
+    mutable: true
+  },
+  {
+    coinType: VSUI_COIN_TYPE,
+    objectId: "0xa441ee45c1f900451ee3939e9879090e9ebdd0a8f7fb90e66558a4a3af72f46e",
+    initialSharedVersion: 214343544,
     mutable: true
   }
 ];
