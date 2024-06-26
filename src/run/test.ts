@@ -8,7 +8,7 @@ import { testLimbo } from './limbo';
 import { testLotteryBuy, testLotteryGet, testLotteryTickets, testLotteryRedeem, testLotteryResults } from './lottery';
 import { testPlinko } from './plinko';
 import { testRangeDiceInsideOutside, testRangeDiceOverUnder } from './rangeDice';
-import { testRouletteAdd, testRouletteCreate, testRouletteExists } from './roulette';
+import { testRouletteAdd, testRouletteCreate, testRouletteExists, testRouletteStart } from './roulette';
 import { testRPS } from './rps';
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -27,8 +27,8 @@ const suiKit = new SuiKit({ mnemonics: MNEMONICS });
 const DESUI_RANGE_DICE_PACKAGE_ID = "0x5a84080100343d7d027737e6f09057f8a3fb036414e25435d46bc7cff9fc7488";
 const DESUI_RANGE_DICE_CORE_PACKAGE_ID = "0x7a05d26f35fee4e6ab9d59cb6f7f48e90cefe2c0742e304b555fa3be8dcf2cea";
 
-const DESUI_ROULETTE_PACKAGE_ID = "0x2786e5eceea8a2f8883662439259a255688445581f22b0ba7b5502d45abd0096";
-const DESUI_ROULETTE_CORE_PACKAGE_ID = "0x54c6adf9f5e1d646d96b4f2977e1e1af96b1da381eebec3f423ccbb3abe55491";
+const DESUI_ROULETTE_PACKAGE_ID = "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
+const DESUI_ROULETTE_CORE_PACKAGE_ID = "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
 
 const dbClient = new DoubleUpClient({
     // limboCorePackageId: DESUI_LIMBO_CORE_PACKAGE_ID,
@@ -89,6 +89,9 @@ const dbClient = new DoubleUpClient({
                 break;
             case 'roulette:exists':
                 testRouletteExists(dbClient, suiKit);
+                break;
+            case 'roulette:start':
+                testRouletteStart(dbClient, suiKit);
                 break;
             case 'rps':
                 testRPS(dbClient, suiKit);

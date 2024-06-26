@@ -26,6 +26,12 @@ import {
   CreatedRouletteTableResponse,
   RouletteAddBetInput,
   RouletteAddBetResponse,
+  RouletteRemoveBetInput,
+  RouletteRemoveBetResponse,
+  RouletteResultInput,
+  RouletteResultResponse,
+  RouletteStartInput,
+  RouletteStartResponse,
   RouletteTableInput,
   RouletteTableResponse,
   RouletteTableExistsInput,
@@ -55,7 +61,10 @@ interface DoubleUpContextState {
   getPlinkoResult: (input: PlinkoResultInput) => Promise<PlinkoResultResponse>;
   getRangeDiceResult: (input: RangeDiceResultInput) => Promise<RangeDiceResultResponse>;
   getRockPaperScissorsResult: (input: RPSResultInput) => Promise<RPSResultResponse>;
+  getRouletteResult: (input: RouletteResultInput) => Promise<RouletteResultResponse>;
   redeemLotteryTickets: (input: RedeemTicketsInput) => RedeemTicketsResponse;
+  removeRouletteBet: (input: RouletteRemoveBetInput) => RouletteRemoveBetResponse;
+  startRoulette: (input: RouletteStartInput) => RouletteStartResponse;
 }
 
 interface DoubleupProviderProps {
@@ -149,8 +158,12 @@ const DoubleUpProvider = ({
   const getPlinkoResult = dbClient.getPlinkoResult;
   const getRangeDiceResult = dbClient.getRangeDiceResult;
   const getRockPaperScissorsResult = dbClient.getRockPaperScissorsResult;
+  const getRouletteResult = dbClient.getRouletteResult;
 
   const redeemLotteryTickets = dbClient.redeemLotteryTickets;
+  const removeRouletteBet = dbClient.removeRouletteBet;
+
+  const startRoulette = dbClient.startRoulette;
 
   const state: DoubleUpContextState = {
     addRouletteBet,
@@ -174,7 +187,10 @@ const DoubleUpProvider = ({
     getPlinkoResult,
     getRangeDiceResult,
     getRockPaperScissorsResult,
-    redeemLotteryTickets
+    getRouletteResult,
+    redeemLotteryTickets,
+    removeRouletteBet,
+    startRoulette
   };
 
   return (

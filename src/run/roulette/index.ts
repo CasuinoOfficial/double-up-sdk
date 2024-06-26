@@ -113,11 +113,43 @@ export const testRouletteExists = async (dbClient, suiKit) => {
 
         console.log("Signed and sent transaction.");
         console.log(transactionResult);
+    } catch (err) {
+        console.log(err);
+    }
+};
 
-        // console.log(transactionResult.effects.modifiedAtVersions)
-        // console.log(transactionResult.effects.sharedObjects)
-        // console.log(transactionResult.effects.gasObject)
-        // console.log(transactionResult.objectChanges)
+export const testRouletteStart = async (dbClient, suiKit) => {
+    try {
+        const txb = new SuiTxBlock();
+
+        const address = suiKit.currentAddress();
+
+        const { ok: startOk, err: startErr, gameSeed } = dbClient.startRoulette({
+            coinType: SUI_COIN_TYPE,
+            transactionBlock: txb.txBlock
+        });
+
+        if (!startOk) {
+            throw startErr;
+        }
+
+        const transactionResult = await suiKit.signAndSendTxn(txb);
+
+        if (transactionResult.effects.status.status === 'failure') {
+            throw new Error(transactionResult.effects.status.error);
+        }
+
+        const { ok: resultOk, err: resultErr, results } = await dbClient.getRouletteResult({
+            coinType: SUI_COIN_TYPE,
+            gameSeed,
+            transactionResult
+        });
+
+        if (!resultOk) {
+            throw resultErr;
+        }
+
+        console.log(results);
     } catch (err) {
         console.log(err);
     }
