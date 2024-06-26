@@ -1,3 +1,4 @@
+import { bcs } from "@mysten/sui.js/bcs";
 import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 import {
     TransactionArgument,
@@ -8,16 +9,13 @@ import {
 import { nanoid } from 'nanoid';
 
 import {
-    BLS_SETTLER_MODULE_NAME,
     BLS_VERIFIER_OBJ,
     ROULETTE_CONFIGS,
     ROULETTE_MODULE_NAME,
-    ROULETTE_STRUCT_NAME,
     UNI_HOUSE_OBJ,
-    UNIHOUSE_CORE_PACKAGE,
     RouletteConfig
 } from "../../constants";
-import { getBlsGameInfos, sleep } from "../../utils";
+import { getRouletteTableInfo, sleep } from "../../utils";
 
 type BetRed = 0;
 type BetBlack = 1;
@@ -76,6 +74,74 @@ interface InternalRouletteAddBetInput extends RouletteAddBetInput {
 export interface RouletteAddBetResponse {
     ok: boolean;
     err?: Error;
+    betId?: TransactionArgument;
+}
+
+interface RouletteParsedJson {
+    bet_id: string;
+    creator: string;
+    outcome: string;
+    round_number: string;
+    table_id: string;
+}
+
+export interface RouletteRemoveBetInput {
+    betId: string;
+    coinType: string;
+    player: string;
+    tableOwner: string;
+    transactionBlock: TransactionBlockType;
+}
+
+interface InternalRouletteRemoveBetInput extends RouletteRemoveBetInput {
+    origin: string;
+    roulettePackageId: string;
+}
+
+export interface RouletteRemoveBetResponse {
+    ok: boolean;
+    err?: Error;
+    returnedCoin?: TransactionArgument;
+}
+
+export interface RouletteResultInput {
+    coinType: string;
+    gameSeed: string;
+    pollInterval?: number;
+    transactionResult: SuiTransactionBlockResponse;
+}
+
+interface InternalRouletteResultInput extends RouletteResultInput {
+    rouletteCorePackageId: string;
+    suiClient: SuiClient;
+}
+
+interface RouletteResult {
+    roll: number;
+}
+
+export interface RouletteResultResponse {
+    ok: boolean;
+    err?: Error;
+    rawResults?: RouletteParsedJson[];
+    results?: RouletteResult[];
+    txDigests?: string[];
+}
+
+export interface RouletteStartInput {
+    coinType: string;
+    transactionBlock: TransactionBlockType;
+}
+
+interface InternalRouletteStartInput extends RouletteStartInput {
+    roulettePackageId: string;
+}
+
+export interface RouletteStartResponse {
+    ok: boolean;
+    err?: Error;
+    gameSeed?: string;
+    receipt?: TransactionArgument;
 }
 
 export interface RouletteTableInput {
@@ -146,18 +212,21 @@ export const addRouletteBet = ({
             }
         }
 
-        transactionBlock.moveCall({
+        const [betId] = transactionBlock.moveCall({
             target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::add_bet`,
             typeArguments: [coinType],
             arguments: [
+                transactionBlock.object(UNI_HOUSE_OBJ),
                 transactionBlock.object(rouletteConfig.objectId),
                 transactionBlock.pure(address, 'address'),
                 coin,
                 transactionBlock.pure(betType),
-                transactionBlock.pure(betNumber ? [betNumber] : []),
+                transactionBlock.pure(bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)),
                 transactionBlock.pure(origin)
             ]
         });
+
+        res.betId = betId;
     } catch (err) {
         res.ok = false;
         res.err = err;
@@ -166,7 +235,6 @@ export const addRouletteBet = ({
     return res;
 };
 
-// Add roulette to the transaction block
 export const createRouletteTable = ({
     coinType,
     roulettePackageId,
@@ -253,6 +321,150 @@ export const getCreatedRouletteTable = ({
         }
 
         res.result = { tableId };
+    } catch (err) {
+        res.ok = false;
+        res.err = err;
+    }
+
+    return res;
+};
+
+export const getRouletteResult = async ({
+    coinType,
+    gameSeed,
+    rouletteCorePackageId,
+    pollInterval = 3000,
+    suiClient,
+    transactionResult
+}: InternalRouletteResultInput): Promise<RouletteResultResponse> => {
+    const res: RouletteResultResponse = { ok: true };
+
+    try {
+        const gameInfos = getRouletteTableInfo({
+            coinType,
+            gameSeed,
+            transactionResult
+        });
+
+        let results: RouletteResult[] = [];
+        let rawResults: RouletteParsedJson[] = [];
+        let txDigests: string[] = [];
+
+        while (results.length === 0) {
+            try {
+                const events = await suiClient.queryEvents({
+                    query: {
+                        MoveEventType: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::BetResolvedEvent<${coinType}>`
+                    },
+                    limit: 50,
+                    order: 'descending',
+                });
+
+                results = events.data.reduce((acc, current) => {
+                    const {
+                        outcome,
+                        table_id
+                    } = current.parsedJson as RouletteParsedJson;
+
+                    if (table_id === gameInfos[0].tableId) {
+                        rawResults.push(current.parsedJson as RouletteParsedJson);
+
+                        txDigests.push(current.id.txDigest);
+
+                        acc.push({ roll: outcome });
+                    }
+
+                    return acc;
+                }, []);
+            } catch (err) {
+                console.error(`DOUBLEUP - Error querying events: ${err}`);
+            }
+
+            if (results.length === 0) {
+                console.log(`DOUBLEUP - No results found. Trying again in ${pollInterval / 1000} seconds.`);
+                await sleep(pollInterval);
+            }
+        }
+
+        res.results = results;
+        res.rawResults = rawResults;
+        res.txDigests = txDigests;
+    } catch (err) {
+        res.ok = false;
+        res.err = err;
+    }
+
+    return res;
+};
+
+export const removeRouletteBet = ({
+    betId,
+    coinType,
+    origin,
+    player,
+    roulettePackageId,
+    tableOwner,
+    transactionBlock
+}: InternalRouletteRemoveBetInput): RouletteRemoveBetResponse => {
+    const res: RouletteRemoveBetResponse = { ok: true };
+
+    try {
+        const rouletteConfig = getRouletteConfig(coinType);
+
+        if (rouletteConfig === undefined) {
+            throw new Error('no roulette support for selected coin');
+        }
+
+        const [coin] = transactionBlock.moveCall({
+            target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::remove_bet`,
+            typeArguments: [coinType],
+            arguments: [
+                transactionBlock.object(rouletteConfig.objectId),
+                transactionBlock.pure(tableOwner, 'address'),
+                transactionBlock.pure(player, 'address'),
+                transactionBlock.pure(betId),
+                transactionBlock.pure(origin)
+            ]
+        });
+
+        res.returnedCoin = coin;
+    } catch (err) {
+        res.ok = false;
+        res.err = err;
+    }
+
+    return res;
+};
+
+export const startRoulette = ({
+    coinType,
+    roulettePackageId,
+    transactionBlock
+}: InternalRouletteStartInput): RouletteStartResponse => {
+    const res: RouletteStartResponse = { ok: true };
+
+    try {
+        const rouletteConfig = getRouletteConfig(coinType);
+
+        if (rouletteConfig === undefined) {
+            throw new Error('no roulette support for selected coin');
+        }
+
+        const userRandomness = Buffer.from(nanoid(512), 'utf8');
+
+        const [,, receipt] = transactionBlock.moveCall({
+            target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::start_roll`,
+            typeArguments: [coinType],
+            arguments: [
+                transactionBlock.object(UNI_HOUSE_OBJ),
+                transactionBlock.object(BLS_VERIFIER_OBJ),
+                transactionBlock.pure(Array.from(userRandomness), "vector<u8>"),
+                transactionBlock.object(rouletteConfig.objectId),
+            ]
+        });
+
+        res.gameSeed = Buffer.from(userRandomness).toString("hex");
+        res.receipt = receipt;
     } catch (err) {
         res.ok = false;
         res.err = err;
