@@ -491,7 +491,14 @@ const [coin] = txb.splitCoins(
 
 // red
 const betType = 0;
-let betNumber;
+
+const { ok, err, betId } = addRouletteBet({
+    address: tableOwner,
+    betType,
+    coin,
+    coinType,
+    transactionBlock: txb
+});
 
 // bet on 15
 const betType = 2;
