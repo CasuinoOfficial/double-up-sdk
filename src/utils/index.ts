@@ -1,6 +1,12 @@
 import { SuiTransactionBlockResponse } from "@mysten/sui.js/client";
 
-import { BLS_SETTLER_MODULE_NAME, UNIHOUSE_PACKAGE, UNIHOUSE_CORE_PACKAGE } from "../constants";
+import {
+    BLS_SETTLER_MODULE_NAME,
+    ROULETTE_CORE_PACKAGE_ID,
+    ROULETTE_MODULE_NAME,
+    UNIHOUSE_PACKAGE,
+    UNIHOUSE_CORE_PACKAGE
+} from "../constants";
 
 interface GameInfo {
     gameCoinType: string;
@@ -25,6 +31,16 @@ interface GenericGameInfosInput {
     filterString: string;
     gameSeed: string;
     transactionResult: SuiTransactionBlockResponse;
+}
+
+interface RouletteTableInfoInput {
+    coinType: string;
+    gameSeed: string;
+    transactionResult: SuiTransactionBlockResponse;
+}
+
+interface RouletteTableInfo {
+    tableId: string;
 }
 
 // Function to sleep for a specified duration
@@ -109,4 +125,23 @@ export const getBlsGameInfosWithDraw = ({
         gameSeed,
         transactionResult
     });
+};
+
+export const getRouletteTableInfo = ({
+    coinType,
+    transactionResult
+}: RouletteTableInfoInput): RouletteTableInfo[] => {
+    const filterString = `${ROULETTE_CORE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`;
+
+    const objectChanges = transactionResult.objectChanges;
+
+    const gameInfos = (objectChanges as any[])
+        .filter(({ objectType }) => objectType === filterString)
+        .map(({ objectId }) => {
+            const tableId = objectId as string;
+
+            return { tableId };
+        });
+
+    return gameInfos;
 };

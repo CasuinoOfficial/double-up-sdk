@@ -21,9 +21,26 @@ import {
 import { LimboInput, LimboResultInput, LimboResponse, LimboResultResponse } from "../games/limbo";
 import { PlinkoInput, PlinkoResultInput, PlinkoResponse, PlinkoResultResponse } from "../games/plinko";
 import { RangeDiceInput, RangeDiceResultInput, RangeDiceResponse, RangeDiceResultResponse } from "src/games/rangeDice";
+import {
+  CreatedRouletteTableInput,
+  CreatedRouletteTableResponse,
+  RouletteAddBetInput,
+  RouletteAddBetResponse,
+  RouletteRemoveBetInput,
+  RouletteRemoveBetResponse,
+  RouletteResultInput,
+  RouletteResultResponse,
+  RouletteStartInput,
+  RouletteStartResponse,
+  RouletteTableInput,
+  RouletteTableResponse,
+  RouletteTableExistsInput,
+  RouletteTableExistsResponse
+} from "src/games/roulette";
 import { RPSInput, RPSResultInput, RPSResponse, RPSResultResponse } from "src/games/rps";
 
 interface DoubleUpContextState {
+  addRouletteBet: (input: RouletteAddBetInput) => RouletteAddBetResponse;
   buyLotteryTickets: (input: BuyTicketsInput) => BuyTicketsResponse;
   createCoinflip: (input: CoinflipInput) => CoinflipResponse;
   createDice: (input: DiceInput) => DiceResponse;
@@ -31,7 +48,10 @@ interface DoubleUpContextState {
   createPlinko: (input: PlinkoInput) => PlinkoResponse;
   createRangeDice: (input: RangeDiceInput) => RangeDiceResponse;
   createRockPaperScissors: (input: RPSInput) => RPSResponse;
+  createRouletteTable: (input: RouletteTableInput) => RouletteTableResponse;
+  doesRouletteTableExist: (input: RouletteTableExistsInput) => RouletteTableExistsResponse;
   getCoinflipResult: (input: CoinflipResultInput) => Promise<CoinflipResultResponse>;
+  getCreatedRouletteTable: (input: CreatedRouletteTableInput) => CreatedRouletteTableResponse;
   getDiceResult: (input: DiceResultInput) => Promise<DiceResultResponse>;
   getLottery: () => Promise<LotteryResponse>;
   getLotteryDrawingResult: (input: DrawingResultInput) => Promise<DrawingResultResponse>;
@@ -41,7 +61,10 @@ interface DoubleUpContextState {
   getPlinkoResult: (input: PlinkoResultInput) => Promise<PlinkoResultResponse>;
   getRangeDiceResult: (input: RangeDiceResultInput) => Promise<RangeDiceResultResponse>;
   getRockPaperScissorsResult: (input: RPSResultInput) => Promise<RPSResultResponse>;
+  getRouletteResult: (input: RouletteResultInput) => Promise<RouletteResultResponse>;
   redeemLotteryTickets: (input: RedeemTicketsInput) => RedeemTicketsResponse;
+  removeRouletteBet: (input: RouletteRemoveBetInput) => RouletteRemoveBetResponse;
+  startRoulette: (input: RouletteStartInput) => RouletteStartResponse;
 }
 
 interface DoubleupProviderProps {
@@ -52,12 +75,15 @@ interface DoubleupProviderProps {
   diceCorePackageId?: string;
   limboPackageId?: string;
   limboCorePackageId?: string;
+  origin?: string;
   partnerNftListId?: string;
   plinkoPackageId?: string;
   plinkoCorePackageId?: string;
   plinkoVerifierId?: string;
   rangeDicePackageId?: string;
   rangeDiceCorePackageId?: string;
+  roulettePackageId?: string;
+  rouletteCorePackageId?: string;
   rpsPackageId?: string;
   rpsCorePackageId?: string;
   suiClient?: SuiClient;
@@ -73,12 +99,15 @@ const DoubleUpProvider = ({
   diceCorePackageId,
   limboPackageId,
   limboCorePackageId,
+  origin,
   partnerNftListId,
   plinkoPackageId,
   plinkoCorePackageId,
   plinkoVerifierId,
   rangeDicePackageId,
   rangeDiceCorePackageId,
+  roulettePackageId,
+  rouletteCorePackageId,
   rpsPackageId,
   rpsCorePackageId,
   suiClient
@@ -90,19 +119,23 @@ const DoubleUpProvider = ({
     diceCorePackageId,
     limboPackageId,
     limboCorePackageId,
+    origin,
     partnerNftListId,
     plinkoPackageId,
     plinkoCorePackageId,
     plinkoVerifierId,
     rangeDicePackageId,
     rangeDiceCorePackageId,
+    roulettePackageId,
+    rouletteCorePackageId,
     rpsPackageId,
     rpsCorePackageId,
     suiClient
   });
 
+  const addRouletteBet = dbClient.addRouletteBet;
+
   const buyLotteryTickets = dbClient.buyLotteryTickets;
-  const redeemLotteryTickets = dbClient.redeemLotteryTickets;
 
   const createCoinflip = dbClient.createCoinflip;
   const createDice = dbClient.createDice;
@@ -110,8 +143,12 @@ const DoubleUpProvider = ({
   const createPlinko = dbClient.createPlinko;
   const createRangeDice = dbClient.createRangeDice;
   const createRockPaperScissors = dbClient.createRockPaperScissors;
+  const createRouletteTable = dbClient.createRouletteTable;
+
+  const doesRouletteTableExist = dbClient.doesRouletteTableExist;
 
   const getCoinflipResult = dbClient.getCoinflipResult;
+  const getCreatedRouletteTable = dbClient.getCreatedRouletteTable;
   const getDiceResult = dbClient.getDiceResult;
   const getLimboResult = dbClient.getLimboResult;
   const getLottery = dbClient.getLottery;
@@ -121,8 +158,15 @@ const DoubleUpProvider = ({
   const getPlinkoResult = dbClient.getPlinkoResult;
   const getRangeDiceResult = dbClient.getRangeDiceResult;
   const getRockPaperScissorsResult = dbClient.getRockPaperScissorsResult;
+  const getRouletteResult = dbClient.getRouletteResult;
+
+  const redeemLotteryTickets = dbClient.redeemLotteryTickets;
+  const removeRouletteBet = dbClient.removeRouletteBet;
+
+  const startRoulette = dbClient.startRoulette;
 
   const state: DoubleUpContextState = {
+    addRouletteBet,
     buyLotteryTickets,
     createCoinflip,
     createDice,
@@ -130,7 +174,10 @@ const DoubleUpProvider = ({
     createPlinko,
     createRangeDice,
     createRockPaperScissors,
+    createRouletteTable,
+    doesRouletteTableExist,
     getCoinflipResult,
+    getCreatedRouletteTable,
     getDiceResult,
     getLimboResult,
     getLottery,
@@ -140,7 +187,10 @@ const DoubleUpProvider = ({
     getPlinkoResult,
     getRangeDiceResult,
     getRockPaperScissorsResult,
-    redeemLotteryTickets
+    getRouletteResult,
+    redeemLotteryTickets,
+    removeRouletteBet,
+    startRoulette
   };
 
   return (

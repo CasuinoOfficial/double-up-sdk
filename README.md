@@ -447,43 +447,103 @@ const { ok: resultOk, err: resultErr, results } = await getRangeDiceResult({
 });
 ```
 
-### Rock, Paper, Scissors
+### Roulette
+
+#### Create Table
+
+```js
+const coinType = "0x2::sui::SUI";
+
+const { ok, err } = createRouletteTable({
+    coinType,
+    transactionBlock: txb
+});
+```
+
+#### Add Bet to Table
 
 betType
 
-| Value | Meaning  |
-| ----- | -------- |
-|   0   | Rock     |
-|   1   | Paper    |
-|   2   | Scissors |
-
-pollInterval (optional, default: 3000)
-
-milliseconds
-
+| Value | Meaning                |
+| ----- | ---------------------- |
+|   0   | Red                    |
+|   1   | Black                  |
+|   2   | Number                 |
+|   3   | Even                   |
+|   4   | Odd                    |
+|   5   | 1st 12 (1 - 12)        |
+|   6   | 2nd 12 (13 - 24)       |
+|   7   | 3rd 12 (25 - 36)       |
+|   8   | 1st 18 (1 - 18)        |
+|   9   | 2nd 18 (19 - 36)       |
+|   10  | 1st Row (1, 4, 7, ...) |
+|   11  | 2nd Row (2, 5, 8, ...) |
+|   12  | 3rd Row (3, 6, 9, ...) |
 
 ```js
+const coinType = "0x2::sui::SUI";
+const tableOwner = "0x...";
+
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount * numberOfDiscs, "u64")
+    txb.pure(betAmount, "u64")
 );
 
-const coinType = "0x2::sui::SUI";
-
-// rock
+// red
 const betType = 0;
 
-const { ok: gameOk, err: gameErr, gameSeed } = createRockPaperScissors({
+const { ok, err, betId } = addRouletteBet({
+    address: tableOwner,
     betType,
     coin,
     coinType,
     transactionBlock: txb
 });
 
+// bet on 15
+const betType = 2;
+const betNumber = 15;
+
+const { ok, err, betId } = addRouletteBet({
+    address: tableOwner,
+    betNumber,
+    betType,
+    coin,
+    coinType,
+    transactionBlock: txb
+});
+```
+
+#### Remove Bet from Table
+
+```js
+const coinType = "0x2::sui::SUI";
+
+const self = "0x...";
+const tableOwner = "0x...";
+
+const { ok, err, results } = await removeRouletteBet({
+    betId,
+    coinType,
+    player: self,
+    tableOwner,
+    transactionBlock
+});
+```
+
+#### Start Roll on your Table
+
+```js
+const coinType = "0x2::sui::SUI";
+
+const { ok: startOk, err: startErr, gameSeed } = startRoulette({
+    coinType,
+    transactionBlock: txb
+});
+
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, results } = await getRockPaperScissorsResult({
-    betType,
+const { ok: resultOk, err: resultErr, results } = await getRouletteResult({
     coinType,
     gameSeed,
     transactionResult
