@@ -69,8 +69,14 @@ import {
   createRouletteTable,
   doesRouletteTableExist,
   getCreatedRouletteTable,
+  getRouletteResult,
+  removeRouletteBet,
+  startRoulette,
   CreatedRouletteTableInput,
   RouletteAddBetInput,
+  RouletteRemoveBetInput,
+  RouletteResultInput,
+  RouletteStartInput,
   RouletteTableInput,
   RouletteTableExistsInput
 } from "../games/roulette";
@@ -259,6 +265,20 @@ export class DoubleUpClient {
       roulettePackageId: this.roulettePackageId
     });
     getCreatedRouletteTable = (input: CreatedRouletteTableInput) => getCreatedRouletteTable({
+      ...input,
+      roulettePackageId: this.roulettePackageId
+    });
+    getRouletteResult = (input: RouletteResultInput) => getRouletteResult({
+      ...input,
+      rouletteCorePackageId: this.rouletteCorePackageId,
+      suiClient: this.suiClient
+    });
+    removeRouletteBet = (input: RouletteRemoveBetInput) => removeRouletteBet({
+      ...input,
+      origin: this.origin,
+      roulettePackageId: this.roulettePackageId
+    });
+    startRoulette = (input: RouletteStartInput) => startRoulette({
       ...input,
       roulettePackageId: this.roulettePackageId
     });
