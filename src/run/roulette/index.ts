@@ -89,30 +89,18 @@ export const testRouletteCreate = async (dbClient, suiKit) => {
 
 export const testRouletteExists = async (dbClient, suiKit) => {
     try {
-        const txb = new SuiTxBlock();
-
         const address = suiKit.currentAddress();
 
-        const { ok: gameOk, err: gameErr, result } = dbClient.doesRouletteTableExist({
+        const { ok, err, tableExists } = await dbClient.doesRouletteTableExist({
             address,
-            coinType: SUI_COIN_TYPE,
-            transactionBlock: txb.txBlock
+            coinType: SUI_COIN_TYPE
         });
 
-        console.log("Added roulette table exists to transaction block.");
-
-        if (!gameOk) {
-            throw gameErr;
+        if (!ok) {
+            throw err;
         }
 
-        const transactionResult = await suiKit.signAndSendTxn(txb);
-
-        if (transactionResult.effects.status.status === 'failure') {
-            throw new Error(transactionResult.effects.status.error);
-        }
-
-        console.log("Signed and sent transaction.");
-        console.log(transactionResult);
+        console.log({ tableExists });
     } catch (err) {
         console.log(err);
     }

@@ -162,17 +162,17 @@ export interface RouletteTableResponse {
 export interface RouletteTableExistsInput {
     address: string;
     coinType: string;
-    transactionBlock: TransactionBlockType;
 }
 
 interface InternalRouletteTableExistsInput extends RouletteTableExistsInput {
-    roulettePackageId: string;
+    rouletteCorePackageId: string;
+    suiClient: SuiClient;
 }
 
 export interface RouletteTableExistsResponse {
     ok: boolean;
     err?: Error;
-    result?: TransactionArgument;
+    tableExists?: boolean;
 }
 
 const getRouletteConfig = (coinType: string): RouletteConfig | undefined => (
@@ -267,12 +267,12 @@ export const createRouletteTable = ({
     return res;
 }
 
-export const doesRouletteTableExist = ({
+export const doesRouletteTableExist = async ({
     address,
     coinType,
-    roulettePackageId,
-    transactionBlock
-}: InternalRouletteTableExistsInput): RouletteTableExistsResponse => {
+    rouletteCorePackageId,
+    suiClient
+}: InternalRouletteTableExistsInput): Promise<RouletteTableExistsResponse> => {
     const res: RouletteTableExistsResponse = { ok: true };
 
     try {
@@ -282,16 +282,17 @@ export const doesRouletteTableExist = ({
             throw new Error('no roulette support for selected coin');
         }
 
-        const [exists] = transactionBlock.moveCall({
-            target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::table_exists`,
-            typeArguments: [coinType],
-            arguments: [
-                transactionBlock.object(rouletteConfig.objectId),
-                transactionBlock.pure(address)
-            ]
+        const { data } = await suiClient.getDynamicFieldObject({
+            parentId: rouletteConfig.objectId,
+            name: {
+                type: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
+                value: {
+                    creator: address
+                }
+            }
         });
 
-        res.result = exists;
+        res.tableExists = !!data;
     } catch (err) {
         res.ok = false;
         res.err = err;
