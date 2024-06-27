@@ -24,6 +24,7 @@ const dbClient = new DoubleUpClient({
     diceCorePackageId: "",
     limboPackageId: "",
     limboCorePackageId: "",
+    origin=""
     partnerNftListId: "",
     plinkoPackageId: "",
     plinkoCorePackageId: "",
@@ -32,6 +33,8 @@ const dbClient = new DoubleUpClient({
     rangeDiceCorePackageId: "",
     rpsPackageId: "",
     rpsCorePackageId: "",
+    roulettePackageId="",
+    rouletteCorePackageId=""
     suiClient
 });
 ```
@@ -53,6 +56,7 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
     diceCorePackageId=""
     limboPackageId=""
     limboCorePackageId=""
+    origin=""
     partnerNftListId=""
     plinkoPackageId=""
     plinkoCorePackageId=""
@@ -61,6 +65,8 @@ const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
     rangeDiceCorePackageId=""
     rpsPackageId=""
     rpsCorePackageId=""
+    roulettePackageId=""
+    rouletteCorePackageId=""
     suiClient={suiClient}
 >
     <App />
@@ -457,6 +463,18 @@ const coinType = "0x2::sui::SUI";
 const { ok, err } = createRouletteTable({
     coinType,
     transactionBlock: txb
+});
+```
+
+#### Table Existence
+
+```js
+const address = "0x...";
+const coinType = "0x2::sui::SUI";
+
+const { ok, err, tableExists } = await doesRouletteTableExist({
+    address,
+    coinType
 });
 ```
 
