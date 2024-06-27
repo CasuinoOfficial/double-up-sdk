@@ -262,7 +262,8 @@ export class DoubleUpClient {
     });
     doesRouletteTableExist = (input: RouletteTableExistsInput) => doesRouletteTableExist({
       ...input,
-      roulettePackageId: this.roulettePackageId
+      rouletteCorePackageId: this.rouletteCorePackageId,
+      suiClient: this.suiClient
     });
     getCreatedRouletteTable = (input: CreatedRouletteTableInput) => getCreatedRouletteTable({
       ...input,

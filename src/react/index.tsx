@@ -49,7 +49,7 @@ interface DoubleUpContextState {
   createRangeDice: (input: RangeDiceInput) => RangeDiceResponse;
   createRockPaperScissors: (input: RPSInput) => RPSResponse;
   createRouletteTable: (input: RouletteTableInput) => RouletteTableResponse;
-  doesRouletteTableExist: (input: RouletteTableExistsInput) => RouletteTableExistsResponse;
+  doesRouletteTableExist: (input: RouletteTableExistsInput) => Promise<RouletteTableExistsResponse>;
   getCoinflipResult: (input: CoinflipResultInput) => Promise<CoinflipResultResponse>;
   getCreatedRouletteTable: (input: CreatedRouletteTableInput) => CreatedRouletteTableResponse;
   getDiceResult: (input: DiceResultInput) => Promise<DiceResultResponse>;
