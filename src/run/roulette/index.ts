@@ -125,12 +125,19 @@ export const testRouletteStart = async (dbClient, suiKit) => {
 
         if (transactionResult.effects.status.status === 'failure') {
             throw new Error(transactionResult.effects.status.error);
-        }
+        };
 
-        const { ok: resultOk, err: resultErr, results } = await dbClient.getRouletteResult({
+        // Get the current round number of the object
+        const { roundNumber } = await dbClient.doesRouletteTableExist({
+            address,
+            coinType: SUI_COIN_TYPE
+        });
+
+        const { ok: resultOk, err: resultErr, results, rawBetResults, rawResults } = await dbClient.getRouletteResult({
             coinType: SUI_COIN_TYPE,
             gameSeed,
-            transactionResult
+            transactionResult,
+            roundNumber
         });
 
         if (!resultOk) {
@@ -138,6 +145,7 @@ export const testRouletteStart = async (dbClient, suiKit) => {
         }
 
         console.log(results);
+        console.log('raws', rawBetResults, rawResults);
     } catch (err) {
         console.log(err);
     }

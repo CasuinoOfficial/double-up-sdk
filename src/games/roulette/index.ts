@@ -13,7 +13,8 @@ import {
     ROULETTE_CONFIGS,
     ROULETTE_MODULE_NAME,
     UNI_HOUSE_OBJ,
-    RouletteConfig
+    RouletteConfig,
+    ROULETTE_BET_SETTLED_EVENT
 } from "../../constants";
 import { getRouletteTableInfo, sleep } from "../../utils";
 
@@ -85,6 +86,24 @@ interface RouletteParsedJson {
     table_id: string;
 }
 
+interface BetResult {
+    bet_id: string;
+    is_win: string;
+    bet_type: number;
+    bet_number: number;
+    bet_size: string;
+    player: string;
+}
+
+interface BetSettledEvent {
+    table_id: string;
+    total_volume: number;
+    round_number: string;
+    creator: string;
+    bet_results: BetResult[];
+    origin: string;
+}
+
 export interface RouletteRemoveBetInput {
     betId: string;
     coinType: string;
@@ -107,8 +126,10 @@ export interface RouletteRemoveBetResponse {
 export interface RouletteResultInput {
     coinType: string;
     gameSeed: string;
+    roundNumber: string;
     pollInterval?: number;
     transactionResult: SuiTransactionBlockResponse;
+    withJson?: boolean;
 }
 
 interface InternalRouletteResultInput extends RouletteResultInput {
@@ -123,6 +144,7 @@ interface RouletteResult {
 export interface RouletteResultResponse {
     ok: boolean;
     err?: Error;
+    rawBetResults?: BetSettledEvent[];
     rawResults?: RouletteParsedJson[];
     results?: RouletteResult[];
     txDigests?: string[];
@@ -171,6 +193,7 @@ interface InternalRouletteTableExistsInput extends RouletteTableExistsInput {
 
 export interface RouletteTableExistsResponse {
     ok: boolean;
+    roundNumber?: string;
     err?: Error;
     tableExists?: boolean;
 }
@@ -292,7 +315,14 @@ export const doesRouletteTableExist = async ({
             }
         });
 
+        if (data.content?.dataType !== "moveObject") {
+            return null;
+          }
+        
+        const fields = data.content.fields as any;
+        res.roundNumber = fields.round_number;
         res.tableExists = !!data;
+        // res.roundNumber
     } catch (err) {
         res.ok = false;
         res.err = err;
@@ -336,7 +366,8 @@ export const getRouletteResult = async ({
     rouletteCorePackageId,
     pollInterval = 3000,
     suiClient,
-    transactionResult
+    roundNumber,
+    transactionResult,
 }: InternalRouletteResultInput): Promise<RouletteResultResponse> => {
     const res: RouletteResultResponse = { ok: true };
 
@@ -349,32 +380,54 @@ export const getRouletteResult = async ({
 
         let results: RouletteResult[] = [];
         let rawResults: RouletteParsedJson[] = [];
+        let rawBetResults: BetSettledEvent[] = [];
         let txDigests: string[] = [];
-
         while (results.length === 0) {
             try {
+                while(rawBetResults.length === 0) {
+                    const { data } = await suiClient.queryEvents({
+                        query: {
+                          MoveEventType: `${ROULETTE_BET_SETTLED_EVENT}<${coinType}>`,
+                        },
+                        limit: 50,
+                    });
+        
+                    for (let betEvents of data) {
+                        const {
+                            table_id,
+                            round_number
+                        } = betEvents.parsedJson as BetSettledEvent;
+                        if (table_id === gameInfos[0].tableId && roundNumber === round_number) {
+                            rawBetResults.push(betEvents.parsedJson as BetSettledEvent);
+                        };
+                    };
+                    
+                    if (rawBetResults.length === 0) {
+                        console.log(`DOUBLEUP - No bet results found found. Trying again in ${pollInterval / 1000} seconds.`);
+                        await sleep(pollInterval);
+                    }
+                }
+
                 const events = await suiClient.queryEvents({
                     query: {
                         MoveEventType: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::BetResolvedEvent<${coinType}>`
                     },
-                    limit: 50,
+                    limit: 30,
                     order: 'descending',
                 });
 
                 results = events.data.reduce((acc, current) => {
                     const {
                         outcome,
-                        table_id
+                        table_id,
+                        round_number
                     } = current.parsedJson as RouletteParsedJson;
 
-                    if (table_id === gameInfos[0].tableId) {
+                    if (table_id === gameInfos[0].tableId && roundNumber === round_number) {
                         rawResults.push(current.parsedJson as RouletteParsedJson);
-
                         txDigests.push(current.id.txDigest);
-
                         acc.push({ roll: outcome });
                     }
-
                     return acc;
                 }, []);
             } catch (err) {
@@ -390,6 +443,7 @@ export const getRouletteResult = async ({
         res.results = results;
         res.rawResults = rawResults;
         res.txDigests = txDigests;
+        res.rawBetResults = rawBetResults;
     } catch (err) {
         res.ok = false;
         res.err = err;
