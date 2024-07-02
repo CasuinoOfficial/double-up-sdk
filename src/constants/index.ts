@@ -142,8 +142,8 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 
 // range dice
 // ===============================================================================
-export const RANGE_DICE_PACKAGE_ID = "";
-export const RANGE_DICE_CORE_PACKAGE_ID = "";
+export const RANGE_DICE_PACKAGE_ID = "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
+export const RANGE_DICE_CORE_PACKAGE_ID = "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
 export const RANGE_DICE_MODULE_NAME = "dice_range";
 export const RANGE_DICE_STRUCT_NAME = "DiceRange";
 // ===============================================================================
