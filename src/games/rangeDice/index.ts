@@ -15,7 +15,7 @@ import {
     UNI_HOUSE_OBJ,
     UNIHOUSE_CORE_PACKAGE
 } from "../../constants";
-import { getBlsGameInfos, sleep } from "../../utils";
+import { getBlsGameInfos, getBlsGameInfosWithDraw, sleep } from "../../utils";
 
 // Note: 0 = Over, 1 = Under
 type OverUnderBet = 0 | 1;
@@ -242,7 +242,7 @@ export const getRangeDiceResult = async ({
     let res: RangeDiceResultResponse = { ok: true };
 
     try {
-        const gameInfos = getBlsGameInfos({
+        const gameInfos = getBlsGameInfosWithDraw({
             coinType,
             corePackageId: rangeDiceCorePackageId,
             gameSeed,
