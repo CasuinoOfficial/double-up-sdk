@@ -61,3 +61,5 @@ $ pnpm test:range:io
 ```sh
 $ pnpm test:range:ou
 ```
+
+### Roulette

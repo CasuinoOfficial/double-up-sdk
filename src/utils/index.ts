@@ -134,7 +134,6 @@ export const getRouletteTableInfo = ({
     const filterString = `${ROULETTE_CORE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`;
 
     const objectChanges = transactionResult.objectChanges;
-
     const gameInfos = (objectChanges as any[])
         .filter(({ objectType }) => objectType === filterString)
         .map(({ objectId }) => {

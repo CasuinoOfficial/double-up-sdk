@@ -78,6 +78,7 @@ export const ROULETTE_PACKAGE_ID = "0x6eb0205627621a882b9e478b3103a961d5e249e10f
 export const ROULETTE_CORE_PACKAGE_ID = "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
 export const ROULETTE_MODULE_NAME = "single_roulette";
 export const ROULETTE_STRUCT_NAME = "SingleRoulette";
+export const ROULETTE_BET_SETTLED_EVENT = `${ROULETTE_CORE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::BetSettledEvent`;
 
 export const ROULETTE_CONFIGS: RouletteConfig[] = [
   {

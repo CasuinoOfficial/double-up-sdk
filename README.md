@@ -561,9 +561,16 @@ const { ok: startOk, err: startErr, gameSeed } = startRoulette({
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
+// Get the current round number of the object
+const { roundNumber } = await doesRouletteTableExist({
+    address,
+    coinType: SUI_COIN_TYPE
+});
+
 const { ok: resultOk, err: resultErr, results } = await getRouletteResult({
     coinType,
     gameSeed,
-    transactionResult
+    transactionResult,
+    roundNumber
 });
 ```
