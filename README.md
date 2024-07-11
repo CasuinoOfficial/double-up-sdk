@@ -150,7 +150,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createRangeDice({
     coinType,
     partnerNftId, <<<<<<<<<<<<
     range,
-    transactionBlock: txb
+    transaction: txb
 });
 ```
 
@@ -177,7 +177,7 @@ const betType = 0;
 
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount, "u64")
+    txb.pure.u64(betAmount)
 );
 
 const coinType = "0x2::sui::SUI";
@@ -186,7 +186,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createCoinflip({
     betType,
     coin,
     coinType,
-    transactionBlock: txb
+    transaction: txb
 });
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
@@ -223,7 +223,7 @@ const betType = 0;
 
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount, "u64")
+    txb.pure.u64(betAmount)
 );
 
 const coinType = "0x2::sui::SUI";
@@ -232,7 +232,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createDice({
     betType,
     coin,
     coinType,
-    transactionBlock: txb
+    transaction: txb
 });
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
@@ -256,7 +256,7 @@ milliseconds
 ```js
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount, "u64")
+    txb.pure.u64(betAmount)
 );
 
 const coinType = "0x2::sui::SUI";
@@ -265,7 +265,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createLimbo({
     coin,
     coinType,
     multiplier: 50,
-    transactionBlock: txb
+    transaction: txb
 });
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
@@ -298,7 +298,7 @@ const tickets = [{
     address,
     coin,
     tickets,
-    transactionBlock: txb
+    transaction: txb
 });
 ```
 
@@ -380,7 +380,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createPlinko({
     coinType,
     numberOfDiscs: 50,
     plinkoType: 1,
-    transactionBlock: txb
+    transaction: txb
 });
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
@@ -440,7 +440,7 @@ const { ok: gameOk, err: gameErr, gameSeed } = createRangeDice({
     coin,
     coinType,
     range,
-    transactionBlock: txb
+    transaction: txb
 });
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });
@@ -462,7 +462,7 @@ const coinType = "0x2::sui::SUI";
 
 const { ok, err } = createRouletteTable({
     coinType,
-    transactionBlock: txb
+    transaction: txb
 });
 ```
 
@@ -504,7 +504,7 @@ const tableOwner = "0x...";
 
 const [coin] = txb.splitCoins(
     txb.gas,
-    txb.pure(betAmount, "u64")
+    txb.pure.u64(betAmount)
 );
 
 // red
@@ -515,7 +515,7 @@ const { ok, err, betId } = addRouletteBet({
     betType,
     coin,
     coinType,
-    transactionBlock: txb
+    transaction: txb
 });
 
 // bet on 15
@@ -528,7 +528,7 @@ const { ok, err, betId } = addRouletteBet({
     betType,
     coin,
     coinType,
-    transactionBlock: txb
+    transaction: txb
 });
 ```
 
@@ -545,7 +545,7 @@ const { ok, err, results } = await removeRouletteBet({
     coinType,
     player: self,
     tableOwner,
-    transactionBlock
+    transaction
 });
 ```
 
@@ -556,7 +556,7 @@ const coinType = "0x2::sui::SUI";
 
 const { ok: startOk, err: startErr, gameSeed } = startRoulette({
     coinType,
-    transactionBlock: txb
+    transaction: txb
 });
 
 const transactionResult = await signAndExecuteTransactionBlock({ ... });

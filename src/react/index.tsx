@@ -1,11 +1,21 @@
-import { SuiClient } from "@mysten/sui.js/client";
+import { SuiClient } from "@mysten/sui/client";
 
 import { ReactElement, ReactNode, createContext, useContext } from "react";
 
 import { DoubleUpClient } from "../client";
 
-import { CoinflipInput, CoinflipResultInput, CoinflipResponse, CoinflipResultResponse } from "../games/coinflip";
-import { DiceInput, DiceResultInput, DiceResponse, DiceResultResponse } from "../games/dice";
+import {
+  CoinflipInput,
+  CoinflipResultInput,
+  CoinflipResponse,
+  CoinflipResultResponse,
+} from "../games/coinflip";
+import {
+  DiceInput,
+  DiceResultInput,
+  DiceResponse,
+  DiceResultResponse,
+} from "../games/dice";
 import {
   BuyTicketsInput,
   BuyTicketsResponse,
@@ -16,11 +26,26 @@ import {
   LotteryTicketsInput,
   LotteryTicketsResponse,
   RedeemTicketsInput,
-  RedeemTicketsResponse
+  RedeemTicketsResponse,
 } from "../games/lottery";
-import { LimboInput, LimboResultInput, LimboResponse, LimboResultResponse } from "../games/limbo";
-import { PlinkoInput, PlinkoResultInput, PlinkoResponse, PlinkoResultResponse } from "../games/plinko";
-import { RangeDiceInput, RangeDiceResultInput, RangeDiceResponse, RangeDiceResultResponse } from "src/games/rangeDice";
+import {
+  LimboInput,
+  LimboResultInput,
+  LimboResponse,
+  LimboResultResponse,
+} from "../games/limbo";
+import {
+  PlinkoInput,
+  PlinkoResultInput,
+  PlinkoResponse,
+  PlinkoResultResponse,
+} from "../games/plinko";
+import {
+  RangeDiceInput,
+  RangeDiceResultInput,
+  RangeDiceResponse,
+  RangeDiceResultResponse,
+} from "src/games/rangeDice";
 import {
   CreatedRouletteTableInput,
   CreatedRouletteTableResponse,
@@ -35,9 +60,14 @@ import {
   RouletteTableInput,
   RouletteTableResponse,
   RouletteTableExistsInput,
-  RouletteTableExistsResponse
+  RouletteTableExistsResponse,
 } from "src/games/roulette";
-import { RPSInput, RPSResultInput, RPSResponse, RPSResultResponse } from "src/games/rps";
+import {
+  RPSInput,
+  RPSResultInput,
+  RPSResponse,
+  RPSResultResponse,
+} from "src/games/rps";
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => RouletteAddBetResponse;
@@ -49,21 +79,39 @@ interface DoubleUpContextState {
   createRangeDice: (input: RangeDiceInput) => RangeDiceResponse;
   createRockPaperScissors: (input: RPSInput) => RPSResponse;
   createRouletteTable: (input: RouletteTableInput) => RouletteTableResponse;
-  doesRouletteTableExist: (input: RouletteTableExistsInput) => Promise<RouletteTableExistsResponse>;
-  getCoinflipResult: (input: CoinflipResultInput) => Promise<CoinflipResultResponse>;
-  getCreatedRouletteTable: (input: CreatedRouletteTableInput) => CreatedRouletteTableResponse;
+  doesRouletteTableExist: (
+    input: RouletteTableExistsInput
+  ) => Promise<RouletteTableExistsResponse>;
+  getCoinflipResult: (
+    input: CoinflipResultInput
+  ) => Promise<CoinflipResultResponse>;
+  getCreatedRouletteTable: (
+    input: CreatedRouletteTableInput
+  ) => CreatedRouletteTableResponse;
   getDiceResult: (input: DiceResultInput) => Promise<DiceResultResponse>;
   getLottery: () => Promise<LotteryResponse>;
-  getLotteryDrawingResult: (input: DrawingResultInput) => Promise<DrawingResultResponse>;
+  getLotteryDrawingResult: (
+    input: DrawingResultInput
+  ) => Promise<DrawingResultResponse>;
   getLotteryHistory: () => Promise<LotteryHistoryResponse>;
-  getLotteryTickets: (input: LotteryTicketsInput) => Promise<LotteryTicketsResponse>;
+  getLotteryTickets: (
+    input: LotteryTicketsInput
+  ) => Promise<LotteryTicketsResponse>;
   getLimboResult: (input: LimboResultInput) => Promise<LimboResultResponse>;
   getPlinkoResult: (input: PlinkoResultInput) => Promise<PlinkoResultResponse>;
-  getRangeDiceResult: (input: RangeDiceResultInput) => Promise<RangeDiceResultResponse>;
-  getRockPaperScissorsResult: (input: RPSResultInput) => Promise<RPSResultResponse>;
-  getRouletteResult: (input: RouletteResultInput) => Promise<RouletteResultResponse>;
+  getRangeDiceResult: (
+    input: RangeDiceResultInput
+  ) => Promise<RangeDiceResultResponse>;
+  getRockPaperScissorsResult: (
+    input: RPSResultInput
+  ) => Promise<RPSResultResponse>;
+  getRouletteResult: (
+    input: RouletteResultInput
+  ) => Promise<RouletteResultResponse>;
   redeemLotteryTickets: (input: RedeemTicketsInput) => RedeemTicketsResponse;
-  removeRouletteBet: (input: RouletteRemoveBetInput) => RouletteRemoveBetResponse;
+  removeRouletteBet: (
+    input: RouletteRemoveBetInput
+  ) => RouletteRemoveBetResponse;
   startRoulette: (input: RouletteStartInput) => RouletteStartResponse;
 }
 
@@ -110,7 +158,7 @@ const DoubleUpProvider = ({
   rouletteCorePackageId,
   rpsPackageId,
   rpsCorePackageId,
-  suiClient
+  suiClient,
 }: DoubleupProviderProps): ReactElement => {
   const dbClient = new DoubleUpClient({
     coinflipPackageId,
@@ -130,7 +178,7 @@ const DoubleUpProvider = ({
     rouletteCorePackageId,
     rpsPackageId,
     rpsCorePackageId,
-    suiClient
+    suiClient,
   });
 
   const addRouletteBet = dbClient.addRouletteBet;
@@ -190,7 +238,7 @@ const DoubleUpProvider = ({
     getRouletteResult,
     redeemLotteryTickets,
     removeRouletteBet,
-    startRoulette
+    startRoulette,
   };
 
   return (
@@ -204,13 +252,10 @@ const useDoubleUp = (): DoubleUpContextState => {
   const context = useContext<DoubleUpContextState>(DoubleUpContext);
 
   if (context === undefined) {
-      throw new Error("useDoubleUp must be used in a DoubleupProvider");
+    throw new Error("useDoubleUp must be used in a DoubleupProvider");
   }
 
   return context;
 };
 
-export {
-    DoubleUpProvider,
-    useDoubleUp
-};
+export { DoubleUpProvider, useDoubleUp };

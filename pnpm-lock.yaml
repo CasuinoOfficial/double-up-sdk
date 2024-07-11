@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@mysten/sui.js':
+      '@mysten/sui':
         specifier: ^0.49.1
         version: 0.49.1
       '@scallop-io/sui-kit':
         specifier: ^0.45.0
-        version: 0.45.0(@mysten/sui.js@0.49.1)
+        version: 0.45.0(@mysten/sui@0.49.1)
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
@@ -53,7 +53,7 @@ packages:
   '@mysten/bcs@0.8.1':
     resolution: {integrity: sha512-wSEdP7QEfGQdb34g+7R0f3OdRqrv88iIABfJVDVJ6IsGLYVILreh8dZfNpZNUUyzctiyhX7zB9e/lR5qkddFPA==}
 
-  '@mysten/sui.js@0.49.1':
+  '@mysten/sui@0.49.1':
     resolution: {integrity: sha512-xMndhhlnlVYjMVmBkXnGs9wdw7/bh3R/QggD/DkqGG7Iq7RL2uldtAeIFYsPGfTua/TJW8RFX7q59RagIOwWdw==}
     engines: {node: '>=16'}
 
@@ -68,7 +68,7 @@ packages:
     resolution: {integrity: sha512-2eY7M5CPX3q/K3OO6ZA7WCDjy8lX1/jDDZlr1Qldckt9lXeRlDrEMhQ0OjaKD7RN03jdXWRhqVDR3FBQveEkSw==}
     engines: {node: '>=16'}
     peerDependencies:
-      '@mysten/sui.js': ^0.52.0
+      '@mysten/sui': ^0.52.0
 
   '@scure/base@1.1.6':
     resolution: {integrity: sha512-ok9AWwhcgYuGG3Zfhyqg+zwl+Wn5uE+dwC0NV/2qQkx4dABbb/bx96vWu8NSj+BNjjSjno+JRYRjle1jV08k3g==}
@@ -316,7 +316,7 @@ snapshots:
     dependencies:
       bs58: 5.0.0
 
-  '@mysten/sui.js@0.49.1':
+  '@mysten/sui@0.49.1':
     dependencies:
       '@mysten/bcs': 0.10.1
       '@noble/curves': 1.4.0
@@ -333,10 +333,10 @@ snapshots:
 
   '@noble/hashes@1.4.0': {}
 
-  '@scallop-io/sui-kit@0.45.0(@mysten/sui.js@0.49.1)':
+  '@scallop-io/sui-kit@0.45.0(@mysten/sui@0.49.1)':
     dependencies:
       '@mysten/bcs': 0.8.1
-      '@mysten/sui.js': 0.49.1
+      '@mysten/sui': 0.49.1
       '@noble/curves': 1.4.0
       '@noble/hashes': 1.4.0
       '@scure/bip39': 1.3.0
