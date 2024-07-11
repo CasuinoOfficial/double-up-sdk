@@ -77,6 +77,9 @@ export const testRPS = async (
     console.log("Retrieved rps results.");
     console.log(results);
     console.log(rawResults);
+    if (rawResults) {
+      console.log(rawResults[0]?.settlements[0]?.player_won);
+    }
     console.log(txDigests);
   } catch (err) {
     console.error(err);

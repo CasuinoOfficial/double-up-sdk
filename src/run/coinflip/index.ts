@@ -78,6 +78,6 @@ export const testCoinflip = async (
     console.log(rawResults);
     console.log(txDigests);
   } catch (err) {
-    console.error(err);
+    console.error("error", err);
   }
 };

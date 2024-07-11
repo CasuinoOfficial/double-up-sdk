@@ -77,7 +77,7 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 
 export const PLINKO_VERIFIER_ID =
   "0x898207c059a7e5d4e82cc7258ca6f1876f439265776efa502e8d1616cf198e37";
-export const PLINKO_VERIFIER_OBJ = Inputs.SharedObjectRef({
+export const PLINKO_VERIFIER_OBJ: any = Inputs.SharedObjectRef({
   objectId: PLINKO_VERIFIER_ID,
   initialSharedVersion: 91929635,
   mutable: true,
@@ -188,13 +188,13 @@ export const BLS_SETTLER_MODULE_NAME = "bls_settler";
 
 export const BLS_VERIFIER_ID =
   "0xc85af84c78bebac4fd91d8cc25d66461503258764402b4c06c9f3e8050b5bd2e";
-export const BLS_VERIFIER_OBJ = Inputs.SharedObjectRef({
+export const BLS_VERIFIER_OBJ: any = Inputs.SharedObjectRef({
   objectId: BLS_VERIFIER_ID,
   initialSharedVersion: 89762028,
   mutable: true,
 });
 
-export const CLOCK_OBJ = Inputs.SharedObjectRef({
+export const CLOCK_OBJ: any = Inputs.SharedObjectRef({
   objectId: "0x6",
   initialSharedVersion: 1,
   mutable: false,
@@ -202,7 +202,7 @@ export const CLOCK_OBJ = Inputs.SharedObjectRef({
 
 export const UNI_HOUSE_ID =
   "0x44d587c7f6b55fdf35d30143c67bc81911140e73e1ad9c7c17998dbd96cc1bc6";
-export const UNI_HOUSE_OBJ = Inputs.SharedObjectRef({
+export const UNI_HOUSE_OBJ: any = Inputs.SharedObjectRef({
   objectId: UNI_HOUSE_ID,
   initialSharedVersion: 89762024,
   mutable: true,

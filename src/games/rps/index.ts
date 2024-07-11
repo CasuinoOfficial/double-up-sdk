@@ -202,7 +202,6 @@ export const getRockPaperScissorsResult = async ({
 
             if (bet_size < payout_amount) {
               // win
-
               switch (betType) {
                 case ROCK:
                   res = SCISSORS;

@@ -28,7 +28,6 @@
   "license": "ISC",
   "dependencies": {
     "@mysten/sui": "^1.2.1",
-    "@scallop-io/sui-kit": "^1.0.0",
     "nanoid": "^5.0.7",
     "react": "^18.3.1"
   },
