@@ -38,6 +38,8 @@ export const testDice = async (
       throw gameErr;
     }
 
+    console.log("testDice check 0");
+
     const transactionResult = await client.signAndExecuteTransaction({
       signer: keypair,
       transaction: txb as any,
@@ -48,6 +50,8 @@ export const testDice = async (
         showObjectChanges: true,
       },
     });
+
+    console.log("testDice check 1");
 
     if (
       transactionResult?.effects &&

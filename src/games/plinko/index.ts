@@ -207,7 +207,7 @@ export const getPlinkoResult = async ({
 
       if (results.length === 0) {
         console.log(
-          `DOUBLEUP - No results found. Trying again in ${
+          `DOUBLEUP - Game in processing. Query again in ${
             pollInterval / 1000
           } seconds.`
         );

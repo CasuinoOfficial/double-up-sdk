@@ -72,6 +72,7 @@ export const createDice = ({
   const res: DiceResponse = { ok: true };
 
   try {
+    console.log("dicePackageId", dicePackageId);
     // This adds some extra entropy to the dice itself
     const userRandomness = Buffer.from(nanoid(512), "utf8");
 
@@ -110,6 +111,7 @@ export const getDiceResult = async ({
 }: InternalDiceResultInput): Promise<DiceResultResponse> => {
   const res: DiceResultResponse = { ok: true };
 
+  console.log("check1");
   try {
     const gameInfos = getBlsGameInfos({
       coinType,
@@ -163,7 +165,7 @@ export const getDiceResult = async ({
 
       if (results.length === 0) {
         console.log(
-          `DOUBLEUP - No results found. Trying again in ${
+          `DOUBLEUP - Game in processing. Query again in ${
             pollInterval / 1000
           } seconds.`
         );

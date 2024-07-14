@@ -61,6 +61,8 @@ const getGenericGameInfos = ({
   gameSeed,
   transactionResult,
 }: GenericGameInfosInput): GameInfo[] => {
+  console.log("check3");
+
   const objectChanges = transactionResult.objectChanges;
 
   const gameInfos = (objectChanges as any[])
@@ -101,7 +103,9 @@ export const getBlsGameInfos = ({
   structName,
   transactionResult,
 }: BlsGameInfosInput): GameInfo[] => {
-  const filterString = `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetData<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
+  const filterString = `${UNIHOUSE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetData<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
+
+  console.log("check2");
 
   return getGenericGameInfos({
     filterString,

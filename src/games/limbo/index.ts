@@ -163,10 +163,12 @@ export const getLimboResult = async ({
           order: "descending",
         });
 
+        console.log("limbo event", events);
+
         results = events.data.reduce((acc, current) => {
           const { game_id, results } = current.parsedJson as LimboParsedJson;
 
-          if (game_id === gameInfos[0].gameId) {
+          if (game_id && game_id === gameInfos[0].gameId) {
             rawResults.push(current.parsedJson as LimboParsedJson);
 
             txDigests.push(current.id.txDigest);
@@ -188,7 +190,7 @@ export const getLimboResult = async ({
 
       if (results.length === 0) {
         console.log(
-          `DOUBLEUP - No results found. Trying again in ${
+          `DOUBLEUP - Game in processing. Query again in ${
             pollInterval / 1000
           } seconds.`
         );
