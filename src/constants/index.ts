@@ -31,12 +31,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 
 // dice
 // ===============================================================================
-export const DICE_PACKAGE_ID =
-  "0xca4106112a29fffdf8d8b39774535abd05896573dfbeda5ab176e1cb76a334ea";
-export const DICE_CORE_PACKAGE_ID =
-  "0xca4106112a29fffdf8d8b39774535abd05896573dfbeda5ab176e1cb76a334ea";
-export const DICE_MODULE_NAME = "dice";
-export const DICE_STRUCT_NAME = "Dice";
+
 // ===============================================================================
 
 // limbo
@@ -208,8 +203,9 @@ export const UNI_HOUSE_OBJ: any = Inputs.SharedObjectRef({
   mutable: true,
 });
 
+//V6 UNIHOUSE
 export const UNIHOUSE_PACKAGE =
-  "0x2f37aa549ecd1283708d487267f93a5e4c8a759d0c2b5ddddb2162f314e6aa49";
+  "0xfd038e13deae83979c1753d66bd05059f37d2c88fc9d613ed5719637d670f600";
 export const UNIHOUSE_CORE_PACKAGE =
   "0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf";
 // ===============================================================================

@@ -146,6 +146,8 @@ export const getCoinflipResult = async ({
     let rawResults: CoinflipParsedJson[] = [];
     let txDigests: string[] = [];
 
+    // console.log("coinfilp gameInfos", gameInfos);
+
     while (results.length === 0) {
       try {
         const events = await suiClient.queryEvents({
@@ -156,11 +158,13 @@ export const getCoinflipResult = async ({
           order: "descending",
         });
 
+        // console.log("coinflip events", events[0].parsedJson);
+
         results = events.data.reduce((acc, current) => {
           const { bet_id, outcome, player, settlements } =
             current.parsedJson as CoinflipParsedJson;
 
-          if (bet_id == gameInfos[0].gameId) {
+          if (bet_id === gameInfos[0]?.gameId) {
             rawResults.push(current.parsedJson as CoinflipParsedJson);
 
             txDigests.push(current.id.txDigest);

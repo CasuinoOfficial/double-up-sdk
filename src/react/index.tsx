@@ -11,12 +11,6 @@ import {
   CoinflipResultResponse,
 } from "../games/coinflip";
 import {
-  DiceInput,
-  DiceResultInput,
-  DiceResponse,
-  DiceResultResponse,
-} from "../games/dice";
-import {
   BuyTicketsInput,
   BuyTicketsResponse,
   DrawingResultInput,
@@ -73,7 +67,6 @@ interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => RouletteAddBetResponse;
   buyLotteryTickets: (input: BuyTicketsInput) => BuyTicketsResponse;
   createCoinflip: (input: CoinflipInput) => CoinflipResponse;
-  createDice: (input: DiceInput) => DiceResponse;
   createLimbo: (input: LimboInput) => LimboResponse;
   createPlinko: (input: PlinkoInput) => PlinkoResponse;
   createRangeDice: (input: RangeDiceInput) => RangeDiceResponse;
@@ -88,7 +81,6 @@ interface DoubleUpContextState {
   getCreatedRouletteTable: (
     input: CreatedRouletteTableInput
   ) => CreatedRouletteTableResponse;
-  getDiceResult: (input: DiceResultInput) => Promise<DiceResultResponse>;
   getLottery: () => Promise<LotteryResponse>;
   getLotteryDrawingResult: (
     input: DrawingResultInput
@@ -186,7 +178,6 @@ const DoubleUpProvider = ({
   const buyLotteryTickets = dbClient.buyLotteryTickets;
 
   const createCoinflip = dbClient.createCoinflip;
-  const createDice = dbClient.createDice;
   const createLimbo = dbClient.createLimbo;
   const createPlinko = dbClient.createPlinko;
   const createRangeDice = dbClient.createRangeDice;
@@ -197,7 +188,6 @@ const DoubleUpProvider = ({
 
   const getCoinflipResult = dbClient.getCoinflipResult;
   const getCreatedRouletteTable = dbClient.getCreatedRouletteTable;
-  const getDiceResult = dbClient.getDiceResult;
   const getLimboResult = dbClient.getLimboResult;
   const getLottery = dbClient.getLottery;
   const getLotteryDrawingResult = dbClient.getLotteryDrawingResult;
@@ -217,7 +207,6 @@ const DoubleUpProvider = ({
     addRouletteBet,
     buyLotteryTickets,
     createCoinflip,
-    createDice,
     createLimbo,
     createPlinko,
     createRangeDice,
@@ -226,7 +215,6 @@ const DoubleUpProvider = ({
     doesRouletteTableExist,
     getCoinflipResult,
     getCreatedRouletteTable,
-    getDiceResult,
     getLimboResult,
     getLottery,
     getLotteryDrawingResult,

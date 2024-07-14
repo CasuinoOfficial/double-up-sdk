@@ -3,8 +3,6 @@ import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import {
   COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
-  DICE_PACKAGE_ID,
-  DICE_CORE_PACKAGE_ID,
   LIMBO_PACKAGE_ID,
   LIMBO_CORE_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
@@ -24,13 +22,6 @@ import {
   CoinflipInput,
   CoinflipResultInput,
 } from "../games/coinflip";
-
-import {
-  createDice,
-  getDiceResult,
-  DiceInput,
-  DiceResultInput,
-} from "../games/dice";
 
 import {
   createLimbo,
@@ -113,8 +104,6 @@ export class DoubleUpClient {
   constructor({
     coinflipPackageId = COIN_PACKAGE_ID,
     coinflipCorePackageId = COIN_CORE_PACKAGE_ID,
-    dicePackageId = DICE_PACKAGE_ID,
-    diceCorePackageId = DICE_CORE_PACKAGE_ID,
     limboPackageId = LIMBO_PACKAGE_ID,
     limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
     origin = "",
@@ -132,9 +121,6 @@ export class DoubleUpClient {
   }: DoubleUpClientInput) {
     this.coinflipPackageId = coinflipPackageId;
     this.coinflipCorePackageId = coinflipCorePackageId;
-
-    this.dicePackageId = dicePackageId;
-    this.diceCorePackageId = diceCorePackageId;
 
     this.limboPackageId = limboPackageId;
     this.limboCorePackageId = limboCorePackageId;
@@ -194,16 +180,6 @@ export class DoubleUpClient {
     getCoinflipResult({
       ...input,
       coinflipCorePackageId: this.coinflipCorePackageId,
-      suiClient: this.suiClient,
-    });
-
-  // dice
-  createDice = (input: DiceInput) =>
-    createDice({ ...input, dicePackageId: this.dicePackageId });
-  getDiceResult = (input: DiceResultInput) =>
-    getDiceResult({
-      ...input,
-      diceCorePackageId: this.diceCorePackageId,
       suiClient: this.suiClient,
     });
 

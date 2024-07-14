@@ -5,7 +5,6 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { fromHEX } from "@mysten/sui/utils";
 
 import { testCoinflip } from "./coinflip";
-import { testDice } from "./dice";
 import { testLimbo } from "./limbo";
 import {
   testLotteryBuy,
@@ -72,9 +71,9 @@ const dbClient = new DoubleUpClient({
       case "coinflip":
         testCoinflip(dbClient, client, keypair);
         break;
-      case "dice":
-        testDice(dbClient, client, keypair);
-        break;
+      // case "dice":
+      //   testDice(dbClient, client, keypair);
+      //   break;
       case "limbo":
         testLimbo(dbClient, client, keypair);
         break;
