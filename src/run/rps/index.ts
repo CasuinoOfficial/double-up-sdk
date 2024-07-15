@@ -57,6 +57,17 @@ export const testRPS = async (
     console.log("Signed and sent transaction.");
     // console.log(transactionResult);
 
+    const showBetType = (betType: 0 | 1 | 2) => {
+      switch (betType) {
+        case 0:
+          return "rock";
+        case 1:
+          return "paper";
+        case 2:
+          return "scissors";
+      }
+    };
+
     const {
       ok: resultsOk,
       err: resultsErr,
@@ -70,17 +81,18 @@ export const testRPS = async (
       transactionResult,
     });
 
-    if (!resultsOk) {
+    if (!resultsOk || !txDigests || !rawResults || !results) {
       throw resultsErr;
     }
 
     console.log("Retrieved rps results.");
-    console.log(results);
-    console.log(rawResults);
-    if (rawResults) {
-      console.log(rawResults[0]?.settlements[0]?.player_won);
-    }
-    console.log(txDigests);
+    console.log(
+      "Game results:",
+      rawResults[0]?.settlements[0]?.player_won ? "won" : "lost"
+    );
+    console.log("User shows:", showBetType(results[0]));
+    console.log("Game rawResult: ", rawResults);
+    console.log("txDigests:", txDigests[0]);
   } catch (err) {
     console.error(err);
   }
