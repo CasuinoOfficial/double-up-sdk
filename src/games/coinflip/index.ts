@@ -146,8 +146,6 @@ export const getCoinflipResult = async ({
     let rawResults: CoinflipParsedJson[] = [];
     let txDigests: string[] = [];
 
-    // console.log("coinfilp gameInfos", gameInfos);
-
     while (results.length === 0) {
       try {
         const events = await suiClient.queryEvents({
@@ -157,8 +155,6 @@ export const getCoinflipResult = async ({
           limit: 50,
           order: "descending",
         });
-
-        // console.log("coinflip events", events[0].parsedJson);
 
         results = events.data.reduce((acc, current) => {
           const { bet_id, outcome, player, settlements } =
@@ -172,8 +168,10 @@ export const getCoinflipResult = async ({
             const { player_won } = settlements[0];
 
             if (player_won) {
-              acc.push(betType === 0 ? 0 : 1);
+              acc.push(betType);
             } else {
+              // check is user bet on heads or tails
+              // if user lose, the result should be the oppsite with the betType
               acc.push(betType === 0 ? 1 : 0);
             }
           }

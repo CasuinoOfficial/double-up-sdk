@@ -4,8 +4,8 @@ import {
   BLS_SETTLER_MODULE_NAME,
   ROULETTE_CORE_PACKAGE_ID,
   ROULETTE_MODULE_NAME,
-  UNIHOUSE_PACKAGE,
   UNIHOUSE_CORE_PACKAGE,
+  UNIHOUSE_V4_PACKAGE,
 } from "../constants";
 
 interface GameInfo {
@@ -121,7 +121,7 @@ export const getBlsGameInfosWithDraw = ({
   transactionResult,
 }: BlsGameInfosInput): GameInfo[] => {
   // UNIHOUSE_PACKAGE - BetDataWithDraw did not exist until unihouse v4
-  const filterString = `${UNIHOUSE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetDataWithDraw<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
+  const filterString = `${UNIHOUSE_V4_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetDataWithDraw<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
 
   return getGenericGameInfos({
     filterString,

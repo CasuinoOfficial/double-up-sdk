@@ -206,6 +206,8 @@ export const UNI_HOUSE_OBJ: any = Inputs.SharedObjectRef({
 //V6 UNIHOUSE
 export const UNIHOUSE_PACKAGE =
   "0xfd038e13deae83979c1753d66bd05059f37d2c88fc9d613ed5719637d670f600";
+export const UNIHOUSE_V4_PACKAGE =
+  "0x2f37aa549ecd1283708d487267f93a5e4c8a759d0c2b5ddddb2162f314e6aa49";
 export const UNIHOUSE_CORE_PACKAGE =
   "0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf";
 // ===============================================================================

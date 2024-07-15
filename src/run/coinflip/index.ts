@@ -69,14 +69,18 @@ export const testCoinflip = async (
       transactionResult,
     });
 
-    if (!resultsOk) {
+    if (!resultsOk || !txDigests || !rawResults || !results) {
       throw resultsErr;
     }
 
     console.log("Retrieved coinflip results.");
-    console.log(results);
-    console.log(rawResults);
-    console.log(txDigests);
+    console.log(
+      "Game results:",
+      rawResults[0]?.settlements[0]?.player_won ? "won" : "lost"
+    );
+    console.log("Coin shows:", results[0] === 0 ? "heads" : "tails");
+    console.log("Game rawResult: ", rawResults);
+    console.log("txDigests:", txDigests[0]);
   } catch (err) {
     console.error("error", err);
   }

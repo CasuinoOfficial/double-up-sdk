@@ -71,9 +71,6 @@ const dbClient = new DoubleUpClient({
       case "coinflip":
         testCoinflip(dbClient, client, keypair);
         break;
-      // case "dice":
-      //   testDice(dbClient, client, keypair);
-      //   break;
       case "limbo":
         testLimbo(dbClient, client, keypair);
         break;
