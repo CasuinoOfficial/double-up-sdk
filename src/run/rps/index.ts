@@ -55,7 +55,6 @@ export const testRPS = async (
     }
 
     console.log("Signed and sent transaction.");
-    // console.log(transactionResult);
 
     const showBetType = (betType: 0 | 1 | 2) => {
       switch (betType) {

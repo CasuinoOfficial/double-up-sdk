@@ -54,7 +54,6 @@ export const testLimbo = async (
     }
 
     console.log("Signed and sent transaction.");
-    // console.log(transactionResult);
 
     const {
       ok: resultsOk,

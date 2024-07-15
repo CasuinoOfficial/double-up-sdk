@@ -153,6 +153,8 @@ export const getLimboResult = async ({
     let rawResults: LimboParsedJson[] = [];
     let txDigests: string[] = [];
 
+    // console.log("gameInfos", gameInfos[0].gameId);
+
     while (results.length === 0) {
       try {
         const events = await suiClient.queryEvents({
@@ -163,12 +165,11 @@ export const getLimboResult = async ({
           order: "descending",
         });
 
-        console.log("limbo event", events);
-
         results = events.data.reduce((acc, current) => {
           const { game_id, results } = current.parsedJson as LimboParsedJson;
 
           if (game_id && game_id === gameInfos[0].gameId) {
+            // console.log("check game_id", game_id);
             rawResults.push(current.parsedJson as LimboParsedJson);
 
             txDigests.push(current.id.txDigest);
@@ -176,8 +177,10 @@ export const getLimboResult = async ({
             const { outcome } = results[0];
 
             if (+outcome % 69 === 0) {
+              // console.log("check no rest with 69");
               acc.push(1);
             } else {
+              // console.log("check rest with 69");
               acc.push(distanceToMultiplier(+outcome));
             }
           }
