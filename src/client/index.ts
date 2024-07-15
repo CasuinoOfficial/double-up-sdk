@@ -1,10 +1,8 @@
-import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
+import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 
-import { 
+import {
   COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
-  DICE_PACKAGE_ID,
-  DICE_CORE_PACKAGE_ID,
   LIMBO_PACKAGE_ID,
   LIMBO_CORE_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
@@ -15,28 +13,21 @@ import {
   RPS_CORE_PACKAGE_ID,
   RPS_PACKAGE_ID,
   RANGE_DICE_PACKAGE_ID,
-  RANGE_DICE_CORE_PACKAGE_ID
+  RANGE_DICE_CORE_PACKAGE_ID,
 } from "../constants";
 
 import {
   createCoinflip,
   getCoinflipResult,
   CoinflipInput,
-  CoinflipResultInput
+  CoinflipResultInput,
 } from "../games/coinflip";
-
-import {
-  createDice,
-  getDiceResult,
-  DiceInput,
-  DiceResultInput
-} from "../games/dice";
 
 import {
   createLimbo,
   getLimboResult,
   LimboInput,
-  LimboResultInput
+  LimboResultInput,
 } from "../games/limbo";
 
 import {
@@ -47,21 +38,21 @@ import {
   getLotteryTickets,
   redeemLotteryTickets,
   DrawingResultInput,
-  LotteryTicketsInput
+  LotteryTicketsInput,
 } from "../games/lottery";
 
 import {
   createPlinko,
   getPlinkoResult,
   PlinkoInput,
-  PlinkoResultInput
+  PlinkoResultInput,
 } from "../games/plinko";
 
 import {
   createRangeDice,
   getRangeDiceResult,
   RangeDiceInput,
-  RangeDiceResultInput
+  RangeDiceResultInput,
 } from "../games/rangeDice";
 
 import {
@@ -78,14 +69,14 @@ import {
   RouletteResultInput,
   RouletteStartInput,
   RouletteTableInput,
-  RouletteTableExistsInput
+  RouletteTableExistsInput,
 } from "../games/roulette";
 
 import {
   createRockPaperScissors,
   getRockPaperScissorsResult,
   RPSInput,
-  RPSResultInput
+  RPSResultInput,
 } from "../games/rps";
 
 interface DoubleUpClientInput {
@@ -110,189 +101,195 @@ interface DoubleUpClientInput {
 }
 
 export class DoubleUpClient {
-    constructor({
-      coinflipPackageId = COIN_PACKAGE_ID,
-      coinflipCorePackageId = COIN_CORE_PACKAGE_ID,
-      dicePackageId = DICE_PACKAGE_ID,
-      diceCorePackageId = DICE_CORE_PACKAGE_ID,
-      limboPackageId = LIMBO_PACKAGE_ID,
-      limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
-      origin = '',
-      partnerNftListId,
-      plinkoPackageId = PLINKO_PACKAGE_ID,
-      plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
-      plinkoVerifierId = PLINKO_VERIFIER_ID,
-      rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
-      rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
-      roulettePackageId = ROULETTE_PACKAGE_ID,
-      rouletteCorePackageId = ROULETTE_CORE_PACKAGE_ID,
-      rpsPackageId = RPS_PACKAGE_ID,
-      rpsCorePackageId = RPS_CORE_PACKAGE_ID,
-      suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") })
-    }: DoubleUpClientInput) {
-      this.coinflipPackageId = coinflipPackageId;
-      this.coinflipCorePackageId = coinflipCorePackageId;
+  constructor({
+    coinflipPackageId = COIN_PACKAGE_ID,
+    coinflipCorePackageId = COIN_CORE_PACKAGE_ID,
+    limboPackageId = LIMBO_PACKAGE_ID,
+    limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
+    origin = "",
+    partnerNftListId,
+    plinkoPackageId = PLINKO_PACKAGE_ID,
+    plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
+    plinkoVerifierId = PLINKO_VERIFIER_ID,
+    rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
+    rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
+    roulettePackageId = ROULETTE_PACKAGE_ID,
+    rouletteCorePackageId = ROULETTE_CORE_PACKAGE_ID,
+    rpsPackageId = RPS_PACKAGE_ID,
+    rpsCorePackageId = RPS_CORE_PACKAGE_ID,
+    suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
+  }: DoubleUpClientInput) {
+    this.coinflipPackageId = coinflipPackageId;
+    this.coinflipCorePackageId = coinflipCorePackageId;
 
-      this.dicePackageId = dicePackageId;
-      this.diceCorePackageId = diceCorePackageId;
+    this.limboPackageId = limboPackageId;
+    this.limboCorePackageId = limboCorePackageId;
 
-      this.limboPackageId = limboPackageId;
-      this.limboCorePackageId = limboCorePackageId;
+    this.origin = origin;
 
-      this.origin = origin;
+    this.partnerNftListId = partnerNftListId;
 
-      this.partnerNftListId = partnerNftListId;
+    this.plinkoPackageId = plinkoPackageId;
+    this.plinkoCorePackageId = plinkoCorePackageId;
+    this.plinkoVerifierId = plinkoVerifierId;
 
-      this.plinkoPackageId = plinkoPackageId;
-      this.plinkoCorePackageId = plinkoCorePackageId;
-      this.plinkoVerifierId = plinkoVerifierId;
+    this.rangeDicePackageId = rangeDicePackageId;
+    this.rangeDiceCorePackageId = rangeDiceCorePackageId;
 
-      this.rangeDicePackageId = rangeDicePackageId;
-      this.rangeDiceCorePackageId = rangeDiceCorePackageId;
+    this.roulettePackageId = roulettePackageId;
+    this.rouletteCorePackageId = rouletteCorePackageId;
 
-      this.roulettePackageId = roulettePackageId;
-      this.rouletteCorePackageId = rouletteCorePackageId;
+    this.rpsPackageId = rpsPackageId;
+    this.rpsCorePackageId = rpsCorePackageId;
 
-      this.rpsPackageId = rpsPackageId;
-      this.rpsCorePackageId = rpsCorePackageId;
+    this.suiClient = suiClient;
+  }
 
-      this.suiClient = suiClient;
-    }
+  coinflipPackageId: string;
+  coinflipCorePackageId: string;
 
-    coinflipPackageId: string;
-    coinflipCorePackageId: string;
+  dicePackageId: string;
+  diceCorePackageId: string;
 
-    dicePackageId: string;
-    diceCorePackageId: string;
+  limboPackageId: string;
+  limboCorePackageId: string;
 
-    limboPackageId: string;
-    limboCorePackageId: string;
+  origin: string;
 
-    origin: string;
+  partnerNftListId: string | undefined;
 
-    partnerNftListId: string | undefined;
+  plinkoPackageId: string;
+  plinkoCorePackageId: string;
+  plinkoVerifierId: string;
 
-    plinkoPackageId: string;
-    plinkoCorePackageId: string;
-    plinkoVerifierId: string;
+  rangeDicePackageId: string;
+  rangeDiceCorePackageId: string;
 
-    rangeDicePackageId: string;
-    rangeDiceCorePackageId: string;
+  roulettePackageId: string;
+  rouletteCorePackageId: string;
 
-    roulettePackageId: string;
-    rouletteCorePackageId: string;
+  rpsPackageId: string;
+  rpsCorePackageId: string;
 
-    rpsPackageId: string;
-    rpsCorePackageId: string;
+  suiClient: SuiClient;
 
-    suiClient: SuiClient;
-
-    // coinflip
-    createCoinflip = (input: CoinflipInput) => createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
-    getCoinflipResult = (input: CoinflipResultInput) => getCoinflipResult({
+  // coinflip
+  createCoinflip = (input: CoinflipInput) =>
+    createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
+  getCoinflipResult = (input: CoinflipResultInput) =>
+    getCoinflipResult({
       ...input,
       coinflipCorePackageId: this.coinflipCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
     });
 
-    // dice
-    createDice = (input: DiceInput) => createDice({ ...input, dicePackageId: this.dicePackageId });
-    getDiceResult = (input: DiceResultInput) => getDiceResult({
+  // lottery
+  buyLotteryTickets = buyLotteryTickets;
+  redeemLotteryTickets = redeemLotteryTickets;
+  getLottery = () => getLottery({ suiClient: this.suiClient });
+  getLotteryHistory = () => getLotteryHistory({ suiClient: this.suiClient });
+  getLotteryDrawingResult = (input: DrawingResultInput) =>
+    getLotteryDrawingResult({
       ...input,
-      diceCorePackageId: this.diceCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
+    });
+  getLotteryTickets = (input: LotteryTicketsInput) =>
+    getLotteryTickets({
+      ...input,
+      suiClient: this.suiClient,
     });
 
-    // lottery
-    buyLotteryTickets = buyLotteryTickets;
-    redeemLotteryTickets = redeemLotteryTickets;
-    getLottery = () => getLottery({ suiClient: this.suiClient });
-    getLotteryHistory = () => getLotteryHistory({ suiClient: this.suiClient });
-    getLotteryDrawingResult = (input: DrawingResultInput) => getLotteryDrawingResult({
-      ...input,
-      suiClient: this.suiClient
-    });
-    getLotteryTickets = (input: LotteryTicketsInput) => getLotteryTickets({
-      ...input,
-      suiClient: this.suiClient
-    });
-
-    // limbo
-    createLimbo = (input: LimboInput) => createLimbo({ ...input, limboPackageId: this.limboPackageId });
-    getLimboResult = (input: LimboResultInput) => getLimboResult({
+  // limbo
+  createLimbo = (input: LimboInput) =>
+    createLimbo({ ...input, limboPackageId: this.limboPackageId });
+  getLimboResult = (input: LimboResultInput) =>
+    getLimboResult({
       ...input,
       limboCorePackageId: this.limboCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
     });
 
-    // plinko
-    createPlinko = (input: PlinkoInput) => createPlinko({
+  // plinko
+  createPlinko = (input: PlinkoInput) =>
+    createPlinko({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
-      plinkoVerifierId: this.plinkoVerifierId
+      plinkoVerifierId: this.plinkoVerifierId,
     });
-    getPlinkoResult = (input: PlinkoResultInput) => getPlinkoResult({
+  getPlinkoResult = (input: PlinkoResultInput) =>
+    getPlinkoResult({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
       plinkoCorePackageId: this.plinkoCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
     });
 
-    // range dice
-    createRangeDice = (input: RangeDiceInput) => createRangeDice({
+  // range dice
+  createRangeDice = (input: RangeDiceInput) =>
+    createRangeDice({
       ...input,
       partnerNftListId: this.partnerNftListId,
-      rangeDicePackageId: this.rangeDicePackageId
+      rangeDicePackageId: this.rangeDicePackageId,
     });
-    getRangeDiceResult = (input: RangeDiceResultInput) => getRangeDiceResult({
+  getRangeDiceResult = (input: RangeDiceResultInput) =>
+    getRangeDiceResult({
       ...input,
       rangeDiceCorePackageId: this.rangeDiceCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
     });
 
-    // roulette
-    addRouletteBet = (input: RouletteAddBetInput) => addRouletteBet({
+  // roulette
+  addRouletteBet = (input: RouletteAddBetInput) =>
+    addRouletteBet({
       ...input,
       origin: this.origin,
-      roulettePackageId: this.roulettePackageId
+      roulettePackageId: this.roulettePackageId,
     });
-    createRouletteTable = (input: RouletteTableInput) => createRouletteTable({
+  createRouletteTable = (input: RouletteTableInput) =>
+    createRouletteTable({
       ...input,
-      roulettePackageId: this.roulettePackageId
+      roulettePackageId: this.roulettePackageId,
     });
-    doesRouletteTableExist = (input: RouletteTableExistsInput) => doesRouletteTableExist({
-      ...input,
-      rouletteCorePackageId: this.rouletteCorePackageId,
-      suiClient: this.suiClient
-    });
-    getCreatedRouletteTable = (input: CreatedRouletteTableInput) => getCreatedRouletteTable({
-      ...input,
-      roulettePackageId: this.roulettePackageId
-    });
-    getRouletteResult = (input: RouletteResultInput) => getRouletteResult({
+  doesRouletteTableExist = (input: RouletteTableExistsInput) =>
+    doesRouletteTableExist({
       ...input,
       rouletteCorePackageId: this.rouletteCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
     });
-    removeRouletteBet = (input: RouletteRemoveBetInput) => removeRouletteBet({
+  getCreatedRouletteTable = (input: CreatedRouletteTableInput) =>
+    getCreatedRouletteTable({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+    });
+  getRouletteResult = (input: RouletteResultInput) =>
+    getRouletteResult({
+      ...input,
+      rouletteCorePackageId: this.rouletteCorePackageId,
+      suiClient: this.suiClient,
+    });
+  removeRouletteBet = (input: RouletteRemoveBetInput) =>
+    removeRouletteBet({
       ...input,
       origin: this.origin,
-      roulettePackageId: this.roulettePackageId
+      roulettePackageId: this.roulettePackageId,
     });
-    startRoulette = (input: RouletteStartInput) => startRoulette({
+  startRoulette = (input: RouletteStartInput) =>
+    startRoulette({
       ...input,
-      roulettePackageId: this.roulettePackageId
+      roulettePackageId: this.roulettePackageId,
     });
 
-    // rps
-    createRockPaperScissors = (input: RPSInput) => createRockPaperScissors({
+  // rps
+  createRockPaperScissors = (input: RPSInput) =>
+    createRockPaperScissors({
       ...input,
       partnerNftListId: this.partnerNftListId,
-      rpsPackageId: this.rpsPackageId
+      rpsPackageId: this.rpsPackageId,
     });
-    getRockPaperScissorsResult = (input: RPSResultInput) => getRockPaperScissorsResult({
+  getRockPaperScissorsResult = (input: RPSResultInput) =>
+    getRockPaperScissorsResult({
       ...input,
       rpsCorePackageId: this.rpsCorePackageId,
-      suiClient: this.suiClient
+      suiClient: this.suiClient,
     });
 }

@@ -6,12 +6,6 @@
 $ pnpm test:coinflip
 ```
 
-### Dice
-
-```sh
-$ pnpm test:dice
-```
-
 ### Limbo
 
 ```sh

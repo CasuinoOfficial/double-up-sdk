@@ -1,16 +1,16 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "declaration": true,
-      "jsx": "react-jsx",
-      "removeComments": true,
-      "allowSyntheticDefaultImports": true,
-      "target": "es2017",
-      "sourceMap": false,
-      "outDir": "./dist",
-      "baseUrl": "./",
-      "incremental": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "test", "lib", "**/*spec.ts", "src/run/**"]
-  }
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "jsx": "react-jsx",
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": false,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "test", "lib", "**/*spec.ts", "src/run/**"]
+}
