@@ -37,7 +37,7 @@ type BetFirstColumn = 10;
 type BetSecondColumn = 11;
 type BetThirdColumn = 12;
 
-type RouletteBet =
+export type RouletteBet =
   | BetRed
   | BetBlack
   | BetNumber

@@ -28,7 +28,8 @@
   "license": "ISC",
   "dependencies": {
     "@mysten/sui": "^1.2.1",
-    "nanoid": "^5.0.7",
+    "dotenv": "^16.4.5",
+    "nanoid": "3",
     "react": "^18.3.1"
   },
   "devDependencies": {
@@ -37,7 +38,6 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@mysten/sui": "^1.2.1",
-    "nanoid": "^5.0.7"
+    "@mysten/sui": "^1.2.1"
   }
 }
