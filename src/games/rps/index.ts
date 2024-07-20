@@ -175,11 +175,6 @@ export const getRockPaperScissorsResult = async ({
       transactionResult,
     });
 
-    console.log("GameInfos: ", gameInfos.length);
-    for (const [index, gameInfo] of gameInfos.entries()) {
-      console.log(`GameInfo ${index}: `, gameInfo.gameId);
-    }
-
     let results: BetType[] = [];
     let rawResults: RPSParsedJson[] = [];
     let txDigests: string[] = [];
