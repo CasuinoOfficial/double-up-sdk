@@ -4,6 +4,7 @@ import { DoubleUpClient } from "../../client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 import { SUI_COIN_TYPE } from "../../constants";
+import { checkComputerBet, getRPSResult, checkBetType } from "../../utils";
 
 export const testRPS = async (
   dbClient: DoubleUpClient,
@@ -12,29 +13,35 @@ export const testRPS = async (
 ) => {
   // rock
   const betType = 0;
+  const numberOfBets = 3;
   const betAmount = 500000000;
 
   try {
     const txb = new Transaction();
+    const gameSeedList: string[] = [];
 
-    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
+    for (let i = 0; i < numberOfBets; i++) {
+      const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
 
-    const {
-      ok: gameOk,
-      err: gameErr,
-      gameSeed,
-    } = dbClient.createRockPaperScissors({
-      betType,
-      coin,
-      coinType: SUI_COIN_TYPE,
-      transaction: txb,
-    });
+      const {
+        ok: gameOk,
+        err: gameErr,
+        gameSeed,
+      } = dbClient.createRockPaperScissors({
+        betType,
+        coin,
+        coinType: SUI_COIN_TYPE,
+        transaction: txb,
+      });
+
+      if (!gameOk || !gameSeed) {
+        throw gameErr;
+      } else {
+        gameSeedList.push(gameSeed);
+      }
+    }
 
     console.log("Added rps to transaction block.");
-
-    if (!gameOk || !gameSeed) {
-      throw gameErr;
-    }
 
     const transactionResult = await client.signAndExecuteTransaction({
       signer: keypair,
@@ -56,17 +63,6 @@ export const testRPS = async (
 
     console.log("Signed and sent transaction.");
 
-    const showBetType = (betType: 0 | 1 | 2) => {
-      switch (betType) {
-        case 0:
-          return "rock";
-        case 1:
-          return "paper";
-        case 2:
-          return "scissors";
-      }
-    };
-
     const {
       ok: resultsOk,
       err: resultsErr,
@@ -76,7 +72,7 @@ export const testRPS = async (
     } = await dbClient.getRockPaperScissorsResult({
       betType,
       coinType: SUI_COIN_TYPE,
-      gameSeed,
+      gameSeed: gameSeedList[0],
       transactionResult,
     });
 
@@ -85,13 +81,19 @@ export const testRPS = async (
     }
 
     console.log("Retrieved rps results.");
-    console.log(
-      "Game results:",
-      rawResults[0]?.settlements[0]?.player_won ? "won" : "lost"
-    );
-    console.log("User shows:", showBetType(results[0]));
-    console.log("Game rawResult: ", rawResults);
-    console.log("txDigests:", txDigests[0]);
+    console.log("Number of bets:", numberOfBets);
+    for (let i = 0; i < numberOfBets; i++) {
+      console.log(`Round ${i + 1}`);
+
+      const computerBet = checkComputerBet(Number(rawResults[i].outcome));
+      const rpsResult = getRPSResult(betType, computerBet);
+
+      console.log("Game results:", rpsResult);
+      console.log("User shows:", checkBetType(results[i]));
+      console.log("PC shows:", checkBetType(computerBet));
+      console.log("Game rawResult: ", rawResults[i]);
+      console.log("txDigests:", txDigests[i]);
+    }
   } catch (err) {
     console.error(err);
   }

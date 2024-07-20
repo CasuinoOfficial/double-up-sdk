@@ -6,6 +6,7 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
+import { randomBytes } from "crypto";
 import { nanoid } from "nanoid";
 
 import {
@@ -103,7 +104,7 @@ export const createRockPaperScissors = ({
 
   try {
     // This adds some extra entropy to the coinflip itself
-    const userRandomness = Buffer.from(nanoid(512), "utf8");
+    const userRandomness = randomBytes(512);
 
     if (
       typeof partnerNftId === "string" &&
@@ -174,11 +175,16 @@ export const getRockPaperScissorsResult = async ({
       transactionResult,
     });
 
+    console.log("GameInfos: ", gameInfos.length);
+    for (const [index, gameInfo] of gameInfos.entries()) {
+      console.log(`GameInfo ${index}: `, gameInfo.gameId);
+    }
+
     let results: BetType[] = [];
     let rawResults: RPSParsedJson[] = [];
     let txDigests: string[] = [];
 
-    while (results.length === 0) {
+    while (results.length < gameInfos.length) {
       try {
         const events = await suiClient.queryEvents({
           query: {
@@ -188,17 +194,17 @@ export const getRockPaperScissorsResult = async ({
           order: "descending",
         });
 
-        results = events.data.reduce((acc, current) => {
-          const { bet_id, settlements } = current.parsedJson as RPSParsedJson;
+        events.data.forEach((event) => {
+          const { bet_id, settlements } = event.parsedJson as RPSParsedJson;
 
-          if (bet_id == gameInfos[0].gameId) {
-            rawResults.push(current.parsedJson as RPSParsedJson);
+          if (bet_id == gameInfos[results.length].gameId) {
+            rawResults.push(event.parsedJson as RPSParsedJson);
 
-            txDigests.push(current.id.txDigest);
+            txDigests.push(event.id.txDigest);
 
             const { bet_size, payout_amount } = settlements[0];
 
-            let res: number;
+            let res: BetType;
 
             if (bet_size < payout_amount) {
               // win
@@ -229,7 +235,6 @@ export const getRockPaperScissorsResult = async ({
               }
             } else {
               // draw
-
               switch (betType) {
                 case ROCK:
                   res = ROCK;
@@ -243,18 +248,18 @@ export const getRockPaperScissorsResult = async ({
               }
             }
 
-            acc.push(res);
+            results.push(res);
           }
-
-          return acc;
         }, []);
       } catch (err) {
         console.error(`DOUBLEUP - Error querying events: ${err}`);
       }
 
-      if (results.length === 0) {
+      if (results.length < gameInfos.length) {
         console.log(
-          `DOUBLEUP - Game in processing. Query again in ${
+          `DOUBLEUP - results: ${
+            results.length
+          } - Game in processing. Query again in ${
             pollInterval / 1000
           } seconds.`
         );
