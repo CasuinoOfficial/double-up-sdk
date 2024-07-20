@@ -61,8 +61,6 @@ const getGenericGameInfos = ({
   gameSeed,
   transactionResult,
 }: GenericGameInfosInput): GameInfo[] => {
-  console.log("check3 filterString", filterString);
-
   const objectChanges = transactionResult.objectChanges;
 
   const gameInfos = (objectChanges as any[])
