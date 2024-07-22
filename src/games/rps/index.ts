@@ -113,7 +113,7 @@ export const createRockPaperScissors = ({
     if (
       typeof partnerNftListId === "string" &&
       typeof partnerNftType === "string" &&
-      !partnerNftArgument
+      partnerNftArgument !== undefined
     ) {
       const [receipt] = transaction.moveCall({
         target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game_with_partner`,
