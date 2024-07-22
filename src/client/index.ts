@@ -1,5 +1,5 @@
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
-
+import { KioskClient, Network } from "@mysten/kiosk";
 import {
   COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
@@ -98,6 +98,7 @@ interface DoubleUpClientInput {
   rpsPackageId?: string;
   rpsCorePackageId?: string;
   suiClient?: SuiClient;
+  kioskClient?: KioskClient;
 }
 
 export class DoubleUpClient {
@@ -143,6 +144,10 @@ export class DoubleUpClient {
     this.rpsCorePackageId = rpsCorePackageId;
 
     this.suiClient = suiClient;
+    this.kioskClient = new KioskClient({
+      client: suiClient,
+      network: Network.MAINNET,
+    });
   }
 
   coinflipPackageId: string;
@@ -172,6 +177,7 @@ export class DoubleUpClient {
   rpsCorePackageId: string;
 
   suiClient: SuiClient;
+  kioskClient: KioskClient;
 
   // coinflip
   createCoinflip = (input: CoinflipInput) =>

@@ -8,8 +8,11 @@ importers:
 
   .:
     dependencies:
+      '@mysten/kiosk':
+        specifier: 0.9.10
+        version: 0.9.10(svelte@4.2.18)(typescript@5.4.5)
       '@mysten/sui':
-        specifier: ^1.2.1
+        specifier: 1.2.1
         version: 1.2.1(svelte@4.2.18)(typescript@5.4.5)
       nanoid:
         specifier: ^5.0.7
@@ -111,12 +114,19 @@ packages:
   '@mysten/bcs@1.0.2':
     resolution: {integrity: sha512-haHT0km/9yIIe8lwo8gDFxGLnoxfRF4WmEVCz4lDXbEVQRsZkF0zB97kukiwMjDuFBaGVUhrOMCLz6td8tSMaQ==}
 
+  '@mysten/kiosk@0.9.10':
+    resolution: {integrity: sha512-ikNTV/NrbdjucUel7BOYkEZabFL/AgcnsikGLPkmCKFP97PdaArd1D//ilVbVD5QkJPX9+fyco+gcb2v0WTMbw==}
+    engines: {node: '>=18'}
+
   '@mysten/sui@1.2.1':
     resolution: {integrity: sha512-1vPJOxuQhYGiDPFXs1diLFHZ8HaYSvhWipg1BSk/VkwTN2Kxa1cJTA2iN6AiuBwC6KEbtEXfHD9CeCnPRhJchg==}
     engines: {node: '>=18'}
 
   '@noble/curves@1.4.0':
     resolution: {integrity: sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg==}
+
+  '@noble/curves@1.4.2':
+    resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
 
   '@noble/hashes@1.4.0':
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
@@ -454,11 +464,18 @@ snapshots:
     dependencies:
       bs58: 5.0.0
 
+  '@mysten/kiosk@0.9.10(svelte@4.2.18)(typescript@5.4.5)':
+    dependencies:
+      '@mysten/sui': 1.2.1(svelte@4.2.18)(typescript@5.4.5)
+    transitivePeerDependencies:
+      - svelte
+      - typescript
+
   '@mysten/sui@1.2.1(svelte@4.2.18)(typescript@5.4.5)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
       '@mysten/bcs': 1.0.2
-      '@noble/curves': 1.4.0
+      '@noble/curves': 1.4.2
       '@noble/hashes': 1.4.0
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
@@ -473,6 +490,10 @@ snapshots:
       - typescript
 
   '@noble/curves@1.4.0':
+    dependencies:
+      '@noble/hashes': 1.4.0
+
+  '@noble/curves@1.4.2':
     dependencies:
       '@noble/hashes': 1.4.0
 

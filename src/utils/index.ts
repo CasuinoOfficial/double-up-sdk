@@ -150,14 +150,14 @@ function between(x: number, min: number, max: number) {
   return x >= min && x <= max;
 }
 
-export const checkComputerBet = (outcome: number) => {
-  if (between(outcome, 0, 290)) {
+export const checkComputerBet = (outcome: number, hasPartnerNFT: boolean) => {
+  if (between(outcome, 0, hasPartnerNFT ? 295 : 290)) {
     // Computer choose rock
     return 0;
-  } else if (between(outcome, 300, 590)) {
+  } else if (between(outcome, 300, hasPartnerNFT ? 595 : 590)) {
     // Computer choose paper
     return 1;
-  } else if (between(outcome, 600, 890)) {
+  } else if (between(outcome, 600, hasPartnerNFT ? 895 : 890)) {
     // Computer choose scissors
     return 2;
   } else {

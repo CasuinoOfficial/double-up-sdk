@@ -5,6 +5,7 @@ import {
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
+import { KioskOwnerCap, KioskTransaction } from "@mysten/kiosk";
 
 import { randomBytes } from "crypto";
 import { nanoid } from "nanoid";
@@ -18,6 +19,7 @@ import {
   UNIHOUSE_CORE_PACKAGE,
 } from "../../constants";
 import { getBlsGameInfosWithDraw, sleep } from "../../utils";
+import { KioskClient } from "@mysten/kiosk";
 
 // 0: Rock, 1: Paper, 2: Scissors
 type BetType = 0 | 1 | 2;
@@ -26,7 +28,8 @@ export interface RPSInput {
   betType: BetType;
   coin: TransactionObjectArgument;
   coinType: string;
-  partnerNftId?: string;
+  partnerNftType?: string;
+  partnerNftArgument?: TransactionArgument;
   transaction: TransactionType;
 }
 
@@ -95,7 +98,8 @@ export const createRockPaperScissors = ({
   betType,
   coin,
   coinType,
-  partnerNftId,
+  partnerNftType,
+  partnerNftArgument,
   partnerNftListId,
   rpsPackageId,
   transaction,
@@ -107,12 +111,13 @@ export const createRockPaperScissors = ({
     const userRandomness = randomBytes(512);
 
     if (
-      typeof partnerNftId === "string" &&
-      typeof partnerNftListId === "string"
+      typeof partnerNftListId === "string" &&
+      typeof partnerNftType === "string" &&
+      !partnerNftArgument
     ) {
       const [receipt] = transaction.moveCall({
         target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game_with_partner`,
-        typeArguments: [coinType],
+        typeArguments: [coinType, partnerNftType],
         arguments: [
           transaction.object(UNI_HOUSE_OBJ),
           transaction.object(BLS_VERIFIER_OBJ),
@@ -121,7 +126,7 @@ export const createRockPaperScissors = ({
           ),
           transaction.pure.u64(betType),
           coin,
-          transaction.object(partnerNftId),
+          partnerNftArgument,
           transaction.object(partnerNftListId),
         ],
       });
