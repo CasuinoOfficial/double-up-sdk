@@ -61,8 +61,6 @@ const getGenericGameInfos = ({
   gameSeed,
   transactionResult,
 }: GenericGameInfosInput): GameInfo[] => {
-  console.log("check3 filterString", filterString);
-
   const objectChanges = transactionResult.objectChanges;
 
   const gameInfos = (objectChanges as any[])
@@ -146,4 +144,58 @@ export const getRouletteTableInfo = ({
     });
 
   return gameInfos;
+};
+
+function between(x: number, min: number, max: number) {
+  return x >= min && x <= max;
+}
+
+export const checkComputerBet = (outcome: number, hasPartnerNFT: boolean) => {
+  if (between(outcome, 0, hasPartnerNFT ? 295 : 290)) {
+    // Computer choose rock
+    return 0;
+  } else if (between(outcome, 300, hasPartnerNFT ? 595 : 590)) {
+    // Computer choose paper
+    return 1;
+  } else if (between(outcome, 600, hasPartnerNFT ? 895 : 890)) {
+    // Computer choose scissors
+    return 2;
+  } else {
+    // Computer use laser beem, you have no way to win
+    return 3;
+  }
+};
+
+export const getRPSResult = (playerBet: number, computerBet: number) => {
+  if (computerBet === 3) {
+    return "lasterBeem";
+  }
+
+  if (playerBet === computerBet) {
+    return "draw";
+  }
+
+  if (
+    (playerBet === 0 && computerBet === 2) ||
+    (playerBet === 1 && computerBet === 0) ||
+    (playerBet === 2 && computerBet === 1)
+  ) {
+    return "win";
+  }
+
+  return "lose";
+};
+
+export const checkBetType = (betType: number) => {
+  switch (betType) {
+    case 1:
+      return "paper";
+    case 2:
+      return "scissors";
+    case 3:
+      return "laserBeem";
+    case 0:
+    default:
+      return "rock";
+  }
 };

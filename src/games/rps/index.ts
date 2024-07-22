@@ -5,7 +5,9 @@ import {
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
+import { KioskOwnerCap, KioskTransaction } from "@mysten/kiosk";
 
+import { randomBytes } from "crypto";
 import { nanoid } from "nanoid";
 
 import {
@@ -17,6 +19,7 @@ import {
   UNIHOUSE_CORE_PACKAGE,
 } from "../../constants";
 import { getBlsGameInfosWithDraw, sleep } from "../../utils";
+import { KioskClient } from "@mysten/kiosk";
 
 // 0: Rock, 1: Paper, 2: Scissors
 type BetType = 0 | 1 | 2;
@@ -25,7 +28,8 @@ export interface RPSInput {
   betType: BetType;
   coin: TransactionObjectArgument;
   coinType: string;
-  partnerNftId?: string;
+  partnerNftType?: string;
+  partnerNftArgument?: TransactionArgument;
   transaction: TransactionType;
 }
 
@@ -94,7 +98,8 @@ export const createRockPaperScissors = ({
   betType,
   coin,
   coinType,
-  partnerNftId,
+  partnerNftType,
+  partnerNftArgument,
   partnerNftListId,
   rpsPackageId,
   transaction,
@@ -103,15 +108,16 @@ export const createRockPaperScissors = ({
 
   try {
     // This adds some extra entropy to the coinflip itself
-    const userRandomness = Buffer.from(nanoid(512), "utf8");
+    const userRandomness = randomBytes(512);
 
     if (
-      typeof partnerNftId === "string" &&
-      typeof partnerNftListId === "string"
+      typeof partnerNftListId === "string" &&
+      typeof partnerNftType === "string" &&
+      partnerNftArgument !== undefined
     ) {
       const [receipt] = transaction.moveCall({
         target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game_with_partner`,
-        typeArguments: [coinType],
+        typeArguments: [coinType, partnerNftType],
         arguments: [
           transaction.object(UNI_HOUSE_OBJ),
           transaction.object(BLS_VERIFIER_OBJ),
@@ -120,7 +126,7 @@ export const createRockPaperScissors = ({
           ),
           transaction.pure.u64(betType),
           coin,
-          transaction.object(partnerNftId),
+          partnerNftArgument,
           transaction.object(partnerNftListId),
         ],
       });
@@ -178,7 +184,7 @@ export const getRockPaperScissorsResult = async ({
     let rawResults: RPSParsedJson[] = [];
     let txDigests: string[] = [];
 
-    while (results.length === 0) {
+    while (results.length < gameInfos.length) {
       try {
         const events = await suiClient.queryEvents({
           query: {
@@ -188,17 +194,17 @@ export const getRockPaperScissorsResult = async ({
           order: "descending",
         });
 
-        results = events.data.reduce((acc, current) => {
-          const { bet_id, settlements } = current.parsedJson as RPSParsedJson;
+        events.data.forEach((event) => {
+          const { bet_id, settlements } = event.parsedJson as RPSParsedJson;
 
-          if (bet_id == gameInfos[0].gameId) {
-            rawResults.push(current.parsedJson as RPSParsedJson);
+          if (bet_id == gameInfos[results.length].gameId) {
+            rawResults.push(event.parsedJson as RPSParsedJson);
 
-            txDigests.push(current.id.txDigest);
+            txDigests.push(event.id.txDigest);
 
             const { bet_size, payout_amount } = settlements[0];
 
-            let res: number;
+            let res: BetType;
 
             if (bet_size < payout_amount) {
               // win
@@ -229,7 +235,6 @@ export const getRockPaperScissorsResult = async ({
               }
             } else {
               // draw
-
               switch (betType) {
                 case ROCK:
                   res = ROCK;
@@ -243,18 +248,18 @@ export const getRockPaperScissorsResult = async ({
               }
             }
 
-            acc.push(res);
+            results.push(res);
           }
-
-          return acc;
         }, []);
       } catch (err) {
         console.error(`DOUBLEUP - Error querying events: ${err}`);
       }
 
-      if (results.length === 0) {
+      if (results.length < gameInfos.length) {
         console.log(
-          `DOUBLEUP - Game in processing. Query again in ${
+          `DOUBLEUP - results: ${
+            results.length
+          } - Game in processing. Query again in ${
             pollInterval / 1000
           } seconds.`
         );
