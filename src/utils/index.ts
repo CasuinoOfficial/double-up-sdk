@@ -1,4 +1,4 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 
 import {
   BLS_SETTLER_MODULE_NAME,
@@ -7,6 +7,7 @@ import {
   UNIHOUSE_CORE_PACKAGE,
   UNIHOUSE_V4_PACKAGE,
 } from "../constants";
+import { Transaction } from "@mysten/sui/dist/cjs/transactions";
 
 interface GameInfo {
   gameCoinType: string;
@@ -198,4 +199,42 @@ export const checkBetType = (betType: number) => {
     default:
       return "rock";
   }
+};
+
+export const getInputCoins = async (
+  client: SuiClient,
+  tx: Transaction,
+  owner: string,
+  coinType: string,
+  amounts: number[]
+) => {
+  if (coinType === "0x2::sui::SUI") {
+    return tx.splitCoins(
+      tx.gas,
+      amounts.map((amount) => tx.pure.u64(amount))
+    );
+  }
+  let targetCoinType = coinType;
+  if (coinType.slice(0, 2) !== "0x") {
+    targetCoinType = `0x${coinType}`;
+  }
+
+  const { data: userCoins } = await client.getCoins({
+    owner,
+    coinType: targetCoinType,
+  });
+  const [mainCoin, ...otherCoins] = userCoins.map((coin) =>
+    tx.objectRef({
+      objectId: coin.coinObjectId,
+      version: coin.version,
+      digest: coin.digest,
+    })
+  );
+  if (!mainCoin) return undefined;
+  if (otherCoins.length > 0) tx.mergeCoins(mainCoin, otherCoins);
+
+  return tx.splitCoins(
+    mainCoin,
+    amounts.map((amount) => tx.pure.u64(amount))
+  );
 };

@@ -1,4 +1,8 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import {
+  SuiClient,
+  SuiEvent,
+  SuiTransactionBlockResponse,
+} from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -50,6 +54,7 @@ interface RPSParsedJson {
   outcome: string;
   player: string;
   settlements: RPSSettlement[];
+  timestamp: string;
 }
 
 export interface RPSResultInput {
@@ -115,6 +120,8 @@ export const createRockPaperScissors = ({
       typeof partnerNftType === "string" &&
       partnerNftArgument !== undefined
     ) {
+      console.log("check 1");
+
       const [receipt] = transaction.moveCall({
         target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game_with_partner`,
         typeArguments: [coinType, partnerNftType],
@@ -130,6 +137,8 @@ export const createRockPaperScissors = ({
           transaction.object(partnerNftListId),
         ],
       });
+
+      console.log("check 2");
 
       res.receipt = receipt;
     } else {
@@ -180,11 +189,12 @@ export const getRockPaperScissorsResult = async ({
       transactionResult,
     });
 
+    let pickedEvents: SuiEvent[] = [];
     let results: BetType[] = [];
     let rawResults: RPSParsedJson[] = [];
     let txDigests: string[] = [];
 
-    while (results.length < gameInfos.length) {
+    while (pickedEvents.length < gameInfos.length) {
       try {
         const events = await suiClient.queryEvents({
           query: {
@@ -195,67 +205,17 @@ export const getRockPaperScissorsResult = async ({
         });
 
         events.data.forEach((event) => {
-          const { bet_id, settlements } = event.parsedJson as RPSParsedJson;
+          const { bet_id } = event.parsedJson as RPSParsedJson;
 
-          if (bet_id == gameInfos[results.length].gameId) {
-            rawResults.push(event.parsedJson as RPSParsedJson);
-
-            txDigests.push(event.id.txDigest);
-
-            const { bet_size, payout_amount } = settlements[0];
-
-            let res: BetType;
-
-            if (bet_size < payout_amount) {
-              // win
-              switch (betType) {
-                case ROCK:
-                  res = SCISSORS;
-                  break;
-                case PAPER:
-                  res = ROCK;
-                  break;
-                case SCISSORS:
-                  res = PAPER;
-                  break;
-              }
-            } else if (bet_size > payout_amount) {
-              // lose
-
-              switch (betType) {
-                case ROCK:
-                  res = PAPER;
-                  break;
-                case PAPER:
-                  res = SCISSORS;
-                  break;
-                case SCISSORS:
-                  res = ROCK;
-                  break;
-              }
-            } else {
-              // draw
-              switch (betType) {
-                case ROCK:
-                  res = ROCK;
-                  break;
-                case PAPER:
-                  res = PAPER;
-                  break;
-                case SCISSORS:
-                  res = SCISSORS;
-                  break;
-              }
-            }
-
-            results.push(res);
+          if (bet_id == gameInfos[pickedEvents.length].gameId) {
+            pickedEvents.push(event);
           }
         }, []);
       } catch (err) {
         console.error(`DOUBLEUP - Error querying events: ${err}`);
       }
 
-      if (results.length < gameInfos.length) {
+      if (pickedEvents.length < gameInfos.length) {
         console.log(
           `DOUBLEUP - results: ${
             results.length
@@ -265,6 +225,67 @@ export const getRockPaperScissorsResult = async ({
         );
         await sleep(pollInterval);
       }
+    }
+
+    const sortedEvents = pickedEvents.sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs)
+    );
+
+    for (const event of sortedEvents) {
+      const { settlements } = event.parsedJson as RPSParsedJson;
+      rawResults.push(event.parsedJson as RPSParsedJson);
+
+      console.log(event.timestampMs);
+
+      txDigests.push(event.id.txDigest);
+
+      const { bet_size, payout_amount } = settlements[0];
+
+      let res: BetType;
+
+      if (bet_size < payout_amount) {
+        // win
+        switch (betType) {
+          case ROCK:
+            res = SCISSORS;
+            break;
+          case PAPER:
+            res = ROCK;
+            break;
+          case SCISSORS:
+            res = PAPER;
+            break;
+        }
+      } else if (bet_size > payout_amount) {
+        // lose
+
+        switch (betType) {
+          case ROCK:
+            res = PAPER;
+            break;
+          case PAPER:
+            res = SCISSORS;
+            break;
+          case SCISSORS:
+            res = ROCK;
+            break;
+        }
+      } else {
+        // draw
+        switch (betType) {
+          case ROCK:
+            res = ROCK;
+            break;
+          case PAPER:
+            res = PAPER;
+            break;
+          case SCISSORS:
+            res = SCISSORS;
+            break;
+        }
+      }
+
+      results.push(res);
     }
 
     res.results = results;

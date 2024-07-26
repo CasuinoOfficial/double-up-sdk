@@ -3,8 +3,13 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
-import { SUI_COIN_TYPE } from "../../constants";
-import { checkComputerBet, getRPSResult, checkBetType } from "../../utils";
+import { SUI_COIN_TYPE, FUD_COIN_TYPE } from "../../constants";
+import {
+  checkComputerBet,
+  getRPSResult,
+  checkBetType,
+  getInputCoins,
+} from "../../utils";
 import { KioskTransaction } from "@mysten/kiosk";
 
 export const testRPS = async (
@@ -16,9 +21,9 @@ export const testRPS = async (
   //If you don't have a partner NFT, leave the PARTNER_NFT_ID empty
   const { PARTNER_NFT_ID = "", TEST_WALLET_ADDRESS = "" } = process.env;
 
-  // rock
+  // paper
   const betType = 1;
-  const numberOfBets = 3;
+  const numberOfBets = 5;
   const betAmount = 500000000;
   const partnerNftId = PARTNER_NFT_ID;
   const partnerNftType =
@@ -51,7 +56,14 @@ export const testRPS = async (
       });
 
       for (let i = 0; i < numberOfBets; i++) {
-        const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
+        const betCoins = await getInputCoins(
+          client,
+          txb,
+          TEST_WALLET_ADDRESS,
+          FUD_COIN_TYPE,
+          [betAmount]
+        );
+        // const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
 
         const {
           ok: gameOk,
@@ -59,8 +71,8 @@ export const testRPS = async (
           gameSeed,
         } = dbClient.createRockPaperScissors({
           betType,
-          coin,
-          coinType: SUI_COIN_TYPE,
+          coin: betCoins[0],
+          coinType: FUD_COIN_TYPE,
           partnerNftType,
           partnerNftArgument: item,
           transaction: txb,
