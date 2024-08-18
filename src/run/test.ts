@@ -3,6 +3,8 @@ import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { fromHEX } from "@mysten/sui/utils";
+import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
+import { decodeSuiPrivateKey } from '@mysten/sui/cryptography';
 
 import { testCoinflip } from "./coinflip";
 import { testLimbo } from "./limbo";
@@ -27,8 +29,10 @@ import {
 import { testRPS } from "./rps";
 
 const { FUNCTION = "", SECRETKEY = "" } = process.env;
-const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
-const keypair = Ed25519Keypair.fromSecretKey(fromHEX(SECRETKEY));
+const client = new SuiClient({ url: getFullnodeUrl("testnet") });
+const { schema, secretKey } = decodeSuiPrivateKey(SECRETKEY);
+const keypair = Secp256k1Keypair.fromSecretKey(secretKey);
+// const keypair = Ed25519Keypair.fromSecretKey(fromHEX(SECRETKEY));
 // const client = new client({ secretKeys: secretKeyS });
 
 // const DESUI_LIMBO_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
@@ -72,48 +76,48 @@ const dbClient = new DoubleUpClient({
       case "coinflip":
         testCoinflip(dbClient, client, keypair);
         break;
-      case "limbo":
-        testLimbo(dbClient, client, keypair);
-        break;
-      case "lottery:get":
-        testLotteryGet(dbClient, client, keypair);
-        break;
-      case "lottery:buy":
-        testLotteryBuy(dbClient, client, keypair);
-        break;
-      case "lottery:redeem":
-        testLotteryRedeem(dbClient, client, keypair);
-        break;
-      case "lottery:results":
-        testLotteryResults(dbClient, client, keypair);
-        break;
-      case "lottery:tickets":
-        testLotteryTickets(dbClient, client, keypair);
-        break;
-      case "plinko":
-        testPlinko(dbClient, client, keypair);
-        break;
-      case "range:io":
-        testRangeDiceInsideOutside(dbClient, client, keypair);
-        break;
-      case "range:ou":
-        testRangeDiceOverUnder(dbClient, client, keypair);
-        break;
-      case "roulette:add":
-        testRouletteAdd(dbClient, client, keypair);
-        break;
-      case "roulette:create":
-        testRouletteCreate(dbClient, client, keypair);
-        break;
-      case "roulette:exists":
-        testRouletteExists(dbClient, client, keypair);
-        break;
-      case "roulette:start":
-        testRouletteStart(dbClient, client, keypair);
-        break;
-      case "rps":
-        testRPS(dbClient, client, keypair);
-        break;
+      // case "limbo":
+      //   testLimbo(dbClient, client, keypair);
+      //   break;
+      // case "lottery:get":
+      //   testLotteryGet(dbClient, client, keypair);
+      //   break;
+      // case "lottery:buy":
+      //   testLotteryBuy(dbClient, client, keypair);
+      //   break;
+      // case "lottery:redeem":
+      //   testLotteryRedeem(dbClient, client, keypair);
+      //   break;
+      // case "lottery:results":
+      //   testLotteryResults(dbClient, client, keypair);
+      //   break;
+      // case "lottery:tickets":
+      //   testLotteryTickets(dbClient, client, keypair);
+      //   break;
+      // case "plinko":
+      //   testPlinko(dbClient, client, keypair);
+      //   break;
+      // case "range:io":
+      //   testRangeDiceInsideOutside(dbClient, client, keypair);
+      //   break;
+      // case "range:ou":
+      //   testRangeDiceOverUnder(dbClient, client, keypair);
+      //   break;
+      // case "roulette:add":
+      //   testRouletteAdd(dbClient, client, keypair);
+      //   break;
+      // case "roulette:create":
+      //   testRouletteCreate(dbClient, client, keypair);
+      //   break;
+      // case "roulette:exists":
+      //   testRouletteExists(dbClient, client, keypair);
+      //   break;
+      // case "roulette:start":
+      //   testRouletteStart(dbClient, client, keypair);
+      //   break;
+      // case "rps":
+      //   testRPS(dbClient, client, keypair);
+      //   break;
       default:
         console.error(
           "Use dedicated test function to test an individual game.\n"

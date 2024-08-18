@@ -22,9 +22,9 @@ export const VSUI_COIN_TYPE =
 // coinflip
 // ===============================================================================
 export const COIN_PACKAGE_ID =
-  "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
-export const COIN_CORE_PACKAGE_ID =
-  "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
+  "0xc26b385ac36a31404684dcd138dbf080229115d1be0760d6ebbca2b15de2837e";
+// export const COIN_CORE_PACKAGE_ID =
+//   "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 // ===============================================================================
@@ -104,110 +104,97 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
     initialSharedVersion: 91929636,
     mutable: true,
   },
-  {
-    coinType: BUCK_COIN_TYPE,
-    objectId:
-      "0x366ec05b281fdb99e5005432a914dbbacb3ab7d3fea87926540b36859b42870e",
-    initialSharedVersion: 91929637,
-    mutable: true,
-  },
-  {
-    coinType: FUD_COIN_TYPE,
-    objectId:
-      "0x739fc1368d7b358b76a693435b874f594e3e05ff0f942ea9d62cb62754c65c3c",
-    initialSharedVersion: 92390311,
-    mutable: true,
-  },
-  {
-    coinType: PUP_COIN_TYPE,
-    objectId:
-      "0x6e3f060a29490bc82d9c3d52a42f7e4e549d8d1fd89ecd769a3311a3c60f6fef",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-  {
-    coinType: NAVX_COIN_TYPE,
-    objectId:
-      "0x8d7e9a860968f8c2b0dd3ffe47ff184f43c07ee764bba1ac1855012a3860bc68",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-  {
-    coinType: STASH_COIN_TYPE,
-    objectId:
-      "0x955e47ef974d82af3f5b42e7c04137e38f0e5f358abaf97cb932653237d9813a",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-  {
-    coinType: SUICANE_COIN_TYPE,
-    objectId:
-      "0xf3a3a1f0223e20a195ac5f3db3097e2b004f8d74cac4c170489d6aa91ac892ad",
-    initialSharedVersion: 92390320,
-    mutable: true,
-  },
-  {
-    coinType: VSUI_COIN_TYPE,
-    objectId:
-      "0xa441ee45c1f900451ee3939e9879090e9ebdd0a8f7fb90e66558a4a3af72f46e",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
+  // {
+  //   coinType: BUCK_COIN_TYPE,
+  //   objectId:
+  //     "0x366ec05b281fdb99e5005432a914dbbacb3ab7d3fea87926540b36859b42870e",
+  //   initialSharedVersion: 91929637,
+  //   mutable: true,
+  // },
+  // {
+  //   coinType: FUD_COIN_TYPE,
+  //   objectId:
+  //     "0x739fc1368d7b358b76a693435b874f594e3e05ff0f942ea9d62cb62754c65c3c",
+  //   initialSharedVersion: 92390311,
+  //   mutable: true,
+  // },
+  // {
+  //   coinType: PUP_COIN_TYPE,
+  //   objectId:
+  //     "0x6e3f060a29490bc82d9c3d52a42f7e4e549d8d1fd89ecd769a3311a3c60f6fef",
+  //   initialSharedVersion: 214343544,
+  //   mutable: true,
+  // },
+  // {
+  //   coinType: NAVX_COIN_TYPE,
+  //   objectId:
+  //     "0x8d7e9a860968f8c2b0dd3ffe47ff184f43c07ee764bba1ac1855012a3860bc68",
+  //   initialSharedVersion: 214343544,
+  //   mutable: true,
+  // },
+  // {
+  //   coinType: STASH_COIN_TYPE,
+  //   objectId:
+  //     "0x955e47ef974d82af3f5b42e7c04137e38f0e5f358abaf97cb932653237d9813a",
+  //   initialSharedVersion: 214343544,
+  //   mutable: true,
+  // },
+  // {
+  //   coinType: SUICANE_COIN_TYPE,
+  //   objectId:
+  //     "0xf3a3a1f0223e20a195ac5f3db3097e2b004f8d74cac4c170489d6aa91ac892ad",
+  //   initialSharedVersion: 92390320,
+  //   mutable: true,
+  // },
+  // {
+  //   coinType: VSUI_COIN_TYPE,
+  //   objectId:
+  //     "0xa441ee45c1f900451ee3939e9879090e9ebdd0a8f7fb90e66558a4a3af72f46e",
+  //   initialSharedVersion: 214343544,
+  //   mutable: true,
+  // },
 ];
 
 // ===============================================================================
 
 // rock paper scissors
 // ===============================================================================
-export const RPS_PACKAGE_ID =
-  "0x34937f6948ff94d4195317a931d7cc87ab5aa2bd9f7e704f7f8ad0e019051051";
-export const RPS_CORE_PACKAGE_ID =
-  "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
-export const RPS_MODULE_NAME = "rock_paper_scissors";
-export const RPS_STRUCT_NAME = "RockPaperScissors";
+// export const RPS_PACKAGE_ID =
+//   "0x34937f6948ff94d4195317a931d7cc87ab5aa2bd9f7e704f7f8ad0e019051051";
+// export const RPS_CORE_PACKAGE_ID =
+//   "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
+// export const RPS_MODULE_NAME = "rock_paper_scissors";
+// export const RPS_STRUCT_NAME = "RockPaperScissors";
 // ===============================================================================
 
 // range dice
 // ===============================================================================
-export const RANGE_DICE_PACKAGE_ID =
-  "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
-export const RANGE_DICE_CORE_PACKAGE_ID =
-  "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
-export const RANGE_DICE_MODULE_NAME = "dice_range";
-export const RANGE_DICE_STRUCT_NAME = "DiceRange";
+// export const RANGE_DICE_PACKAGE_ID =
+//   "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
+// export const RANGE_DICE_CORE_PACKAGE_ID =
+//   "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
+// export const RANGE_DICE_MODULE_NAME = "dice_range";
+// export const RANGE_DICE_STRUCT_NAME = "DiceRange";
 // ===============================================================================
 
 // shared
 // ===============================================================================
-export const BLS_SETTLER_MODULE_NAME = "bls_settler";
-
-export const BLS_VERIFIER_ID =
-  "0xc85af84c78bebac4fd91d8cc25d66461503258764402b4c06c9f3e8050b5bd2e";
-export const BLS_VERIFIER_OBJ: any = Inputs.SharedObjectRef({
-  objectId: BLS_VERIFIER_ID,
-  initialSharedVersion: 89762028,
-  mutable: true,
-});
-
 export const CLOCK_OBJ: any = Inputs.SharedObjectRef({
   objectId: "0x6",
   initialSharedVersion: 1,
   mutable: false,
 });
 
-export const UNI_HOUSE_ID =
-  "0x44d587c7f6b55fdf35d30143c67bc81911140e73e1ad9c7c17998dbd96cc1bc6";
-export const UNI_HOUSE_OBJ: any = Inputs.SharedObjectRef({
-  objectId: UNI_HOUSE_ID,
-  initialSharedVersion: 89762024,
-  mutable: true,
+export const RAND_OBJ: any = Inputs.SharedObjectRef({
+  objectId: "0x8",
+  initialSharedVersion: 1,
+  mutable: false,
 });
+
+export const UNI_HOUSE_OBJ_ID =
+  "0xe339ccc83e8bf497c77d80fc25dedb4703daabf3a3459ef5186600d9ae82b08a";
 
 //V6 UNIHOUSE
 export const UNIHOUSE_PACKAGE =
-  "0xfd038e13deae83979c1753d66bd05059f37d2c88fc9d613ed5719637d670f600";
-export const UNIHOUSE_V4_PACKAGE =
-  "0x2f37aa549ecd1283708d487267f93a5e4c8a759d0c2b5ddddb2162f314e6aa49";
-export const UNIHOUSE_CORE_PACKAGE =
-  "0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf";
+  "0x93c79b3a0a920173f8d463cdaa06b2bf412504205edc4d0231af1313270b248f";
 // ===============================================================================
