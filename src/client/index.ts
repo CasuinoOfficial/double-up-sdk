@@ -4,7 +4,6 @@ import {
   // COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
   LIMBO_PACKAGE_ID,
-  LIMBO_CORE_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
   PLINKO_CORE_PACKAGE_ID,
   PLINKO_VERIFIER_ID,
@@ -24,7 +23,6 @@ import {
 
 import {
   createLimbo,
-  getLimboResult,
   LimboInput,
   LimboResultInput,
 } from "../games/limbo";
@@ -104,8 +102,7 @@ export class DoubleUpClient {
   constructor({
     coinflipPackageId = COIN_PACKAGE_ID,
     limboPackageId = LIMBO_PACKAGE_ID,
-    limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
-    origin = "",
+    origin = "DoubleUp",
     partnerNftListId,
     plinkoPackageId = PLINKO_PACKAGE_ID,
     plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
@@ -122,7 +119,6 @@ export class DoubleUpClient {
     // this.coinflipCorePackageId = coinflipCorePackageId;
 
     this.limboPackageId = limboPackageId;
-    this.limboCorePackageId = limboCorePackageId;
 
     this.origin = origin;
 
@@ -197,15 +193,9 @@ export class DoubleUpClient {
   //     suiClient: this.suiClient,
   //   });
 
-  // // limbo
-  // createLimbo = (input: LimboInput) =>
-  //   createLimbo({ ...input, limboPackageId: this.limboPackageId });
-  // getLimboResult = (input: LimboResultInput) =>
-  //   getLimboResult({
-  //     ...input,
-  //     limboCorePackageId: this.limboCorePackageId,
-  //     suiClient: this.suiClient,
-  //   });
+  // limbo
+  createLimbo = (input: LimboInput) =>
+    createLimbo({ ...input, limboPackageId: this.limboPackageId });
 
   // // plinko
   // createPlinko = (input: PlinkoInput) =>

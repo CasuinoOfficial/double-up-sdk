@@ -36,15 +36,13 @@ export const COIN_STRUCT_NAME = "Coinflip";
 
 // limbo
 // ===============================================================================
-export const LIMBO_CORE_PACKAGE_ID =
-  "0xbca3313d753bba2e3b3d911d2306c5024de99dfdb2fc456850186b18867ac36c";
 export const LIMBO_PACKAGE_ID =
-  "0x26f5edaef93c8195cd5f96cdf54d96051088948ce2cb740d6c8803a53b0be3f9";
+  "0xa512f40f1dc88adc9f5da52a38148594c68939480d19e0e2b019a552a498c5da";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 
-export const LIMBO_MIN_MULTIPLIER = "1.01";
-export const LIMBO_MAX_MULTIPLIER = "100";
+export const LIMBO_MIN_MULTIPLIER = "101";
+export const LIMBO_MAX_MULTIPLIER = "10000";
 // ===============================================================================
 
 // lottery
@@ -185,11 +183,7 @@ export const CLOCK_OBJ: any = Inputs.SharedObjectRef({
   mutable: false,
 });
 
-export const RAND_OBJ: any = Inputs.SharedObjectRef({
-  objectId: "0x8",
-  initialSharedVersion: 1,
-  mutable: false,
-});
+export const RAND_OBJ_ID: any = "0x8";
 
 export const UNI_HOUSE_OBJ_ID =
   "0xe339ccc83e8bf497c77d80fc25dedb4703daabf3a3459ef5186600d9ae82b08a";

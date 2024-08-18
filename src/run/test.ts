@@ -32,11 +32,6 @@ const { FUNCTION = "", SECRETKEY = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("testnet") });
 const { schema, secretKey } = decodeSuiPrivateKey(SECRETKEY);
 const keypair = Secp256k1Keypair.fromSecretKey(secretKey);
-// const keypair = Ed25519Keypair.fromSecretKey(fromHEX(SECRETKEY));
-// const client = new client({ secretKeys: secretKeyS });
-
-// const DESUI_LIMBO_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
-// const DESUI_LIMBO_CORE_PACKAGE_ID = "0x6357ecb5a510ffda89024b37942444e6f32f69f598c0d2fec6555869882657f6";
 
 const PARTNER_NFT_ID =
   "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
@@ -76,9 +71,9 @@ const dbClient = new DoubleUpClient({
       case "coinflip":
         testCoinflip(dbClient, client, keypair);
         break;
-      // case "limbo":
-      //   testLimbo(dbClient, client, keypair);
-      //   break;
+      case "limbo":
+        testLimbo(dbClient, client, keypair);
+        break;
       // case "lottery:get":
       //   testLotteryGet(dbClient, client, keypair);
       //   break;

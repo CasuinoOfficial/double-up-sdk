@@ -16,7 +16,6 @@ export const testCoinflip = async (
 
   try {
     const txb = new Transaction();
-
     const coins = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
 
     dbClient.createCoinflip({
@@ -40,40 +39,17 @@ export const testCoinflip = async (
     });
     console.log('result', transactionResult);
 
-    // if (
-    //   transactionResult?.effects &&
-    //   transactionResult?.effects.status.status === "failure"
-    // ) {
-    //   throw new Error(transactionResult.effects.status.error);
-    // }
+    if (
+      transactionResult?.effects &&
+      transactionResult?.effects.status.status === "failure"
+    ) {
+      throw new Error(transactionResult.effects.status.error);
+    }
+    
+    console.log("Events", transactionResult?.events);
 
-    console.log("Signed and sent transaction.");
+    return transactionResult?.events;
 
-    // const {
-    //   ok: resultsOk,
-    //   err: resultsErr,
-    //   results,
-    //   rawResults,
-    //   txDigests,
-    // } = await dbClient.getCoinflipResult({
-    //   betType,
-    //   coinType: SUI_COIN_TYPE,
-    //   gameSeed,
-    //   transactionResult,
-    // });
-
-    // if (!resultsOk || !txDigests || !rawResults || !results) {
-    //   throw resultsErr;
-    // }
-
-    // console.log("Retrieved coinflip results.");
-    // console.log(
-    //   "Game results:",
-    //   rawResults[0]?.settlements[0]?.player_won ? "won" : "lost"
-    // );
-    // console.log("Coin shows:", results[0] === 0 ? "heads" : "tails");
-    // console.log("Game rawResult: ", rawResults);
-    // console.log("txDigests:", txDigests[0]);
   } catch (err) {
     console.error("error", err);
   }
