@@ -39,7 +39,7 @@ import {
   RangeDiceResultInput,
   RangeDiceResponse,
   RangeDiceResultResponse,
-} from "src/games/rangeDice";
+} from "src/games/ufoRange";
 import {
   CreatedRouletteTableInput,
   CreatedRouletteTableResponse,
@@ -154,22 +154,14 @@ const DoubleUpProvider = ({
 }: DoubleupProviderProps): ReactElement => {
   const dbClient = new DoubleUpClient({
     coinflipPackageId,
-    coinflipCorePackageId,
     dicePackageId,
-    diceCorePackageId,
     limboPackageId,
-    limboCorePackageId,
     origin,
     partnerNftListId,
     plinkoPackageId,
-    plinkoCorePackageId,
-    plinkoVerifierId,
     rangeDicePackageId,
-    rangeDiceCorePackageId,
     roulettePackageId,
-    rouletteCorePackageId,
     rpsPackageId,
-    rpsCorePackageId,
     suiClient,
   });
 

@@ -1,43 +1,54 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
+import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 
-import { SUI_COIN_TYPE } from "../../constants";
+import { RAND_OBJ_ID, SUI_COIN_TYPE, UFORANGE_MODULE_NAME, UFORANGE_PACKAGE_ID, UNI_HOUSE_OBJ_ID } from "../../constants";
+import { OverUnderBet } from "../../games/ufoRange";
+import { bcs } from "@mysten/sui/bcs";
 
-export const testRangeDiceOverUnder = async (
+export const testRange = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Ed25519Keypair
+  keypair: Secp256k1Keypair
 ) => {
-  // over
-  const betType = 0;
-  const betAmount = 500000000;
+    // over
+    const betTypes: OverUnderBet[] = [0];
+    const betAmount = 500000000;
 
-  const range = 1;
-
-  try {
+    const range = [[49, 100]];
     const txb = new Transaction();
+    const coins = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
 
-    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
+    console.log("split coins");  
 
-    const {
-      ok: gameOk,
-      err: gameErr,
-      gameSeed,
-    } = dbClient.createRangeDice({
-      betType,
-      coin,
-      coinType: SUI_COIN_TYPE,
-      range,
-      transaction: txb,
+    txb.moveCall({
+      target: `${UFORANGE_PACKAGE_ID}::${UFORANGE_MODULE_NAME}::play`,
+      typeArguments: [SUI_COIN_TYPE],
+      arguments: [
+        txb.object(UNI_HOUSE_OBJ_ID),
+        txb.object(RAND_OBJ_ID),
+        txb.makeMoveVec({ elements: [coins] }),
+        txb.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        // transaction.makeMoveVec({ elements: [rangeFormArg0]}),
+        txb.pure(
+          bcs.vector(bcs.vector(bcs.U64)).serialize(range)
+        ),
+        txb.pure.string("DoubleUp")
+      ],
     });
 
-    console.log("Added ranged dice (over/under) to transaction block.");
+    // dbClient.createRange({
+    //   betTypes,
+    //   coins: txb.makeMoveVec({ elements: [coins[0], coins[1]] }),
+    //   coinType: SUI_COIN_TYPE,
+    //   range,
+    //   transaction: txb,
+    // });
 
-    if (!gameOk) {
-      throw gameErr;
-    }
+    console.log("Added ranged dice (over/under) to transaction block.");  
 
     const transactionResult = await client.signAndExecuteTransaction({
       signer: keypair,
@@ -49,114 +60,16 @@ export const testRangeDiceOverUnder = async (
         showObjectChanges: true,
       },
     });
+    console.log('result', transactionResult);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
+    // if (
+    //   transactionResult?.effects &&
+    //   transactionResult?.effects.status.status === "failure"
+    // ) {
+    //   throw new Error(transactionResult.effects.status.error);
+    // }
 
-    console.log("Signed and sent transaction.");
-    console.log(transactionResult);
+    // console.log("Signed and sent transaction.");
+    // console.log(transactionResult);
 
-    const {
-      ok: resultsOk,
-      err: resultsErr,
-      results,
-    } = await dbClient.getRangeDiceResult({
-      betType,
-      coinType: SUI_COIN_TYPE,
-      //TODO: need to confirm could the gameSeed be empty string or not
-      gameSeed: gameSeed ?? "",
-      transactionResult,
-    });
-
-    if (!resultsOk) {
-      throw resultsErr;
-    }
-
-    console.log("Retrieved dice results.");
-    console.log(results);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const testRangeDiceInsideOutside = async (
-  dbClient: DoubleUpClient,
-  client: SuiClient,
-  keypair: Ed25519Keypair
-) => {
-  // inside
-  const betType = 2;
-  const betAmount = 500000000;
-
-  const range = [3, 4];
-
-  try {
-    const txb = new Transaction();
-
-    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
-
-    const {
-      ok: gameOk,
-      err: gameErr,
-      gameSeed,
-    } = dbClient.createRangeDice({
-      betType,
-      coin,
-      coinType: SUI_COIN_TYPE,
-      range,
-      transaction: txb,
-    });
-
-    console.log("Added ranged dice (inside/out) to transaction block.");
-
-    if (!gameOk) {
-      throw gameErr;
-    }
-
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
-
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
-
-    console.log("Signed and sent transaction.");
-    console.log(transactionResult);
-
-    const {
-      ok: resultsOk,
-      err: resultsErr,
-      results,
-    } = await dbClient.getRangeDiceResult({
-      betType,
-      coinType: SUI_COIN_TYPE,
-      //TODO: need to confirm could the gameSeed be empty string or not
-      gameSeed: gameSeed ?? "",
-      transactionResult,
-    });
-
-    if (!resultsOk) {
-      throw resultsErr;
-    }
-
-    console.log("Retrieved dice results.");
-    console.log(results);
-  } catch (err) {
-    console.log(err);
-  }
 };

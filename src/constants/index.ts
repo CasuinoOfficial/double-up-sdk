@@ -62,19 +62,10 @@ export const LOTTERY_STORE_ID =
 // plinko
 // ===============================================================================
 export const PLINKO_PACKAGE_ID =
-  "0xe1956df956df4d2f3ec2dc4319e03b037d95db97a6f9845112e1ba4986703234";
-export const PLINKO_CORE_PACKAGE_ID =
-  "0x1513ee1a47bb1e3b78162f42510f3eece3c6ab0b246bdafda47f939cf7a81c07";
-export const PLINKO_MODULE_NAME = "plinko";
+  "0xdeee42a7c689682c0e6f51dafb53ce4d53788b3956d9ac5c44d0988162f62884";
+export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
-export const PLINKO_VERIFIER_ID =
-  "0x898207c059a7e5d4e82cc7258ca6f1876f439265776efa502e8d1616cf198e37";
-export const PLINKO_VERIFIER_OBJ: any = Inputs.SharedObjectRef({
-  objectId: PLINKO_VERIFIER_ID,
-  initialSharedVersion: 91929635,
-  mutable: true,
-});
 // ===============================================================================
 
 // roulette
@@ -167,12 +158,10 @@ export const ROULETTE_CONFIGS: RouletteConfig[] = [
 
 // range dice
 // ===============================================================================
-// export const RANGE_DICE_PACKAGE_ID =
-//   "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
-// export const RANGE_DICE_CORE_PACKAGE_ID =
-//   "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
-// export const RANGE_DICE_MODULE_NAME = "dice_range";
-// export const RANGE_DICE_STRUCT_NAME = "DiceRange";
+export const UFORANGE_PACKAGE_ID =
+  "0xbbb437789e0c4d2ee8468203ec2f3884d6317d2cb1442b60d31db0766fe45418";
+export const UFORANGE_MODULE_NAME = "ufo_range";
+export const UFORANGE_STRUCT_NAME = "UFORange";
 // ===============================================================================
 
 // shared

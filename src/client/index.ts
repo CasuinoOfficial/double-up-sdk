@@ -1,30 +1,22 @@
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { KioskClient, Network } from "@mysten/kiosk";
 import {
-  // COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
   LIMBO_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
-  PLINKO_CORE_PACKAGE_ID,
-  PLINKO_VERIFIER_ID,
   ROULETTE_PACKAGE_ID,
-  ROULETTE_CORE_PACKAGE_ID,
-  // RPS_CORE_PACKAGE_ID,
   // RPS_PACKAGE_ID,
   // RANGE_DICE_PACKAGE_ID,
-  // RANGE_DICE_CORE_PACKAGE_ID,
 } from "../constants";
 
 import {
   createCoinflip,
   CoinflipInput,
-  CoinflipResultInput,
 } from "../games/coinflip";
 
 import {
   createLimbo,
   LimboInput,
-  LimboResultInput,
 } from "../games/limbo";
 
 import {
@@ -39,18 +31,15 @@ import {
 } from "../games/lottery";
 
 import {
-  createPlinko,
-  getPlinkoResult,
+  createSinglePlinko,
   PlinkoInput,
   PlinkoResultInput,
 } from "../games/plinko";
 
 import {
-  createRangeDice,
-  getRangeDiceResult,
-  RangeDiceInput,
-  RangeDiceResultInput,
-} from "../games/rangeDice";
+  createRange,
+  RangeInput,
+} from "../games/ufoRange";
 
 import {
   addRouletteBet,
@@ -78,22 +67,14 @@ import {
 
 interface DoubleUpClientInput {
   coinflipPackageId?: string;
-  coinflipCorePackageId?: string;
   dicePackageId?: string;
-  diceCorePackageId?: string;
   limboPackageId?: string;
-  limboCorePackageId?: string;
   origin?: string;
   partnerNftListId?: string;
   plinkoPackageId?: string;
-  plinkoCorePackageId?: string;
-  plinkoVerifierId?: string;
   rangeDicePackageId?: string;
-  rangeDiceCorePackageId?: string;
   roulettePackageId?: string;
-  rouletteCorePackageId?: string;
   rpsPackageId?: string;
-  rpsCorePackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -105,12 +86,9 @@ export class DoubleUpClient {
     origin = "DoubleUp",
     partnerNftListId,
     plinkoPackageId = PLINKO_PACKAGE_ID,
-    plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
-    plinkoVerifierId = PLINKO_VERIFIER_ID,
     // rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
     // rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
-    rouletteCorePackageId = ROULETTE_CORE_PACKAGE_ID,
     // rpsPackageId = RPS_PACKAGE_ID,
     // rpsCorePackageId = RPS_CORE_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
@@ -125,14 +103,10 @@ export class DoubleUpClient {
     this.partnerNftListId = partnerNftListId;
 
     this.plinkoPackageId = plinkoPackageId;
-    this.plinkoCorePackageId = plinkoCorePackageId;
-    this.plinkoVerifierId = plinkoVerifierId;
-
     // this.rangeDicePackageId = rangeDicePackageId;
     // this.rangeDiceCorePackageId = rangeDiceCorePackageId;
 
     this.roulettePackageId = roulettePackageId;
-    this.rouletteCorePackageId = rouletteCorePackageId;
 
     // this.rpsPackageId = rpsPackageId;
     // this.rpsCorePackageId = rpsCorePackageId;
@@ -140,35 +114,27 @@ export class DoubleUpClient {
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
-      network: Network.MAINNET,
+      network: Network.TESTNET,
     });
   }
 
   coinflipPackageId: string;
-  coinflipCorePackageId: string;
 
   dicePackageId: string;
-  diceCorePackageId: string;
 
   limboPackageId: string;
-  limboCorePackageId: string;
 
   origin: string;
 
   partnerNftListId: string | undefined;
 
   plinkoPackageId: string;
-  plinkoCorePackageId: string;
-  plinkoVerifierId: string;
 
   rangeDicePackageId: string;
-  rangeDiceCorePackageId: string;
 
   roulettePackageId: string;
-  rouletteCorePackageId: string;
 
   rpsPackageId: string;
-  rpsCorePackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -198,33 +164,18 @@ export class DoubleUpClient {
     createLimbo({ ...input, limboPackageId: this.limboPackageId });
 
   // // plinko
-  // createPlinko = (input: PlinkoInput) =>
-  //   createPlinko({
-  //     ...input,
-  //     plinkoPackageId: this.plinkoPackageId,
-  //     plinkoVerifierId: this.plinkoVerifierId,
-  //   });
-  // getPlinkoResult = (input: PlinkoResultInput) =>
-  //   getPlinkoResult({
-  //     ...input,
-  //     plinkoPackageId: this.plinkoPackageId,
-  //     plinkoCorePackageId: this.plinkoCorePackageId,
-  //     suiClient: this.suiClient,
-  //   });
+  createSinglePlinko = (input: PlinkoInput) =>
+    createSinglePlinko({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+    });
 
-  // // range dice
-  // createRangeDice = (input: RangeDiceInput) =>
-  //   createRangeDice({
-  //     ...input,
-  //     partnerNftListId: this.partnerNftListId,
-  //     rangeDicePackageId: this.rangeDicePackageId,
-  //   });
-  // getRangeDiceResult = (input: RangeDiceResultInput) =>
-  //   getRangeDiceResult({
-  //     ...input,
-  //     rangeDiceCorePackageId: this.rangeDiceCorePackageId,
-  //     suiClient: this.suiClient,
-  //   });
+  // range dice
+  createRange = (input: RangeInput) =>
+    createRange({
+      ...input,
+      partnerNftListId: this.partnerNftListId,
+  });
 
   // // roulette
   // addRouletteBet = (input: RouletteAddBetInput) =>
