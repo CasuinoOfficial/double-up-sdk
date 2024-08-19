@@ -10,6 +10,7 @@ import {
 import { bcs } from "@mysten/sui/bcs";
 
 import { PLINKO_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID, PLINKO_PACKAGE_ID, PLINKO_CONFIG_ID } from "../../constants";
+import { KIOSK_ITEM, KIOSK_OWNER_CAP } from "@mysten/kiosk";
 
 interface PlinkoGameResults {
   ballIndex: string;
@@ -101,10 +102,9 @@ interface PlinkoTable {
   tableId: string;
 }
 
+// TODO: create PlayPlinkoInput interface
 export interface PlinkoAddBetInput {
-  address: string;
-  betNumber?: number;
-  betType: PlinkoBet;
+  creator: string;
   coin: TransactionObjectArgument;
   coinType: string;
   transaction: TransactionType;
@@ -121,7 +121,7 @@ export interface PlinkoAddBetResponse {
   betId?: TransactionArgument;
 }
 
-interface PlinkoParsedJson {
+interface PlinkoTableParsedJson {
   bet_id: string;
   creator: string;
   outcome: string;
@@ -144,7 +144,7 @@ export interface PlinkoTableResponse {
 }
 
 export interface PlinkoTableExistsInput {
-  address: string;
+  creator: string;
   coinType: string;
 }
 
@@ -187,7 +187,7 @@ export const createPlinkoTable = ({
 };
 
 export const doesPlinkoTableExist = async ({
-  address,
+  creator,
   coinType,
   plinkoCorePackageId,
   suiClient,
@@ -200,7 +200,7 @@ export const doesPlinkoTableExist = async ({
       name: {
         type: `${plinkoCorePackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
         value: {
-          creator: address,
+          creator,
         },
       },
     });
@@ -253,25 +253,83 @@ export const getCreatedPlinkoTable = ({
   return res;
 };
 
-// TODO: Fix this 
-export const addPlinkoBet = (
-  coinType: string,
-  plinkoPackageId: string, 
-  creator: string,
-  coin: TransactionObjectArgument,
-  transaction: TransactionType
-) => {
-  transaction.moveCall({
-    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::add_bet`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(PLINKO_CONFIG_ID),
-      transaction.pure.address(creator),
-      coin,
-    ],
-  });
+export const addPlinkoBet = ({
+  coinType,
+  plinkoPackageId, 
+  creator,
+  coin,
+  transaction,
+}: InternalPlinkoAddBetInput): PlinkoAddBetResponse => {
+  const res: PlinkoAddBetResponse = { ok: true };
+
+  try {
+    const [betId] = transaction.moveCall({
+      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::add_bet`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(PLINKO_CONFIG_ID),
+        transaction.pure.address(creator),
+        coin,
+      ],
+    });
+
+    res.betId = betId;
+  } catch (err) {
+    res.ok = false;
+    res.err = err;
+  };
+  
+  return res;
 };
+
+export const startMultiPlinko = ({
+  coinType,
+  creator,
+  numberOfDiscs,
+  plinkoPackageId,
+  plinkoType,
+  partnerNftId,
+  partnerNftType,
+  partnerNftListId,
+  transaction,
+  origin,
+}: InternalPlayPlinkoInput): PlayPlinkoResponse => {
+  const res: PlayPlinkoResponse = { ok: true };
+
+  try {
+    if (
+      typeof partnerNftListId === "string" &&
+      typeof partnerNftType === "string" &&
+      partnerNftId !== undefined
+    ) {
+      transaction.moveCall({
+        target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko_with_partner`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(PLINKO_CONFIG_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.address(creator),
+          transaction.pure.u64(numberOfDiscs),
+          transaction.pure.u64(/*TODO: bet size */),
+          transaction.pure.u8(plinkoType),
+          transaction.object(partnerNftListId),
+          KIOSK_ITEM,
+          KIOSK_OWNER_CAP,
+          partnerNftId,
+          transaction.pure.string(origin ?? "DoubleUp"),
+        ],
+      });
+    }
+  } catch (err) {
+    res.ok = false;
+    res.err = err;
+  }
+
+  return res;
+};
+
 
 export const createSinglePlinko = ({
   coin,
