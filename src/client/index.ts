@@ -6,7 +6,7 @@ import {
   PLINKO_PACKAGE_ID,
   ROULETTE_PACKAGE_ID,
   RPS_PACKAGE_ID,
-  RANGE_DICE_PACKAGE_ID,
+  UFORANGE_PACKAGE_ID,
 } from "../constants";
 
 import {
@@ -84,7 +84,7 @@ export class DoubleUpClient {
     origin = "DoubleUp",
     partnerNftListId,
     plinkoPackageId = PLINKO_PACKAGE_ID,
-    ufoRangePackageId = RANGE_DICE_PACKAGE_ID,
+    ufoRangePackageId = UFORANGE_PACKAGE_ID,
     // rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
     rpsPackageId = RPS_PACKAGE_ID,

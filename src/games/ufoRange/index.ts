@@ -23,12 +23,12 @@ export interface RangeInput {
   partnerNftId?: string;
   range: number[][];
   transaction: TransactionType;
-  ufoRangePackageId: string;
   origin?: string;
 }
 
 interface InternalRangeDiceInput extends RangeInput {
   partnerNftListId?: string;
+  ufoRangePackageId?: string;
 }
 
 const isOverUnder = (
