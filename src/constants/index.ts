@@ -13,7 +13,7 @@ export const PUP_COIN_TYPE =
 export const STASH_COIN_TYPE =
   "0x2cff601fe16f622fd6203f8f64bef4e68d687f51f4d06f13c2bbba17cb84c87e::stash::STASH";
 export const SUI_COIN_TYPE = "0x2::sui::SUI";
-export const SUICANE_COIN_TYPE =
+export const SUICUNE_COIN_TYPE =
   "0x8c47c0bde84b7056520a44f46c56383e714cc9b6a55e919d8736a34ec7ccb533::suicune::SUICUNE";
 export const VSUI_COIN_TYPE =
   "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT";
@@ -58,6 +58,7 @@ export const PLINKO_PACKAGE_ID =
   "0x8318ad757263f89c408d2adbf6ca7de4af1b74d9abc59a5299d52a0181e32aaf";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
+export const PLINKO_CONFIG_ID = "";
 
 // ===============================================================================
 
