@@ -16,7 +16,7 @@ export const testRange = async (
     const betTypes: OverUnderBet[] = [0, 1];
     const betAmount = 500000000;
 
-    const range = [[51, 100], [51, 100]];
+    const range = [[5001, 10000], [1, 5000]];
     const txb = new Transaction();
     const coins = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), txb.pure.u64(betAmount)]);
 
