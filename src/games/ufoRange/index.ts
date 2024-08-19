@@ -1,18 +1,13 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
-  TransactionArgument,
   Transaction as TransactionType,
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
 import {
-  UFORANGE_PACKAGE_ID,
   UFORANGE_MODULE_NAME,
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
-  COIN_MODULE_NAME,
-  COIN_PACKAGE_ID,
 } from "../../constants";
 
 // Note: 0 = Over, 1 = Under
@@ -28,6 +23,7 @@ export interface RangeInput {
   partnerNftId?: string;
   range: number[][];
   transaction: TransactionType;
+  ufoRangePackageId: string;
   origin?: string;
 }
 
@@ -60,10 +56,11 @@ export const createRange = ({
   partnerNftListId,
   range,
   transaction,
+  ufoRangePackageId,
   origin
 }: InternalRangeDiceInput) => {
     transaction.moveCall({
-      target: `${UFORANGE_PACKAGE_ID}::${UFORANGE_MODULE_NAME}::play`,
+      target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play`,
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),

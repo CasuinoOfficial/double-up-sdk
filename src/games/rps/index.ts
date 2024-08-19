@@ -8,11 +8,8 @@ import { bcs } from "@mysten/sui/bcs";
 import { KioskOwnerCap, KioskTransaction } from "@mysten/kiosk";
 
 import { randomBytes } from "crypto";
-import { nanoid } from "nanoid";
 
 import {
-  BLS_SETTLER_MODULE_NAME,
-  BLS_VERIFIER_OBJ,
   RPS_MODULE_NAME,
   RPS_STRUCT_NAME,
   UNI_HOUSE_OBJ,
@@ -138,7 +135,6 @@ export const createRockPaperScissors = ({
         typeArguments: [coinType],
         arguments: [
           transaction.object(UNI_HOUSE_OBJ),
-          transaction.object(BLS_VERIFIER_OBJ),
           transaction.pure(
             bcs.vector(bcs.U8).serialize(Array.from(userRandomness))
           ),

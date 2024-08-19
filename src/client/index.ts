@@ -5,8 +5,8 @@ import {
   LIMBO_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
   ROULETTE_PACKAGE_ID,
-  // RPS_PACKAGE_ID,
-  // RANGE_DICE_PACKAGE_ID,
+  RPS_PACKAGE_ID,
+  RANGE_DICE_PACKAGE_ID,
 } from "../constants";
 
 import {
@@ -60,9 +60,7 @@ import {
 
 import {
   createRockPaperScissors,
-  getRockPaperScissorsResult,
   RPSInput,
-  RPSResultInput,
 } from "../games/rps";
 
 interface DoubleUpClientInput {
@@ -72,7 +70,7 @@ interface DoubleUpClientInput {
   origin?: string;
   partnerNftListId?: string;
   plinkoPackageId?: string;
-  rangeDicePackageId?: string;
+  ufoRangePackageId?: string;
   roulettePackageId?: string;
   rpsPackageId?: string;
   suiClient?: SuiClient;
@@ -86,10 +84,10 @@ export class DoubleUpClient {
     origin = "DoubleUp",
     partnerNftListId,
     plinkoPackageId = PLINKO_PACKAGE_ID,
-    // rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
+    ufoRangePackageId = RANGE_DICE_PACKAGE_ID,
     // rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
-    // rpsPackageId = RPS_PACKAGE_ID,
+    rpsPackageId = RPS_PACKAGE_ID,
     // rpsCorePackageId = RPS_CORE_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
   }: DoubleUpClientInput) {
@@ -103,7 +101,7 @@ export class DoubleUpClient {
     this.partnerNftListId = partnerNftListId;
 
     this.plinkoPackageId = plinkoPackageId;
-    // this.rangeDicePackageId = rangeDicePackageId;
+    this.ufoRangePackageId = ufoRangePackageId;
     // this.rangeDiceCorePackageId = rangeDiceCorePackageId;
 
     this.roulettePackageId = roulettePackageId;
@@ -130,7 +128,7 @@ export class DoubleUpClient {
 
   plinkoPackageId: string;
 
-  rangeDicePackageId: string;
+  ufoRangePackageId: string;
 
   roulettePackageId: string;
 
@@ -170,11 +168,12 @@ export class DoubleUpClient {
       plinkoPackageId: this.plinkoPackageId,
     });
 
-  // range dice
+  // UFO
   createRange = (input: RangeInput) =>
     createRange({
       ...input,
       partnerNftListId: this.partnerNftListId,
+      ufoRangePackageId: this.ufoRangePackageId
   });
 
   // // roulette
