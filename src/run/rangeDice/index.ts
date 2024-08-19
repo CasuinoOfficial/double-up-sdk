@@ -20,8 +20,6 @@ export const testRange = async (
     const txb = new Transaction();
     const coins = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), txb.pure.u64(betAmount)]);
 
-    console.log("split coins");  
-
     dbClient.createRange({
       betTypes,
       coins: txb.makeMoveVec({ elements: [coins[0], coins[1]] }),
@@ -43,15 +41,4 @@ export const testRange = async (
       },
     });
     console.log('result', transactionResult);
-
-    // if (
-    //   transactionResult?.effects &&
-    //   transactionResult?.effects.status.status === "failure"
-    // ) {
-    //   throw new Error(transactionResult.effects.status.error);
-    // }
-
-    // console.log("Signed and sent transaction.");
-    // console.log(transactionResult);
-
 };
