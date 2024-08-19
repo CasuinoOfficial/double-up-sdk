@@ -62,38 +62,20 @@ export const createRange = ({
   transaction,
   origin
 }: InternalRangeDiceInput) => {
-    // const rangeFormArg0 = transaction.makeMoveVec({ elements: [transaction.pure.u64(40), transaction.pure.u64(100)] });
-    // const rangeFormArg1 = transaction.makeMoveVec({ elements: [transaction.pure.u64(1), transaction.pure.u64(40)] });
-
-    // transaction.moveCall({
-    //   target: `${COIN_PACKAGE_ID}::${COIN_MODULE_NAME}::play`,
-    //   typeArguments: [coinType],
-    //   arguments: [
-    //     transaction.object(UNI_HOUSE_OBJ_ID),
-    //     transaction.object(RAND_OBJ_ID),
-    //     transaction.pure(
-    //       bcs.vector(bcs.U64).serialize(betTypes)
-    //     ),
-    //     coins,
-    //     transaction.pure.string(origin ?? "DoubleUp")
-    //   ],
-    // });
-
-    // transaction.moveCall({
-    //   target: `${UFORANGE_PACKAGE_ID}::${UFORANGE_MODULE_NAME}::play`,
-    //   typeArguments: [coinType],
-    //   arguments: [
-    //     transaction.object(UNI_HOUSE_OBJ_ID),
-    //     transaction.object(RAND_OBJ_ID),
-    //     coins,
-    //     // transaction.pure(
-    //     //   bcs.vector(bcs.U64).serialize(betTypes)
-    //     // ),
-    //     // transaction.makeMoveVec({ elements: [rangeFormArg0]}),
-    //     // transaction.pure(
-    //     //   bcs.vector(bcs.vector(bcs.U64)).serialize(range)
-    //     // ),
-    //     // transaction.pure.string(origin ?? "DoubleUp")
-    //   ],
-    // });
+    transaction.moveCall({
+      target: `${UFORANGE_PACKAGE_ID}::${UFORANGE_MODULE_NAME}::play`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        coins,
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        transaction.pure(
+          bcs.vector(bcs.vector(bcs.U64)).serialize(range)
+        ),
+        transaction.pure.string("DoubleUp")
+      ],
+    });
 }
