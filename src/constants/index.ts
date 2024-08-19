@@ -55,7 +55,7 @@ export const LOTTERY_STORE_ID =
 // plinko
 // ===============================================================================
 export const PLINKO_PACKAGE_ID =
-  "0x8c80c732d006f98a9a34697bf78ffd52d309f11ce428dec19426010eb2958966";
+  "0xfbdd7f0145aa3d94dc1627b35bf160f47409094736fca63e6d357e6cb6749372";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
@@ -92,7 +92,7 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 // range dice
 // ===============================================================================
 export const UFORANGE_PACKAGE_ID =
-  "0xe537921902a6c66871aabbc276ee045b05c277febfc4b2a6b1b576de764e49f6";
+  "0xff6396ec3b286fb69a77235b304af3483a0bf103f2fd4a70e85d4636aff54c4a";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 // ===============================================================================
