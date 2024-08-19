@@ -22,7 +22,7 @@ export const VSUI_COIN_TYPE =
 // coinflip
 // ===============================================================================
 export const COIN_PACKAGE_ID =
-  "0x5ccb82f23a20291d3a45f5b9b576aeffbb48d56e4bc58bd5befc82fa7309e496";
+  "0x11b826a79e1da7801e3e4f59ee0f2b047edbf828375b0055c92b1d242b757f01";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 // ===============================================================================
@@ -30,7 +30,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 // limbo
 // ===============================================================================
 export const LIMBO_PACKAGE_ID =
-  "0x56d84253489f0c45ae045a6c814a4086306eefc04f1365964ff9146d08bee132";
+  "0x30e738500c2470521cf11df3d25f85609e731aad378948c745818fc4477674b0";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 
@@ -55,7 +55,7 @@ export const LOTTERY_STORE_ID =
 // plinko
 // ===============================================================================
 export const PLINKO_PACKAGE_ID =
-  "0xfbdd7f0145aa3d94dc1627b35bf160f47409094736fca63e6d357e6cb6749372";
+  "0x81f5fc374a94d8285ee6d140a6ba7253c38a280f908e0c48c889d7f63f3dad7c";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
@@ -71,20 +71,20 @@ export interface RouletteConfig {
 }
 
 export const ROULETTE_PACKAGE_ID =
-  "0x9ae0dcd8d014ca9993f4432e0a817e1d7994dc7fb8247a1954473cca0629d7c4";
+  "0x7bad85c854188b6d438f14bae7a409860a1cacda891721b707059ad3e15c878d";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
 
 // Blackjack
 // ===============================================================================
-export const BLACKJACK_PACKAGE_ID = "0x4f0218468281d6d52a2f2a97c1a0c21bb64f4408bbb644ba301da477f40972a9";
+export const BLACKJACK_PACKAGE_ID = "0x60390c5d4696b81a84b9ab037dcd8828a0ac02ca91aed3dc257b7415333e54f0";
 export const BLACKJACK_MODULE = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
 
 // rock paper scissors
 // ===============================================================================
 export const RPS_PACKAGE_ID =
-  "0xb8952a4bebb246ae2754604e283b89e9c46a9b78df67fc7ee37875f59eecb487";
+  "0x9f4e23421230f801d3ccbefb7b95f2691f50a918a68bb1ca3eb26e3f26ae0484";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 // ===============================================================================
@@ -92,7 +92,7 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 // range dice
 // ===============================================================================
 export const UFORANGE_PACKAGE_ID =
-  "0xff6396ec3b286fb69a77235b304af3483a0bf103f2fd4a70e85d4636aff54c4a";
+  "0xfec755dcd2b2f63645686c1eb22544e304acb330fef2090593f1799b46adf557";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 // ===============================================================================
@@ -108,8 +108,9 @@ export const CLOCK_OBJ: any = Inputs.SharedObjectRef({
 export const RAND_OBJ_ID: any = "0x8";
 
 // UNIHOUSE
-export const UNI_HOUSE_OBJ_ID =
-  "0xa7ee1a753dab908862f4f6b92aa1d97abf61033e407edcde420ad91c31cb62b9";
 export const UNIHOUSE_PACKAGE =
-  "0x3098b601d307e1943f6477241c0fa8d9fafdbfe5f4b456fdc0b95378c0127891";
+  "0xdb20c647b538dcd3eff8ca4303d59480d46cf5e1d22ad7ae626f78d1d970a63f";
+  
+export const UNI_HOUSE_OBJ_ID =
+  "0x5995a0a86812cc44d09731cb85095d2c0c03857341adb0da0e7c08dfaf3e8498";
 // ===============================================================================
