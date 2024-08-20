@@ -22,7 +22,6 @@ import {
 import {
   testRouletteAdd,
   testRouletteCreate,
-  testRouletteExists,
   testRouletteStart,
 } from "./roulette";
 import { testRPS } from "./rps";
@@ -36,18 +35,8 @@ const keypair = Secp256k1Keypair.fromSecretKey(secretKey);
 const PARTNER_NFT_ID =
   "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
 
-const DESUI_ROULETTE_PACKAGE_ID =
-  "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
-
 const dbClient = new DoubleUpClient({
-  // limboCorePackageId: DESUI_LIMBO_CORE_PACKAGE_ID,
-  // limboPackageId: DESUI_LIMBO_PACKAGE_ID,
   partnerNftListId: PARTNER_NFT_ID,
-  plinkoPackageId: PLINKO_PACKAGE_ID,
-  // plinkoVerifierId: DESUI_PLINKO_VERIFIER_ID,
-  // rangeDicePackageId: DESUI_RANGE_DICE_PACKAGE_ID,
-  // rangeDiceCorePackageId: DESUI_RANGE_DICE_CORE_PACKAGE_ID,
-  roulettePackageId: DESUI_ROULETTE_PACKAGE_ID,
   suiClient: client,
 });
 
@@ -81,18 +70,15 @@ const dbClient = new DoubleUpClient({
       case "range":
         testRange(dbClient, client, keypair);
         break;
-      // case "roulette:add":
-      //   testRouletteAdd(dbClient, client, keypair);
-      //   break;
-      // case "roulette:create":
-      //   testRouletteCreate(dbClient, client, keypair);
-      //   break;
-      // case "roulette:exists":
-      //   testRouletteExists(dbClient, client, keypair);
-      //   break;
-      // case "roulette:start":
-      //   testRouletteStart(dbClient, client, keypair);
-      //   break;
+      case "roulette:add":
+        testRouletteAdd(dbClient, client, keypair);
+        break;
+      case "roulette:create":
+        testRouletteCreate(dbClient, client, keypair);
+        break;
+      case "roulette:start":
+        testRouletteStart(dbClient, client, keypair);
+        break;
       case "rps":
         testRPS(dbClient, client, keypair);
         break;

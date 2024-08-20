@@ -46,16 +46,16 @@ import {
   createRouletteTable,
   doesRouletteTableExist,
   getCreatedRouletteTable,
-  getRouletteResult,
   removeRouletteBet,
   startRoulette,
   CreatedRouletteTableInput,
   RouletteAddBetInput,
   RouletteRemoveBetInput,
-  RouletteResultInput,
   RouletteStartInput,
   RouletteTableInput,
   RouletteTableExistsInput,
+  RouletteSettleOrContinueInput,
+  rouletteSettleOrContinue
 } from "../games/roulette";
 
 import {
@@ -164,46 +164,46 @@ export class DoubleUpClient {
       ufoRangePackageId: this.ufoRangePackageId
   });
 
-  // // roulette
-  // addRouletteBet = (input: RouletteAddBetInput) =>
-  //   addRouletteBet({
-  //     ...input,
-  //     origin: this.origin,
-  //     roulettePackageId: this.roulettePackageId,
-  //   });
-  // createRouletteTable = (input: RouletteTableInput) =>
-  //   createRouletteTable({
-  //     ...input,
-  //     roulettePackageId: this.roulettePackageId,
-  //   });
-  // doesRouletteTableExist = (input: RouletteTableExistsInput) =>
-  //   doesRouletteTableExist({
-  //     ...input,
-  //     rouletteCorePackageId: this.rouletteCorePackageId,
-  //     suiClient: this.suiClient,
-  //   });
-  // getCreatedRouletteTable = (input: CreatedRouletteTableInput) =>
-  //   getCreatedRouletteTable({
-  //     ...input,
-  //     roulettePackageId: this.roulettePackageId,
-  //   });
-  // getRouletteResult = (input: RouletteResultInput) =>
-  //   getRouletteResult({
-  //     ...input,
-  //     rouletteCorePackageId: this.rouletteCorePackageId,
-  //     suiClient: this.suiClient,
-  //   });
-  // removeRouletteBet = (input: RouletteRemoveBetInput) =>
-  //   removeRouletteBet({
-  //     ...input,
-  //     origin: this.origin,
-  //     roulettePackageId: this.roulettePackageId,
-  //   });
-  // startRoulette = (input: RouletteStartInput) =>
-  //   startRoulette({
-  //     ...input,
-  //     roulettePackageId: this.roulettePackageId,
-  //   });
+  // roulette
+  addRouletteBet = (input: RouletteAddBetInput) =>
+    addRouletteBet({
+      ...input,
+      origin: this.origin,
+      roulettePackageId: this.roulettePackageId,
+    });
+  createRouletteTable = (input: RouletteTableInput) =>
+    createRouletteTable({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+    });
+  doesRouletteTableExist = (input: RouletteTableExistsInput) =>
+    doesRouletteTableExist({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+      suiClient: this.suiClient,
+    });
+  getCreatedRouletteTable = (input: CreatedRouletteTableInput) =>
+    getCreatedRouletteTable({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+    });
+  removeRouletteBet = (input: RouletteRemoveBetInput) =>
+    removeRouletteBet({
+      ...input,
+      origin: this.origin,
+      roulettePackageId: this.roulettePackageId,
+    });
+  startRoulette = (input: RouletteStartInput) =>
+    startRoulette({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+    });
+  rouletteSettleOrContinue = (input: RouletteSettleOrContinueInput) => 
+    rouletteSettleOrContinue({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+      origin: this.origin
+    });
 
   // // rps
   createRockPaperScissors = (input: RPSInput) =>

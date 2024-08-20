@@ -63,15 +63,9 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 
 // roulette
 // ===============================================================================
-export interface RouletteConfig {
-  coinType: string;
-  initialSharedVersion: number;
-  mutable: boolean;
-  objectId: string;
-}
-
 export const ROULETTE_PACKAGE_ID =
   "0xa6f2a0809053306da275b9460fc33b0d417200411404beafbe31bc4626f9f697";
+export const ROULETTE_CONFIG = "0x17185917dde1079a27880b6c381c1d6d77b9acd3741cff07fdd7d33fb2c86a5d";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
 

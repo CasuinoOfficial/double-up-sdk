@@ -1,14 +1,14 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
+import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 
 import { SUI_COIN_TYPE } from "../../constants";
 
 export const testRouletteAdd = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Ed25519Keypair
+  keypair: Secp256k1Keypair
 ) => {
   const betAmount = 500000000;
 
@@ -71,7 +71,7 @@ export const testRouletteAdd = async (
 export const testRouletteCreate = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Ed25519Keypair
+  keypair: Secp256k1Keypair
 ) => {
   try {
     const txb = new Transaction();
@@ -126,51 +126,17 @@ export const testRouletteCreate = async (
   }
 };
 
-export const testRouletteExists = async (
-  dbClient: DoubleUpClient,
-  client: SuiClient,
-  keypair: Ed25519Keypair
-) => {
-  try {
-    const address = keypair.getPublicKey().toSuiAddress();
-
-    const { ok, err, tableExists } = await dbClient.doesRouletteTableExist({
-      address,
-      coinType: SUI_COIN_TYPE,
-    });
-
-    if (!ok) {
-      throw err;
-    }
-
-    console.log({ tableExists });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const testRouletteStart = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Ed25519Keypair
+  keypair: Secp256k1Keypair
 ) => {
-  try {
     const txb = new Transaction();
 
-    const address = keypair.getPublicKey().toSuiAddress();
-
-    const {
-      ok: startOk,
-      err: startErr,
-      gameSeed,
-    } = dbClient.startRoulette({
+    dbClient.startRoulette({
       coinType: SUI_COIN_TYPE,
       transaction: txb,
     });
-
-    if (!startOk) {
-      throw startErr;
-    }
 
     const transactionResult = await client.signAndExecuteTransaction({
       signer: keypair,
@@ -183,41 +149,26 @@ export const testRouletteStart = async (
       },
     });
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
+    console.log('rolled a number', transactionResult);
+    const txb2 = new Transaction();
 
-    // Get the current round number of the object
-    const { roundNumber } = await dbClient.doesRouletteTableExist({
-      address,
+    // dbClient
+    dbClient.rouletteSettleOrContinue({
       coinType: SUI_COIN_TYPE,
+      transaction: txb2,
+      hostAddress: keypair.toSuiAddress(),
     });
 
-    const {
-      ok: resultOk,
-      err: resultErr,
-      results,
-      rawBetResults,
-      rawResults,
-    } = await dbClient.getRouletteResult({
-      coinType: SUI_COIN_TYPE,
-      //TODO: need to confirm could the gameSeed be empty string or not
-      gameSeed: gameSeed ?? "",
-      transactionResult,
-      //TODO: need to confirm could the roundNumber be empty string or not
-      roundNumber: roundNumber ?? "",
+    const transactionResult2 = await client.signAndExecuteTransaction({
+      signer: keypair,
+      transaction: txb2 as any,
+      options: {
+        showRawEffects: true,
+        showEffects: true,
+        showEvents: true,
+        showObjectChanges: true,
+      },
     });
+    console.log('rolled a number', transactionResult2);
 
-    if (!resultOk) {
-      throw resultErr;
-    }
-
-    console.log(results);
-    console.log("raws", rawBetResults, rawResults);
-  } catch (err) {
-    console.log(err);
-  }
 };
