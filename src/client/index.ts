@@ -7,6 +7,7 @@ import {
   ROULETTE_PACKAGE_ID,
   RPS_PACKAGE_ID,
   UFORANGE_PACKAGE_ID,
+  BLACKJACK_PACKAGE_ID,
 } from "../constants";
 
 import {
@@ -63,6 +64,11 @@ import {
   RPSInput,
 } from "../games/rps";
 
+import {
+  BlackjackInput,
+  createBlackjackGame,
+} from "../games/blackjack";
+
 interface DoubleUpClientInput {
   coinflipPackageId?: string;
   dicePackageId?: string;
@@ -73,6 +79,7 @@ interface DoubleUpClientInput {
   ufoRangePackageId?: string;
   roulettePackageId?: string;
   rpsPackageId?: string;
+  blackjackPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -87,6 +94,7 @@ export class DoubleUpClient {
     ufoRangePackageId = UFORANGE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
     rpsPackageId = RPS_PACKAGE_ID,
+    blackjackPackageId = BLACKJACK_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
   }: DoubleUpClientInput) {
     this.coinflipPackageId = coinflipPackageId;
@@ -97,6 +105,7 @@ export class DoubleUpClient {
     this.ufoRangePackageId = ufoRangePackageId;
     this.roulettePackageId = roulettePackageId;
     this.rpsPackageId = rpsPackageId;
+    this.blackjackPackageId = blackjackPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -121,6 +130,8 @@ export class DoubleUpClient {
   roulettePackageId: string;
 
   rpsPackageId: string;
+
+  blackjackPackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -211,5 +222,12 @@ export class DoubleUpClient {
       ...input,
       partnerNftListId: this.partnerNftListId,
       rpsPackageId: this.rpsPackageId,
+    });
+
+    // blackjack
+  createBlackjackGame = (input: BlackjackInput) => 
+    createBlackjackGame({
+      ...input,
+      blackjackPackageId: this.blackjackPackageId,
     });
 }
