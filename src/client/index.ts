@@ -129,21 +129,21 @@ export class DoubleUpClient {
   createCoinflip = (input: CoinflipInput) =>
     createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
 
-  // // lottery
-  // buyLotteryTickets = buyLotteryTickets;
-  // redeemLotteryTickets = redeemLotteryTickets;
-  // getLottery = () => getLottery({ suiClient: this.suiClient });
-  // getLotteryHistory = () => getLotteryHistory({ suiClient: this.suiClient });
-  // getLotteryDrawingResult = (input: DrawingResultInput) =>
-  //   getLotteryDrawingResult({
-  //     ...input,
-  //     suiClient: this.suiClient,
-  //   });
-  // getLotteryTickets = (input: LotteryTicketsInput) =>
-  //   getLotteryTickets({
-  //     ...input,
-  //     suiClient: this.suiClient,
-  //   });
+  // lottery
+  buyLotteryTickets = buyLotteryTickets;
+  redeemLotteryTickets = redeemLotteryTickets;
+  getLottery = () => getLottery({ suiClient: this.suiClient });
+  getLotteryHistory = () => getLotteryHistory({ suiClient: this.suiClient });
+  getLotteryDrawingResult = (input: DrawingResultInput) =>
+    getLotteryDrawingResult({
+      ...input,
+      suiClient: this.suiClient,
+    });
+  getLotteryTickets = (input: LotteryTicketsInput) =>
+    getLotteryTickets({
+      ...input,
+      suiClient: this.suiClient,
+    });
 
   // limbo
   createLimbo = (input: LimboInput) =>

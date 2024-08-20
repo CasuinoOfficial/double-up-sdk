@@ -15,19 +15,14 @@ import {
 
 type BetRed = 0;
 type BetBlack = 1;
-
 type BetNumber = 2;
-
 type BetEven = 3;
 type BetOdd = 4;
-
 type BetFirstTwelve = 5;
 type BetSecondTwelve = 6;
 type BetThirdTwelve = 7;
-
 type BetFirstEighteen = 8;
 type BetSecondEighteen = 9;
-
 type BetFirstColumn = 10;
 type BetSecondColumn = 11;
 type BetThirdColumn = 12;
@@ -405,7 +400,6 @@ export const startRoulette = ({
     ],
   });
 };
-
 
 export const rouletteSettleOrContinue = ({
   coinType,
