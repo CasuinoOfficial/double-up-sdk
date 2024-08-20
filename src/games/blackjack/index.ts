@@ -1,6 +1,7 @@
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
+  TransactionArgument,
 } from "@mysten/sui/transactions";
 
 import {
@@ -22,23 +23,51 @@ interface InternalBlackjackInput extends BlackjackInput {
   blackjackPackageId?: string;
 }
 
-export const createBlackJackGame = ({
+export interface BlackJackGameCreatedResponse {
+  ok: boolean;
+  err?: Error;
+  result?: TransactionArgument;
+}
+
+export interface BlackjackGameExistsInput {
+
+}
+
+interface BlackjackGame {
+  gameId: string;
+}
+
+export const createBlackjackGame = ({
   betSize,
   coinType,
   coin,
   transaction,
   blackjackPackageId,
   origin,
-}: InternalBlackjackInput) => {
-  transaction.moveCall({
-    target: `${blackjackPackageId}::${BLACKJACK_MODULE}::init_game`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(BLACKJACK_CONFIG_ID),
-      transaction.pure.u64(betSize),
-      coin,
-    ],
-  });
+}: InternalBlackjackInput): BlackJackGameCreatedResponse => {
+  const res: BlackJackGameCreatedResponse = { ok: true };
+  
+  try {
+    const [game] = transaction.moveCall({
+      target: `${blackjackPackageId}::${BLACKJACK_MODULE}::init_game`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG_ID),
+        transaction.pure.u64(betSize),
+        coin,
+      ],
+    });
+
+    res.result = game;
+  } catch (err) {
+    res.ok = false;
+    res.err = err;
+  };
+  
+  return res;
 }
 
+export const doesBlackjackGameExist = ({
+
+})
