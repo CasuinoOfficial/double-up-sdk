@@ -75,6 +75,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 export const BLACKJACK_PACKAGE_ID = "0x06dafbf1d3bc4df8765ab080c638ddcb1bee62f17e3c66091b9f32eb9835aef8";
 export const BLACKJACK_MODULE = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
+export const BLACKJACK_CONFIG_ID = "";
 
 // rock paper scissors
 // ===============================================================================
