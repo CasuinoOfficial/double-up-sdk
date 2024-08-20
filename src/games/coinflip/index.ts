@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -6,26 +6,21 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
-import { nanoid } from "nanoid";
-
 import {
-  BLS_SETTLER_MODULE_NAME,
-  BLS_VERIFIER_OBJ,
   COIN_MODULE_NAME,
-  COIN_STRUCT_NAME,
-  UNI_HOUSE_OBJ,
-  UNIHOUSE_CORE_PACKAGE,
+  RAND_OBJ_ID,
+  UNI_HOUSE_OBJ_ID,
 } from "../../constants";
-import { getBlsGameInfos, sleep } from "../../utils";
 
 // 0: Heads, 1: Tails
-type BetType = 0 | 1;
+export type BetType = 0 | 1;
 
 export interface CoinflipInput {
-  betType: BetType;
-  coin: TransactionObjectArgument;
+  betTypes: Array<BetType>;
+  coins: TransactionObjectArgument; // This should be a vector of coins already
   coinType: string;
   transaction: TransactionType;
+  origin?: string;
 }
 
 interface InternalCoinflipInput extends CoinflipInput {
@@ -54,11 +49,6 @@ export interface CoinflipResultInput {
   transactionResult: SuiTransactionBlockResponse;
 }
 
-interface InternalCoinflipResultInput extends CoinflipResultInput {
-  coinflipCorePackageId: string;
-  suiClient: SuiClient;
-}
-
 export interface CoinflipResponse {
   ok: boolean;
   err?: Error;
@@ -85,120 +75,25 @@ interface WinRange {
 
 // Add coinflip to the transaction block
 export const createCoinflip = ({
-  betType,
-  coin,
+  betTypes,
+  coins,
   coinflipPackageId,
   coinType,
   transaction,
-}: InternalCoinflipInput): CoinflipResponse => {
-  const res: CoinflipResponse = { ok: true };
-
-  try {
-    // This adds some extra entropy to the coinflip itself
-    const userRandomness = Buffer.from(nanoid(512), "utf8");
-
-    const [receipt] = transaction.moveCall({
-      target: `${coinflipPackageId}::${COIN_MODULE_NAME}::start_game`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ),
-        transaction.object(BLS_VERIFIER_OBJ),
-        transaction.pure(
-          bcs.vector(bcs.U8).serialize(Array.from(userRandomness))
-        ),
-        transaction.pure.u64(betType),
-        coin,
-      ],
-    });
-
-    res.gameSeed = Buffer.from(userRandomness).toString("hex");
-    res.receipt = receipt;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
+  origin
+}: InternalCoinflipInput) => {
+  transaction.moveCall({
+    target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(RAND_OBJ_ID),
+      transaction.pure(
+        bcs.vector(bcs.U64).serialize(betTypes)
+      ),
+      coins,
+      transaction.pure.string(origin ?? "DoubleUp")
+    ],
+  });
 };
 
-export const getCoinflipResult = async ({
-  betType,
-  coinflipCorePackageId,
-  coinType,
-  gameSeed,
-  pollInterval = 3000,
-  suiClient,
-  transactionResult,
-}: InternalCoinflipResultInput): Promise<CoinflipResultResponse> => {
-  const res: CoinflipResultResponse = { ok: true };
-
-  try {
-    const gameInfos = getBlsGameInfos({
-      coinType,
-      corePackageId: coinflipCorePackageId,
-      gameSeed,
-      moduleName: COIN_MODULE_NAME,
-      structName: COIN_STRUCT_NAME,
-      transactionResult,
-    });
-
-    let results: BetType[] = [];
-    let rawResults: CoinflipParsedJson[] = [];
-    let txDigests: string[] = [];
-
-    while (results.length === 0) {
-      try {
-        const events = await suiClient.queryEvents({
-          query: {
-            MoveEventType: `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::SettlementEvent<${coinType}, ${coinflipCorePackageId}::${COIN_MODULE_NAME}::${COIN_STRUCT_NAME}>`,
-          },
-          limit: 50,
-          order: "descending",
-        });
-
-        results = events.data.reduce((acc, current) => {
-          const { bet_id, outcome, player, settlements } =
-            current.parsedJson as CoinflipParsedJson;
-
-          if (bet_id === gameInfos[0]?.gameId) {
-            rawResults.push(current.parsedJson as CoinflipParsedJson);
-
-            txDigests.push(current.id.txDigest);
-
-            const { player_won } = settlements[0];
-
-            if (player_won) {
-              acc.push(betType);
-            } else {
-              // check is user bet on heads or tails
-              // if user lose, the result should be the oppsite with the betType
-              acc.push(betType === 0 ? 1 : 0);
-            }
-          }
-
-          return acc;
-        }, []);
-      } catch (err) {
-        console.error(`DOUBLEUP - Error querying events: ${err}`);
-      }
-
-      if (results.length === 0) {
-        console.log(
-          `DOUBLEUP - Game in processing. Query again in ${
-            pollInterval / 1000
-          } seconds.`
-        );
-        await sleep(pollInterval);
-      }
-    }
-
-    res.results = results;
-    res.rawResults = rawResults;
-    res.txDigests = txDigests;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
-};

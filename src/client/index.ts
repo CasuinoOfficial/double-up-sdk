@@ -1,33 +1,22 @@
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { KioskClient, Network } from "@mysten/kiosk";
 import {
-  COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
   LIMBO_PACKAGE_ID,
-  LIMBO_CORE_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
-  PLINKO_CORE_PACKAGE_ID,
-  PLINKO_VERIFIER_ID,
   ROULETTE_PACKAGE_ID,
-  ROULETTE_CORE_PACKAGE_ID,
-  RPS_CORE_PACKAGE_ID,
   RPS_PACKAGE_ID,
-  RANGE_DICE_PACKAGE_ID,
-  RANGE_DICE_CORE_PACKAGE_ID,
+  UFORANGE_PACKAGE_ID,
 } from "../constants";
 
 import {
   createCoinflip,
-  getCoinflipResult,
   CoinflipInput,
-  CoinflipResultInput,
 } from "../games/coinflip";
 
 import {
   createLimbo,
-  getLimboResult,
   LimboInput,
-  LimboResultInput,
 } from "../games/limbo";
 
 import {
@@ -42,61 +31,48 @@ import {
 } from "../games/lottery";
 
 import {
-  createPlinko,
-  getPlinkoResult,
+  createSinglePlinko,
   PlinkoInput,
   PlinkoResultInput,
 } from "../games/plinko";
 
 import {
-  createRangeDice,
-  getRangeDiceResult,
-  RangeDiceInput,
-  RangeDiceResultInput,
-} from "../games/rangeDice";
+  createRange,
+  RangeInput,
+} from "../games/ufoRange";
 
 import {
   addRouletteBet,
   createRouletteTable,
   doesRouletteTableExist,
   getCreatedRouletteTable,
-  getRouletteResult,
   removeRouletteBet,
   startRoulette,
   CreatedRouletteTableInput,
   RouletteAddBetInput,
   RouletteRemoveBetInput,
-  RouletteResultInput,
   RouletteStartInput,
   RouletteTableInput,
   RouletteTableExistsInput,
+  RouletteSettleOrContinueInput,
+  rouletteSettleOrContinue
 } from "../games/roulette";
 
 import {
   createRockPaperScissors,
-  getRockPaperScissorsResult,
   RPSInput,
-  RPSResultInput,
 } from "../games/rps";
 
 interface DoubleUpClientInput {
   coinflipPackageId?: string;
-  coinflipCorePackageId?: string;
   dicePackageId?: string;
-  diceCorePackageId?: string;
   limboPackageId?: string;
-  limboCorePackageId?: string;
   origin?: string;
   partnerNftListId?: string;
   plinkoPackageId?: string;
-  plinkoCorePackageId?: string;
-  plinkoVerifierId?: string;
-  rangeDicePackageId?: string;
-  rangeDiceCorePackageId?: string;
+  ufoRangePackageId?: string;
   roulettePackageId?: string;
-  rouletteCorePackageId?: string;
   rpsPackageId?: string;
-  rpsCorePackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -104,77 +80,47 @@ interface DoubleUpClientInput {
 export class DoubleUpClient {
   constructor({
     coinflipPackageId = COIN_PACKAGE_ID,
-    coinflipCorePackageId = COIN_CORE_PACKAGE_ID,
     limboPackageId = LIMBO_PACKAGE_ID,
-    limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
-    origin = "",
+    origin = "DoubleUp",
     partnerNftListId,
     plinkoPackageId = PLINKO_PACKAGE_ID,
-    plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
-    plinkoVerifierId = PLINKO_VERIFIER_ID,
-    rangeDicePackageId = RANGE_DICE_PACKAGE_ID,
-    rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
+    ufoRangePackageId = UFORANGE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
-    rouletteCorePackageId = ROULETTE_CORE_PACKAGE_ID,
     rpsPackageId = RPS_PACKAGE_ID,
-    rpsCorePackageId = RPS_CORE_PACKAGE_ID,
-    suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
+    suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
   }: DoubleUpClientInput) {
     this.coinflipPackageId = coinflipPackageId;
-    this.coinflipCorePackageId = coinflipCorePackageId;
-
     this.limboPackageId = limboPackageId;
-    this.limboCorePackageId = limboCorePackageId;
-
     this.origin = origin;
-
     this.partnerNftListId = partnerNftListId;
-
     this.plinkoPackageId = plinkoPackageId;
-    this.plinkoCorePackageId = plinkoCorePackageId;
-    this.plinkoVerifierId = plinkoVerifierId;
-
-    this.rangeDicePackageId = rangeDicePackageId;
-    this.rangeDiceCorePackageId = rangeDiceCorePackageId;
-
+    this.ufoRangePackageId = ufoRangePackageId;
     this.roulettePackageId = roulettePackageId;
-    this.rouletteCorePackageId = rouletteCorePackageId;
-
     this.rpsPackageId = rpsPackageId;
-    this.rpsCorePackageId = rpsCorePackageId;
-
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
-      network: Network.MAINNET,
+      network: Network.TESTNET,
     });
   }
 
   coinflipPackageId: string;
-  coinflipCorePackageId: string;
 
   dicePackageId: string;
-  diceCorePackageId: string;
 
   limboPackageId: string;
-  limboCorePackageId: string;
 
   origin: string;
 
   partnerNftListId: string | undefined;
 
   plinkoPackageId: string;
-  plinkoCorePackageId: string;
-  plinkoVerifierId: string;
 
-  rangeDicePackageId: string;
-  rangeDiceCorePackageId: string;
+  ufoRangePackageId: string;
 
   roulettePackageId: string;
-  rouletteCorePackageId: string;
 
   rpsPackageId: string;
-  rpsCorePackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -182,12 +128,6 @@ export class DoubleUpClient {
   // coinflip
   createCoinflip = (input: CoinflipInput) =>
     createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
-  getCoinflipResult = (input: CoinflipResultInput) =>
-    getCoinflipResult({
-      ...input,
-      coinflipCorePackageId: this.coinflipCorePackageId,
-      suiClient: this.suiClient,
-    });
 
   // lottery
   buyLotteryTickets = buyLotteryTickets;
@@ -208,41 +148,21 @@ export class DoubleUpClient {
   // limbo
   createLimbo = (input: LimboInput) =>
     createLimbo({ ...input, limboPackageId: this.limboPackageId });
-  getLimboResult = (input: LimboResultInput) =>
-    getLimboResult({
-      ...input,
-      limboCorePackageId: this.limboCorePackageId,
-      suiClient: this.suiClient,
-    });
 
-  // plinko
-  createPlinko = (input: PlinkoInput) =>
-    createPlinko({
+  // // plinko
+  createSinglePlinko = (input: PlinkoInput) =>
+    createSinglePlinko({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
-      plinkoVerifierId: this.plinkoVerifierId,
-    });
-  getPlinkoResult = (input: PlinkoResultInput) =>
-    getPlinkoResult({
-      ...input,
-      plinkoPackageId: this.plinkoPackageId,
-      plinkoCorePackageId: this.plinkoCorePackageId,
-      suiClient: this.suiClient,
     });
 
-  // range dice
-  createRangeDice = (input: RangeDiceInput) =>
-    createRangeDice({
+  // UFO
+  createRange = (input: RangeInput) =>
+    createRange({
       ...input,
       partnerNftListId: this.partnerNftListId,
-      rangeDicePackageId: this.rangeDicePackageId,
-    });
-  getRangeDiceResult = (input: RangeDiceResultInput) =>
-    getRangeDiceResult({
-      ...input,
-      rangeDiceCorePackageId: this.rangeDiceCorePackageId,
-      suiClient: this.suiClient,
-    });
+      ufoRangePackageId: this.ufoRangePackageId
+  });
 
   // roulette
   addRouletteBet = (input: RouletteAddBetInput) =>
@@ -259,19 +179,13 @@ export class DoubleUpClient {
   doesRouletteTableExist = (input: RouletteTableExistsInput) =>
     doesRouletteTableExist({
       ...input,
-      rouletteCorePackageId: this.rouletteCorePackageId,
+      roulettePackageId: this.roulettePackageId,
       suiClient: this.suiClient,
     });
   getCreatedRouletteTable = (input: CreatedRouletteTableInput) =>
     getCreatedRouletteTable({
       ...input,
       roulettePackageId: this.roulettePackageId,
-    });
-  getRouletteResult = (input: RouletteResultInput) =>
-    getRouletteResult({
-      ...input,
-      rouletteCorePackageId: this.rouletteCorePackageId,
-      suiClient: this.suiClient,
     });
   removeRouletteBet = (input: RouletteRemoveBetInput) =>
     removeRouletteBet({
@@ -284,18 +198,18 @@ export class DoubleUpClient {
       ...input,
       roulettePackageId: this.roulettePackageId,
     });
+  rouletteSettleOrContinue = (input: RouletteSettleOrContinueInput) => 
+    rouletteSettleOrContinue({
+      ...input,
+      roulettePackageId: this.roulettePackageId,
+      origin: this.origin
+    });
 
-  // rps
+  // // rps
   createRockPaperScissors = (input: RPSInput) =>
     createRockPaperScissors({
       ...input,
       partnerNftListId: this.partnerNftListId,
       rpsPackageId: this.rpsPackageId,
-    });
-  getRockPaperScissorsResult = (input: RPSResultInput) =>
-    getRockPaperScissorsResult({
-      ...input,
-      rpsCorePackageId: this.rpsCorePackageId,
-      suiClient: this.suiClient,
     });
 }

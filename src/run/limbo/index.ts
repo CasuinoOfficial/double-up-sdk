@@ -1,39 +1,30 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
+import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 
 import { SUI_COIN_TYPE } from "../../constants";
 
 export const testLimbo = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Ed25519Keypair
+  keypair: Secp256k1Keypair
 ) => {
   const betAmount = 500000000;
-  const multiplier = 1.1;
+  const multipliers = [150, 200, 101];
 
   try {
     const txb = new Transaction();
+    const coins = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), betAmount, betAmount]);
 
-    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
-
-    const {
-      ok: gameOk,
-      err: gameErr,
-      gameSeed,
-    } = dbClient.createLimbo({
-      coin,
+    dbClient.createLimbo({
+      coins: txb.makeMoveVec({ elements: [coins[0], coins[1], coins[2]] }),
       coinType: SUI_COIN_TYPE,
-      multiplier,
+      multipliers,
       transaction: txb,
     });
 
     console.log("Added limbo to transaction block.");
-
-    if (!gameOk || !gameSeed) {
-      throw gameErr;
-    }
 
     const transactionResult = await client.signAndExecuteTransaction({
       signer: keypair,
@@ -52,29 +43,19 @@ export const testLimbo = async (
     ) {
       throw new Error(transactionResult.effects.status.error);
     }
+    console.log('result', transactionResult);
 
-    console.log("Signed and sent transaction.");
-
-    const {
-      ok: resultsOk,
-      err: resultsErr,
-      results,
-      rawResults,
-      txDigests,
-    } = await dbClient.getLimboResult({
-      coinType: SUI_COIN_TYPE,
-      gameSeed,
-      transactionResult,
-    });
-
-    if (!resultsOk) {
-      throw resultsErr;
+    if (
+      transactionResult?.effects &&
+      transactionResult?.effects.status.status === "failure"
+    ) {
+      throw new Error(transactionResult.effects.status.error);
     }
+    
+    console.log("Events", transactionResult?.events);
 
-    console.log("Retrieved limbo results.");
-    console.log(results);
-    console.log(rawResults);
-    console.log(txDigests);
+    return transactionResult?.events;
+
   } catch (err) {
     console.log(err);
   }

@@ -22,29 +22,20 @@ export const VSUI_COIN_TYPE =
 // coinflip
 // ===============================================================================
 export const COIN_PACKAGE_ID =
-  "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
-export const COIN_CORE_PACKAGE_ID =
-  "0x57c3008880285085e5fd94092f21923158e3d8906161cf24d6ec1bb4e5b9036a";
+  "0x40e238338ebe43e2c7e68f95abadbe0cf2f57b6a9c438dc8c99420971b6c01cb";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 // ===============================================================================
 
-// dice
-// ===============================================================================
-
-// ===============================================================================
-
 // limbo
 // ===============================================================================
-export const LIMBO_CORE_PACKAGE_ID =
-  "0xbca3313d753bba2e3b3d911d2306c5024de99dfdb2fc456850186b18867ac36c";
 export const LIMBO_PACKAGE_ID =
-  "0x26f5edaef93c8195cd5f96cdf54d96051088948ce2cb740d6c8803a53b0be3f9";
+  "0xd641b25cde3ea14d6ff46d3ded1c0456881956f708d3f62d038b07893a2d7271";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 
-export const LIMBO_MIN_MULTIPLIER = "1.01";
-export const LIMBO_MAX_MULTIPLIER = "100";
+export const LIMBO_MIN_MULTIPLIER = "101";
+export const LIMBO_MAX_MULTIPLIER = "10000";
 // ===============================================================================
 
 // lottery
@@ -64,150 +55,62 @@ export const LOTTERY_STORE_ID =
 // plinko
 // ===============================================================================
 export const PLINKO_PACKAGE_ID =
-  "0xe1956df956df4d2f3ec2dc4319e03b037d95db97a6f9845112e1ba4986703234";
-export const PLINKO_CORE_PACKAGE_ID =
-  "0x1513ee1a47bb1e3b78162f42510f3eece3c6ab0b246bdafda47f939cf7a81c07";
-export const PLINKO_MODULE_NAME = "plinko";
+  "0x8318ad757263f89c408d2adbf6ca7de4af1b74d9abc59a5299d52a0181e32aaf";
+export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
-export const PLINKO_VERIFIER_ID =
-  "0x898207c059a7e5d4e82cc7258ca6f1876f439265776efa502e8d1616cf198e37";
-export const PLINKO_VERIFIER_OBJ: any = Inputs.SharedObjectRef({
-  objectId: PLINKO_VERIFIER_ID,
-  initialSharedVersion: 91929635,
-  mutable: true,
-});
 // ===============================================================================
 
 // roulette
 // ===============================================================================
-export interface RouletteConfig {
-  coinType: string;
-  initialSharedVersion: number;
-  mutable: boolean;
-  objectId: string;
-}
-
 export const ROULETTE_PACKAGE_ID =
-  "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
-export const ROULETTE_CORE_PACKAGE_ID =
-  "0x6eb0205627621a882b9e478b3103a961d5e249e10fef550dc8a9032ce86c0a61";
-export const ROULETTE_MODULE_NAME = "single_roulette";
-export const ROULETTE_STRUCT_NAME = "SingleRoulette";
-export const ROULETTE_BET_SETTLED_EVENT = `${ROULETTE_CORE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::BetSettledEvent`;
+  "0xa6f2a0809053306da275b9460fc33b0d417200411404beafbe31bc4626f9f697";
+export const ROULETTE_CONFIG = "0x17185917dde1079a27880b6c381c1d6d77b9acd3741cff07fdd7d33fb2c86a5d";
+export const ROULETTE_MODULE_NAME = "roulette";
+export const ROULETTE_STRUCT_NAME = "Roulette";
 
-export const ROULETTE_CONFIGS: RouletteConfig[] = [
-  {
-    coinType: SUI_COIN_TYPE,
-    objectId:
-      "0x3401a61166a84e6431b00def26f8cc2b87f78737a8d5a94c474afc1f28484629",
-    initialSharedVersion: 91929636,
-    mutable: true,
-  },
-  {
-    coinType: BUCK_COIN_TYPE,
-    objectId:
-      "0x366ec05b281fdb99e5005432a914dbbacb3ab7d3fea87926540b36859b42870e",
-    initialSharedVersion: 91929637,
-    mutable: true,
-  },
-  {
-    coinType: FUD_COIN_TYPE,
-    objectId:
-      "0x739fc1368d7b358b76a693435b874f594e3e05ff0f942ea9d62cb62754c65c3c",
-    initialSharedVersion: 92390311,
-    mutable: true,
-  },
-  {
-    coinType: PUP_COIN_TYPE,
-    objectId:
-      "0x6e3f060a29490bc82d9c3d52a42f7e4e549d8d1fd89ecd769a3311a3c60f6fef",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-  {
-    coinType: NAVX_COIN_TYPE,
-    objectId:
-      "0x8d7e9a860968f8c2b0dd3ffe47ff184f43c07ee764bba1ac1855012a3860bc68",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-  {
-    coinType: STASH_COIN_TYPE,
-    objectId:
-      "0x955e47ef974d82af3f5b42e7c04137e38f0e5f358abaf97cb932653237d9813a",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-  {
-    coinType: SUICANE_COIN_TYPE,
-    objectId:
-      "0xf3a3a1f0223e20a195ac5f3db3097e2b004f8d74cac4c170489d6aa91ac892ad",
-    initialSharedVersion: 92390320,
-    mutable: true,
-  },
-  {
-    coinType: VSUI_COIN_TYPE,
-    objectId:
-      "0xa441ee45c1f900451ee3939e9879090e9ebdd0a8f7fb90e66558a4a3af72f46e",
-    initialSharedVersion: 214343544,
-    mutable: true,
-  },
-];
-
+// Blackjack
 // ===============================================================================
+export const BLACKJACK_PACKAGE_ID = "0x06dafbf1d3bc4df8765ab080c638ddcb1bee62f17e3c66091b9f32eb9835aef8";
+export const BLACKJACK_MODULE = "blackjack";
+export const BLACKJACK_STRUCT_NAME = "Blackjack";
 
 // rock paper scissors
 // ===============================================================================
 export const RPS_PACKAGE_ID =
-  "0x34937f6948ff94d4195317a931d7cc87ab5aa2bd9f7e704f7f8ad0e019051051";
-export const RPS_CORE_PACKAGE_ID =
-  "0xd1417478493c4656891ef783fdb9144d8f008f3a16068c8aeaff89b41a320490";
+  "0xf8c9b9bc32fad71978aa1ce0c71899fe16d66b5e71e15e66d2d8820265589329";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 // ===============================================================================
 
 // range dice
 // ===============================================================================
-export const RANGE_DICE_PACKAGE_ID =
-  "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
-export const RANGE_DICE_CORE_PACKAGE_ID =
-  "0x95117c2b8218490aef9e500f5b76fa3123c318f5edc7b629b857d0a69140d15f";
-export const RANGE_DICE_MODULE_NAME = "dice_range";
-export const RANGE_DICE_STRUCT_NAME = "DiceRange";
+export const UFORANGE_PACKAGE_ID =
+  "0x384058b24e81df9708553b562c14481e921cc2576da90b06e5d6d31faa8c75a2";
+export const UFORANGE_MODULE_NAME = "ufo_range";
+export const UFORANGE_STRUCT_NAME = "UFORange";
+
+// Craps
+// ===============================================================================
+export const CRAPS_PACKAGE_ID = '0x5fc268b2438c0af48ac383f47f754c1dbc1dbd653f4be6fa421c55b40b6f0dbc';
+export const CRAPS_MODULE_NAME = "craps";
+export const CRAPS_STRUCT_NAME = "Craps";
 // ===============================================================================
 
 // shared
 // ===============================================================================
-export const BLS_SETTLER_MODULE_NAME = "bls_settler";
-
-export const BLS_VERIFIER_ID =
-  "0xc85af84c78bebac4fd91d8cc25d66461503258764402b4c06c9f3e8050b5bd2e";
-export const BLS_VERIFIER_OBJ: any = Inputs.SharedObjectRef({
-  objectId: BLS_VERIFIER_ID,
-  initialSharedVersion: 89762028,
-  mutable: true,
-});
-
 export const CLOCK_OBJ: any = Inputs.SharedObjectRef({
   objectId: "0x6",
   initialSharedVersion: 1,
   mutable: false,
 });
 
-export const UNI_HOUSE_ID =
-  "0x44d587c7f6b55fdf35d30143c67bc81911140e73e1ad9c7c17998dbd96cc1bc6";
-export const UNI_HOUSE_OBJ: any = Inputs.SharedObjectRef({
-  objectId: UNI_HOUSE_ID,
-  initialSharedVersion: 89762024,
-  mutable: true,
-});
+export const RAND_OBJ_ID: any = "0x8";
 
-//V6 UNIHOUSE
+// UNIHOUSE
 export const UNIHOUSE_PACKAGE =
-  "0xfd038e13deae83979c1753d66bd05059f37d2c88fc9d613ed5719637d670f600";
-export const UNIHOUSE_V4_PACKAGE =
-  "0x2f37aa549ecd1283708d487267f93a5e4c8a759d0c2b5ddddb2162f314e6aa49";
-export const UNIHOUSE_CORE_PACKAGE =
-  "0xf0978635bb456d2cb2e594cd4a018c9aed486d6cb68c7890abe5ef56838034bf";
+  "0xae976fbbfc634bcb4546ac0fea5a692de59a9f8f49a71536f0b32f6396e783b6";
+
+export const UNI_HOUSE_OBJ_ID =
+  "0x801d6de71b93d3dea11ed7fe0bf89304f8ce47fcdec884424129a535745aac3b";
 // ===============================================================================

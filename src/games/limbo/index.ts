@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -6,18 +6,13 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
-import { nanoid } from "nanoid";
-
 import {
-  BLS_VERIFIER_OBJ,
   LIMBO_MAX_MULTIPLIER,
   LIMBO_MIN_MULTIPLIER,
   LIMBO_MODULE_NAME,
-  LIMBO_STRUCT_NAME,
-  UNI_HOUSE_OBJ,
+  RAND_OBJ_ID,
+  UNI_HOUSE_OBJ_ID,
 } from "../../constants";
-import { getBlsGameInfos, sleep } from "../../utils";
-import { rawListeners } from "process";
 
 type LimboResult = number;
 
@@ -28,10 +23,11 @@ interface LimboGameResults {
 }
 
 export interface LimboInput {
-  coin: TransactionObjectArgument;
+  coins: TransactionObjectArgument;
   coinType: string;
-  multiplier: number;
+  multipliers: number[];
   transaction: TransactionType;
+  origin?: string; 
 }
 
 interface LimboParsedJson {
@@ -51,11 +47,6 @@ export interface LimboResultInput {
   transactionResult: SuiTransactionBlockResponse;
 }
 
-interface InternalLimboResultInput extends LimboResultInput {
-  limboCorePackageId: string;
-  suiClient: SuiClient;
-}
-
 export interface LimboResponse {
   ok: boolean;
   err?: Error;
@@ -71,143 +62,35 @@ export interface LimboResultResponse {
   txDigests?: string[];
 }
 
-const distanceToMultiplier = (distance: number): number => {
-  distance /= 100_000;
-  const res = (10_000 - distance) / (10_000 - 100 * distance);
-
-  if (res > 100) {
-    return 100;
-  }
-
-  return Math.floor(res * 100) / 100;
-};
-
 // Weighted flip where the user can select how much multiplier they want.
+// Note that the multiplers are passed in as integers and not a decimal representation i.e. 1.01 = 101
 export const createLimbo = ({
-  coin,
+  coins,
   coinType,
   limboPackageId,
-  multiplier,
+  multipliers,
   transaction,
-}: InternalLimboInput): LimboResponse => {
-  const res: LimboResponse = { ok: true };
-
-  try {
-    if (
-      Number(multiplier) < Number(LIMBO_MIN_MULTIPLIER) ||
-      Number(multiplier) > Number(LIMBO_MAX_MULTIPLIER)
-    ) {
-      throw new Error("Multiplier out of range");
-    }
-
-    // This adds some extra entropy to the coinflip itself.
-    const userRandomness = Buffer.from(nanoid(512), "utf8");
-
-    const [receipt] = transaction.moveCall({
-      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::start_game`,
+  origin
+}: InternalLimboInput) => {
+    for (let num of multipliers) {
+      if (
+        Number(num) < Number(LIMBO_MIN_MULTIPLIER) ||
+        Number(num) > Number(LIMBO_MAX_MULTIPLIER)
+      ) {
+        throw new Error("Multiplier out of range");
+      }
+    };
+    transaction.moveCall({
+      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play`,
       typeArguments: [coinType],
       arguments: [
-        transaction.object(UNI_HOUSE_OBJ),
-        transaction.object(BLS_VERIFIER_OBJ),
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        coins,
         transaction.pure(
-          bcs.vector(bcs.U8).serialize(Array.from(userRandomness))
+          bcs.vector(bcs.U64).serialize(multipliers)
         ),
-        transaction.pure(
-          bcs.vector(bcs.U64).serialize([Math.floor(Number(multiplier) * 100)])
-        ),
-        transaction.makeMoveVec({ elements: [coin] }),
+        transaction.pure.string(origin ?? "DoubleUp")
       ],
     });
-
-    res.gameSeed = Buffer.from(userRandomness).toString("hex");
-    res.receipt = receipt;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
-};
-
-export const getLimboResult = async ({
-  coinType,
-  gameSeed,
-  limboCorePackageId,
-  pollInterval = 3000,
-  suiClient,
-  transactionResult,
-}: InternalLimboResultInput): Promise<LimboResultResponse> => {
-  const res: LimboResultResponse = { ok: true };
-
-  try {
-    const gameInfos = getBlsGameInfos({
-      coinType,
-      corePackageId: limboCorePackageId,
-      gameSeed,
-      moduleName: LIMBO_MODULE_NAME,
-      structName: LIMBO_STRUCT_NAME,
-      transactionResult,
-    });
-
-    let results: LimboResult[] = [];
-    let rawResults: LimboParsedJson[] = [];
-    let txDigests: string[] = [];
-
-    // console.log("gameInfos", gameInfos[0].gameId);
-
-    while (results.length === 0) {
-      try {
-        const events = await suiClient.queryEvents({
-          query: {
-            MoveEventType: `${limboCorePackageId}::${LIMBO_MODULE_NAME}::LimboResults<${coinType}>`,
-          },
-          limit: 50,
-          order: "descending",
-        });
-
-        results = events.data.reduce((acc, current) => {
-          const { game_id, results } = current.parsedJson as LimboParsedJson;
-
-          if (game_id && game_id === gameInfos[0].gameId) {
-            // console.log("check game_id", game_id);
-            rawResults.push(current.parsedJson as LimboParsedJson);
-
-            txDigests.push(current.id.txDigest);
-
-            const { outcome } = results[0];
-
-            if (+outcome % 69 === 0) {
-              // console.log("check no rest with 69");
-              acc.push(1);
-            } else {
-              // console.log("check rest with 69");
-              acc.push(distanceToMultiplier(+outcome));
-            }
-          }
-
-          return acc;
-        }, []);
-      } catch (err) {
-        console.error(`DOUBLEUP - Error querying events: ${err}`);
-      }
-
-      if (results.length === 0) {
-        console.log(
-          `DOUBLEUP - Game in processing. Query again in ${
-            pollInterval / 1000
-          } seconds.`
-        );
-        await sleep(pollInterval);
-      }
-    }
-
-    res.results = results;
-    res.rawResults = rawResults;
-    res.txDigests = txDigests;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
 };
