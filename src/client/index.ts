@@ -85,30 +85,18 @@ export class DoubleUpClient {
     partnerNftListId,
     plinkoPackageId = PLINKO_PACKAGE_ID,
     ufoRangePackageId = UFORANGE_PACKAGE_ID,
-    // rangeDiceCorePackageId = RANGE_DICE_CORE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
     rpsPackageId = RPS_PACKAGE_ID,
-    // rpsCorePackageId = RPS_CORE_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
   }: DoubleUpClientInput) {
     this.coinflipPackageId = coinflipPackageId;
-    // this.coinflipCorePackageId = coinflipCorePackageId;
-
     this.limboPackageId = limboPackageId;
-
     this.origin = origin;
-
     this.partnerNftListId = partnerNftListId;
-
     this.plinkoPackageId = plinkoPackageId;
     this.ufoRangePackageId = ufoRangePackageId;
-    // this.rangeDiceCorePackageId = rangeDiceCorePackageId;
-
     this.roulettePackageId = roulettePackageId;
-
-    // this.rpsPackageId = rpsPackageId;
-    // this.rpsCorePackageId = rpsCorePackageId;
-
+    this.rpsPackageId = rpsPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -218,16 +206,10 @@ export class DoubleUpClient {
   //   });
 
   // // rps
-  // createRockPaperScissors = (input: RPSInput) =>
-  //   createRockPaperScissors({
-  //     ...input,
-  //     partnerNftListId: this.partnerNftListId,
-  //     rpsPackageId: this.rpsPackageId,
-  //   });
-  // getRockPaperScissorsResult = (input: RPSResultInput) =>
-  //   getRockPaperScissorsResult({
-  //     ...input,
-  //     rpsCorePackageId: this.rpsCorePackageId,
-  //     suiClient: this.suiClient,
-  //   });
+  createRockPaperScissors = (input: RPSInput) =>
+    createRockPaperScissors({
+      ...input,
+      partnerNftListId: this.partnerNftListId,
+      rpsPackageId: this.rpsPackageId,
+    });
 }

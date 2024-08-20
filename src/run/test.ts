@@ -93,9 +93,9 @@ const dbClient = new DoubleUpClient({
       // case "roulette:start":
       //   testRouletteStart(dbClient, client, keypair);
       //   break;
-      // case "rps":
-      //   testRPS(dbClient, client, keypair);
-      //   break;
+      case "rps":
+        testRPS(dbClient, client, keypair);
+        break;
       default:
         console.error(
           "Use dedicated test function to test an individual game.\n"
