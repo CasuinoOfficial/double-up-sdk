@@ -91,17 +91,17 @@ export const getRouletteTableInfo = ({
 }: RouletteTableInfoInput): RouletteTableInfo[] => {
   const filterString = `${ROULETTE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`;
 
-  const objectChanges = transactionResult.objectChanges;
-  const gameInfos = (objectChanges as any[])
-    .filter(({ objectType }) => objectType === filterString)
-    .map(({ objectId }) => {
-      const tableId = objectId as string;
+//   const objectChanges = transactionResult.objectChanges;
+//   const gameInfos = (objectChanges as any[])
+//     .filter(({ objectType }) => objectType === filterString)
+//     .map(({ objectId }) => {
+//       const tableId = objectId as string;
 
-      return { tableId };
-    });
+//       return { tableId };
+//     });
 
-  return gameInfos;
-};
+//   return gameInfos;
+// };
 
 function between(x: number, min: number, max: number) {
   return x >= min && x <= max;
