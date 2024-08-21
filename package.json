@@ -26,7 +26,8 @@
     "test:craps:roll": "FUNCTION=craps:roll pnpm test",
     "test:craps:get": "FUNCTION=craps:get pnpm test",
     "test:craps:settle": "FUNCTION=craps:settle pnpm test",
-    "test:rps": "FUNCTION=rps pnpm test"
+    "test:rps": "FUNCTION=rps pnpm test",
+    "test:blackjack:create": "FUNCTION=blackjack:create pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

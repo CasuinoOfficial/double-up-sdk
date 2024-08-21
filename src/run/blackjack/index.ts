@@ -9,10 +9,11 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 export const testBlackjackCreate = async (
 	dbClient: DoubleUpClient,
 	client: SuiClient,
-	keypair: Ed25519Keypair,
+	keypair: Secp256k1Keypair,
 ) => {
 	try {
 		const txb = new Transaction();
+		txb.setGasBudget(100000000);
 
 		const betSize = 1_000_000_000;
 		const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betSize)]);
@@ -22,9 +23,10 @@ export const testBlackjackCreate = async (
 			coinType: SUI_COIN_TYPE,
 			coin,
 			transaction: txb,
+			origin: "",
 		});
 
-		console.log("Added init blackjack game to transaction");
+		console.log("Added create blackjack game to transaction");
 
 		if (!ok) {
 			throw err;
@@ -49,7 +51,24 @@ export const testBlackjackCreate = async (
     }
 
     console.log("Signed and sent transaction.");
+		console.dir(transactionResult, { depth: 5});
+
+		// const {
+		// 	ok: getOk,
+		// 	err: getErr,
+		// 	result,
+		// } = dbClient.getCreatedBlackjackGame({
+		// 	coinType: SUI_COIN_TYPE,
+		// 	transactionResult,
+		// });
+
+		// if (!getOk) {
+		// 	throw getErr;
+		// }
+
+		// console.log(result);
+
   } catch (err) {
     console.log(err);
   }
-}
+};

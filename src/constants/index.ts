@@ -58,7 +58,7 @@ export const PLINKO_PACKAGE_ID =
   "0x8318ad757263f89c408d2adbf6ca7de4af1b74d9abc59a5299d52a0181e32aaf";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
-export const PLINKO_CONFIG_ID = "";
+export const PLINKO_CONFIG_ID = "0x43c70e0463dd3fa01ee9feeb67464044b0bec37cfb0f3d147514176b3193eb85";
 
 // ===============================================================================
 
@@ -75,7 +75,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 export const BLACKJACK_PACKAGE_ID = "0x06dafbf1d3bc4df8765ab080c638ddcb1bee62f17e3c66091b9f32eb9835aef8";
 export const BLACKJACK_MODULE = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
-export const BLACKJACK_CONFIG_ID = "";
+export const BLACKJACK_CONFIG_ID = "0x605a37d234e6e74e72dc61c3e974eec36befef0115bd3201891056c2fe759ccf";
 
 // rock paper scissors
 // ===============================================================================

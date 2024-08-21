@@ -24,13 +24,16 @@ import {
   testRouletteStart,
 } from "./roulette";
 import { testRPS } from "./rps";
+import { testBlackjackCreate } from "./blackjack";
 import { PLINKO_PACKAGE_ID } from "../constants";
 import { testCrapsAdd, testCrapsAddAndRemove, testCrapsCreate, testCrapsRoll, testCrapsSettle, testGetCrapsTable } from "./craps";
 
-const { FUNCTION = "", SECRETKEY = "" } = process.env;
+const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("testnet") });
-const { schema, secretKey } = decodeSuiPrivateKey(SECRETKEY);
-const keypair = Secp256k1Keypair.fromSecretKey(secretKey);
+const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
+const secretKey = keypair.getSecretKey();
+// const { schema, secretKey } = decodeSuiPrivateKey(SECRETKEY);
+// const keypair = Secp256k1Keypair.fromSecretKey(secretKey);
 
 const PARTNER_NFT_ID =
   "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
@@ -100,6 +103,9 @@ const dbClient = new DoubleUpClient({
       case "rps":
         testRPS(dbClient, client, keypair);
         break;
+      case "blackjack:create":
+        testBlackjackCreate(dbClient, client, keypair);
+        break;
       default:
         console.error(
           "Use dedicated test function to test an individual game.\n"
@@ -110,4 +116,4 @@ const dbClient = new DoubleUpClient({
       "You must supply your wallet secret key in the .env file to test.\n"
     );
   }
-})(FUNCTION, SECRETKEY);
+})(FUNCTION, MNEMONICS);
