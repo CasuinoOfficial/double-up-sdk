@@ -14,7 +14,11 @@ import {
   testLotteryRedeem,
   testLotteryResults,
 } from "./lottery";
-import { testPlinko } from "./plinko";
+import { 
+  testPlinko,
+  testMultiPlinkoCreate,
+  testMultiPlinkoAdd,
+} from "./plinko";
 import {
   testRange,
 } from "./rangeDice";
@@ -69,6 +73,12 @@ const dbClient = new DoubleUpClient({
       //   break;
       case "plinko":
         testPlinko(dbClient, client, keypair);
+        break;
+      case "multiplinko:create":
+        testMultiPlinkoCreate(dbClient, client, keypair);
+        break;
+      case "multiplinko:add":
+        testMultiPlinkoAdd(dbClient, client, keypair);
         break;
       case "range":
         testRange(dbClient, client, keypair);

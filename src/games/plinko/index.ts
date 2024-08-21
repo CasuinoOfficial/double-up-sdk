@@ -9,7 +9,7 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
-import { PLINKO_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID, PLINKO_PACKAGE_ID, PLINKO_CONFIG_ID } from "../../constants";
+import { PLINKO_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID, PLINKO_CONFIG } from "../../constants";
 import { KIOSK_ITEM, KIOSK_OWNER_CAP } from "@mysten/kiosk";
 
 interface PlinkoGameResults {
@@ -102,7 +102,6 @@ interface PlinkoTable {
   tableId: string;
 }
 
-// TODO: create PlayPlinkoInput interface
 export interface PlinkoAddBetInput {
   creator: string;
   coin: TransactionObjectArgument;
@@ -149,7 +148,7 @@ export interface PlinkoTableExistsInput {
 }
 
 interface InternalPlinkoTableExistsInput extends PlinkoTableExistsInput {
-  plinkoCorePackageId: string;
+  plinkoPackageId: string;
   suiClient: SuiClient;
 }
 
@@ -158,6 +157,37 @@ export interface PlinkoTableExistsResponse {
   roundNumber?: string;
   err?: Error;
   tableExists?: boolean;
+}
+
+export interface PlinkoRemoveBetInput {
+  creator: string;
+  player: string;
+  coinType: string;
+  transaction: TransactionType;
+}
+
+interface InternalPlinkoRemoveBetInput extends PlinkoRemoveBetInput {
+  plinkoPackageId: string;
+}
+
+export interface PlinkoRemoveBetResponse {
+  ok: boolean;
+  err?: Error;
+  returnedCoin?: TransactionArgument;
+}
+
+export interface PlayPlinkoInput {
+  coinType: string;
+  creator: string;
+  numberOfDiscs: number;
+  betSize: number;
+  plinkoType: PlinkoType;
+  transaction: TransactionType;
+  origin: string;
+}
+
+interface InternalPlayPlinkoInput extends PlayPlinkoInput {
+  plinkoPackageId: string;
 }
 
 export const createPlinkoTable = ({
@@ -173,7 +203,7 @@ export const createPlinkoTable = ({
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(PLINKO_CONFIG_ID),
+        transaction.object(PLINKO_CONFIG),
       ],
     });
 
@@ -189,16 +219,16 @@ export const createPlinkoTable = ({
 export const doesPlinkoTableExist = async ({
   creator,
   coinType,
-  plinkoCorePackageId,
+  plinkoPackageId,
   suiClient,
 }: InternalPlinkoTableExistsInput): Promise<PlinkoTableExistsResponse> => {
   const res: PlinkoTableExistsResponse = { ok: true };
 
   try {
     const { data } = await suiClient.getDynamicFieldObject({
-      parentId: PLINKO_CONFIG_ID,
+      parentId: PLINKO_CONFIG,
       name: {
-        type: `${plinkoCorePackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
+        type: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
         value: {
           creator,
         },
@@ -268,7 +298,7 @@ export const addPlinkoBet = ({
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(PLINKO_CONFIG_ID),
+        transaction.object(PLINKO_CONFIG),
         transaction.pure.address(creator),
         coin,
       ],
@@ -283,52 +313,61 @@ export const addPlinkoBet = ({
   return res;
 };
 
-// export const startMultiPlinko = ({
-//   coinType,
-//   creator,
-//   numberOfDiscs,
-//   plinkoPackageId,
-//   plinkoType,
-//   partnerNftId,
-//   partnerNftType,
-//   partnerNftListId,
-//   transaction,
-//   origin,
-// }: InternalPlayPlinkoInput): PlayPlinkoResponse => {
-//   const res: PlayPlinkoResponse = { ok: true };
+export const removePlinkoBet = ({
+  coinType,
+  plinkoPackageId,
+  creator,
+  player,
+  transaction,
+}: InternalPlinkoRemoveBetInput): PlinkoRemoveBetResponse => {
+  const res: PlinkoRemoveBetResponse = { ok: true };
 
-//   try {
-//     if (
-//       typeof partnerNftListId === "string" &&
-//       typeof partnerNftType === "string" &&
-//       partnerNftId !== undefined
-//     ) {
-//       transaction.moveCall({
-//         target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko_with_partner`,
-//         typeArguments: [coinType],
-//         arguments: [
-//           transaction.object(UNI_HOUSE_OBJ_ID),
-//           transaction.object(PLINKO_CONFIG_ID),
-//           transaction.object(RAND_OBJ_ID),
-//           transaction.pure.address(creator),
-//           transaction.pure.u64(numberOfDiscs),
-//           transaction.pure.u64(/*TODO: bet size */),
-//           transaction.pure.u8(plinkoType),
-//           transaction.object(partnerNftListId),
-//           KIOSK_ITEM,
-//           KIOSK_OWNER_CAP,
-//           partnerNftId,
-//           transaction.pure.string(origin ?? "DoubleUp"),
-//         ],
-//       });
-//     }
-//   } catch (err) {
-//     res.ok = false;
-//     res.err = err;
-//   }
+  try {
+    const [coin] = transaction.moveCall({
+      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::remove_bet`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(PLINKO_CONFIG),
+        transaction.pure.address(creator),
+        transaction.pure.address(player),
+      ],
+    });
 
-//   return res;
-// };
+    res.returnedCoin = coin;
+  } catch (err) {
+    res.ok = false;
+    res.err = err;
+  };
+
+  return res;
+}
+
+export const startMultiPlinko = ({
+  coinType,
+  creator,
+  numberOfDiscs,
+  betSize,
+  plinkoPackageId,
+  plinkoType,
+  transaction,
+  origin,
+}: InternalPlayPlinkoInput) => {
+  transaction.moveCall({
+    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(PLINKO_CONFIG),
+      transaction.object(RAND_OBJ_ID),
+      transaction.pure.address(creator),
+      transaction.pure.u64(numberOfDiscs),
+      transaction.pure.u64(betSize),
+      transaction.pure.u8(plinkoType),
+      transaction.pure.string(origin ?? "DoubleUp"),
+    ],
+  });
+};
 
 
 export const createSinglePlinko = ({
