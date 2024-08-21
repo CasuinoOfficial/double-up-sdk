@@ -33,7 +33,6 @@ import {
 import {
   createSinglePlinko,
   PlinkoInput,
-  PlinkoResultInput,
 } from "../games/plinko";
 
 import {
@@ -44,18 +43,16 @@ import {
 import {
   addRouletteBet,
   createRouletteTable,
-  doesRouletteTableExist,
-  getCreatedRouletteTable,
   removeRouletteBet,
   startRoulette,
-  CreatedRouletteTableInput,
   RouletteAddBetInput,
   RouletteRemoveBetInput,
   RouletteStartInput,
   RouletteTableInput,
-  RouletteTableExistsInput,
   RouletteSettleOrContinueInput,
-  rouletteSettleOrContinue
+  rouletteSettleOrContinue,
+  GetRouletteTableInput,
+  getRouletteTable
 } from "../games/roulette";
 
 import {
@@ -176,16 +173,11 @@ export class DoubleUpClient {
       ...input,
       roulettePackageId: this.roulettePackageId,
     });
-  doesRouletteTableExist = (input: RouletteTableExistsInput) =>
-    doesRouletteTableExist({
+  getRouletteTable = (input: GetRouletteTableInput) =>
+    getRouletteTable({
       ...input,
       roulettePackageId: this.roulettePackageId,
       suiClient: this.suiClient,
-    });
-  getCreatedRouletteTable = (input: CreatedRouletteTableInput) =>
-    getCreatedRouletteTable({
-      ...input,
-      roulettePackageId: this.roulettePackageId,
     });
   removeRouletteBet = (input: RouletteRemoveBetInput) =>
     removeRouletteBet({

@@ -5,6 +5,7 @@ import {
     Transaction as TransactionType,
     TransactionObjectArgument,
   } from "@mysten/sui/transactions";
+import { SuiClient } from "@mysten/sui/client";
 
 export interface CrapsRemoveBetInput {
     coinType: string;
@@ -103,10 +104,27 @@ export interface CrapsAddBetInput {
     transaction: TransactionType;
   }
   
-  interface InternalCrapsAddBetInput extends CrapsAddBetInput {
+interface InternalCrapsAddBetInput extends CrapsAddBetInput {
     origin: string;
     crapsPackageId: string;
+}
+
+export interface GetCrapsTableInput {
+    address: string;
+    coinType: string;
   }
+  
+interface InternalGetCrapsTableInput extends GetCrapsTableInput {
+    crapsPackageId: string;
+    suiClient: SuiClient;
+}
+
+export interface GetCrapsTableResponse {
+    ok: boolean;
+    err?: Error;
+    fields?: any;
+}
+
 
 export const createCrapsTable = ({
     coinType,
@@ -120,6 +138,30 @@ export const createCrapsTable = ({
           transaction.object(CRAPS_CONFIG),
         ],
     });
+}
+
+export const getCrapsTable = async ({
+    address,
+    coinType,
+    crapsPackageId,
+    suiClient,
+}: InternalGetCrapsTableInput): Promise<GetCrapsTableResponse> => {
+    const { data } = await suiClient.getDynamicFieldObject({
+        parentId: CRAPS_CONFIG,
+        name: {
+          type: `${crapsPackageId}::${CRAPS_MODULE_NAME}::GameTag<${coinType}>`,
+          value: {
+            creator: address,
+          },
+        },
+      });
+  
+      if (data.content?.dataType !== "moveObject") {
+        return null;
+      }
+  
+      const fields = data.content.fields as any;
+      return fields;
 }
 
 export const placeBet = ({
@@ -147,7 +189,7 @@ export const placeBet = ({
     });
 }
 
-export const removeRouletteBet = ({
+export const removeCrapsBet = ({
     coinType,
     betNumber,
     betType,
@@ -159,7 +201,7 @@ export const removeRouletteBet = ({
   
     try {
       const [coin] = transaction.moveCall({
-        target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::place_bet`,
+        target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::remove_bet`,
         typeArguments: [coinType],
         arguments: [
           transaction.object(CRAPS_CONFIG),
@@ -203,7 +245,7 @@ export const crapsSettleOrContinue = ({
     origin
   }: InternalCrapsSettleOrContinueInput) => {
     transaction.moveCall({
-    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::start_roll`,
+    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::settle_or_continue`,
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),

@@ -42,25 +42,6 @@ type RouletteBet =
   | BetSecondColumn
   | BetThirdColumn;
 
-export interface CreatedRouletteTableInput {
-  coinType: string;
-  transactionResult: SuiTransactionBlockResponse;
-}
-
-interface InternalCreatedRouletteTableInput extends CreatedRouletteTableInput {
-  roulettePackageId: string;
-}
-
-export interface CreatedRouletteTableResponse {
-  ok: boolean;
-  err?: Error;
-  result?: RouletteTable;
-}
-
-interface RouletteTable {
-  tableId: string;
-}
-
 export interface RouletteAddBetInput {
   address: string;
   betNumber?: number;
@@ -179,21 +160,20 @@ export interface RouletteTableResponse {
   result?: TransactionArgument;
 }
 
-export interface RouletteTableExistsInput {
+export interface GetRouletteTableInput {
   address: string;
   coinType: string;
 }
 
-interface InternalRouletteTableExistsInput extends RouletteTableExistsInput {
+interface InternalGetRouletteTableInput extends GetRouletteTableInput {
   roulettePackageId: string;
   suiClient: SuiClient;
 }
 
-export interface RouletteTableExistsResponse {
+export interface GetRouletteTableResponse {
   ok: boolean;
-  roundNumber?: string;
   err?: Error;
-  tableExists?: boolean;
+  fields?: any;
 }
 
 export interface RouletteSettleOrContinueInput {
@@ -274,13 +254,13 @@ export const createRouletteTable = ({
     });
 };
 
-export const doesRouletteTableExist = async ({
+export const getRouletteTable = async ({
   address,
   coinType,
   roulettePackageId,
   suiClient,
-}: InternalRouletteTableExistsInput): Promise<RouletteTableExistsResponse> => {
-  const res: RouletteTableExistsResponse = { ok: true };
+}: InternalGetRouletteTableInput): Promise<GetRouletteTableResponse> => {
+  const res: GetRouletteTableResponse = { ok: true };
 
   try {
     const { data } = await suiClient.getDynamicFieldObject({
@@ -298,41 +278,7 @@ export const doesRouletteTableExist = async ({
     }
 
     const fields = data.content.fields as any;
-    res.roundNumber = fields.round_number;
-    res.tableExists = !!data;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
-};
-
-export const getCreatedRouletteTable = ({
-  coinType,
-  roulettePackageId,
-  transactionResult,
-}: InternalCreatedRouletteTableInput): CreatedRouletteTableResponse => {
-  const res: CreatedRouletteTableResponse = { ok: true };
-
-  try {
-    const tableId = transactionResult.objectChanges.reduce((acc, current) => {
-      if (
-        current.type === "created" &&
-        current.objectType ===
-          `${roulettePackageId}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`
-      ) {
-        acc = current.objectId;
-      }
-
-      return acc;
-    }, "");
-
-    if (tableId.length === 0) {
-      throw new Error("could not find roulette table");
-    }
-
-    res.result = { tableId };
+    res.fields = fields;
   } catch (err) {
     res.ok = false;
     res.err = err;
