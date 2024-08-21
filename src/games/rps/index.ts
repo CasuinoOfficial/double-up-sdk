@@ -12,10 +12,8 @@ import { randomBytes } from "crypto";
 import {
   RAND_OBJ_ID,
   RPS_MODULE_NAME,
-  RPS_STRUCT_NAME,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants";
-import { getBlsGameInfosWithDraw, sleep } from "../../utils";
 import { KioskClient } from "@mysten/kiosk";
 
 // 0: Rock, 1: Paper, 2: Scissors
