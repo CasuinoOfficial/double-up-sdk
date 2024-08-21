@@ -62,6 +62,7 @@ import {
   createRockPaperScissors,
   RPSInput,
 } from "../games/rps";
+import { mint, NFTMintInput, NFTRevealInput, reveal } from "src/doubleup_citizens/mint";
 
 interface DoubleUpClientInput {
   coinflipPackageId?: string;
@@ -212,4 +213,13 @@ export class DoubleUpClient {
       partnerNftListId: this.partnerNftListId,
       rpsPackageId: this.rpsPackageId,
     });
+
+  // DoubleUp Citizen
+  mintCitizen = (input: NFTMintInput) => {
+    mint(input);
+  };
+
+  revealCitizen = (input: NFTRevealInput) => {
+    reveal(input);
+  }
 }

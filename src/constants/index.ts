@@ -97,6 +97,13 @@ export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
 // ===============================================================================
 
+// Doubleup Citizens
+// ===============================================================================
+export const NFT_PACKAGE_ID = '';
+export const NFT_MODULE_NAME= 'doubleup_citizens';
+export const NFT_FEES_COLLECTOR = ''; // config shared object
+export const NFT_TRANSFER_POLICY = '';
+
 // shared
 // ===============================================================================
 export const CLOCK_OBJ: any = Inputs.SharedObjectRef({
