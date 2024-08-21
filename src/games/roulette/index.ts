@@ -264,26 +264,14 @@ export const createRouletteTable = ({
   coinType,
   roulettePackageId,
   transaction,
-}: InternalRouletteTableInput): RouletteTableResponse => {
-  const res: RouletteTableResponse = { ok: true };
-
-  try {
-
-    const [table] = transaction.moveCall({
+}: InternalRouletteTableInput) => {
+    transaction.moveCall({
       target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
       typeArguments: [coinType],
       arguments: [
         transaction.object(ROULETTE_CONFIG),
       ],
     });
-
-    res.result = table;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
 };
 
 export const doesRouletteTableExist = async ({

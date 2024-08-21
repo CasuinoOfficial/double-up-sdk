@@ -6,8 +6,6 @@ import { DoubleUpClient } from "../client";
 
 import {
   CoinflipInput,
-  CoinflipResultInput,
-  CoinflipResultResponse,
 } from "../games/coinflip";
 import {
   BuyTicketsInput,
