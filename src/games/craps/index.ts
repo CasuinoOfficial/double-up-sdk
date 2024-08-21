@@ -1,4 +1,4 @@
-import { CRAPS_CONFIG, CRAPS_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID } from "src/constants";
+import { CRAPS_CONFIG, CRAPS_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID } from "../../constants";
 import { bcs } from "@mysten/sui/bcs";
 import {
     TransactionArgument,
@@ -15,7 +15,7 @@ export interface CrapsRemoveBetInput {
     transaction: TransactionType;
   }
 
-interface InternalCraosRemoveBetInput extends CrapsRemoveBetInput {
+interface InternalCrapsRemoveBetInput extends CrapsRemoveBetInput {
     crapsPackageId: string;
   }
   
@@ -33,15 +33,15 @@ interface InternalCrapsSettleOrContinueInput extends CrapsSettleOrContinueInput 
 export interface CrapsRemoveBetResponse {
     ok: boolean;
     err?: Error;
-    returnedCoin?: TransactionArgument;
+    returnedCoin: TransactionArgument;
 }
 
-export interface RouletteStartInput {
+export interface CrapsStartInput {
     coinType: string;
     transaction: TransactionType;
   }
   
-interface InternalRouletteStartInput extends RouletteStartInput {
+interface InternalCrapsStartInput extends CrapsStartInput {
     crapsPackageId: string;
 }
 
@@ -94,6 +94,26 @@ type CrapsBet =
   | ComeOddsBet
   | DontComeOddsBet 
   | CESplitBet;
+
+export const PassLineBet = 0;
+export const DontPassLineBet = 1;
+export const FieldBet = 2;
+export const PlaceBet = 3;
+export const BuyBet = 4;
+export const LayBet = 5;
+export const LittleOnesBet = 6;
+export const BigOnesBet = 7;
+export const AllOfThemBet = 8;
+export const ComeBet = 9;
+export const DontComeBet = 10;
+export const HardWaysBet = 11;
+export const AnyCrapsBet = 12;
+export const CrapsSevenBet = 13;
+export const PassOddsBet = 14;
+export const DontPassOddsBet = 15;
+export const ComeOddsBet = 16;
+export const DontComeOddsBet = 17;
+export const CESplitBet = 18;
 
 export interface CrapsAddBetInput {
     address: string;
@@ -149,13 +169,12 @@ export const getCrapsTable = async ({
     const { data } = await suiClient.getDynamicFieldObject({
         parentId: CRAPS_CONFIG,
         name: {
-          type: `${crapsPackageId}::${CRAPS_MODULE_NAME}::GameTag<${coinType}>`,
+          type: `${crapsPackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
           value: {
             creator: address,
           },
         },
-      });
-  
+      });  
       if (data.content?.dataType !== "moveObject") {
         return null;
       }
@@ -164,7 +183,7 @@ export const getCrapsTable = async ({
       return fields;
 }
 
-export const placeBet = ({
+export const addCrapsBet = ({
     address,
     betNumber,
     betType,
@@ -172,7 +191,7 @@ export const placeBet = ({
     coinType,
     crapsPackageId,
     transaction,
-}) => {
+}: InternalCrapsAddBetInput) => {
     transaction.moveCall({
         target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::place_bet`,
         typeArguments: [coinType],
@@ -180,7 +199,7 @@ export const placeBet = ({
             transaction.object(UNI_HOUSE_OBJ_ID),
             transaction.object(CRAPS_CONFIG),
             transaction.pure.address(address),
-            transaction.pure.u8(betType),
+            transaction.pure.u64(betType),
             transaction.pure(
               bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
             ),
@@ -196,29 +215,20 @@ export const removeCrapsBet = ({
     crapsPackageId,
     tableOwner,
     transaction,
-}: InternalCraosRemoveBetInput): CrapsRemoveBetResponse => {
-    const res: CrapsRemoveBetResponse = { ok: true };
-  
-    try {
-      const [coin] = transaction.moveCall({
-        target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::remove_bet`,
-        typeArguments: [coinType],
-        arguments: [
-          transaction.object(CRAPS_CONFIG),
-          transaction.pure.address(tableOwner),
-          transaction.pure.u8(betType),
-          transaction.pure(
-            bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
-          ),
-        ],
-      });
-  
-      res.returnedCoin = coin;
-    } catch (err) {
-      res.ok = false;
-      res.err = err;
-    }
-  
+}: InternalCrapsRemoveBetInput): CrapsRemoveBetResponse => {
+    const [coin] = transaction.moveCall({
+    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::remove_bet`,
+    typeArguments: [coinType],
+    arguments: [
+        transaction.object(CRAPS_CONFIG),
+        transaction.pure.address(tableOwner),
+        transaction.pure.u64(betType),
+        transaction.pure(
+        bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
+        ),
+    ],
+    });
+    const res: CrapsRemoveBetResponse = { ok: true, returnedCoin: coin };
     return res;
 };
 
@@ -226,7 +236,7 @@ export const startCraps = ({
     coinType,
     crapsPackageId,
     transaction,
-}: InternalRouletteStartInput) => {
+}: InternalCrapsStartInput) => {
     transaction.moveCall({
         target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::start_roll`,
         typeArguments: [coinType],

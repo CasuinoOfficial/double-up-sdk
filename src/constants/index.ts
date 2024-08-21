@@ -114,4 +114,7 @@ export const UNIHOUSE_PACKAGE =
 
 export const UNI_HOUSE_OBJ_ID =
   "0x801d6de71b93d3dea11ed7fe0bf89304f8ce47fcdec884424129a535745aac3b";
+  
+// Partner list
 // ===============================================================================
+export const PARTNER_NFT_LIST_ID = "0x0"

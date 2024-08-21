@@ -62,31 +62,6 @@ export interface RouletteAddBetResponse {
   betId?: TransactionArgument;
 }
 
-interface RouletteParsedJson {
-  bet_id: string;
-  creator: string;
-  outcome: string;
-  round_number: string;
-  table_id: string;
-}
-
-interface BetResult {
-  bet_id: string;
-  is_win: string;
-  bet_type: number;
-  bet_number: number;
-  bet_size: string;
-  player: string;
-}
-
-interface BetSettledEvent {
-  table_id: string;
-  total_volume: number;
-  round_number: string;
-  creator: string;
-  bet_results: BetResult[];
-  origin: string;
-}
 
 export interface RouletteRemoveBetInput {
   betId: string;
@@ -105,28 +80,6 @@ export interface RouletteRemoveBetResponse {
   ok: boolean;
   err?: Error;
   returnedCoin?: TransactionArgument;
-}
-
-export interface RouletteResultInput {
-  coinType: string;
-  gameSeed: string;
-  roundNumber: string;
-  pollInterval?: number;
-  transactionResult: SuiTransactionBlockResponse;
-  withJson?: boolean;
-}
-
-interface RouletteResult {
-  roll: number;
-}
-
-export interface RouletteResultResponse {
-  ok: boolean;
-  err?: Error;
-  rawBetResults?: BetSettledEvent[];
-  rawResults?: RouletteParsedJson[];
-  results?: RouletteResult[];
-  txDigests?: string[];
 }
 
 export interface RouletteStartInput {

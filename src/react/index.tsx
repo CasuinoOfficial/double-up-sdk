@@ -27,7 +27,7 @@ import {
 } from "../games/plinko";
 import {
   RangeInput,
-} from "src/games/ufoRange";
+} from "../games/ufoRange";
 import {
   GetRouletteTableInput,
   GetRouletteTableResponse,
@@ -37,10 +37,11 @@ import {
   RouletteSettleOrContinueInput,
   RouletteStartInput,
   RouletteTableInput,
-} from "src/games/roulette";
+} from "../games/roulette";
 import {
   RPSInput,
-} from "src/games/rps";
+} from "../games/rps";
+import { CrapsAddBetInput, CrapsRemoveBetInput, CrapsRemoveBetResponse, CrapsSettleOrContinueInput, CrapsStartInput, CrapsTableInput, GetCrapsTableInput } from "../games/craps";
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;
@@ -66,6 +67,12 @@ interface DoubleUpContextState {
     input: RouletteRemoveBetInput
   ) => RouletteRemoveBetResponse;
   startRoulette: (input: RouletteStartInput) => void;
+  createCrapsTable: (input: CrapsTableInput) => void;
+  getCrapsTable: (input: GetCrapsTableInput) => void;
+  addCrapsBet: (input: CrapsAddBetInput) => void;
+  removeCrapsBet: (input: CrapsRemoveBetInput) => CrapsRemoveBetResponse;
+  startCraps: (input: CrapsStartInput) => void;
+  crapsSettleOrContinue: (input: CrapsSettleOrContinueInput) => void;
 }
 
 interface DoubleupProviderProps {
@@ -127,6 +134,12 @@ const DoubleUpProvider = ({
   const redeemLotteryTickets = dbClient.redeemLotteryTickets;
   const removeRouletteBet = dbClient.removeRouletteBet;
   const startRoulette = dbClient.startRoulette;
+  const createCrapsTable = dbClient.createCrapsTable;
+  const getCrapsTable = dbClient.getCrapsTable;
+  const addCrapsBet = dbClient.addCrapsBet;
+  const removeCrapsBet = dbClient.removeCrapsBet;
+  const startCraps = dbClient.startCraps;
+  const crapsSettleOrContinue = dbClient.crapsSettleOrContinue;
 
   const state: DoubleUpContextState = {
     addRouletteBet,
@@ -146,6 +159,12 @@ const DoubleUpProvider = ({
     redeemLotteryTickets,
     removeRouletteBet,
     startRoulette,
+    createCrapsTable,
+    getCrapsTable,
+    addCrapsBet,
+    removeCrapsBet,
+    startCraps,
+    crapsSettleOrContinue,
   };
 
   return (
