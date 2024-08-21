@@ -29,16 +29,14 @@ import {
   RangeInput,
 } from "src/games/ufoRange";
 import {
-  CreatedRouletteTableInput,
-  CreatedRouletteTableResponse,
+  GetRouletteTableInput,
+  GetRouletteTableResponse,
   RouletteAddBetInput,
   RouletteRemoveBetInput,
   RouletteRemoveBetResponse,
+  RouletteSettleOrContinueInput,
   RouletteStartInput,
   RouletteTableInput,
-  RouletteTableResponse,
-  RouletteTableExistsInput,
-  RouletteTableExistsResponse,
 } from "src/games/roulette";
 import {
   RPSInput,
@@ -52,13 +50,9 @@ interface DoubleUpContextState {
   createSinglePlinko: (input: PlinkoInput) => void;
   createRange: (input: RangeInput) => void;
   createRockPaperScissors: (input: RPSInput) => void;
-  createRouletteTable: (input: RouletteTableInput) => RouletteTableResponse;
-  doesRouletteTableExist: (
-    input: RouletteTableExistsInput
-  ) => Promise<RouletteTableExistsResponse>;
-  getCreatedRouletteTable: (
-    input: CreatedRouletteTableInput
-  ) => CreatedRouletteTableResponse;
+  createRouletteTable: (input: RouletteTableInput) => void;
+  getRouletteTable: (input: GetRouletteTableInput) => Promise<GetRouletteTableResponse>;
+  rouletteSettleOrContinue: (input: RouletteSettleOrContinueInput) => void;
   getLottery: () => Promise<LotteryResponse>;
   getLotteryDrawingResult: (
     input: DrawingResultInput
@@ -124,19 +118,14 @@ const DoubleUpProvider = ({
   const createRange = dbClient.createRange;
   const createRockPaperScissors = dbClient.createRockPaperScissors;
   const createRouletteTable = dbClient.createRouletteTable;
-
-  const doesRouletteTableExist = dbClient.doesRouletteTableExist;
-
-  const getCreatedRouletteTable = dbClient.getCreatedRouletteTable;
+  const rouletteSettleOrContinue = dbClient.rouletteSettleOrContinue;
+  const getRouletteTable = dbClient.getRouletteTable;
   const getLottery = dbClient.getLottery;
   const getLotteryDrawingResult = dbClient.getLotteryDrawingResult;
   const getLotteryHistory = dbClient.getLotteryHistory;
   const getLotteryTickets = dbClient.getLotteryTickets;
-
-
   const redeemLotteryTickets = dbClient.redeemLotteryTickets;
   const removeRouletteBet = dbClient.removeRouletteBet;
-
   const startRoulette = dbClient.startRoulette;
 
   const state: DoubleUpContextState = {
@@ -148,8 +137,8 @@ const DoubleUpProvider = ({
     createRange,
     createRockPaperScissors,
     createRouletteTable,
-    doesRouletteTableExist,
-    getCreatedRouletteTable,
+    getRouletteTable,
+    rouletteSettleOrContinue,
     getLottery,
     getLotteryDrawingResult,
     getLotteryHistory,

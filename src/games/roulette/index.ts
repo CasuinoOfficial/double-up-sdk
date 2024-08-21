@@ -278,6 +278,7 @@ export const getRouletteTable = async ({
     }
 
     const fields = data.content.fields as any;
+    res.ok = true;
     res.fields = fields;
   } catch (err) {
     res.ok = false;
