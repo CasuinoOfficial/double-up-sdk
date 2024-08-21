@@ -1,11 +1,11 @@
 import { SuiTransactionBlockResponse } from "@mysten/sui/client";
 
 import {
-  BLS_SETTLER_MODULE_NAME,
-  ROULETTE_CORE_PACKAGE_ID,
-  ROULETTE_MODULE_NAME,
-  UNIHOUSE_CORE_PACKAGE,
-  UNIHOUSE_V4_PACKAGE,
+  // BLS_SETTLER_MODULE_NAME,
+  // ROULETTE_CORE_PACKAGE_ID,
+  // ROULETTE_MODULE_NAME,
+  // UNIHOUSE_CORE_PACKAGE,
+  // UNIHOUSE_V4_PACKAGE,
 } from "../constants";
 
 interface GameInfo {
@@ -93,58 +93,58 @@ export const getGameInfos = ({
   });
 };
 
-export const getBlsGameInfos = ({
-  coinType,
-  corePackageId,
-  gameSeed,
-  moduleName,
-  structName,
-  transactionResult,
-}: BlsGameInfosInput): GameInfo[] => {
-  const filterString = `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetData<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
+// export const getBlsGameInfos = ({
+//   coinType,
+//   corePackageId,
+//   gameSeed,
+//   moduleName,
+//   structName,
+//   transactionResult,
+// }: BlsGameInfosInput): GameInfo[] => {
+//   const filterString = `${UNIHOUSE_CORE_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetData<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
 
-  return getGenericGameInfos({
-    filterString,
-    gameSeed,
-    transactionResult,
-  });
-};
+//   return getGenericGameInfos({
+//     filterString,
+//     gameSeed,
+//     transactionResult,
+//   });
+// };
 
-export const getBlsGameInfosWithDraw = ({
-  coinType,
-  corePackageId,
-  gameSeed,
-  moduleName,
-  structName,
-  transactionResult,
-}: BlsGameInfosInput): GameInfo[] => {
-  // UNIHOUSE_PACKAGE - BetDataWithDraw did not exist until unihouse v4
-  const filterString = `${UNIHOUSE_V4_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetDataWithDraw<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
+// export const getBlsGameInfosWithDraw = ({
+//   coinType,
+//   corePackageId,
+//   gameSeed,
+//   moduleName,
+//   structName,
+//   transactionResult,
+// }: BlsGameInfosInput): GameInfo[] => {
+//   // UNIHOUSE_PACKAGE - BetDataWithDraw did not exist until unihouse v4
+//   const filterString = `${UNIHOUSE_V4_PACKAGE}::${BLS_SETTLER_MODULE_NAME}::BetDataWithDraw<${coinType}, ${corePackageId}::${moduleName}::${structName}>`;
 
-  return getGenericGameInfos({
-    filterString,
-    gameSeed,
-    transactionResult,
-  });
-};
+//   return getGenericGameInfos({
+//     filterString,
+//     gameSeed,
+//     transactionResult,
+//   });
+// };
 
-export const getRouletteTableInfo = ({
-  coinType,
-  transactionResult,
-}: RouletteTableInfoInput): RouletteTableInfo[] => {
-  const filterString = `${ROULETTE_CORE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`;
+// export const getRouletteTableInfo = ({
+//   coinType,
+//   transactionResult,
+// }: RouletteTableInfoInput): RouletteTableInfo[] => {
+//   const filterString = `${ROULETTE_CORE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`;
 
-  const objectChanges = transactionResult.objectChanges;
-  const gameInfos = (objectChanges as any[])
-    .filter(({ objectType }) => objectType === filterString)
-    .map(({ objectId }) => {
-      const tableId = objectId as string;
+//   const objectChanges = transactionResult.objectChanges;
+//   const gameInfos = (objectChanges as any[])
+//     .filter(({ objectType }) => objectType === filterString)
+//     .map(({ objectId }) => {
+//       const tableId = objectId as string;
 
-      return { tableId };
-    });
+//       return { tableId };
+//     });
 
-  return gameInfos;
-};
+//   return gameInfos;
+// };
 
 function between(x: number, min: number, max: number) {
   return x >= min && x <= max;

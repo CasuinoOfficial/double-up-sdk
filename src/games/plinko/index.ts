@@ -283,52 +283,52 @@ export const addPlinkoBet = ({
   return res;
 };
 
-export const startMultiPlinko = ({
-  coinType,
-  creator,
-  numberOfDiscs,
-  plinkoPackageId,
-  plinkoType,
-  partnerNftId,
-  partnerNftType,
-  partnerNftListId,
-  transaction,
-  origin,
-}: InternalPlayPlinkoInput): PlayPlinkoResponse => {
-  const res: PlayPlinkoResponse = { ok: true };
+// export const startMultiPlinko = ({
+//   coinType,
+//   creator,
+//   numberOfDiscs,
+//   plinkoPackageId,
+//   plinkoType,
+//   partnerNftId,
+//   partnerNftType,
+//   partnerNftListId,
+//   transaction,
+//   origin,
+// }: InternalPlayPlinkoInput): PlayPlinkoResponse => {
+//   const res: PlayPlinkoResponse = { ok: true };
 
-  try {
-    if (
-      typeof partnerNftListId === "string" &&
-      typeof partnerNftType === "string" &&
-      partnerNftId !== undefined
-    ) {
-      transaction.moveCall({
-        target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko_with_partner`,
-        typeArguments: [coinType],
-        arguments: [
-          transaction.object(UNI_HOUSE_OBJ_ID),
-          transaction.object(PLINKO_CONFIG_ID),
-          transaction.object(RAND_OBJ_ID),
-          transaction.pure.address(creator),
-          transaction.pure.u64(numberOfDiscs),
-          transaction.pure.u64(/*TODO: bet size */),
-          transaction.pure.u8(plinkoType),
-          transaction.object(partnerNftListId),
-          KIOSK_ITEM,
-          KIOSK_OWNER_CAP,
-          partnerNftId,
-          transaction.pure.string(origin ?? "DoubleUp"),
-        ],
-      });
-    }
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
+//   try {
+//     if (
+//       typeof partnerNftListId === "string" &&
+//       typeof partnerNftType === "string" &&
+//       partnerNftId !== undefined
+//     ) {
+//       transaction.moveCall({
+//         target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko_with_partner`,
+//         typeArguments: [coinType],
+//         arguments: [
+//           transaction.object(UNI_HOUSE_OBJ_ID),
+//           transaction.object(PLINKO_CONFIG_ID),
+//           transaction.object(RAND_OBJ_ID),
+//           transaction.pure.address(creator),
+//           transaction.pure.u64(numberOfDiscs),
+//           transaction.pure.u64(/*TODO: bet size */),
+//           transaction.pure.u8(plinkoType),
+//           transaction.object(partnerNftListId),
+//           KIOSK_ITEM,
+//           KIOSK_OWNER_CAP,
+//           partnerNftId,
+//           transaction.pure.string(origin ?? "DoubleUp"),
+//         ],
+//       });
+//     }
+//   } catch (err) {
+//     res.ok = false;
+//     res.err = err;
+//   }
 
-  return res;
-};
+//   return res;
+// };
 
 
 export const createSinglePlinko = ({
