@@ -21,7 +21,8 @@
     "test:roulette:create": "FUNCTION=roulette:create pnpm test",
     "test:roulette:exists": "FUNCTION=roulette:exists pnpm test",
     "test:roulette:start": "FUNCTION=roulette:start pnpm test",
-    "test:rps": "FUNCTION=rps pnpm test"
+    "test:rps": "FUNCTION=rps pnpm test",
+    "test:blackjack:create": "FUNCTION=blackjack:create pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
