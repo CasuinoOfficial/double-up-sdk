@@ -33,8 +33,20 @@ import {
 
 import {
   createSinglePlinko,
+  createPlinkoTable,
+  addPlinkoBet,
+  doesPlinkoTableExist,
+  getCreatedPlinkoTable,
+  removePlinkoBet,
+  startMultiPlinko,
   PlinkoInput,
   PlinkoResultInput,
+  PlinkoTableInput,
+  PlinkoAddBetInput,
+  PlinkoTableExistsInput,
+  CreatedPlinkoTableInput,
+  PlinkoRemoveBetInput,
+  PlayPlinkoInput,
 } from "../games/plinko";
 
 import {
@@ -160,9 +172,41 @@ export class DoubleUpClient {
   createLimbo = (input: LimboInput) =>
     createLimbo({ ...input, limboPackageId: this.limboPackageId });
 
-  // // plinko
+  // plinko
   createSinglePlinko = (input: PlinkoInput) =>
     createSinglePlinko({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+    });
+  createPlinkoTable = (input: PlinkoTableInput) =>
+    createPlinkoTable({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+    });
+  addPlinkoBet = (input: PlinkoAddBetInput) =>
+    addPlinkoBet({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+      origin: this.origin,
+    });
+  doesPlinkoTableExist = (input: PlinkoTableExistsInput) =>
+    doesPlinkoTableExist({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+      suiClient: this.suiClient,
+    });
+  getCreatedPlinkoTable = (input: CreatedPlinkoTableInput) =>
+    getCreatedPlinkoTable({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+    });
+  removePlinkoBet = (input: PlinkoRemoveBetInput) =>
+    removePlinkoBet({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+    });
+  startMultiPlinko = (input: PlayPlinkoInput) =>
+    startMultiPlinko({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
     });
@@ -216,7 +260,7 @@ export class DoubleUpClient {
       origin: this.origin
     });
 
-  // // rps
+  // rps
   createRockPaperScissors = (input: RPSInput) =>
     createRockPaperScissors({
       ...input,

@@ -8,8 +8,7 @@ import {
   BLACKJACK_MODULE,
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
-  BLACKJACK_CONFIG_ID,
-  ROULETTE_PACKAGE_ID,
+  BLACKJACK_CONFIG,
 } from "../../constants";
 import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/dist/cjs/client";
 
@@ -82,7 +81,7 @@ export const createBlackjackGame = ({
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(BLACKJACK_CONFIG_ID),
+        transaction.object(BLACKJACK_CONFIG),
         transaction.pure.u64(betSize),
         coin,
       ],
@@ -108,7 +107,7 @@ export const doesBlackjackGameExist = async ({
 
   try {
     const { data } = await suiClient.getDynamicFieldObject({
-      parentId: BLACKJACK_CONFIG_ID,
+      parentId: BLACKJACK_CONFIG,
       name: gameId,
     })
   }
