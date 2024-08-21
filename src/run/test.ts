@@ -1,7 +1,6 @@
 // import { client, SuiTxBlock } from '@scallop-io/sui-kit';
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../client";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { fromHEX } from "@mysten/sui/utils";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 import { decodeSuiPrivateKey } from '@mysten/sui/cryptography';
@@ -26,6 +25,7 @@ import {
 } from "./roulette";
 import { testRPS } from "./rps";
 import { PLINKO_PACKAGE_ID } from "../constants";
+import { testCrapsAdd, testCrapsAddAndRemove, testCrapsCreate, testCrapsRoll, testCrapsSettle, testGetCrapsTable } from "./craps";
 
 const { FUNCTION = "", SECRETKEY = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("testnet") });
@@ -78,6 +78,24 @@ const dbClient = new DoubleUpClient({
         break;
       case "roulette:start":
         testRouletteStart(dbClient, client, keypair);
+        break;
+      case "craps:add":
+        testCrapsAdd(dbClient, client, keypair);
+        break;
+      case "craps:create":
+        testCrapsCreate(dbClient, client, keypair);
+        break;
+      case "craps:roll":
+        testCrapsRoll(dbClient, client, keypair);
+        break;
+      case "craps:remove":
+        testCrapsAddAndRemove(dbClient, client, keypair);
+        break;
+      case "craps:get":
+        testGetCrapsTable(dbClient, keypair);
+        break;
+      case "craps:settle":
+        testCrapsSettle(dbClient, client, keypair);
         break;
       case "rps":
         testRPS(dbClient, client, keypair);

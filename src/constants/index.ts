@@ -93,6 +93,7 @@ export const UFORANGE_STRUCT_NAME = "UFORange";
 // Craps
 // ===============================================================================
 export const CRAPS_PACKAGE_ID = '0x5fc268b2438c0af48ac383f47f754c1dbc1dbd653f4be6fa421c55b40b6f0dbc';
+export const CRAPS_CONFIG = '0x5c2108637bf8dc34c9f91c6a11bd3badddd6663787f35867691ea046f8ebb13b';
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
 // ===============================================================================
@@ -113,4 +114,7 @@ export const UNIHOUSE_PACKAGE =
 
 export const UNI_HOUSE_OBJ_ID =
   "0x801d6de71b93d3dea11ed7fe0bf89304f8ce47fcdec884424129a535745aac3b";
+  
+// Partner list
 // ===============================================================================
+export const PARTNER_NFT_LIST_ID = "0x0"

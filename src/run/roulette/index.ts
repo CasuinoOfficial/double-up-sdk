@@ -2,7 +2,6 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
-
 import { SUI_COIN_TYPE } from "../../constants";
 
 export const testRouletteAdd = async (
@@ -76,16 +75,12 @@ export const testRouletteCreate = async (
   try {
     const txb = new Transaction();
 
-    const { ok: createOk, err: createErr } = dbClient.createRouletteTable({
+    dbClient.createRouletteTable({
       coinType: SUI_COIN_TYPE,
       transaction: txb,
     });
 
     console.log("Added roulette table create to transaction block.");
-
-    if (!createOk) {
-      throw createErr;
-    }
 
     const transactionResult = await client.signAndExecuteTransaction({
       signer: keypair,
@@ -110,17 +105,17 @@ export const testRouletteCreate = async (
     const {
       ok: getOk,
       err: getErr,
-      result,
-    } = dbClient.getCreatedRouletteTable({
+      fields,
+    } = await dbClient.getRouletteTable({
       coinType: SUI_COIN_TYPE,
-      transactionResult,
+      address: keypair.toSuiAddress(),
     });
 
     if (!getOk) {
       throw getErr;
     }
 
-    console.log(result);
+    console.log(fields);
   } catch (err) {
     console.log(err);
   }

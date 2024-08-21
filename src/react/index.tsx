@@ -6,8 +6,6 @@ import { DoubleUpClient } from "../client";
 
 import {
   CoinflipInput,
-  CoinflipResultInput,
-  CoinflipResultResponse,
 } from "../games/coinflip";
 import {
   BuyTicketsInput,
@@ -29,22 +27,21 @@ import {
 } from "../games/plinko";
 import {
   RangeInput,
-} from "src/games/ufoRange";
+} from "../games/ufoRange";
 import {
-  CreatedRouletteTableInput,
-  CreatedRouletteTableResponse,
+  GetRouletteTableInput,
+  GetRouletteTableResponse,
   RouletteAddBetInput,
   RouletteRemoveBetInput,
   RouletteRemoveBetResponse,
+  RouletteSettleOrContinueInput,
   RouletteStartInput,
   RouletteTableInput,
-  RouletteTableResponse,
-  RouletteTableExistsInput,
-  RouletteTableExistsResponse,
-} from "src/games/roulette";
+} from "../games/roulette";
 import {
   RPSInput,
-} from "src/games/rps";
+} from "../games/rps";
+import { CrapsAddBetInput, CrapsRemoveBetInput, CrapsRemoveBetResponse, CrapsSettleOrContinueInput, CrapsStartInput, CrapsTableInput, GetCrapsTableInput } from "../games/craps";
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;
@@ -54,13 +51,9 @@ interface DoubleUpContextState {
   createSinglePlinko: (input: PlinkoInput) => void;
   createRange: (input: RangeInput) => void;
   createRockPaperScissors: (input: RPSInput) => void;
-  createRouletteTable: (input: RouletteTableInput) => RouletteTableResponse;
-  doesRouletteTableExist: (
-    input: RouletteTableExistsInput
-  ) => Promise<RouletteTableExistsResponse>;
-  getCreatedRouletteTable: (
-    input: CreatedRouletteTableInput
-  ) => CreatedRouletteTableResponse;
+  createRouletteTable: (input: RouletteTableInput) => void;
+  getRouletteTable: (input: GetRouletteTableInput) => Promise<GetRouletteTableResponse>;
+  rouletteSettleOrContinue: (input: RouletteSettleOrContinueInput) => void;
   getLottery: () => Promise<LotteryResponse>;
   getLotteryDrawingResult: (
     input: DrawingResultInput
@@ -74,6 +67,12 @@ interface DoubleUpContextState {
     input: RouletteRemoveBetInput
   ) => RouletteRemoveBetResponse;
   startRoulette: (input: RouletteStartInput) => void;
+  createCrapsTable: (input: CrapsTableInput) => void;
+  getCrapsTable: (input: GetCrapsTableInput) => void;
+  addCrapsBet: (input: CrapsAddBetInput) => void;
+  removeCrapsBet: (input: CrapsRemoveBetInput) => CrapsRemoveBetResponse;
+  startCraps: (input: CrapsStartInput) => void;
+  crapsSettleOrContinue: (input: CrapsSettleOrContinueInput) => void;
 }
 
 interface DoubleupProviderProps {
@@ -126,20 +125,21 @@ const DoubleUpProvider = ({
   const createRange = dbClient.createRange;
   const createRockPaperScissors = dbClient.createRockPaperScissors;
   const createRouletteTable = dbClient.createRouletteTable;
-
-  const doesRouletteTableExist = dbClient.doesRouletteTableExist;
-
-  const getCreatedRouletteTable = dbClient.getCreatedRouletteTable;
+  const rouletteSettleOrContinue = dbClient.rouletteSettleOrContinue;
+  const getRouletteTable = dbClient.getRouletteTable;
   const getLottery = dbClient.getLottery;
   const getLotteryDrawingResult = dbClient.getLotteryDrawingResult;
   const getLotteryHistory = dbClient.getLotteryHistory;
   const getLotteryTickets = dbClient.getLotteryTickets;
-
-
   const redeemLotteryTickets = dbClient.redeemLotteryTickets;
   const removeRouletteBet = dbClient.removeRouletteBet;
-
   const startRoulette = dbClient.startRoulette;
+  const createCrapsTable = dbClient.createCrapsTable;
+  const getCrapsTable = dbClient.getCrapsTable;
+  const addCrapsBet = dbClient.addCrapsBet;
+  const removeCrapsBet = dbClient.removeCrapsBet;
+  const startCraps = dbClient.startCraps;
+  const crapsSettleOrContinue = dbClient.crapsSettleOrContinue;
 
   const state: DoubleUpContextState = {
     addRouletteBet,
@@ -150,8 +150,8 @@ const DoubleUpProvider = ({
     createRange,
     createRockPaperScissors,
     createRouletteTable,
-    doesRouletteTableExist,
-    getCreatedRouletteTable,
+    getRouletteTable,
+    rouletteSettleOrContinue,
     getLottery,
     getLotteryDrawingResult,
     getLotteryHistory,
@@ -159,6 +159,12 @@ const DoubleUpProvider = ({
     redeemLotteryTickets,
     removeRouletteBet,
     startRoulette,
+    createCrapsTable,
+    getCrapsTable,
+    addCrapsBet,
+    removeCrapsBet,
+    startCraps,
+    crapsSettleOrContinue,
   };
 
   return (

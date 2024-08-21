@@ -19,10 +19,6 @@ interface GameInfosInput {
   transactionResult: SuiTransactionBlockResponse;
 }
 
-interface BlsGameInfosInput extends GameInfosInput {
-  structName: string;
-}
-
 interface GenericGameInfosInput {
   filterString: string;
   gameSeed: string;
