@@ -197,7 +197,7 @@ export class DoubleUpClient {
       origin: this.origin
     });
 
-  // // rps
+  // rps
   createRockPaperScissors = (input: RPSInput) =>
     createRockPaperScissors({
       ...input,

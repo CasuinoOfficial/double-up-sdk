@@ -107,9 +107,9 @@ export const testRouletteCreate = async (
       ok: getOk,
       err: getErr,
       fields,
-    } = await dbClient.getCreatedRouletteTable({
+    } = await dbClient.getRouletteTable({
       coinType: SUI_COIN_TYPE,
-      transactionResult,
+      address: keypair.toSuiAddress(),
     });
 
     if (!getOk) {
