@@ -10,39 +10,6 @@ import {
 import { bcs } from "@mysten/sui/bcs";
 
 import { PLINKO_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID, PLINKO_CONFIG } from "../../constants";
-import { KIOSK_ITEM, KIOSK_OWNER_CAP } from "@mysten/kiosk";
-
-interface PlinkoGameResults {
-  ballIndex: string;
-  ballPath: number[];
-}
-
-interface PlinkoParsedGameResults {
-  ball_index: string;
-  ball_path: number[];
-}
-
-interface PlinkoResult {
-  ballCount: string;
-  betSize: string;
-  challenged: boolean;
-  gameId: string;
-  gameType: PlinkoType;
-  player: string;
-  pnl: string;
-  results: PlinkoGameResults[];
-}
-
-interface PlinkoParsedJson {
-  ball_count: string;
-  bet_size: string;
-  challenged: boolean;
-  game_id: string;
-  game_type: PlinkoType;
-  player: string;
-  pnl: string;
-  results: PlinkoParsedGameResults[];
-}
 
 // 0: 6 Rows, 1: 9 Rows, 2: 12 Rows
 type PlinkoType = 0 | 1 | 2;
@@ -61,45 +28,21 @@ interface InternalPlinkoInput extends PlinkoInput {
   plinkoPackageId: string;
 }
 
-export interface PlinkoResultInput {
+export interface GetPlinkoTableInput {
+  address: string,
   coinType: string;
-  gameSeed: string;
-  pollInterval?: number;
-  transactionResult: SuiTransactionBlockResponse;
 }
 
-export interface PlinkoResponse {
-  ok: boolean;
-  err?: Error;
-  gameSeed?: string;
-  receipt?: TransactionArgument;
-}
-
-export interface PlinkoResultResponse {
-  ok: boolean;
-  err?: Error;
-  results?: PlinkoResult[];
-  rawResults?: PlinkoParsedJson[];
-  txDigests?: string[];
-}
-
-export interface CreatedPlinkoTableInput {
-  coinType: string;
-  transactionResult: SuiTransactionBlockResponse;
-}
-
-interface InternalCreatedPlinkoTableInput extends CreatedPlinkoTableInput {
+interface InternalGetPlinkoTableInput extends GetPlinkoTableInput {
   plinkoPackageId: string;
+  suiClient: SuiClient;
+
 }
 
-export interface CreatedPlinkoTableResponse {
+export interface GetPlinkoTableResponse {
   ok: boolean;
   err?: Error;
-  result?: PlinkoTable;
-}
-
-interface PlinkoTable {
-  tableId: string;
+  fields?: any;
 }
 
 export interface PlinkoAddBetInput {
@@ -119,15 +62,6 @@ export interface PlinkoAddBetResponse {
   err?: Error;
   betId?: TransactionArgument;
 }
-
-interface PlinkoTableParsedJson {
-  bet_id: string;
-  creator: string;
-  outcome: string;
-  round_number: string;
-  table_id: string;
-}
-
 export interface PlinkoTableInput {
   coinType: string;
   transaction: TransactionType;
@@ -135,30 +69,6 @@ export interface PlinkoTableInput {
 export interface InternalPlinkoTableInput extends PlinkoTableInput {
   plinkoPackageId: string;
 }
-
-export interface PlinkoTableResponse {
-  ok: boolean;
-  err?: Error;
-  result?: TransactionArgument;
-}
-
-export interface PlinkoTableExistsInput {
-  creator: string;
-  coinType: string;
-}
-
-interface InternalPlinkoTableExistsInput extends PlinkoTableExistsInput {
-  plinkoPackageId: string;
-  suiClient: SuiClient;
-}
-
-export interface PlinkoTableExistsResponse {
-  ok: boolean;
-  roundNumber?: string;
-  err?: Error;
-  tableExists?: boolean;
-}
-
 export interface PlinkoRemoveBetInput {
   creator: string;
   player: string;
@@ -176,7 +86,7 @@ export interface PlinkoRemoveBetResponse {
   returnedCoin?: TransactionArgument;
 }
 
-export interface PlayPlinkoInput {
+export interface StartMultiPlinkoInput {
   coinType: string;
   creator: string;
   numberOfDiscs: number;
@@ -186,7 +96,7 @@ export interface PlayPlinkoInput {
   origin: string;
 }
 
-interface InternalPlayPlinkoInput extends PlayPlinkoInput {
+interface InternalStartMultiPlinkoInput extends StartMultiPlinkoInput {
   plinkoPackageId: string;
 }
 
@@ -194,35 +104,24 @@ export const createPlinkoTable = ({
   coinType, 
   plinkoPackageId,
   transaction,
-}: InternalPlinkoTableInput): PlinkoTableResponse => {
-  const res: PlinkoTableResponse = { ok: true };
-
-  try {
-    const [table] = transaction.moveCall({
-      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::create_plinko_table`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(PLINKO_CONFIG),
-      ],
-    });
-
-    res.result = table;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
+}: InternalPlinkoTableInput) => {
+  const [table] = transaction.moveCall({
+    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::create_plinko_table`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(PLINKO_CONFIG),
+    ],
+  });
 };
 
-export const doesPlinkoTableExist = async ({
-  creator,
+export const getPlinkoTable = async ({
+  address,
   coinType,
   plinkoPackageId,
   suiClient,
-}: InternalPlinkoTableExistsInput): Promise<PlinkoTableExistsResponse> => {
-  const res: PlinkoTableExistsResponse = { ok: true };
+}: InternalGetPlinkoTableInput): Promise<GetPlinkoTableResponse> => {
+  const res: GetPlinkoTableResponse = { ok: true };
 
   try {
     const { data } = await suiClient.getDynamicFieldObject({
@@ -230,7 +129,7 @@ export const doesPlinkoTableExist = async ({
       name: {
         type: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
         value: {
-          creator,
+          creator: address,
         },
       },
     });
@@ -240,41 +139,8 @@ export const doesPlinkoTableExist = async ({
     }
 
     const fields = data.content.fields as any;
-    res.roundNumber = fields.round_number;
-    res.tableExists = !!data;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
-  }
-
-  return res;
-}
-
-export const getCreatedPlinkoTable = ({
-  coinType,
-  plinkoPackageId,
-  transactionResult,
-}: InternalCreatedPlinkoTableInput): CreatedPlinkoTableResponse => {
-  const res: CreatedPlinkoTableResponse = { ok: true };
-
-  try {
-    const tableId = transactionResult.objectChanges.reduce((acc, current) => {
-      if (
-        current.type === "created" &&
-        current.objectType ===
-          `${plinkoPackageId}::${PLINKO_MODULE_NAME}::PlinkoTable<${coinType}>`
-      ) {
-        acc = current.objectId;
-      }
-
-      return acc;
-    }, "");
-
-    if (tableId.length === 0) {
-      throw new Error("could not find plinko table");
-    }
-
-    res.result = { tableId };
+    res.ok = true;
+    res.fields = fields;
   } catch (err) {
     res.ok = false;
     res.err = err;
@@ -308,7 +174,7 @@ export const addPlinkoBet = ({
   } catch (err) {
     res.ok = false;
     res.err = err;
-  };
+  }
   
   return res;
 };
@@ -338,7 +204,7 @@ export const removePlinkoBet = ({
   } catch (err) {
     res.ok = false;
     res.err = err;
-  };
+  }
 
   return res;
 }
@@ -352,7 +218,7 @@ export const startMultiPlinko = ({
   plinkoType,
   transaction,
   origin,
-}: InternalPlayPlinkoInput) => {
+}: InternalStartMultiPlinkoInput) => {
   transaction.moveCall({
     target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko`,
     typeArguments: [coinType],

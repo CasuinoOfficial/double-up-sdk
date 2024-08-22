@@ -18,6 +18,9 @@ import {
   testPlinko,
   testMultiPlinkoCreate,
   testMultiPlinkoAdd,
+  testMultiPlinkoRemove,
+  testMultiPlinkoGet,
+  testMultiPlinkoStart,
 } from "./plinko";
 import {
   testRange,
@@ -29,15 +32,11 @@ import {
 } from "./roulette";
 import { testRPS } from "./rps";
 import { testBlackjackCreate } from "./blackjack";
-import { PLINKO_PACKAGE_ID } from "../constants";
 import { testCrapsAdd, testCrapsAddAndRemove, testCrapsCreate, testCrapsRoll, testCrapsSettle, testGetCrapsTable } from "./craps";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("testnet") });
 const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
-const secretKey = keypair.getSecretKey();
-// const { schema, secretKey } = decodeSuiPrivateKey(SECRETKEY);
-// const keypair = Secp256k1Keypair.fromSecretKey(secretKey);
 
 const PARTNER_NFT_ID =
   "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
@@ -79,6 +78,15 @@ const dbClient = new DoubleUpClient({
         break;
       case "multiplinko:add":
         testMultiPlinkoAdd(dbClient, client, keypair);
+        break;
+      case "multiplinko:remove":
+        testMultiPlinkoRemove(dbClient, client, keypair);
+        break;
+      case "multiplinko:get":
+        testMultiPlinkoGet(dbClient, keypair);
+        break;
+      case "multiplinko:start":
+        testMultiPlinkoStart(dbClient, client, keypair);
         break;
       case "range":
         testRange(dbClient, client, keypair);

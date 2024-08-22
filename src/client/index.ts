@@ -35,19 +35,16 @@ import {
 import {
   createSinglePlinko,
   createPlinkoTable,
+  getPlinkoTable,
   addPlinkoBet,
-  doesPlinkoTableExist,
-  getCreatedPlinkoTable,
   removePlinkoBet,
   startMultiPlinko,
   PlinkoInput,
-  PlinkoResultInput,
   PlinkoTableInput,
   PlinkoAddBetInput,
-  PlinkoTableExistsInput,
-  CreatedPlinkoTableInput,
+  GetPlinkoTableInput,
   PlinkoRemoveBetInput,
-  PlayPlinkoInput,
+  StartMultiPlinkoInput,
 } from "../games/plinko";
 
 import {
@@ -198,23 +195,18 @@ export class DoubleUpClient {
       plinkoPackageId: this.plinkoPackageId,
       origin: this.origin,
     });
-  doesPlinkoTableExist = (input: PlinkoTableExistsInput) =>
-    doesPlinkoTableExist({
+  getPlinkoTable = (input: GetPlinkoTableInput) =>
+    getPlinkoTable({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
       suiClient: this.suiClient,
-    });
-  getCreatedPlinkoTable = (input: CreatedPlinkoTableInput) =>
-    getCreatedPlinkoTable({
-      ...input,
-      plinkoPackageId: this.plinkoPackageId,
     });
   removePlinkoBet = (input: PlinkoRemoveBetInput) =>
     removePlinkoBet({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
     });
-  startMultiPlinko = (input: PlayPlinkoInput) =>
+  startMultiPlinko = (input: StartMultiPlinkoInput) =>
     startMultiPlinko({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
