@@ -16,6 +16,11 @@
     "test:lottery:results": "FUNCTION=lottery:results pnpm test",
     "test:lottery:tickets": "FUNCTION=lottery:tickets pnpm test",
     "test:plinko": "FUNCTION=plinko pnpm test",
+    "test:multiplinko:create": "FUNCTION=multiplinko:create pnpm test",
+    "test:multiplinko:add": "FUNCTION=multiplinko:add pnpm test",
+    "test:multiplinko:remove": "FUNCTION=multiplinko:remove pnpm test",
+    "test:multiplinko:get": "FUNCTION=multiplinko:get pnpm test",
+    "test:multiplinko:start": "FUNCTION=multiplinko:start pnpm test",
     "test:range": "FUNCTION=range pnpm test",
     "test:roulette:add": "FUNCTION=roulette:add pnpm test",
     "test:roulette:create": "FUNCTION=roulette:create pnpm test",
@@ -26,7 +31,8 @@
     "test:craps:roll": "FUNCTION=craps:roll pnpm test",
     "test:craps:get": "FUNCTION=craps:get pnpm test",
     "test:craps:settle": "FUNCTION=craps:settle pnpm test",
-    "test:rps": "FUNCTION=rps pnpm test"
+    "test:rps": "FUNCTION=rps pnpm test",
+    "test:blackjack:create": "FUNCTION=blackjack:create pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
