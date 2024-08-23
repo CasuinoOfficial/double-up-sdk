@@ -4,7 +4,7 @@ import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 
 import { RAND_OBJ_ID, SUI_COIN_TYPE, UFORANGE_MODULE_NAME, UFORANGE_PACKAGE_ID, UNI_HOUSE_OBJ_ID } from "../../constants";
-import { OverUnderBet } from "../../games/ufoRange";
+import { InsideOutsideBet, OverUnderBet } from "../../games/ufoRange";
 import { bcs } from "@mysten/sui/bcs";
 
 export const testRange = async (
@@ -13,7 +13,7 @@ export const testRange = async (
   keypair: Secp256k1Keypair
 ) => {
     // over
-    const betTypes: OverUnderBet[] = [0, 1];
+    const betTypes: OverUnderBet[] | InsideOutsideBet[] = [2, 3];
     const betAmount = 500000000;
 
     const range = [[5001, 10000], [1, 5000]];

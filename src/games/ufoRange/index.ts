@@ -14,10 +14,10 @@ import {
 export type OverUnderBet = 0 | 1;
 
 // Note: 2 = Inside, 3 = Outside
-type InsideOutsideBet = 2 | 3;
+export type InsideOutsideBet = 2 | 3;
 
 export interface RangeInput {
-  betTypes: Array<OverUnderBet>;
+  betTypes: Array<OverUnderBet | InsideOutsideBet>;
   coins: TransactionObjectArgument;
   coinType: string;
   partnerNftId?: string;
