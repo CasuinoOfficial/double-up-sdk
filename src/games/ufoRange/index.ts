@@ -16,6 +16,11 @@ export type OverUnderBet = 0 | 1;
 // Note: 2 = Inside, 3 = Outside
 export type InsideOutsideBet = 2 | 3;
 
+export type RangeOverBet = 0
+export type RangeUnderBet = 1
+export type RangeInsideBet = 2
+export type RangeOutsideBet = 3
+
 export interface RangeInput {
   betTypes: Array<OverUnderBet | InsideOutsideBet>;
   coins: TransactionObjectArgument;

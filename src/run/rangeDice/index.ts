@@ -1,10 +1,23 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
-import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
+import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 
-import { RAND_OBJ_ID, SUI_COIN_TYPE, UFORANGE_MODULE_NAME, UFORANGE_PACKAGE_ID, UNI_HOUSE_OBJ_ID } from "../../constants";
-import { InsideOutsideBet, OverUnderBet } from "../../games/ufoRange";
+import {
+  RAND_OBJ_ID,
+  SUI_COIN_TYPE,
+  UFORANGE_MODULE_NAME,
+  UFORANGE_PACKAGE_ID,
+  UNI_HOUSE_OBJ_ID,
+} from "../../constants";
+import {
+  InsideOutsideBet,
+  OverUnderBet,
+  RangeInsideBet,
+  RangeOutsideBet,
+  RangeOverBet,
+  RangeUnderBet,
+} from "../../games/ufoRange";
 import { bcs } from "@mysten/sui/bcs";
 
 export const testRange = async (
@@ -12,33 +25,45 @@ export const testRange = async (
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-    // over
-    const betTypes: OverUnderBet[] | InsideOutsideBet[] = [2, 3];
-    const betAmount = 500000000;
+  // over
+  const betTypes:
+    | RangeOverBet[]
+    | RangeUnderBet[]
+    | RangeInsideBet[]
+    | RangeOutsideBet[] = [3, 3, 3];
+  const betAmount = 500000000;
 
-    const range = [[5001, 10000], [1, 5000]];
-    const txb = new Transaction();
-    const coins = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), txb.pure.u64(betAmount)]);
+  const range = [
+    [5001, 10000],
+    [1, 5000],
+    [2500, 5000],
+  ];
 
-    dbClient.createRange({
-      betTypes,
-      coins: txb.makeMoveVec({ elements: [coins[0], coins[1]] }),
-      coinType: SUI_COIN_TYPE,
-      range,
-      transaction: txb,
-    });
+  const txb = new Transaction();
+  const coins = txb.splitCoins(txb.gas, [
+    txb.pure.u64(betAmount),
+    txb.pure.u64(betAmount),
+  ]);
 
-    console.log("Added ranged dice (over/under) to transaction block.");  
+  dbClient.createRange({
+    betTypes,
+    coins: txb.makeMoveVec({ elements: [coins[0], coins[1]] }),
+    coinType: SUI_COIN_TYPE,
+    range,
+    transaction: txb,
+  });
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
-    console.log('result', transactionResult);
+  console.log("Added ranged dice (over/under) to transaction block.");
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: txb as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+  console.log("result", transactionResult);
 };
