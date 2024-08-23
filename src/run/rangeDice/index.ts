@@ -35,7 +35,7 @@ export const testRange = async (
 
   const range = [
     [5001, 10000],
-    [1, 5000],
+    [0, 5000],
     [2500, 5000],
   ];
 
