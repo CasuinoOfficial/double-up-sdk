@@ -22,7 +22,7 @@ export const VSUI_COIN_TYPE =
 // coinflip
 // ===============================================================================
 export const COIN_PACKAGE_ID =
-  "0xa961256e4bcad48db6a8b9f1815118a14918e3869be865c2eaca2947b09b2b47";
+  "0xd3f3a32ef0edf0fcf98813aa60be1665f259caa03362c7fd7844e8a3c763ad2b";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 // ===============================================================================
@@ -30,7 +30,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 // limbo
 // ===============================================================================
 export const LIMBO_PACKAGE_ID =
-  "0xf3389ce02b73bbd7b11df7162c68a10ce145e673da46b2d791bc06ad39957a2a";
+  "0x52243cbbfbf7209aa226f623900214414f73e957e4741638f24cb3b9d0c16f96";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 
@@ -55,32 +55,32 @@ export const LOTTERY_STORE_ID =
 // plinko
 // ===============================================================================
 export const PLINKO_PACKAGE_ID =
-  "0x8c2f543b570a15d6665cf5a84fcdfc70adda78af987a9e3ea1c24fa3d34585ee";
+  "0xe04f1a24f63e68ecb01faf18f2fa9c5016bf72f18938b1aaf1235ba48100c01c";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
-export const PLINKO_CONFIG = "0x8c935877a75d1c67781fc61230972635c3c510c5fd87776086722a79df5e8b87";
+export const PLINKO_CONFIG = "0xdc690a92f53a43981f701546481efc33e0ffb9283967d8da5565c28514793df9";
 
 // ===============================================================================
 
 // roulette
 // ===============================================================================
 export const ROULETTE_PACKAGE_ID =
-  "0x9f0b69ecf5260d68a4c772f8b1115afd3c53caf04d820acfc1471cc99a30b2e6";
-export const ROULETTE_CONFIG = "0xef8971ec7004ae35775f434cb61e03ab1886919199ce2bb8acf5321b1b49fd10";
+  "0x2f3bef45d2783ea968c393f431fc207b8c29d14e4a487aae69251f460af17ea9";
+export const ROULETTE_CONFIG = "0x2e64d8a3f6fa904d26393622e1ff3c12d056cb43a8bf924ae986c5b6c8634ea0";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
 
 // Blackjack
 // ===============================================================================
-export const BLACKJACK_PACKAGE_ID = "0x2a61f12ce30502289c17fcbbfc6d0ad816cf41b219f970d0b32b82990b69d4fd";
+export const BLACKJACK_PACKAGE_ID = "0x44bbbb69db782c2cf8252f12cda052d4680189b24d675739246f97c778c01a8b";
 export const BLACKJACK_MODULE = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
-export const BLACKJACK_CONFIG = "0x736c986293f00184bf73df77d6fbd5fadad2084274eeb047f3483f7274dc1c87";
+export const BLACKJACK_CONFIG = "0xbee412707092a75b292d88c53c1ebca71a2b8f56976db65eaabaefd394fe66f4";
 
 // rock paper scissors
 // ===============================================================================
 export const RPS_PACKAGE_ID =
-  "0xec95e40e3b624b9ccce88e62542fb1e8a0cecf22770e127ccd6bab77726dce91";
+  "0xb5489c1d67defefe88c990e302121b6b7b6ff5f61bf6a91ae230b076614ed9bd";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 // ===============================================================================
@@ -88,14 +88,14 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 // range dice
 // ===============================================================================
 export const UFORANGE_PACKAGE_ID =
-  "0x36ab5a1191719832e011fb69911d7c05d58798a402fde4ee92011932ad151672";
+  "0xc0fdeaa0786ea2601e0fe1fd24595e2ab5fddd1dc99737c1877b8e238a559c3b";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
 // Craps
 // ===============================================================================
-export const CRAPS_PACKAGE_ID = '0x701df463fbdd42389d1cd596a0bf22585ab2d367a8803ec6e1ba2facb968a16a';
-export const CRAPS_CONFIG = '0xae4595a2aa7c99200a05c072025a06597ff218e072d561e48f35b388a9037665';
+export const CRAPS_PACKAGE_ID = '0xacac83e7239ce62a2b4ddf0021031eb170a8464464fe4a7691ba5c26329039a1';
+export const CRAPS_CONFIG = '0x994c7e63df55a442bb3ee78b59865d23c6ff9195f2ac1a10caeb5a90b9b54e47';
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
 // ===============================================================================
@@ -112,10 +112,10 @@ export const RAND_OBJ_ID: any = "0x8";
 
 // UNIHOUSE
 export const UNIHOUSE_PACKAGE =
-  "0x303bfc8d4911ea4a02c5f0ed0e6572b335c69dfa144e512052844eb979bc8c4c";
+  "0x9365ff0594a1c5c50bd1f6755910435a0757771e617d68a8f65e2f1e50666662";
 
 export const UNI_HOUSE_OBJ_ID =
-  "0x9b5b94662e9ee7a3929abef69b75b66268996423ef13d3ce4d79478b8f4c10e8";
+  "0x9a64c674aa752e334419bd63ef0c6eb9c9bc9271ce336b103cf25fa156a8a8da";
   
 // Partner list
 // ===============================================================================
