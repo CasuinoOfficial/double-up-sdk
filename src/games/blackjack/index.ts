@@ -148,7 +148,7 @@ export const blackjackDealerMove = ({
 }
 
 const isDoubleOrSplit = (playerAction: PlayerAction): playerAction is Double | Split =>
-  playerAction === (103 | 104);
+  playerAction === (103 || 104);
 
 export const blackjackPlayerMove = ({
   coinType,
