@@ -31,7 +31,16 @@ import {
   testRouletteStart,
 } from "./roulette";
 import { testRPS } from "./rps";
-import { testBlackjackCreate } from "./blackjack";
+import { 
+  testBlackjackCreate, 
+  testBlackjackDealerMove, 
+  testBlackjackPlayerDouble, 
+  testBlackjackPlayerHit, 
+  testBlackjackPlayerSplit, 
+  testBlackjackPlayerStand, 
+  testBlackjackPlayerSurrender, 
+  testGetBlackjackTable 
+} from "./blackjack";
 import { testCrapsAdd, testCrapsAddAndRemove, testCrapsCreate, testCrapsRoll, testCrapsSettle, testGetCrapsTable } from "./craps";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -123,6 +132,27 @@ const dbClient = new DoubleUpClient({
         break;
       case "blackjack:create":
         testBlackjackCreate(dbClient, client, keypair);
+        break;
+      case "blackjack:get":
+        testGetBlackjackTable(dbClient, keypair);
+        break;
+      case "blackjack:deal":
+        testBlackjackDealerMove(dbClient, client, keypair);
+        break;
+      case "blackjack:hit":
+        testBlackjackPlayerHit(dbClient, client, keypair);
+        break;
+      case "blackjack:stand":
+        testBlackjackPlayerStand(dbClient, client, keypair);
+        break;
+      case "blackjack:double":
+        testBlackjackPlayerDouble(dbClient, client, keypair);
+        break;
+      case "blackjack:split":
+        testBlackjackPlayerSplit(dbClient, client, keypair);
+        break;
+      case "blackjack:surrender":
+        testBlackjackPlayerSurrender(dbClient, client, keypair);
         break;
       default:
         console.error(

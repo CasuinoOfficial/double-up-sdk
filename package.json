@@ -32,7 +32,14 @@
     "test:craps:get": "FUNCTION=craps:get pnpm test",
     "test:craps:settle": "FUNCTION=craps:settle pnpm test",
     "test:rps": "FUNCTION=rps pnpm test",
-    "test:blackjack:create": "FUNCTION=blackjack:create pnpm test"
+    "test:blackjack:create": "FUNCTION=blackjack:create pnpm test",
+    "test:blackjack:get": "FUNCTION=blackjack:get pnpm test",
+    "test:blackjack:deal": "FUNCTION=blackjack:deal pnpm test",
+    "test:blackjack:hit": "FUNCTION=blackjack:hit pnpm test",
+    "test:blackjack:stand": "FUNCTION=blackjack:stand pnpm test",
+    "test:blackjack:double": "FUNCTION=blackjack:double pnpm test",
+    "test:blackjack:split": "FUNCTION=blackjack:split pnpm test",
+    "test:blackjack:surrender": "FUNCTION=blackjack:surrender pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
