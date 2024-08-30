@@ -62,7 +62,6 @@ export interface RouletteAddBetResponse {
   betId?: TransactionArgument;
 }
 
-
 export interface RouletteRemoveBetInput {
   betId: string;
   coinType: string;
@@ -130,13 +129,14 @@ export interface GetRouletteTableResponse {
 }
 
 export interface RouletteSettleOrContinueInput {
-  coinType: string,
+  coinType: string;
   transaction: TransactionType;
   hostAddress: string;
   origin?: string;
 }
 
-interface InternalRouletteSettleOrContinueInput extends RouletteSettleOrContinueInput {
+interface InternalRouletteSettleOrContinueInput
+  extends RouletteSettleOrContinueInput {
   roulettePackageId: string;
 }
 
@@ -157,14 +157,16 @@ export const addRouletteBet = ({
 
   try {
     if (isBetNumber(betType)) {
-      if (!betNumber) {
+      if (typeof betNumber !== "number") {
         throw new Error("invalid roulette bet");
       } else if (betNumber > 37) {
-        throw new Error("roulette bet number is too high");
+        throw new Error("roulette bet number does not exist");
       }
     } else {
       if (!!betNumber) {
-        throw new Error("invalid roulette bet");
+        throw new Error(
+          "Invalid combination, betType does not require betNumber"
+        );
       }
     }
 
@@ -198,13 +200,11 @@ export const createRouletteTable = ({
   roulettePackageId,
   transaction,
 }: InternalRouletteTableInput) => {
-    transaction.moveCall({
-      target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(ROULETTE_CONFIG),
-      ],
-    });
+  transaction.moveCall({
+    target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
+    typeArguments: [coinType],
+    arguments: [transaction.object(ROULETTE_CONFIG)],
+  });
 };
 
 export const getRouletteTable = async ({
@@ -294,7 +294,7 @@ export const rouletteSettleOrContinue = ({
   roulettePackageId,
   transaction,
   hostAddress,
-  origin
+  origin,
 }: InternalRouletteSettleOrContinueInput) => {
   transaction.moveCall({
     target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::settle_or_continue`,
@@ -304,7 +304,7 @@ export const rouletteSettleOrContinue = ({
       transaction.object(ROULETTE_CONFIG),
       transaction.pure.address(hostAddress),
       transaction.pure(bcs.option(bcs.U64).serialize(null)),
-      transaction.pure.string(origin ?? "DoubleUp")
+      transaction.pure.string(origin ?? "DoubleUp"),
     ],
   });
-}
+};
