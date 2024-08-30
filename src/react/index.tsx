@@ -23,7 +23,15 @@ import {
   LimboInput,
 } from "../games/limbo";
 import {
+  GetPlinkoTableInput,
+  GetPlinkoTableResponse,
+  PlinkoAddBetInput,
+  PlinkoAddBetResponse,
   PlinkoInput,
+  PlinkoRemoveBetInput,
+  PlinkoRemoveBetResponse,
+  PlinkoTableInput,
+  StartMultiPlinkoInput,
 } from "../games/plinko";
 import {
   RangeInput,
@@ -42,6 +50,7 @@ import {
   RPSInput,
 } from "../games/rps";
 import { CrapsAddBetInput, CrapsRemoveBetInput, CrapsRemoveBetResponse, CrapsSettleOrContinueInput, CrapsStartInput, CrapsTableInput, GetCrapsTableInput } from "../games/craps";
+import { BlackjackDealerMoveInput, BlackjackInput, BlackjackPlayerMoveInput, GetBlackjackTableInput, GetBlackjackTableResponse } from "../games/blackjack";
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;
@@ -49,6 +58,11 @@ interface DoubleUpContextState {
   createCoinflip: (input: CoinflipInput) => void;
   createLimbo: (input: LimboInput) => void;
   createSinglePlinko: (input: PlinkoInput) => void;
+  createPlinkoTable: (input: PlinkoTableInput) => void;
+  addPlinkoBet: (input: PlinkoAddBetInput) => PlinkoAddBetResponse;
+  getPlinkoTable: (input: GetPlinkoTableInput) => Promise<GetPlinkoTableResponse>;
+  removePlinkoBet: (input: PlinkoRemoveBetInput) => PlinkoRemoveBetResponse;
+  startMultiPlinko: (input: StartMultiPlinkoInput) => void;
   createRange: (input: RangeInput) => void;
   createRockPaperScissors: (input: RPSInput) => void;
   createRouletteTable: (input: RouletteTableInput) => void;
@@ -73,6 +87,10 @@ interface DoubleUpContextState {
   removeCrapsBet: (input: CrapsRemoveBetInput) => CrapsRemoveBetResponse;
   startCraps: (input: CrapsStartInput) => void;
   crapsSettleOrContinue: (input: CrapsSettleOrContinueInput) => void;
+  createBlackjackGame: (input: BlackjackInput) => void;
+  getBlackjackTable: (input: GetBlackjackTableInput) => Promise<GetBlackjackTableResponse>;
+  blackjackDealerMove: (input: BlackjackDealerMoveInput) => void;
+  blackjackPlayerMove: (input: BlackjackPlayerMoveInput) => void;
 }
 
 interface DoubleupProviderProps {
@@ -86,6 +104,7 @@ interface DoubleupProviderProps {
   ufoRangePackageId?: string;
   roulettePackageId?: string;
   rpsPackageId?: string;
+  blackjackPackageId?: string;
   suiClient?: SuiClient;
 }
 
@@ -101,6 +120,7 @@ const DoubleUpProvider = ({
   roulettePackageId,
   rpsPackageId,
   ufoRangePackageId,
+  blackjackPackageId,
   suiClient,
 }: DoubleupProviderProps): ReactElement => {
   const dbClient = new DoubleUpClient({
@@ -112,6 +132,7 @@ const DoubleUpProvider = ({
     ufoRangePackageId,
     roulettePackageId,
     rpsPackageId,
+    blackjackPackageId,
     suiClient,
   });
 
@@ -122,6 +143,11 @@ const DoubleUpProvider = ({
   const createCoinflip = dbClient.createCoinflip;
   const createLimbo = dbClient.createLimbo;
   const createSinglePlinko = dbClient.createSinglePlinko;
+  const createPlinkoTable = dbClient.createPlinkoTable;
+  const addPlinkoBet = dbClient.addPlinkoBet;
+  const getPlinkoTable = dbClient.getPlinkoTable;
+  const removePlinkoBet = dbClient.removePlinkoBet;
+  const startMultiPlinko = dbClient.startMultiPlinko;
   const createRange = dbClient.createRange;
   const createRockPaperScissors = dbClient.createRockPaperScissors;
   const createRouletteTable = dbClient.createRouletteTable;
@@ -140,6 +166,10 @@ const DoubleUpProvider = ({
   const removeCrapsBet = dbClient.removeCrapsBet;
   const startCraps = dbClient.startCraps;
   const crapsSettleOrContinue = dbClient.crapsSettleOrContinue;
+  const createBlackjackGame = dbClient.createBlackjackGame;
+  const getBlackjackTable = dbClient.getBlackjackTable;
+  const blackjackDealerMove = dbClient.blackjackDealerMove;
+  const blackjackPlayerMove = dbClient.blackjackPlayerMove;
 
   const state: DoubleUpContextState = {
     addRouletteBet,
@@ -147,6 +177,11 @@ const DoubleUpProvider = ({
     createCoinflip,
     createLimbo,
     createSinglePlinko,
+    createPlinkoTable,
+    addPlinkoBet,
+    getPlinkoTable,
+    removePlinkoBet,
+    startMultiPlinko,
     createRange,
     createRockPaperScissors,
     createRouletteTable,
@@ -165,6 +200,10 @@ const DoubleUpProvider = ({
     removeCrapsBet,
     startCraps,
     crapsSettleOrContinue,
+    createBlackjackGame,
+    getBlackjackTable,
+    blackjackDealerMove,
+    blackjackPlayerMove,
   };
 
   return (
