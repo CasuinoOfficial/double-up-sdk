@@ -95,7 +95,7 @@ export const UFORANGE_STRUCT_NAME = "UFORange";
 // Craps
 // ===============================================================================
 export const CRAPS_PACKAGE_ID = '0xab027d68203420f78bcba2ccaae7dc21ec9671228dc8ba3057d3a03e6401b4ab';
-export const CRAPS_CONFIG = '0x994c7e63df55a442bb3ee78b59865d23c6ff9195f2ac1a10caeb5a90b9b54e47';
+export const CRAPS_CONFIG = '0xf67a47be05791edbc3abe1e3e42a94f41d03768eb6084d0b4608d5ee61d30bb9';
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
 // ===============================================================================
