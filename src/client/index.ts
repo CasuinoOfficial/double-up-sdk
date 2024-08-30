@@ -86,8 +86,14 @@ import {
   startCraps } from "../games/craps";
 
 import {
-  BlackjackInput,
   createBlackjackGame,
+  BlackjackInput,
+  getBlackjackTable,
+  GetBlackjackTableInput,
+  blackjackDealerMove,
+  BlackjackDealerMoveInput,
+  blackjackPlayerMove,
+  BlackjackPlayerMoveInput,
 } from "../games/blackjack";
 
 interface DoubleUpClientInput {
@@ -273,26 +279,23 @@ export class DoubleUpClient {
       ...input,
       crapsPackageId: this.crapsPackageId,
       origin: this.origin
-    })
-  
+    });
   removeCrapsBet = (input: CrapsRemoveBetInput) =>
     removeCrapsBet({
       ...input,
       crapsPackageId: this.crapsPackageId,
     });
-
   startCraps = (input: CrapsStartInput) => 
     startCraps({
       ...input,
       crapsPackageId: this.crapsPackageId
     });
-  
   crapsSettleOrContinue = (input: CrapsSettleOrContinueInput) => 
     crapsSettleOrContinue({
       ...input,
       crapsPackageId: this.crapsPackageId,
       origin: this.origin
-    })
+    });
 
   // rps
   createRockPaperScissors = (input: RPSInput) =>
@@ -305,6 +308,23 @@ export class DoubleUpClient {
     // blackjack
   createBlackjackGame = (input: BlackjackInput) => 
     createBlackjackGame({
+      ...input,
+      blackjackPackageId: this.blackjackPackageId,
+      origin: this.origin,
+    });
+  getBlackjackTable = (input: GetBlackjackTableInput) =>
+    getBlackjackTable({
+      ...input,
+      blackjackPackageId: this.blackjackPackageId,
+      suiClient: this.suiClient,
+    });
+  blackjackDealerMove = (input: BlackjackDealerMoveInput) => 
+    blackjackDealerMove({
+      ...input,
+      blackjackPackageId: this.blackjackPackageId,
+    });
+  blackjackPlayerMove = (input: BlackjackPlayerMoveInput) =>
+    blackjackPlayerMove({
       ...input,
       blackjackPackageId: this.blackjackPackageId,
     });
