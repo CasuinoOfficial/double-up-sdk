@@ -26,6 +26,112 @@ type BetSecondEighteen = 9;
 type BetFirstColumn = 10;
 type BetSecondColumn = 11;
 type BetThirdColumn = 12;
+type BetSplit0_00 = 13;
+type BetSplit1_2 = 14;
+type BetSplit2_3 = 15;
+type BetSplit4_5 = 16;
+type BetSplit5_6 = 17;
+type BetSplit7_8 = 18;
+type BetSplit8_9 = 19;
+type BetSplit10_11 = 20;
+type BetSplit11_12 = 21;
+type BetSplit13_14 = 22;
+type BetSplit14_15 = 23;
+type BetSplit16_17 = 24;
+type BetSplit17_18 = 25;
+type BetSplit19_20 = 26;
+type BetSplit20_21 = 27;
+type BetSplit22_23 = 28;
+type BetSplit23_24 = 29;
+type BetSplit25_26 = 30;
+type BetSplit26_27 = 31;
+type BetSplit28_29 = 32;
+type BetSplit29_30 = 33;
+type BetSplit31_32 = 34;
+type BetSplit32_33 = 35;
+type BetSplit34_35 = 36;
+type BetSplit35_36 = 37;
+type BetSplit1_4 = 38;
+type BetSplit2_5 = 39;
+type BetSplit3_6 = 40;
+type BetSplit4_7 = 41;
+type BetSplit5_8 = 42;
+type BetSplit6_9 = 43;
+type BetSplit7_10 = 44;
+type BetSplit8_11 = 45;
+type BetSplit9_12 = 46;
+type BetSplit10_13 = 47;
+type BetSplit11_14 = 48;
+type BetSplit12_15 = 49;
+type BetSplit13_16 = 50;
+type BetSplit14_17 = 51;
+type BetSplit15_18 = 52;
+type BetSplit16_19 = 53;
+type BetSplit17_20 = 54;
+type BetSplit18_21 = 55;
+type BetSplit19_22 = 56;
+type BetSplit20_23 = 57;
+type BetSplit21_24 = 58;
+type BetSplit22_25 = 59;
+type BetSplit23_26 = 60;
+type BetSplit24_27 = 61;
+type BetSplit25_28 = 62;
+type BetSplit26_29 = 63;
+type BetSplit27_30 = 64;
+type BetSplit28_31 = 65;
+type BetSplit29_32 = 66;
+type BetSplit30_33 = 67;
+type BetSplit31_34 = 68;
+type BetSplit32_35 = 69;
+type BetSplit33_36 = 70;
+type BetSplit00_2_3 = 71;
+type BetSplit0_1_2 = 72;
+type BetStreet1_2_3 = 73;
+type BetStreet4_5_6 = 74;
+type BetStreet7_8_9 = 75;
+type BetStreet10_11_12 = 76;
+type BetStreet13_14_15 = 77;
+type BetStreet16_17_18 = 78;
+type BetStreet19_20_21 = 79;
+type BetStreet22_23_24 = 80;
+type BetStreet25_26_27 = 81;
+type BetStreet28_29_30 = 82;
+type BetStreet31_32_33 = 83;
+type BetStreet34_35_36 = 84;
+type BetCorner1_2_4_5 = 85;
+type BetCorner2_3_5_6 = 86;
+type BetCorner4_5_7_8 = 87;
+type BetCorner5_6_8_9 = 88;
+type BetCorner7_8_10_11 = 89;
+type BetCorner8_9_11_12 = 90;
+type BetCorner10_11_13_14 = 91;
+type BetCorner11_12_14_15 = 92;
+type BetCorner13_14_16_17 = 93;
+type BetCorner14_15_17_18 = 94;
+type BetCorner16_17_19_20 = 95;
+type BetCorner17_18_20_21 = 96;
+type BetCorner19_20_22_23 = 97;
+type BetCorner20_21_23_24 = 98;
+type BetCorner22_23_25_26 = 99;
+type BetCorner23_24_26_27 = 100;
+type BetCorner25_26_28_29 = 101;
+type BetCorner26_27_29_30 = 102;
+type BetCorner28_29_31_32 = 103;
+type BetCorner29_30_32_33 = 104;
+type BetCorner31_32_34_35 = 105;
+type BetCorner32_33_35_36 = 106;
+type BetDoubleStreet1_2_3_4_5_6 = 107;
+type BetDoubleStreet4_5_6_7_8_9 = 108;
+type BetDoubleStreet7_8_9_10_11_12 = 109;
+type BetDoubleStreet10_11_12_13_14_15 = 110;
+type BetDoubleStreet13_14_15_16_17_18 = 111;
+type BetDoubleStreet16_17_18_19_20_21 = 112;
+type BetDoubleStreet19_20_21_22_23_24 = 113;
+type BetDoubleStreet22_23_24_25_26_27 = 114;
+type BetDoubleStreet25_26_27_28_29_30 = 115;
+type BetDoubleStreet28_29_30_31_32_33 = 116;
+type BetDoubleStreet31_32_33_34_35_36 = 117;
+type BetDoubleStreet0_00_1_2_3 = 118;
 
 type RouletteBet =
   | BetRed
@@ -40,7 +146,113 @@ type RouletteBet =
   | BetSecondEighteen
   | BetFirstColumn
   | BetSecondColumn
-  | BetThirdColumn;
+  | BetThirdColumn
+  | BetSplit0_00
+  | BetSplit1_2
+  | BetSplit2_3
+  | BetSplit4_5
+  | BetSplit5_6
+  | BetSplit7_8
+  | BetSplit8_9
+  | BetSplit10_11
+  | BetSplit11_12
+  | BetSplit13_14
+  | BetSplit14_15
+  | BetSplit16_17
+  | BetSplit17_18
+  | BetSplit19_20
+  | BetSplit20_21
+  | BetSplit22_23
+  | BetSplit23_24
+  | BetSplit25_26
+  | BetSplit26_27
+  | BetSplit28_29
+  | BetSplit29_30
+  | BetSplit31_32
+  | BetSplit32_33
+  | BetSplit34_35
+  | BetSplit35_36
+  | BetSplit1_4
+  | BetSplit2_5
+  | BetSplit3_6
+  | BetSplit4_7
+  | BetSplit5_8
+  | BetSplit6_9
+  | BetSplit7_10
+  | BetSplit8_11
+  | BetSplit9_12
+  | BetSplit10_13
+  | BetSplit11_14
+  | BetSplit12_15
+  | BetSplit13_16
+  | BetSplit14_17
+  | BetSplit15_18
+  | BetSplit16_19
+  | BetSplit17_20
+  | BetSplit18_21
+  | BetSplit19_22
+  | BetSplit20_23
+  | BetSplit21_24
+  | BetSplit22_25
+  | BetSplit23_26
+  | BetSplit24_27
+  | BetSplit25_28
+  | BetSplit26_29
+  | BetSplit27_30
+  | BetSplit28_31
+  | BetSplit29_32
+  | BetSplit30_33
+  | BetSplit31_34
+  | BetSplit32_35
+  | BetSplit33_36
+  | BetSplit00_2_3
+  | BetSplit0_1_2
+  | BetStreet1_2_3
+  | BetStreet4_5_6
+  | BetStreet7_8_9
+  | BetStreet10_11_12
+  | BetStreet13_14_15
+  | BetStreet16_17_18
+  | BetStreet19_20_21
+  | BetStreet22_23_24
+  | BetStreet25_26_27
+  | BetStreet28_29_30
+  | BetStreet31_32_33
+  | BetStreet34_35_36
+  | BetCorner1_2_4_5
+  | BetCorner2_3_5_6
+  | BetCorner4_5_7_8
+  | BetCorner5_6_8_9
+  | BetCorner7_8_10_11
+  | BetCorner8_9_11_12
+  | BetCorner10_11_13_14
+  | BetCorner11_12_14_15
+  | BetCorner13_14_16_17
+  | BetCorner14_15_17_18
+  | BetCorner16_17_19_20
+  | BetCorner17_18_20_21
+  | BetCorner19_20_22_23
+  | BetCorner20_21_23_24
+  | BetCorner22_23_25_26
+  | BetCorner23_24_26_27
+  | BetCorner25_26_28_29
+  | BetCorner26_27_29_30
+  | BetCorner28_29_31_32
+  | BetCorner29_30_32_33
+  | BetCorner31_32_34_35
+  | BetCorner32_33_35_36
+  | BetDoubleStreet1_2_3_4_5_6
+  | BetDoubleStreet4_5_6_7_8_9
+  | BetDoubleStreet7_8_9_10_11_12
+  | BetDoubleStreet10_11_12_13_14_15
+  | BetDoubleStreet13_14_15_16_17_18
+  | BetDoubleStreet16_17_18_19_20_21
+  | BetDoubleStreet19_20_21_22_23_24
+  | BetDoubleStreet22_23_24_25_26_27
+  | BetDoubleStreet25_26_27_28_29_30
+  | BetDoubleStreet28_29_30_31_32_33
+  | BetDoubleStreet31_32_33_34_35_36
+  | BetDoubleStreet0_00_1_2_3;
 
 export interface RouletteAddBetInput {
   address: string;

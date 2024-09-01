@@ -19,6 +19,10 @@ export const testRouletteAdd = async (
   // const betType = 2;
   // const betNumber = 2;
 
+  // corner 20/21/23/24
+  // const betType = 98;
+  // let betNumber;
+
   try {
     const txb = new Transaction();
 
