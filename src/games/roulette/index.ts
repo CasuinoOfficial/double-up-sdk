@@ -283,6 +283,7 @@ export const startRoulette = ({
     target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::start_roll`,
     typeArguments: [coinType],
     arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
       transaction.object(RAND_OBJ_ID),
       transaction.object(ROULETTE_CONFIG),
     ],
