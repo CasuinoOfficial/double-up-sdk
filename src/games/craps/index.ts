@@ -74,7 +74,7 @@ type ComeOddsBet = 16;
 type DontComeOddsBet = 17;
 type CESplitBet = 18;
 
-type CrapsBet =
+export type CrapsBet =
   | PassLineBet
   | DontPassLineBet
   | FieldBet
