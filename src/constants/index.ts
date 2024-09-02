@@ -65,8 +65,8 @@ export const PLINKO_CONFIG = "0x9e29741f87e0ec9cdd43021eb5e615a508aedf35cc7a78d7
 // roulette
 // ===============================================================================
 export const ROULETTE_PACKAGE_ID =
-  "0x7618a6d144a232fa4a7dee066d2310bc559a655a204e248a39baee35a1cb2225";
-export const ROULETTE_CONFIG = "0xbcaa952488aedbd764d017341ea951b72a3cbbe558887136a4944b185f4c8bb4";
+  "0xf6898cf9e138f194813aaa040ee06aa4635d9d4892a7cf337f32a5c91137a8f3";
+export const ROULETTE_CONFIG = "0x480e4cef3a4199617e60a71ee3552f8d2399e5323c6b77f337dc2e45e6afd61d";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
 
