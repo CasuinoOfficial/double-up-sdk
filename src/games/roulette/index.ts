@@ -13,6 +13,7 @@ import {
   RAND_OBJ_ID,
 } from "../../constants";
 
+// Bet Types
 type BetRed = 0;
 type BetBlack = 1;
 type BetNumber = 2;
@@ -26,6 +27,8 @@ type BetSecondEighteen = 9;
 type BetFirstColumn = 10;
 type BetSecondColumn = 11;
 type BetThirdColumn = 12;
+
+// 17x Payout Bets
 type BetSplit0_00 = 13;
 type BetSplit0_1 = 14;
 type BetSplit00_3 = 15;
@@ -86,6 +89,8 @@ type BetSplit30_33 = 69;
 type BetSplit31_34 = 70;
 type BetSplit32_35 = 71;
 type BetSplit33_36 = 72;
+
+// 11x Payout Bets
 type BetSplit0_00_2 = 73;
 type BetSplit00_2_3 = 74;
 type BetSplit0_1_2 = 75;
@@ -101,6 +106,8 @@ type BetStreet25_26_27 = 84;
 type BetStreet28_29_30 = 85;
 type BetStreet31_32_33 = 86;
 type BetStreet34_35_36 = 87;
+
+// 8x Payout Bets
 type BetCorner1_2_4_5 = 88;
 type BetCorner2_3_5_6 = 89;
 type BetCorner4_5_7_8 = 90;
@@ -123,6 +130,8 @@ type BetCorner28_29_31_32 = 106;
 type BetCorner29_30_32_33 = 107;
 type BetCorner31_32_34_35 = 108;
 type BetCorner32_33_35_36 = 109;
+
+// 5x Payout Bets
 type BetDoubleStreet1_2_3_4_5_6 = 110;
 type BetDoubleStreet4_5_6_7_8_9 = 111;
 type BetDoubleStreet7_8_9_10_11_12 = 112;
@@ -134,6 +143,8 @@ type BetDoubleStreet22_23_24_25_26_27 = 117;
 type BetDoubleStreet25_26_27_28_29_30 = 118;
 type BetDoubleStreet28_29_30_31_32_33 = 119;
 type BetDoubleStreet31_32_33_34_35_36 = 120;
+
+// 6.2x Payout Bets
 type BetDoubleStreet0_00_1_2_3 = 121;
 
 type RouletteBet =
