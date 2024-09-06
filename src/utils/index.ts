@@ -2,7 +2,8 @@ import { SuiTransactionBlockResponse } from "@mysten/sui/client";
 
 import {
   ROULETTE_MODULE_NAME, ROULETTE_PACKAGE_ID,
-} from "../constants";
+  SUI_COIN_TYPE,
+} from "../constants/mainnetConstants";
 
 interface GameInfo {
   gameCoinType: string;
@@ -154,5 +155,11 @@ export const checkBetType = (betType: number) => {
     case 0:
     default:
       return "rock";
+  }
+};
+
+export const getAssetIndex = (coinType: string): number => {
+  if (coinType === SUI_COIN_TYPE) {
+    return 0;
   }
 };

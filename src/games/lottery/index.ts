@@ -12,7 +12,7 @@ import {
   LOTTERY_PACKAGE_ID,
   LOTTERY_STORE_ID,
   SUI_COIN_TYPE,
-} from "../../constants";
+} from "../../constants/testnetConstants";
 import { sleep } from "../../utils";
 
 export interface BuyTicketsInput {

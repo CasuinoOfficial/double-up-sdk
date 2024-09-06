@@ -9,7 +9,7 @@ import {
   UFORANGE_MODULE_NAME,
   UFORANGE_PACKAGE_ID,
   UNI_HOUSE_OBJ_ID,
-} from "../../constants";
+} from "../../constants/mainnetConstants";
 import { InsideOutsideBet } from "../../games/ufoRange";
 import { bcs } from "@mysten/sui/bcs";
 
@@ -27,14 +27,11 @@ export const testRange = async (
     [1, 5000],
   ];
   const txb = new Transaction();
-  const coins = txb.splitCoins(txb.gas, [
-    txb.pure.u64(betAmount),
-    txb.pure.u64(betAmount),
-  ]);
+  const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
 
   dbClient.createRange({
     betTypes,
-    coins: txb.makeMoveVec({ elements: [coins[0], coins[1]] }),
+    coin,
     coinType: SUI_COIN_TYPE,
     range,
     transaction: txb,

@@ -9,7 +9,17 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
-import { PLINKO_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID, PLINKO_CONFIG } from "../../constants";
+import { 
+  PLINKO_MODULE_NAME, 
+  RAND_OBJ_ID, 
+  UNI_HOUSE_OBJ_ID, 
+  PLINKO_CONFIG,
+  CLOCK_OBJ_ID,
+  PYTH_SUI_PRICE_INFO_OBJ_ID,
+  SUILEND_MARKET,
+  SUILEND_POND_SUI_POOL_OBJ_ID,
+} from "../../constants/mainnetConstants";
+import { getAssetIndex } from "../../utils";
 
 // 0: 6 Rows, 1: 9 Rows, 2: 12 Rows
 type PlinkoType = 0 | 1 | 2;
@@ -219,8 +229,9 @@ export const startMultiPlinko = ({
   transaction,
   origin,
 }: InternalStartMultiPlinkoInput) => {
+  let assetIndex = getAssetIndex(coinType);
   transaction.moveCall({
-    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko`,
+    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko_0`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
@@ -231,6 +242,11 @@ export const startMultiPlinko = ({
       transaction.pure.u64(betSize),
       transaction.pure.u8(plinkoType),
       transaction.pure.string(origin ?? "DoubleUp"),
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
     ],
   });
 };
@@ -245,8 +261,9 @@ export const createSinglePlinko = ({
   transaction,
   origin
 }: InternalPlinkoInput) => {
+  let assetIndex = getAssetIndex(coinType);
   transaction.moveCall({
-    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko`,
+    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_0`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
@@ -255,6 +272,11 @@ export const createSinglePlinko = ({
       transaction.pure.u8(plinkoType),
       transaction.pure.string(origin ?? "DoubleUp"),
       coin,
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
     ],
   });
 };

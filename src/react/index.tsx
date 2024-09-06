@@ -4,9 +4,10 @@ import { ReactElement, ReactNode, createContext, useContext } from "react";
 
 import { DoubleUpClient } from "../client";
 
-import {
-  CoinflipInput,
-} from "../games/coinflip";
+import { CoinflipInput } from "../games/coinflip";
+import { LimboInput } from "../games/limbo";
+import { RangeInput } from "../games/ufoRange";
+import { RPSInput } from "../games/rps";
 import {
   BuyTicketsInput,
   BuyTicketsResponse,
@@ -20,9 +21,6 @@ import {
   RedeemTicketsResponse,
 } from "../games/lottery";
 import {
-  LimboInput,
-} from "../games/limbo";
-import {
   GetPlinkoTableInput,
   GetPlinkoTableResponse,
   PlinkoAddBetInput,
@@ -34,9 +32,6 @@ import {
   StartMultiPlinkoInput,
 } from "../games/plinko";
 import {
-  RangeInput,
-} from "../games/ufoRange";
-import {
   GetRouletteTableInput,
   GetRouletteTableResponse,
   RouletteAddBetInput,
@@ -46,11 +41,22 @@ import {
   RouletteStartInput,
   RouletteTableInput,
 } from "../games/roulette";
-import {
-  RPSInput,
-} from "../games/rps";
-import { CrapsAddBetInput, CrapsRemoveBetInput, CrapsRemoveBetResponse, CrapsSettleOrContinueInput, CrapsStartInput, CrapsTableInput, GetCrapsTableInput } from "../games/craps";
-import { BlackjackDealerMoveInput, BlackjackInput, BlackjackPlayerMoveInput, GetBlackjackTableInput, GetBlackjackTableResponse } from "../games/blackjack";
+import { 
+  CrapsAddBetInput, 
+  CrapsRemoveBetInput, 
+  CrapsRemoveBetResponse, 
+  CrapsSettleOrContinueInput, 
+  CrapsStartInput, 
+  CrapsTableInput, 
+  GetCrapsTableInput 
+} from "../games/craps";
+import { 
+  BlackjackDealerMoveInput, 
+  BlackjackInput, 
+  BlackjackPlayerMoveInput, 
+  GetBlackjackTableInput, 
+  GetBlackjackTableResponse 
+} from "../games/blackjack";
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;

@@ -9,7 +9,7 @@ import {
   RPS_PACKAGE_ID,
   UFORANGE_PACKAGE_ID,
   BLACKJACK_PACKAGE_ID,
-} from "../constants";
+} from "../constants/mainnetConstants";
 
 import {
   createCoinflip,
@@ -71,6 +71,7 @@ import {
   createRockPaperScissors,
   RPSInput,
 } from "../games/rps";
+
 import { 
   addCrapsBet, 
   CrapsAddBetInput, 
@@ -124,7 +125,7 @@ export class DoubleUpClient {
     rpsPackageId = RPS_PACKAGE_ID,
     crapsPackageId = CRAPS_PACKAGE_ID,
     blackjackPackageId = BLACKJACK_PACKAGE_ID,
-    suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
+    suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
     this.coinflipPackageId = coinflipPackageId;
     this.limboPackageId = limboPackageId;
@@ -139,7 +140,7 @@ export class DoubleUpClient {
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
-      network: Network.TESTNET,
+      network: Network.MAINNET,
     });
   }
 
