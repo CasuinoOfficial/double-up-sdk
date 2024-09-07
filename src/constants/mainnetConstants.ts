@@ -26,7 +26,7 @@ export const UNI_HOUSE_OBJ_ID =
 // SUILEND
 // ===============================================================================
 export const SUILEND_POND_PACKAGE_ID =
-  "0xee0150555a187970285efd82153b0fc87ed0fb53844a3001f4dff3a5e73d70af";
+  "0x0658c56b5283c46076a82eb7db0def408a4248d6e5b41b96c63f3c989af5d37d";
 export const SUILEND_POND_MODULE_NAME = "pond";
 export const SUILEND_POND_STRUCT_NAME = "SUILEND_POND";
 export const SUILEND_POND_SUI_POOL_OBJ_ID = 
