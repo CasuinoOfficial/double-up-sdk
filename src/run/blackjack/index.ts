@@ -210,7 +210,7 @@ export const testBlackjackPlayerDouble = async (
 ) => {
 	try {
 		const txb = new Transaction();
-		const betSize = 1_000_000_000;
+		const betSize = 500_000_000;
 		const DOUBLE = 103;
 		const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betSize)]);
 
@@ -256,7 +256,7 @@ export const testBlackjackPlayerSplit = async (
 ) => {
 	try {
 		const txb = new Transaction();
-		const betSize = 1_000_000_000;
+		const betSize = 500_000_000;
 		const SPLIT = 104;
 		const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betSize)]);
 
@@ -302,7 +302,6 @@ export const testBlackjackPlayerSurrender = async (
 ) => {
 	try {
 		const txb = new Transaction();
-		const betSize = 1_000_000_000;
 		const SURRENDER = 105;
 
 		dbClient.blackjackPlayerMove({
