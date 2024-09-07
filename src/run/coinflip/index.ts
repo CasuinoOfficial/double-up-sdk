@@ -12,7 +12,7 @@ export const testCoinflip = async (
 ) => {
   // heads
   // const betTypes: BetType[] = [0];
-  const betAmount = 500000000;
+  const betAmount = 5000000;
 
   // 100 bets
   let betTypes: BetType[] = [];

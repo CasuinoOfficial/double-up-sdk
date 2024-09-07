@@ -52,6 +52,7 @@ import {
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
+console.log('got here');
 const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
 
 const PARTNER_NFT_ID =
@@ -162,9 +163,34 @@ const dbClient = new DoubleUpClient({
         testBlackjackPlayerSurrender(dbClient, client, keypair);
         break;
       default:
-        console.error(
-          "Use dedicated test function to test an individual game.\n"
-        );
+        // Test all
+        testCoinflip(dbClient, client, keypair);
+        // testLimbo(dbClient, client, keypair);
+        // testPlinko(dbClient, client, keypair);
+        // testMultiPlinkoCreate(dbClient, client, keypair);
+        // testMultiPlinkoAdd(dbClient, client, keypair);
+        // testMultiPlinkoRemove(dbClient, client, keypair);
+        // testMultiPlinkoGet(dbClient, keypair);
+        // testMultiPlinkoStart(dbClient, client, keypair);
+        // testRange(dbClient, client, keypair);
+        // testRouletteAdd(dbClient, client, keypair);
+        // testRouletteCreate(dbClient, client, keypair);
+        // testRouletteStart(dbClient, client, keypair);
+        // testCrapsAdd(dbClient, client, keypair);
+        // testCrapsCreate(dbClient, client, keypair);
+        // testCrapsRoll(dbClient, client, keypair);
+        // testCrapsAddAndRemove(dbClient, client, keypair);
+        // testGetCrapsTable(dbClient, keypair);
+        // testCrapsSettle(dbClient, client, keypair);
+        // testRPS(dbClient, client, keypair);
+        // testBlackjackCreate(dbClient, client, keypair);
+        // testGetBlackjackTable(dbClient, keypair);
+        // testBlackjackDealerMove(dbClient, client, keypair);
+        // testBlackjackPlayerHit(dbClient, client, keypair);
+        // testBlackjackPlayerStand(dbClient, client, keypair);
+        // testBlackjackPlayerDouble(dbClient, client, keypair);
+        // testBlackjackPlayerSplit(dbClient, client, keypair);
+        // testBlackjackPlayerSurrender(dbClient, client, keypair);
     }
   } else {
     console.error(
