@@ -1,4 +1,13 @@
-import { CRAPS_CONFIG, CRAPS_MODULE_NAME, RAND_OBJ_ID, UNI_HOUSE_OBJ_ID } from "../../constants";
+import { 
+  CLOCK_OBJ_ID,
+  CRAPS_CONFIG, 
+  CRAPS_MODULE_NAME, 
+  PYTH_SUI_PRICE_INFO_OBJ_ID, 
+  RAND_OBJ_ID, 
+  SUILEND_MARKET, 
+  SUILEND_POND_SUI_POOL_OBJ_ID, 
+  UNI_HOUSE_OBJ_ID 
+} from "../../constants/mainnetConstants";
 import { bcs } from "@mysten/sui/bcs";
 import {
     TransactionArgument,
@@ -6,6 +15,7 @@ import {
     TransactionObjectArgument,
   } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
+import { getAssetIndex } from "../../utils";
 
 export interface CrapsRemoveBetInput {
     coinType: string;
@@ -241,6 +251,7 @@ export const startCraps = ({
         target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::start_roll`,
         typeArguments: [coinType],
         arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
           transaction.object(RAND_OBJ_ID),
           transaction.object(CRAPS_CONFIG),
         ],
@@ -254,15 +265,21 @@ export const crapsSettleOrContinue = ({
     hostAddress,
     origin
   }: InternalCrapsSettleOrContinueInput) => {
+    let assetIndex = getAssetIndex(coinType);
     transaction.moveCall({
-    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::settle_or_continue`,
+    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::settle_or_continue_0`,
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),
         transaction.object(CRAPS_CONFIG),
         transaction.pure.address(hostAddress),
         transaction.pure(bcs.option(bcs.U64).serialize(null)),
-        transaction.pure.string(origin ?? "DoubleUp")
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
       ],
     });
   }

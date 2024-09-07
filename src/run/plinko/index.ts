@@ -4,18 +4,18 @@ import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 import { PlinkoRemoveBetResponse } from "../../games/plinko";
 
-import { SUI_COIN_TYPE } from "../../constants";
+import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 
 export const testPlinko = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-  const betAmount = 500000000;
-  const numberOfDiscs = 1;
+  const betAmount = 50000000;
+  const numberOfDiscs = 100;
 
   // 6 Rows
-  const plinkoType = 0;
+  const plinkoType = 1;
 
   const txb = new Transaction();
 

@@ -5,14 +5,19 @@ import {
 } from "@mysten/sui/transactions";
 
 import {
-  BLACKJACK_MODULE,
+  BLACKJACK_MODULE_NAME,
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
   BLACKJACK_CONFIG,
-} from "../../constants";
+  CLOCK_OBJ_ID,
+  PYTH_SUI_PRICE_INFO_OBJ_ID,
+  SUILEND_MARKET,
+  SUILEND_POND_SUI_POOL_OBJ_ID,
+} from "../../constants/mainnetConstants";
 import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/dist/cjs/client";
 import { bcs } from "@mysten/sui/dist/cjs/bcs";
 import { transactionDataFromV1 } from "@mysten/sui/dist/cjs/transactions/data/v1";
+import { getAssetIndex } from "../../utils";
 
 type Hit = 101;
 type Stand = 102;
@@ -86,7 +91,7 @@ export const createBlackjackGame = ({
   origin,
 }: InternalBlackjackInput) => {
   transaction.moveCall({
-    target: `${blackjackPackageId}::${BLACKJACK_MODULE}::init_game`,
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
@@ -109,7 +114,7 @@ export const getBlackjackTable = async ({
     const { data } = await suiClient.getDynamicFieldObject({
       parentId: BLACKJACK_CONFIG,
       name: {
-        type: `${blackjackPackageId}::${BLACKJACK_MODULE}::BlackjackTag<${coinType}>`,
+        type: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
         value: {
           creator: address,
         },
@@ -136,13 +141,19 @@ export const blackjackDealerMove = ({
   transaction,
   blackjackPackageId,
 }: InternalBlackjackDealerMoveInput) => {
+  let assetIndex = getAssetIndex(coinType);
   transaction.moveCall({
-    target: `${blackjackPackageId}::${BLACKJACK_MODULE}::dealer_move`,
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::dealer_move_0`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
       transaction.object(BLACKJACK_CONFIG),
       transaction.object(RAND_OBJ_ID),
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
     ],
   });
 }
@@ -177,14 +188,20 @@ export const blackjackPlayerMove = ({
     });
   }
 
+  let assetIndex = getAssetIndex(coinType);
   transaction.moveCall({
-    target: `${blackjackPackageId}::${BLACKJACK_MODULE}::player_move`,
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_0`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
       transaction.object(BLACKJACK_CONFIG),
       transaction.pure.u64(playerAction),
       coin_opt,
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
     ],
   });
 }

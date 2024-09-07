@@ -3,7 +3,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 
-import { SUI_COIN_TYPE } from "../../constants";
+import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Keypair } from "@mysten/sui/cryptography";
 
@@ -15,7 +15,7 @@ export const testBlackjackCreate = async (
 	try {
 		const txb = new Transaction();
 
-		const betSize = 1_000_000_000;
+		const betSize = 500_000_000;
 		const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betSize)]);
 
 		dbClient.createBlackjackGame({
@@ -210,7 +210,7 @@ export const testBlackjackPlayerDouble = async (
 ) => {
 	try {
 		const txb = new Transaction();
-		const betSize = 1_000_000_000;
+		const betSize = 500_000_000;
 		const DOUBLE = 103;
 		const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betSize)]);
 
@@ -256,7 +256,7 @@ export const testBlackjackPlayerSplit = async (
 ) => {
 	try {
 		const txb = new Transaction();
-		const betSize = 1_000_000_000;
+		const betSize = 500_000_000;
 		const SPLIT = 104;
 		const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(betSize)]);
 
@@ -302,7 +302,6 @@ export const testBlackjackPlayerSurrender = async (
 ) => {
 	try {
 		const txb = new Transaction();
-		const betSize = 1_000_000_000;
 		const SURRENDER = 105;
 
 		dbClient.blackjackPlayerMove({

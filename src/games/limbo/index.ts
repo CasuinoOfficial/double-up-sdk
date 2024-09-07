@@ -7,12 +7,17 @@ import {
 import { bcs } from "@mysten/sui/bcs";
 
 import {
+  CLOCK_OBJ_ID,
   LIMBO_MAX_MULTIPLIER,
   LIMBO_MIN_MULTIPLIER,
   LIMBO_MODULE_NAME,
+  PYTH_SUI_PRICE_INFO_OBJ_ID,
   RAND_OBJ_ID,
+  SUILEND_MARKET,
+  SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
-} from "../../constants";
+} from "../../constants/mainnetConstants";
+import { getAssetIndex } from "../../utils";
 
 type LimboResult = number;
 
@@ -23,7 +28,7 @@ interface LimboGameResults {
 }
 
 export interface LimboInput {
-  coins: TransactionObjectArgument;
+  coin: TransactionObjectArgument;
   coinType: string;
   multipliers: number[];
   transaction: TransactionType;
@@ -65,7 +70,7 @@ export interface LimboResultResponse {
 // Weighted flip where the user can select how much multiplier they want.
 // Note that the multiplers are passed in as integers and not a decimal representation i.e. 1.01 = 101
 export const createLimbo = ({
-  coins,
+  coin,
   coinType,
   limboPackageId,
   multipliers,
@@ -80,17 +85,23 @@ export const createLimbo = ({
         throw new Error("Multiplier out of range");
       }
     };
+    let assetIndex = getAssetIndex(coinType);
     transaction.moveCall({
-      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play`,
+      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_0`,
       typeArguments: [coinType],
       arguments: [
         transaction.object(UNI_HOUSE_OBJ_ID),
         transaction.object(RAND_OBJ_ID),
-        coins,
+        coin,
         transaction.pure(
           bcs.vector(bcs.U64).serialize(multipliers)
         ),
-        transaction.pure.string(origin ?? "DoubleUp")
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
       ],
     });
 };

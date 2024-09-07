@@ -2,7 +2,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
-import { SUI_COIN_TYPE } from "../../constants";
+import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 import { CrapsRemoveBetResponse, PassLineBet } from "../../games/craps";
 
 export const testCrapsCreate = async (

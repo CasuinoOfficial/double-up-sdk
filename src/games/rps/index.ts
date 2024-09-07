@@ -10,18 +10,23 @@ import { KioskOwnerCap, KioskTransaction } from "@mysten/kiosk";
 import { randomBytes } from "crypto";
 
 import {
+  CLOCK_OBJ_ID,
+  PYTH_SUI_PRICE_INFO_OBJ_ID,
   RAND_OBJ_ID,
   RPS_MODULE_NAME,
+  SUILEND_MARKET,
+  SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
-} from "../../constants";
+} from "../../constants/mainnetConstants";
 import { KioskClient } from "@mysten/kiosk";
+import { getAssetIndex } from "../../utils";
 
 // 0: Rock, 1: Paper, 2: Scissors
 export type BetType = 0 | 1 | 2;
 
 export interface RPSInput {
   betTypes: Array<BetType>;
-  coins: TransactionObjectArgument; // This should be a vector of coins already
+  coin: TransactionObjectArgument; 
   coinType: string;
   partnerNftType?: string;
   nfts?: TransactionArgument;
@@ -94,7 +99,7 @@ const SCISSORS = 2;
 // Add rps to the transaction block
 export const createRockPaperScissors = ({
   betTypes,
-  coins,
+  coin,
   coinType,
   partnerNftType,
   kioskId,
@@ -105,46 +110,57 @@ export const createRockPaperScissors = ({
   transaction,
   origin
 }: InternalRPSInput) => {
+  let assetIndex = getAssetIndex(coinType);
 
-    if (
-      typeof partnerNftListId === "string" &&
-      typeof partnerNftType === "string" &&
-      nfts !== undefined
-    ) {
-      console.log('partner');
-      transaction.moveCall({
-        target: `${rpsPackageId}::${RPS_MODULE_NAME}::start_game_with_partner`,
-        typeArguments: [coinType, partnerNftType],
-        arguments: [
-          transaction.object(UNI_HOUSE_OBJ_ID),
-          transaction.object(RAND_OBJ_ID),
-          transaction.pure(
-            bcs.vector(bcs.U64).serialize(betTypes)
-          ),
-          coins,
-          transaction.object(partnerNftListId),
-          transaction.object(kioskId),
-          transaction.object(kioskOwnerCap),
-          nfts,
-          transaction.pure.string(origin ?? "DoubleUp")
-        ],
-      });
+  if (
+    typeof partnerNftListId === "string" &&
+    typeof partnerNftType === "string" &&
+    nfts !== undefined
+  ) {
+    console.log('partner');
+    transaction.moveCall({
+      target: `${rpsPackageId}::${RPS_MODULE_NAME}::play_with_partner_0`,
+      typeArguments: [coinType, partnerNftType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        coin,
+        transaction.object(partnerNftListId),
+        transaction.object(kioskId),
+        transaction.object(kioskOwnerCap),
+        nfts,
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
 
-    } else {
-      console.log('normal');
+  } else {
+    console.log('normal');
 
-      transaction.moveCall({
-        target: `${rpsPackageId}::${RPS_MODULE_NAME}::play`,
-        typeArguments: [coinType],
-        arguments: [
-          transaction.object(UNI_HOUSE_OBJ_ID),
-          transaction.object(RAND_OBJ_ID),
-          transaction.pure(
-            bcs.vector(bcs.U64).serialize(betTypes)
-          ),
-          coins,
-          transaction.pure.string(origin ?? "DoubleUp")
-        ],
-      });
-    }
+    transaction.moveCall({
+      target: `${rpsPackageId}::${RPS_MODULE_NAME}::play_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        coin,
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  }
 };

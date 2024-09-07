@@ -41,10 +41,17 @@ import {
   testBlackjackPlayerSurrender, 
   testGetBlackjackTable 
 } from "./blackjack";
-import { testCrapsAdd, testCrapsAddAndRemove, testCrapsCreate, testCrapsRoll, testCrapsSettle, testGetCrapsTable } from "./craps";
+import { 
+  testCrapsAdd, 
+  testCrapsAddAndRemove, 
+  testCrapsCreate, 
+  testCrapsRoll, 
+  testCrapsSettle, 
+  testGetCrapsTable 
+} from "./craps";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
-const client = new SuiClient({ url: getFullnodeUrl("testnet") });
+const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
 const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
 
 const PARTNER_NFT_ID =
