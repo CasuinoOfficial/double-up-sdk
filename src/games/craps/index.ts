@@ -184,12 +184,6 @@ export interface CrapsContractData {
   target_roll_sum: string;
 }
 
-// export interface GetCrapsTableResponse {
-//   ok: boolean;
-//   err?: Error;
-//   fields?: CrapsContractData;
-// }
-
 export const createCrapsTable = ({
   coinType,
   crapsPackageId,

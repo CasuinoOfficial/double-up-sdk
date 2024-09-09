@@ -14,9 +14,7 @@ import {
   SUILEND_MARKET,
   SUILEND_POND_SUI_POOL_OBJ_ID,
 } from "../../constants/mainnetConstants";
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/dist/cjs/client";
-import { bcs } from "@mysten/sui/dist/cjs/bcs";
-import { transactionDataFromV1 } from "@mysten/sui/dist/cjs/transactions/data/v1";
+import { SuiClient } from "@mysten/sui/client";
 import { getAssetIndex } from "../../utils";
 
 type Hit = 101;
@@ -159,7 +157,7 @@ export const blackjackDealerMove = ({
 }
 
 const isDoubleOrSplit = (playerAction: PlayerAction): playerAction is Double | Split =>
-  playerAction === (103 || 104);
+  (playerAction === 103) || (playerAction === 104);
 
 export const blackjackPlayerMove = ({
   coinType,

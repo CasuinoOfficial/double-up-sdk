@@ -164,7 +164,7 @@ const dbClient = new DoubleUpClient({
         break;
       default:
         // Test all
-        testCoinflip(dbClient, client, keypair);
+        // testCoinflip(dbClient, client, keypair);
         // testLimbo(dbClient, client, keypair);
         // testPlinko(dbClient, client, keypair);
         // testMultiPlinkoCreate(dbClient, client, keypair);

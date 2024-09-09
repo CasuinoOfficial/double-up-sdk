@@ -37,20 +37,15 @@ export const testCrapsCreate = async (
   
       console.log("Signed and sent transaction.", transactionResult);
 
-      const {
-        ok: getOk,
-        err: getErr,
-        fields,
-      } = await dbClient.getCrapsTable({
+      const resp = await dbClient.getCrapsTable({
         coinType: SUI_COIN_TYPE,
         address: keypair.toSuiAddress(),
       });
 
-      if (!getOk) {
-        throw getErr;
-      }
-  
-      console.log(fields);
+      if (!resp) {
+        return "sad"
+      };
+
 }
 
 export const testGetCrapsTable = async (
@@ -58,16 +53,12 @@ export const testGetCrapsTable = async (
     keypair: Secp256k1Keypair
 ) => {
     try {
-        const {
-            ok: getOk,
-            err: getErr,
-            fields,
-          } = await dbClient.getCrapsTable({
+          const resp = await dbClient.getCrapsTable({
             coinType: SUI_COIN_TYPE,
             address: keypair.toSuiAddress(),
           });
       
-          console.log(fields);
+          console.log(resp);
     } catch (e) {
         console.log(e);
     }
@@ -182,7 +173,8 @@ export const testCrapsSettle = async (
     dbClient.crapsSettleOrContinue({
       coinType: SUI_COIN_TYPE,
       transaction: txb2,
-      hostAddress: keypair.toSuiAddress(),
+      // hostAddress: keypair.toSuiAddress(),
+      hostAddress: '0x2679d10a99fde34ef57bf28e22cc11c78bf2d9e8353530992df35b2160cf4b9a'
     });
 
     const transactionResult2 = await client.signAndExecuteTransaction({
