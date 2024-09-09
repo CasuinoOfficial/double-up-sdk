@@ -63,7 +63,7 @@ export const createRange = ({
       coin,
       transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
       transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
-      transaction.pure.string("DoubleUp"),
+      transaction.pure.string(origin ?? "DoubleUp"),
       transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
       transaction.object(SUILEND_MARKET),
       transaction.object(CLOCK_OBJ_ID),
