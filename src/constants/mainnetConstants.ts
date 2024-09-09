@@ -26,7 +26,7 @@ export const UNI_HOUSE_OBJ_ID =
 // SUILEND
 // ===============================================================================
 export const SUILEND_POND_PACKAGE_ID =
-  "0x0658c56b5283c46076a82eb7db0def408a4248d6e5b41b96c63f3c989af5d37d";
+  "0xa0809bd09ba04f47d88b713f21db28b6c6ddde87d1dafe504b28e26eb5377112";
 export const SUILEND_POND_MODULE_NAME = "pond";
 export const SUILEND_POND_STRUCT_NAME = "SUILEND_POND";
 export const SUILEND_POND_SUI_POOL_OBJ_ID = 
@@ -110,7 +110,7 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 // CRAPS
 // ===============================================================================
 export const CRAPS_PACKAGE_ID = 
-  "0x4743e3331a2d04b1ac774103106b7315b079e580c3ba53af39e41956dec4966f";
+  "0xee9797456fbddcc33d9f74298996992c31ad42dd8c02755fe3424ecb36cc5ad4";
 export const CRAPS_CONFIG = 
   "0xc55a5c4fb74f830aa0986e2cf866141a992c0da30d38ca465923d13cf0031b42";
 export const CRAPS_MODULE_NAME = "craps";

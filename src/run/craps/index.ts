@@ -3,7 +3,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
-import { CrapsRemoveBetResponse, PassLineBet } from "../../games/craps";
+import { CrapsRemoveBetResponse, PassLineBet, PlaceBet } from "../../games/craps";
 
 export const testCrapsCreate = async (
     dbClient: DoubleUpClient,
@@ -83,6 +83,44 @@ export const testCrapsAdd = async (
         coinType: SUI_COIN_TYPE,
         transaction: txb,
     });
+//     const [coin2] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
+
+//     dbClient.addCrapsBet({
+//       address,
+//       betType: PlaceBet,
+//       betNumber: 6,
+//       coin: coin2,
+//       coinType: SUI_COIN_TYPE,
+//       transaction: txb,
+//   });
+//   const [coin3, coin4, coin5] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), txb.pure.u64(betAmount), txb.pure.u64(betAmount)]);
+
+//   dbClient.addCrapsBet({
+//     address,
+//     betType: PlaceBet,
+//     betNumber: 8,
+//     coin: coin3,
+//     coinType: SUI_COIN_TYPE,
+//     transaction: txb,
+// });
+
+// dbClient.addCrapsBet({
+//   address,
+//   betType: PlaceBet,
+//   betNumber: 5,
+//   coin: coin4,
+//   coinType: SUI_COIN_TYPE,
+//   transaction: txb,
+// });
+
+// dbClient.addCrapsBet({
+//   address,
+//   betType: PlaceBet,
+//   betNumber: 9,
+//   coin: coin5,
+//   coinType: SUI_COIN_TYPE,
+//   transaction: txb,
+// });
 
     const transactionResult = await client.signAndExecuteTransaction({
         signer: keypair,
@@ -173,8 +211,8 @@ export const testCrapsSettle = async (
     dbClient.crapsSettleOrContinue({
       coinType: SUI_COIN_TYPE,
       transaction: txb2,
-      // hostAddress: keypair.toSuiAddress(),
-      hostAddress: '0x2679d10a99fde34ef57bf28e22cc11c78bf2d9e8353530992df35b2160cf4b9a'
+      hostAddress: keypair.toSuiAddress(),
+      // hostAddress: '0x2679d10a99fde34ef57bf28e22cc11c78bf2d9e8353530992df35b2160cf4b9a'
     });
 
     const transactionResult2 = await client.signAndExecuteTransaction({
