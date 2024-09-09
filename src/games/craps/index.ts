@@ -184,11 +184,11 @@ export interface CrapsContractData {
   target_roll_sum: string;
 }
 
-export interface GetCrapsTableResponse {
-  ok: boolean;
-  err?: Error;
-  fields?: CrapsContractData;
-}
+// export interface GetCrapsTableResponse {
+//   ok: boolean;
+//   err?: Error;
+//   fields?: CrapsContractData;
+// }
 
 export const createCrapsTable = ({
   coinType,
@@ -207,7 +207,7 @@ export const getCrapsTable = async ({
   coinType,
   crapsPackageId,
   suiClient,
-}: InternalGetCrapsTableInput): Promise<GetCrapsTableResponse> => {
+}: InternalGetCrapsTableInput): Promise<CrapsContractData | null> => {
   const { data } = await suiClient.getDynamicFieldObject({
     parentId: CRAPS_CONFIG,
     name: {
