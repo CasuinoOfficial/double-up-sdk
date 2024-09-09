@@ -414,7 +414,9 @@ export const addRouletteBet = ({
         coin,
         transaction.pure.u8(betType),
         transaction.pure(
-          bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
+          bcs
+            .option(bcs.U64)
+            .serialize(typeof betNumber === "number" ? betNumber : null)
         ),
         transaction.pure.string(origin ?? "DoubleUp"),
       ],
