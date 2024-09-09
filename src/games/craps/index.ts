@@ -164,8 +164,8 @@ export interface CrapsContractData {
   creator: string;
   current_risk: string;
   id: { id: string };
-  numbers_rolled: number[]; //TODO: double check this is a number array
-  numbers_rolled_set: { fields: { contents: number[] }; type: string }; //TODO: double check this is a number array
+  numbers_rolled: string[];
+  numbers_rolled_set: { fields: { contents: string[] }; type: string };
   round_number: string;
   rounds_settled: {
     fields: { id: { id: string }; size: string };
