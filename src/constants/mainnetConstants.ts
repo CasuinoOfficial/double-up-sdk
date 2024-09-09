@@ -78,7 +78,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 // UFO RANGE
 // ===============================================================================
 export const UFORANGE_PACKAGE_ID =
-  "0xd5b857e378db92047ddee56b8d0779e0794c37f1421191708928d4cb90b17b08";
+  "0xb9b9acecf2a11f8ce652b747a22588bc27928bd5e3dbdef546e9c55986985a09";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
