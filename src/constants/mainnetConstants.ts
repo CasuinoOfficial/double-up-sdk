@@ -19,7 +19,7 @@ export const VSUI_COIN_TYPE =
 // UNIHOUSE
 // ===============================================================================
 export const UNIHOUSE_PACKAGE =
-  "0x90ebe312f8cdfc6eb719513b19e200fd68b06e340487c2a7a69be6554979e7e2";
+  "0xcbea36448bc5739f17f15b7cad66d797273e86b8b0823f3f221a5c4032fdedfc";
 export const UNI_HOUSE_OBJ_ID =
   "0x3b048f25779362453e8e99d77a33a0e244bde7cd354988d903312f35de89d2a2";
 
