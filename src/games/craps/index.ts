@@ -1,67 +1,68 @@
-import { 
+import {
   CLOCK_OBJ_ID,
-  CRAPS_CONFIG, 
-  CRAPS_MODULE_NAME, 
-  PYTH_SUI_PRICE_INFO_OBJ_ID, 
-  RAND_OBJ_ID, 
-  SUILEND_MARKET, 
-  SUILEND_POND_SUI_POOL_OBJ_ID, 
-  UNI_HOUSE_OBJ_ID 
+  CRAPS_CONFIG,
+  CRAPS_MODULE_NAME,
+  PYTH_SUI_PRICE_INFO_OBJ_ID,
+  RAND_OBJ_ID,
+  SUILEND_MARKET,
+  SUILEND_POND_SUI_POOL_OBJ_ID,
+  UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
 import { bcs } from "@mysten/sui/bcs";
 import {
-    TransactionArgument,
-    Transaction as TransactionType,
-    TransactionObjectArgument,
-  } from "@mysten/sui/transactions";
+  TransactionArgument,
+  Transaction as TransactionType,
+  TransactionObjectArgument,
+} from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { getAssetIndex } from "../../utils";
 
 export interface CrapsRemoveBetInput {
-    coinType: string;
-    tableOwner: string;
-    betType: number;
-    betNumber?: number;
-    transaction: TransactionType;
-  }
-
-interface InternalCrapsRemoveBetInput extends CrapsRemoveBetInput {
-    crapsPackageId: string;
-  }
-  
-export interface CrapsSettleOrContinueInput {
-    coinType: string,
-    transaction: TransactionType;
-    hostAddress: string;
-    origin?: string;
+  coinType: string;
+  tableOwner: string;
+  betType: number;
+  betNumber?: number;
+  transaction: TransactionType;
 }
 
-interface InternalCrapsSettleOrContinueInput extends CrapsSettleOrContinueInput {
-    crapsPackageId: string;
+interface InternalCrapsRemoveBetInput extends CrapsRemoveBetInput {
+  crapsPackageId: string;
+}
+
+export interface CrapsSettleOrContinueInput {
+  coinType: string;
+  transaction: TransactionType;
+  hostAddress: string;
+  origin?: string;
+}
+
+interface InternalCrapsSettleOrContinueInput
+  extends CrapsSettleOrContinueInput {
+  crapsPackageId: string;
 }
 
 export interface CrapsRemoveBetResponse {
-    ok: boolean;
-    err?: Error;
-    returnedCoin: TransactionArgument;
+  ok: boolean;
+  err?: Error;
+  returnedCoin: TransactionArgument;
 }
 
 export interface CrapsStartInput {
-    coinType: string;
-    transaction: TransactionType;
-  }
-  
+  coinType: string;
+  transaction: TransactionType;
+}
+
 interface InternalCrapsStartInput extends CrapsStartInput {
-    crapsPackageId: string;
+  crapsPackageId: string;
 }
 
 export interface CrapsTableInput {
-    coinType: string;
-    transaction: TransactionType;
-  }
-  
+  coinType: string;
+  transaction: TransactionType;
+}
+
 interface InternalCrapsTableInput extends CrapsTableInput {
-    crapsPackageId: string;
+  crapsPackageId: string;
 }
 
 type PassLineBet = 0;
@@ -102,7 +103,7 @@ export type CrapsBet =
   | PassOddsBet
   | DontPassOddsBet
   | ComeOddsBet
-  | DontComeOddsBet 
+  | DontComeOddsBet
   | CESplitBet;
 
 export const PassLineBet = 0;
@@ -126,160 +127,191 @@ export const DontComeOddsBet = 17;
 export const CESplitBet = 18;
 
 export interface CrapsAddBetInput {
-    address: string;
-    betNumber?: number;
-    betType: CrapsBet;
-    coin: TransactionObjectArgument;
-    coinType: string;
-    transaction: TransactionType;
-  }
-  
+  address: string;
+  betNumber?: number;
+  betType: CrapsBet;
+  coin: TransactionObjectArgument;
+  coinType: string;
+  transaction: TransactionType;
+}
+
 interface InternalCrapsAddBetInput extends CrapsAddBetInput {
-    origin: string;
-    crapsPackageId: string;
+  origin: string;
+  crapsPackageId: string;
 }
 
 export interface GetCrapsTableInput {
-    address: string;
-    coinType: string;
-  }
-  
+  address: string;
+  coinType: string;
+}
+
 interface InternalGetCrapsTableInput extends GetCrapsTableInput {
-    crapsPackageId: string;
-    suiClient: SuiClient;
+  crapsPackageId: string;
+  suiClient: SuiClient;
+}
+
+export interface CrapsContractData {
+  balance: string;
+  bets: {
+    fields: {
+      head: string | null;
+      id: { id: string };
+      size: string;
+      tail: string | null;
+    };
+    type: string;
+  };
+  creator: string;
+  current_risk: string;
+  id: { id: string };
+  numbers_rolled: number[]; //TODO: double check this is a number array
+  numbers_rolled_set: { fields: { contents: number[] }; type: string }; //TODO: double check this is a number array
+  round_number: string;
+  rounds_settled: {
+    fields: { id: { id: string }; size: string };
+    type: string;
+  };
+  settled_bets: {
+    fields: {
+      head: string | null;
+      id: { id: string };
+      size: string;
+      tail: string | null;
+    };
+    type: string;
+  };
+  status: number;
+  target_roll_sum: string;
 }
 
 export interface GetCrapsTableResponse {
-    ok: boolean;
-    err?: Error;
-    fields?: any;
+  ok: boolean;
+  err?: Error;
+  fields?: CrapsContractData;
 }
-
 
 export const createCrapsTable = ({
-    coinType,
-    crapsPackageId,
-    transaction,
+  coinType,
+  crapsPackageId,
+  transaction,
 }: InternalCrapsTableInput) => {
-    transaction.moveCall({
-        target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::create_craps_table`,
-        typeArguments: [coinType],
-        arguments: [
-          transaction.object(CRAPS_CONFIG),
-        ],
-    });
-}
+  transaction.moveCall({
+    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::create_craps_table`,
+    typeArguments: [coinType],
+    arguments: [transaction.object(CRAPS_CONFIG)],
+  });
+};
 
 export const getCrapsTable = async ({
-    address,
-    coinType,
-    crapsPackageId,
-    suiClient,
+  address,
+  coinType,
+  crapsPackageId,
+  suiClient,
 }: InternalGetCrapsTableInput): Promise<GetCrapsTableResponse> => {
-    const { data } = await suiClient.getDynamicFieldObject({
-        parentId: CRAPS_CONFIG,
-        name: {
-          type: `${crapsPackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
-          value: {
-            creator: address,
-          },
-        },
-      });  
-      if (data.content?.dataType !== "moveObject") {
-        return null;
-      }
-  
-      const fields = data.content.fields as any;
-      return fields;
-}
+  const { data } = await suiClient.getDynamicFieldObject({
+    parentId: CRAPS_CONFIG,
+    name: {
+      type: `${crapsPackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
+      value: {
+        creator: address,
+      },
+    },
+  });
+  if (data.content?.dataType !== "moveObject") {
+    return null;
+  }
+
+  const fields = data.content.fields as any;
+  return fields;
+};
 
 export const addCrapsBet = ({
-    address,
-    betNumber,
-    betType,
-    coin,
-    coinType,
-    crapsPackageId,
-    transaction,
+  address,
+  betNumber,
+  betType,
+  coin,
+  coinType,
+  crapsPackageId,
+  transaction,
 }: InternalCrapsAddBetInput) => {
-    transaction.moveCall({
-        target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::place_bet`,
-        typeArguments: [coinType],
-        arguments: [
-            transaction.object(UNI_HOUSE_OBJ_ID),
-            transaction.object(CRAPS_CONFIG),
-            transaction.pure.address(address),
-            transaction.pure.u64(betType),
-            transaction.pure(
-              bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
-            ),
-            coin,
-        ],
-    });
-}
+  transaction.moveCall({
+    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::place_bet`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(CRAPS_CONFIG),
+      transaction.pure.address(address),
+      transaction.pure.u64(betType),
+      transaction.pure(
+        bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
+      ),
+      coin,
+    ],
+  });
+};
 
 export const removeCrapsBet = ({
-    coinType,
-    betNumber,
-    betType,
-    crapsPackageId,
-    tableOwner,
-    transaction,
+  coinType,
+  betNumber,
+  betType,
+  crapsPackageId,
+  tableOwner,
+  transaction,
 }: InternalCrapsRemoveBetInput): CrapsRemoveBetResponse => {
-    const [coin] = transaction.moveCall({
+  const [coin] = transaction.moveCall({
     target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::remove_bet`,
     typeArguments: [coinType],
     arguments: [
-        transaction.object(CRAPS_CONFIG),
-        transaction.pure.address(tableOwner),
-        transaction.pure.u64(betType),
-        transaction.pure(
+      transaction.object(CRAPS_CONFIG),
+      transaction.pure.address(tableOwner),
+      transaction.pure.u64(betType),
+      transaction.pure(
         bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
-        ),
+      ),
     ],
-    });
-    const res: CrapsRemoveBetResponse = { ok: true, returnedCoin: coin };
-    return res;
+  });
+  const res: CrapsRemoveBetResponse = { ok: true, returnedCoin: coin };
+  return res;
 };
 
 export const startCraps = ({
-    coinType,
-    crapsPackageId,
-    transaction,
+  coinType,
+  crapsPackageId,
+  transaction,
 }: InternalCrapsStartInput) => {
-    transaction.moveCall({
-        target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::start_roll`,
-        typeArguments: [coinType],
-        arguments: [
-          transaction.object(UNI_HOUSE_OBJ_ID),
-          transaction.object(RAND_OBJ_ID),
-          transaction.object(CRAPS_CONFIG),
-        ],
-    });
-}
+  transaction.moveCall({
+    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::start_roll`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(RAND_OBJ_ID),
+      transaction.object(CRAPS_CONFIG),
+    ],
+  });
+};
 
 export const crapsSettleOrContinue = ({
-    coinType,
-    crapsPackageId,
-    transaction,
-    hostAddress,
-    origin
-  }: InternalCrapsSettleOrContinueInput) => {
-    let assetIndex = getAssetIndex(coinType);
-    transaction.moveCall({
+  coinType,
+  crapsPackageId,
+  transaction,
+  hostAddress,
+  origin,
+}: InternalCrapsSettleOrContinueInput) => {
+  let assetIndex = getAssetIndex(coinType);
+  transaction.moveCall({
     target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::settle_or_continue_0`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(CRAPS_CONFIG),
-        transaction.pure.address(hostAddress),
-        transaction.pure(bcs.option(bcs.U64).serialize(null)),
-        transaction.pure.string(origin ?? "DoubleUp"),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
-  }
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(CRAPS_CONFIG),
+      transaction.pure.address(hostAddress),
+      transaction.pure(bcs.option(bcs.U64).serialize(null)),
+      transaction.pure.string(origin ?? "DoubleUp"),
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
+    ],
+  });
+};
