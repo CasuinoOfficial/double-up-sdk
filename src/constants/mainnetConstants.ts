@@ -19,7 +19,7 @@ export const VSUI_COIN_TYPE =
 // UNIHOUSE
 // ===============================================================================
 export const UNIHOUSE_PACKAGE =
-  "0xcbea36448bc5739f17f15b7cad66d797273e86b8b0823f3f221a5c4032fdedfc";
+  "0x90ebe312f8cdfc6eb719513b19e200fd68b06e340487c2a7a69be6554979e7e2";
 export const UNI_HOUSE_OBJ_ID =
   "0x3b048f25779362453e8e99d77a33a0e244bde7cd354988d903312f35de89d2a2";
 
@@ -29,15 +29,15 @@ export const SUILEND_POND_PACKAGE_ID =
   "0xa0809bd09ba04f47d88b713f21db28b6c6ddde87d1dafe504b28e26eb5377112";
 export const SUILEND_POND_MODULE_NAME = "pond";
 export const SUILEND_POND_STRUCT_NAME = "SUILEND_POND";
-export const SUILEND_POND_SUI_POOL_OBJ_ID = 
+export const SUILEND_POND_SUI_POOL_OBJ_ID =
   "0x2f4ab56d53c13baa8a6c84f6c4b04220d8627ce20a55cf80e426c60f1c206a95";
 
-// SUILEND - ARGS  
-export const SUILEND_MAIN_POOL_TYPE = 
+// SUILEND - ARGS
+export const SUILEND_MAIN_POOL_TYPE =
   "0xf95b06141ed4a174f239417323bde3f209b972f5930d8521ea38a52aff3a6ddf::suilend::MAIN_POOL";
-export const SUILEND_MARKET = 
+export const SUILEND_MARKET =
   "0x84030d26d85eaa7035084a057f2f11f701b7e2e4eda87551becbc7c97505ece1";
-export const PYTH_SUI_PRICE_INFO_OBJ_ID = 
+export const PYTH_SUI_PRICE_INFO_OBJ_ID =
   "0x801dbc2f0053d34734814b2d6df491ce7807a725fe9a01ad74a07e9c51396c37";
 
 // SHARED
@@ -47,7 +47,7 @@ export const RAND_OBJ_ID = "0x8";
 
 // PARTNER LIST
 // ===============================================================================
-export const PARTNER_NFT_LIST_ID = "0x0"
+export const PARTNER_NFT_LIST_ID = "0x0";
 
 // COINFLIP
 // ===============================================================================
@@ -70,7 +70,7 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 // ===============================================================================
 export const ROULETTE_PACKAGE_ID =
   "0x0832ca4c8b6416f6b000a08ac36bd79df1917cc3470009caa71612974fb457e7";
-export const ROULETTE_CONFIG = 
+export const ROULETTE_CONFIG =
   "0xe3fcd487558ff96dbdc4626f5437b9d97910371dd9ae1c7e3a546a68b7be2902";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
@@ -93,25 +93,25 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 // ===============================================================================
 export const PLINKO_PACKAGE_ID =
   "0xc724ec53db91571202d18eb1bb528f7a8158a53018e8b4ad3c00997a97d664dd";
-export const PLINKO_CONFIG = 
+export const PLINKO_CONFIG =
   "0x02e01685e34911c78723bba5311d844313b26f690df0b40109787069ed653b87";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
 // BLACKJACK
 // ===============================================================================
-export const BLACKJACK_PACKAGE_ID = 
+export const BLACKJACK_PACKAGE_ID =
   "0xb1ee02dde7980be1e7558c5918a6e2860353421febea67319010ce16898b9651";
-export const BLACKJACK_CONFIG = 
+export const BLACKJACK_CONFIG =
   "0x4bdf76f28e497040d54b598662de406a62a2002656f5e1a97701accac086e5d4";
 export const BLACKJACK_MODULE_NAME = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
 
 // CRAPS
 // ===============================================================================
-export const CRAPS_PACKAGE_ID = 
+export const CRAPS_PACKAGE_ID =
   "0xee9797456fbddcc33d9f74298996992c31ad42dd8c02755fe3424ecb36cc5ad4";
-export const CRAPS_CONFIG = 
+export const CRAPS_CONFIG =
   "0xc55a5c4fb74f830aa0986e2cf866141a992c0da30d38ca465923d13cf0031b42";
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
