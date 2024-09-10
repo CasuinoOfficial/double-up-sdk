@@ -33,7 +33,6 @@ import {
 import { testRPS } from "./rps";
 import { 
   testBlackjackCreate, 
-  testBlackjackDealerMove, 
   testBlackjackPlayerDouble, 
   testBlackjackPlayerHit, 
   testBlackjackPlayerSplit, 
@@ -65,6 +64,7 @@ const dbClient = new DoubleUpClient({
 
 ((fnName, secretKey) => {
   if (secretKey !== "") {
+    console.log(keypair.toSuiAddress());
     switch (fnName) {
       case "coinflip":
         testCoinflip(dbClient, client, keypair);
@@ -144,9 +144,6 @@ const dbClient = new DoubleUpClient({
       case "blackjack:get":
         testGetBlackjackTable(dbClient, keypair);
         break;
-      case "blackjack:deal":
-        testBlackjackDealerMove(dbClient, client, keypair);
-        break;
       case "blackjack:hit":
         testBlackjackPlayerHit(dbClient, client, keypair);
         break;
@@ -185,7 +182,6 @@ const dbClient = new DoubleUpClient({
         // testRPS(dbClient, client, keypair);
         // testBlackjackCreate(dbClient, client, keypair);
         // testGetBlackjackTable(dbClient, keypair);
-        // testBlackjackDealerMove(dbClient, client, keypair);
         // testBlackjackPlayerHit(dbClient, client, keypair);
         // testBlackjackPlayerStand(dbClient, client, keypair);
         // testBlackjackPlayerDouble(dbClient, client, keypair);

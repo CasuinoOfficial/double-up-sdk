@@ -54,64 +54,15 @@ export const testGetBlackjackTable = async (
 	keypair: Secp256k1Keypair,
 ) => {
 	try {
-		const {
-			ok: getOk,
-			err: getErr,
-			fields
-		} = await dbClient.getBlackjackTable({
+		const resp = await dbClient.getBlackjackTable({
 			coinType: SUI_COIN_TYPE,
 			address: keypair.toSuiAddress(),
 		});
 
-		if (!getOk) {
-			throw getErr;
-		}
-
-		console.dir(fields, {depth: 5});
+		console.dir(resp, {depth: 5});
 	} catch (err) {
 		console.log(err);
 	}
-}
-
-export const testBlackjackDealerMove = async (
-	dbClient: DoubleUpClient,
-	client: SuiClient,
-	keypair: Secp256k1Keypair,
-) => {
-	try {
-		const txb = new Transaction();
-
-		dbClient.blackjackDealerMove({
-			coinType: SUI_COIN_TYPE,
-			transaction: txb,
-		});
-
-		console.log("Dealer move added to transaction");
-
-		const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
-
-		if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
-
-    console.log("Signed and sent transaction.");
-		console.dir(transactionResult, { depth: 5});
-
-  } catch (err) {
-    console.log(err);
-  }
 }
 
 export const testBlackjackPlayerHit = async (

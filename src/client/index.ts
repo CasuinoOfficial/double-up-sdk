@@ -91,8 +91,6 @@ import {
   BlackjackInput,
   getBlackjackTable,
   GetBlackjackTableInput,
-  blackjackDealerMove,
-  BlackjackDealerMoveInput,
   blackjackPlayerMove,
   BlackjackPlayerMoveInput,
 } from "../games/blackjack";
@@ -318,11 +316,6 @@ export class DoubleUpClient {
       ...input,
       blackjackPackageId: this.blackjackPackageId,
       suiClient: this.suiClient,
-    });
-  blackjackDealerMove = (input: BlackjackDealerMoveInput) => 
-    blackjackDealerMove({
-      ...input,
-      blackjackPackageId: this.blackjackPackageId,
     });
   blackjackPlayerMove = (input: BlackjackPlayerMoveInput) =>
     blackjackPlayerMove({
