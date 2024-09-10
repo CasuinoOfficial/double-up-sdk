@@ -52,9 +52,33 @@ interface InternalGetBlackjackTableInput extends GetBlackjackTableInput {
 }
 
 export interface GetBlackjackTableResponse {
-  ok: boolean;
-  err?: Error;
-  fields?: BlackjackGame;
+  balance: string;
+  creator: string;
+  current_game: {
+    fields: {
+      bet_size: string;
+      current_deck: number[];
+      dealer_cards: number[];
+      hands: {
+        cards: number[];
+        status: number;
+        current_sum: number;
+        bet_size: string;
+        is_natural_blackjack: boolean;
+        is_doubled: boolean;
+        is_settled: boolean;
+        bet_returned: number;
+      }[];
+      origin: string;
+      risk: number;
+      start_epoch: number;
+    }
+    type: string;
+  },
+  id: {
+    id: string;
+  },
+  round_number: string;
 }
 
 interface BlackjackGame {
@@ -106,32 +130,24 @@ export const getBlackjackTable = async ({
   blackjackPackageId,
   suiClient,
 }: InternalGetBlackjackTableInput): Promise<GetBlackjackTableResponse> => {
-  const res: GetBlackjackTableResponse = { ok: true };
 
-  try {
-    const { data } = await suiClient.getDynamicFieldObject({
-      parentId: BLACKJACK_CONFIG,
-      name: {
-        type: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
-        value: {
-          creator: address,
-        },
+  const { data } = await suiClient.getDynamicFieldObject({
+    parentId: BLACKJACK_CONFIG,
+    name: {
+      type: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
+      value: {
+        creator: address,
       },
-    });
+    },
+  });
 
-    if (data.content?.dataType !== "moveObject") {
-      return null;
-    }
-
-    const fields = data.content.fields as any;
-    res.ok = true;
-    res.fields = fields;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
+  if (data.content?.dataType !== "moveObject") {
+    return null;
   }
 
-  return res;
+  const fields = data.content.fields as any;
+
+  return fields;
 }
 
 export const blackjackDealerMove = ({
