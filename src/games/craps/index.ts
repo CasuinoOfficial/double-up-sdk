@@ -62,7 +62,7 @@ export interface CrapsTableInput {
 }
 
 interface InternalCrapsTableInput extends CrapsTableInput {
-  crapsPackageId: string;
+  crapsCorePackageId: string;
 }
 
 type PassLineBet = 0;
@@ -146,7 +146,7 @@ export interface GetCrapsTableInput {
 }
 
 interface InternalGetCrapsTableInput extends GetCrapsTableInput {
-  crapsPackageId: string;
+  crapsCorePackageId: string;
   suiClient: SuiClient;
 }
 
@@ -186,11 +186,11 @@ export interface CrapsContractData {
 
 export const createCrapsTable = ({
   coinType,
-  crapsPackageId,
+  crapsCorePackageId,
   transaction,
 }: InternalCrapsTableInput) => {
   transaction.moveCall({
-    target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::create_craps_table`,
+    target: `${crapsCorePackageId}::${CRAPS_MODULE_NAME}::create_craps_table`,
     typeArguments: [coinType],
     arguments: [transaction.object(CRAPS_CONFIG)],
   });
@@ -199,13 +199,13 @@ export const createCrapsTable = ({
 export const getCrapsTable = async ({
   address,
   coinType,
-  crapsPackageId,
+  crapsCorePackageId,
   suiClient,
 }: InternalGetCrapsTableInput): Promise<CrapsContractData | null> => {
   const { data } = await suiClient.getDynamicFieldObject({
     parentId: CRAPS_CONFIG,
     name: {
-      type: `${crapsPackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
+      type: `${crapsCorePackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
       value: {
         creator: address,
       },

@@ -337,7 +337,7 @@ export interface RouletteTableInput {
 }
 
 interface InternalRouletteTableInput extends RouletteTableInput {
-  roulettePackageId: string;
+  rouletteCorePackageId: string;
 }
 
 export interface RouletteTableResponse {
@@ -352,7 +352,7 @@ export interface GetRouletteTableInput {
 }
 
 interface InternalGetRouletteTableInput extends GetRouletteTableInput {
-  roulettePackageId: string;
+  rouletteCorePackageId: string;
   suiClient: SuiClient;
 }
 
@@ -433,11 +433,11 @@ export const addRouletteBet = ({
 
 export const createRouletteTable = ({
   coinType,
-  roulettePackageId,
+  rouletteCorePackageId,
   transaction,
 }: InternalRouletteTableInput) => {
   transaction.moveCall({
-    target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
+    target: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
     typeArguments: [coinType],
     arguments: [transaction.object(ROULETTE_CONFIG)],
   });
@@ -446,7 +446,7 @@ export const createRouletteTable = ({
 export const getRouletteTable = async ({
   address,
   coinType,
-  roulettePackageId,
+  rouletteCorePackageId,
   suiClient,
 }: InternalGetRouletteTableInput): Promise<GetRouletteTableResponse> => {
   const res: GetRouletteTableResponse = { ok: true };
@@ -455,7 +455,7 @@ export const getRouletteTable = async ({
     const { data } = await suiClient.getDynamicFieldObject({
       parentId: ROULETTE_CONFIG,
       name: {
-        type: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
+        type: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
         value: {
           creator: address,
         },
