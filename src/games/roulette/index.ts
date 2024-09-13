@@ -462,7 +462,7 @@ export const getRouletteTable = async ({
       },
     });
 
-    if (data.content?.dataType !== "moveObject") {
+    if (data?.content?.dataType !== "moveObject") {
       return null;
     }
 

@@ -136,7 +136,7 @@ export const getBlackjackTable = async ({
     },
   });
 
-  if (data.content?.dataType !== "moveObject") {
+  if (data?.content?.dataType !== "moveObject") {
     return null;
   }
 

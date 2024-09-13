@@ -144,7 +144,7 @@ export const getPlinkoTable = async ({
       },
     });
 
-    if (data.content?.dataType !== "moveObject") {
+    if (data?.content?.dataType !== "moveObject") {
       return null;
     }
 
