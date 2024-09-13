@@ -1,25 +1,27 @@
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { KioskClient, Network } from "@mysten/kiosk";
 import {
+  COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
+  CRAPS_CORE_PACKAGE_ID,
   CRAPS_PACKAGE_ID,
+  LIMBO_CORE_PACKAGE_ID,
   LIMBO_PACKAGE_ID,
+  PLINKO_CORE_PACKAGE_ID,
   PLINKO_PACKAGE_ID,
+  ROULETTE_CORE_PACKAGE_ID,
   ROULETTE_PACKAGE_ID,
+  RPS_CORE_PACKAGE_ID,
   RPS_PACKAGE_ID,
+  UFORANGE_CORE_PACKAGE_ID,
   UFORANGE_PACKAGE_ID,
+  BLACKJACK_CORE_PACKAGE_ID,
   BLACKJACK_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
-import {
-  createCoinflip,
-  CoinflipInput,
-} from "../games/coinflip";
+import { createCoinflip, CoinflipInput } from "../games/coinflip";
 
-import {
-  createLimbo,
-  LimboInput,
-} from "../games/limbo";
+import { createLimbo, LimboInput } from "../games/limbo";
 
 import {
   buyLotteryTickets,
@@ -47,10 +49,7 @@ import {
   StartMultiPlinkoInput,
 } from "../games/plinko";
 
-import {
-  createRange,
-  RangeInput,
-} from "../games/ufoRange";
+import { createRange, RangeInput } from "../games/ufoRange";
 
 import {
   addRouletteBet,
@@ -64,27 +63,25 @@ import {
   RouletteSettleOrContinueInput,
   rouletteSettleOrContinue,
   GetRouletteTableInput,
-  getRouletteTable
+  getRouletteTable,
 } from "../games/roulette";
 
-import {
-  createRockPaperScissors,
-  RPSInput,
-} from "../games/rps";
+import { createRockPaperScissors, RPSInput } from "../games/rps";
 
-import { 
-  addCrapsBet, 
-  CrapsAddBetInput, 
-  CrapsRemoveBetInput, 
-  crapsSettleOrContinue, 
-  CrapsSettleOrContinueInput, 
-  CrapsStartInput, 
-  CrapsTableInput, 
-  createCrapsTable, 
-  getCrapsTable, 
-  GetCrapsTableInput, 
-  removeCrapsBet, 
-  startCraps } from "../games/craps";
+import {
+  addCrapsBet,
+  CrapsAddBetInput,
+  CrapsRemoveBetInput,
+  crapsSettleOrContinue,
+  CrapsSettleOrContinueInput,
+  CrapsStartInput,
+  CrapsTableInput,
+  createCrapsTable,
+  getCrapsTable,
+  GetCrapsTableInput,
+  removeCrapsBet,
+  startCraps,
+} from "../games/craps";
 
 import {
   createBlackjackGame,
@@ -96,16 +93,25 @@ import {
 } from "../games/blackjack";
 
 interface DoubleUpClientInput {
+  coinflipCorePackageId?: string;
   coinflipPackageId?: string;
+  diceCorePackageId?: string;
   dicePackageId?: string;
+  limboCorePackageId?: string;
   limboPackageId?: string;
   origin?: string;
   partnerNftListId?: string;
+  plinkoCorePackageId?: string;
   plinkoPackageId?: string;
+  ufoRangeCorePackageId?: string;
   ufoRangePackageId?: string;
+  rouletteCorePackageId?: string;
   roulettePackageId?: string;
+  rpsCorePackageId?: string;
   rpsPackageId?: string;
+  crapsCorePackageId?: string;
   crapsPackageId?: string;
+  blackjackCorePackageId?: string;
   blackjackPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
@@ -113,27 +119,43 @@ interface DoubleUpClientInput {
 
 export class DoubleUpClient {
   constructor({
+    coinflipCorePackageId = COIN_CORE_PACKAGE_ID,
     coinflipPackageId = COIN_PACKAGE_ID,
+    limboCorePackageId = LIMBO_CORE_PACKAGE_ID,
     limboPackageId = LIMBO_PACKAGE_ID,
     origin = "DoubleUp",
     partnerNftListId,
+    plinkoCorePackageId = PLINKO_CORE_PACKAGE_ID,
     plinkoPackageId = PLINKO_PACKAGE_ID,
+    ufoRangeCorePackageId = UFORANGE_CORE_PACKAGE_ID,
     ufoRangePackageId = UFORANGE_PACKAGE_ID,
+    rouletteCorePackageId = ROULETTE_CORE_PACKAGE_ID,
     roulettePackageId = ROULETTE_PACKAGE_ID,
+    rpsCorePackageId = RPS_CORE_PACKAGE_ID,
     rpsPackageId = RPS_PACKAGE_ID,
+    crapsCorePackageId = CRAPS_CORE_PACKAGE_ID,
     crapsPackageId = CRAPS_PACKAGE_ID,
+    blackjackCorePackageId = BLACKJACK_CORE_PACKAGE_ID,
     blackjackPackageId = BLACKJACK_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
+    this.coinflipCorePackageId = coinflipCorePackageId;
     this.coinflipPackageId = coinflipPackageId;
+    this.limboCorePackageId = limboCorePackageId;
     this.limboPackageId = limboPackageId;
     this.origin = origin;
     this.partnerNftListId = partnerNftListId;
+    this.plinkoCorePackageId = plinkoCorePackageId;
     this.plinkoPackageId = plinkoPackageId;
+    this.ufoRangeCorePackageId = ufoRangeCorePackageId;
     this.ufoRangePackageId = ufoRangePackageId;
+    this.rouletteCorePackageId = rouletteCorePackageId;
     this.roulettePackageId = roulettePackageId;
+    this.crapsCorePackageId = crapsCorePackageId;
     this.crapsPackageId = crapsPackageId;
+    this.rpsCorePackageId = rpsCorePackageId;
     this.rpsPackageId = rpsPackageId;
+    this.blackjackCorePackageId = blackjackCorePackageId;
     this.blackjackPackageId = blackjackPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
@@ -146,14 +168,23 @@ export class DoubleUpClient {
   origin: string;
 
   // Game Package Ids
+  coinflipCorePackageId: string;
   coinflipPackageId: string;
+  diceCorePackageId: string;
   dicePackageId: string;
+  limboCorePackageId: string;
   limboPackageId: string;
+  plinkoCorePackageId: string;
   plinkoPackageId: string;
+  ufoRangeCorePackageId: string;
   ufoRangePackageId: string;
+  rouletteCorePackageId: string;
   roulettePackageId: string;
+  rpsCorePackageId: string;
   rpsPackageId: string;
+  crapsCorePackageId: string;
   crapsPackageId: string;
+  blackjackCorePackageId: string;
   blackjackPackageId: string;
 
   suiClient: SuiClient;
@@ -192,7 +223,7 @@ export class DoubleUpClient {
   createPlinkoTable = (input: PlinkoTableInput) =>
     createPlinkoTable({
       ...input,
-      plinkoPackageId: this.plinkoPackageId,
+      plinkoCorePackageId: this.plinkoCorePackageId,
     });
   addPlinkoBet = (input: PlinkoAddBetInput) =>
     addPlinkoBet({
@@ -203,7 +234,7 @@ export class DoubleUpClient {
   getPlinkoTable = (input: GetPlinkoTableInput) =>
     getPlinkoTable({
       ...input,
-      plinkoPackageId: this.plinkoPackageId,
+      plinkoCorePackageId: this.plinkoCorePackageId,
       suiClient: this.suiClient,
     });
   removePlinkoBet = (input: PlinkoRemoveBetInput) =>
@@ -222,8 +253,8 @@ export class DoubleUpClient {
     createRange({
       ...input,
       partnerNftListId: this.partnerNftListId,
-      ufoRangePackageId: this.ufoRangePackageId
-  });
+      ufoRangePackageId: this.ufoRangePackageId,
+    });
 
   // roulette
   addRouletteBet = (input: RouletteAddBetInput) =>
@@ -235,12 +266,12 @@ export class DoubleUpClient {
   createRouletteTable = (input: RouletteTableInput) =>
     createRouletteTable({
       ...input,
-      roulettePackageId: this.roulettePackageId,
+      rouletteCorePackageId: this.rouletteCorePackageId,
     });
   getRouletteTable = (input: GetRouletteTableInput) =>
     getRouletteTable({
       ...input,
-      roulettePackageId: this.roulettePackageId,
+      rouletteCorePackageId: this.rouletteCorePackageId,
       suiClient: this.suiClient,
     });
   removeRouletteBet = (input: RouletteRemoveBetInput) =>
@@ -254,46 +285,46 @@ export class DoubleUpClient {
       ...input,
       roulettePackageId: this.roulettePackageId,
     });
-  rouletteSettleOrContinue = (input: RouletteSettleOrContinueInput) => 
+  rouletteSettleOrContinue = (input: RouletteSettleOrContinueInput) =>
     rouletteSettleOrContinue({
       ...input,
       roulettePackageId: this.roulettePackageId,
-      origin: this.origin
+      origin: this.origin,
     });
 
   // Craps
-  createCrapsTable = (input: CrapsTableInput) => 
+  createCrapsTable = (input: CrapsTableInput) =>
     createCrapsTable({
       ...input,
-      crapsPackageId: this.crapsPackageId,
+      crapsCorePackageId: this.crapsCorePackageId,
     });
   getCrapsTable = (input: GetCrapsTableInput) =>
     getCrapsTable({
       ...input,
-      crapsPackageId: this.crapsPackageId,
+      crapsCorePackageId: this.crapsCorePackageId,
       suiClient: this.suiClient,
     });
-  addCrapsBet = (input: CrapsAddBetInput) => 
+  addCrapsBet = (input: CrapsAddBetInput) =>
     addCrapsBet({
       ...input,
       crapsPackageId: this.crapsPackageId,
-      origin: this.origin
+      origin: this.origin,
     });
   removeCrapsBet = (input: CrapsRemoveBetInput) =>
     removeCrapsBet({
       ...input,
       crapsPackageId: this.crapsPackageId,
     });
-  startCraps = (input: CrapsStartInput) => 
+  startCraps = (input: CrapsStartInput) =>
     startCraps({
       ...input,
-      crapsPackageId: this.crapsPackageId
+      crapsPackageId: this.crapsPackageId,
     });
-  crapsSettleOrContinue = (input: CrapsSettleOrContinueInput) => 
+  crapsSettleOrContinue = (input: CrapsSettleOrContinueInput) =>
     crapsSettleOrContinue({
       ...input,
       crapsPackageId: this.crapsPackageId,
-      origin: this.origin
+      origin: this.origin,
     });
 
   // rps
@@ -304,17 +335,17 @@ export class DoubleUpClient {
       rpsPackageId: this.rpsPackageId,
     });
 
-    // blackjack
-  createBlackjackGame = (input: BlackjackInput) => 
+  // blackjack
+  createBlackjackGame = (input: BlackjackInput) =>
     createBlackjackGame({
       ...input,
-      blackjackPackageId: this.blackjackPackageId,
+      blackjackCorePackageId: this.blackjackCorePackageId,
       origin: this.origin,
     });
   getBlackjackTable = (input: GetBlackjackTableInput) =>
     getBlackjackTable({
       ...input,
-      blackjackPackageId: this.blackjackPackageId,
+      blackjackCorePackageId: this.blackjackCorePackageId,
       suiClient: this.suiClient,
     });
   blackjackPlayerMove = (input: BlackjackPlayerMoveInput) =>

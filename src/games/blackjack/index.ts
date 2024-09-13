@@ -23,12 +23,7 @@ type Double = 103;
 type Split = 104;
 type Surrender = 105;
 
-type PlayerAction = 
-  | Hit
-  | Stand
-  | Double
-  | Split
-  | Surrender;
+type PlayerAction = Hit | Stand | Double | Split | Surrender;
 
 export interface BlackjackInput {
   coinType: string;
@@ -37,7 +32,7 @@ export interface BlackjackInput {
 }
 
 interface InternalBlackjackInput extends BlackjackInput {
-  blackjackPackageId: string;
+  blackjackCorePackageId: string;
   origin: string;
 }
 
@@ -47,7 +42,7 @@ export interface GetBlackjackTableInput {
 }
 
 interface InternalGetBlackjackTableInput extends GetBlackjackTableInput {
-  blackjackPackageId: string;
+  blackjackCorePackageId: string;
   suiClient: SuiClient;
 }
 
@@ -72,12 +67,12 @@ export interface GetBlackjackTableResponse {
       origin: string;
       risk: number;
       start_epoch: number;
-    }
+    };
     type: string;
-  },
+  };
   id: {
     id: string;
-  },
+  };
   round_number: string;
 }
 
@@ -96,13 +91,13 @@ export const createBlackjackGame = ({
   coinType,
   coin,
   transaction,
-  blackjackPackageId,
+  blackjackCorePackageId,
   origin,
 }: InternalBlackjackInput) => {
   let assetIndex = getAssetIndex(coinType);
 
   transaction.moveCall({
-    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_0`,
+    target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_0`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
@@ -117,19 +112,18 @@ export const createBlackjackGame = ({
       transaction.pure.u64(assetIndex),
     ],
   });
-}
+};
 
 export const getBlackjackTable = async ({
   address,
   coinType,
-  blackjackPackageId,
+  blackjackCorePackageId,
   suiClient,
 }: InternalGetBlackjackTableInput): Promise<GetBlackjackTableResponse> => {
-
   const { data } = await suiClient.getDynamicFieldObject({
     parentId: BLACKJACK_CONFIG,
     name: {
-      type: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
+      type: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
       value: {
         creator: address,
       },
@@ -143,10 +137,12 @@ export const getBlackjackTable = async ({
   const fields = data.content.fields as any;
 
   return fields;
-}
+};
 
-const isDoubleOrSplit = (playerAction: PlayerAction): playerAction is Double | Split =>
-  (playerAction === 103) || (playerAction === 104);
+const isDoubleOrSplit = (
+  playerAction: PlayerAction
+): playerAction is Double | Split =>
+  playerAction === 103 || playerAction === 104;
 
 export const blackjackPlayerMove = ({
   coinType,
@@ -160,7 +156,7 @@ export const blackjackPlayerMove = ({
   if (isDoubleOrSplit(playerAction)) {
     if (!coinOpt) {
       throw new Error("Coin required to DOUBLE or SPLIT");
-    };
+    }
     transaction.moveCall({
       target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_0`,
       typeArguments: [coinType],
@@ -177,11 +173,10 @@ export const blackjackPlayerMove = ({
         transaction.pure.u64(assetIndex),
       ],
     });
-
   } else {
     if (!!coinOpt) {
       throw new Error("Do not provide coin to HIT or STAND or SURRENDER");
-    };
+    }
     transaction.moveCall({
       target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
       typeArguments: [coinType],
@@ -198,4 +193,4 @@ export const blackjackPlayerMove = ({
       ],
     });
   }
-}
+};

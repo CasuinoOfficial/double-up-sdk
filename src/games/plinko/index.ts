@@ -1,7 +1,4 @@
-import {
-  SuiClient,
-  SuiTransactionBlockResponse,
-} from "@mysten/sui/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -9,10 +6,10 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
-import { 
-  PLINKO_MODULE_NAME, 
-  RAND_OBJ_ID, 
-  UNI_HOUSE_OBJ_ID, 
+import {
+  PLINKO_MODULE_NAME,
+  RAND_OBJ_ID,
+  UNI_HOUSE_OBJ_ID,
   PLINKO_CONFIG,
   CLOCK_OBJ_ID,
   PYTH_SUI_PRICE_INFO_OBJ_ID,
@@ -31,7 +28,7 @@ export interface PlinkoInput {
   numberOfDiscs: number;
   plinkoType: PlinkoType;
   transaction: TransactionType;
-  origin?: string; 
+  origin?: string;
 }
 
 interface InternalPlinkoInput extends PlinkoInput {
@@ -39,14 +36,13 @@ interface InternalPlinkoInput extends PlinkoInput {
 }
 
 export interface GetPlinkoTableInput {
-  address: string,
+  address: string;
   coinType: string;
 }
 
 interface InternalGetPlinkoTableInput extends GetPlinkoTableInput {
-  plinkoPackageId: string;
+  plinkoCorePackageId: string;
   suiClient: SuiClient;
-
 }
 
 export interface GetPlinkoTableResponse {
@@ -77,7 +73,7 @@ export interface PlinkoTableInput {
   transaction: TransactionType;
 }
 export interface InternalPlinkoTableInput extends PlinkoTableInput {
-  plinkoPackageId: string;
+  plinkoCorePackageId: string;
 }
 export interface PlinkoRemoveBetInput {
   creator: string;
@@ -111,12 +107,12 @@ interface InternalStartMultiPlinkoInput extends StartMultiPlinkoInput {
 }
 
 export const createPlinkoTable = ({
-  coinType, 
-  plinkoPackageId,
+  coinType,
+  plinkoCorePackageId,
   transaction,
 }: InternalPlinkoTableInput) => {
   const [table] = transaction.moveCall({
-    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::create_plinko_table`,
+    target: `${plinkoCorePackageId}::${PLINKO_MODULE_NAME}::create_plinko_table`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
@@ -128,7 +124,7 @@ export const createPlinkoTable = ({
 export const getPlinkoTable = async ({
   address,
   coinType,
-  plinkoPackageId,
+  plinkoCorePackageId,
   suiClient,
 }: InternalGetPlinkoTableInput): Promise<GetPlinkoTableResponse> => {
   const res: GetPlinkoTableResponse = { ok: true };
@@ -137,7 +133,7 @@ export const getPlinkoTable = async ({
     const { data } = await suiClient.getDynamicFieldObject({
       parentId: PLINKO_CONFIG,
       name: {
-        type: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
+        type: `${plinkoCorePackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
         value: {
           creator: address,
         },
@@ -161,7 +157,7 @@ export const getPlinkoTable = async ({
 
 export const addPlinkoBet = ({
   coinType,
-  plinkoPackageId, 
+  plinkoPackageId,
   creator,
   coin,
   transaction,
@@ -185,7 +181,7 @@ export const addPlinkoBet = ({
     res.ok = false;
     res.err = err;
   }
-  
+
   return res;
 };
 
@@ -217,7 +213,7 @@ export const removePlinkoBet = ({
   }
 
   return res;
-}
+};
 
 export const startMultiPlinko = ({
   coinType,
@@ -251,7 +247,6 @@ export const startMultiPlinko = ({
   });
 };
 
-
 export const createSinglePlinko = ({
   coin,
   coinType,
@@ -259,7 +254,7 @@ export const createSinglePlinko = ({
   plinkoPackageId,
   plinkoType,
   transaction,
-  origin
+  origin,
 }: InternalPlinkoInput) => {
   let assetIndex = getAssetIndex(coinType);
   transaction.moveCall({
