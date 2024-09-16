@@ -16,7 +16,7 @@ import {
   SUILEND_MARKET,
   SUILEND_POND_SUI_POOL_OBJ_ID,
 } from "../../constants/mainnetConstants";
-import { getAssetIndex } from "../../utils";
+import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
 
 // 0: 6 Rows, 1: 9 Rows, 2: 12 Rows
 type PlinkoType = 0 | 1 | 2;
@@ -32,6 +32,20 @@ export interface PlinkoInput {
 }
 
 interface InternalPlinkoInput extends PlinkoInput {
+  plinkoPackageId: string;
+}
+
+export interface PlinkoVoucherInput {
+  betSize: number;
+  voucherId: string;
+  client: SuiClient;
+  numberOfDiscs: number;
+  plinkoType: PlinkoType;
+  transaction: TransactionType;
+  origin?: string;
+}
+
+interface InternalPlinkoVoucherInput extends PlinkoVoucherInput {
   plinkoPackageId: string;
 }
 
@@ -267,6 +281,40 @@ export const createSinglePlinko = ({
       transaction.pure.u8(plinkoType),
       transaction.pure.string(origin ?? "DoubleUp"),
       coin,
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
+    ],
+  });
+};
+
+export const createSinglePlinkoWithVoucher = async ({
+  betSize,
+  voucherId,
+  client,
+  numberOfDiscs,
+  plinkoPackageId,
+  plinkoType,
+  transaction,
+  origin,
+}: InternalPlinkoVoucherInput) => {
+  let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+  let assetIndex = getAssetIndex(coinType);
+  let voucherBank = getVoucherBank(coinType);
+  transaction.moveCall({
+    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher_0`,
+    typeArguments: [coinType, voucherType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(RAND_OBJ_ID),
+      transaction.pure.u64(numberOfDiscs),
+      transaction.pure.u8(plinkoType),
+      transaction.pure.string(origin ?? "DoubleUp"),
+      transaction.pure.u64(betSize),
+      transaction.object(voucherId),
+      transaction.object(voucherBank),
       transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
       transaction.object(SUILEND_MARKET),
       transaction.object(CLOCK_OBJ_ID),

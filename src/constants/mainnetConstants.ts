@@ -41,6 +41,19 @@ export const SUILEND_MARKET =
 export const PYTH_SUI_PRICE_INFO_OBJ_ID =
   "0x801dbc2f0053d34734814b2d6df491ce7807a725fe9a01ad74a07e9c51396c37";
 
+// VOUCHERS
+// ===============================================================================
+export const SUI_VOUCHER_BANK = 
+  "0xa07a0a48fc82fb86a416d46f3518a20e40dd211a3287f5dcfd599a5165d0f124";
+export const BUCK_VOUCHER_BANK = 
+  "0x313de210ab58ffd3cd120608f970fbdcb598caf87c62949eeb83c928101c417d";
+export const VOUCHER_PACKAGE_ID = 
+  "0xfb3efc5a003159d418a5b864d68cd562533e13cbb73d6caa0c4c1a924321b5de";
+export const DOUBLEUP_TYPE = `${VOUCHER_PACKAGE_ID}::types::DoubleUp`;
+export const UCESPORTS_TYPE = `${VOUCHER_PACKAGE_ID}::types::UCEsports`;
+export const DESUI_TYPE = `${VOUCHER_PACKAGE_ID}::types::DesuiLabs`;
+export const VOUCHER_BURN_TARGET = `${VOUCHER_PACKAGE_ID}::voucher::burn`;
+
 // SHARED
 // ===============================================================================
 export const CLOCK_OBJ_ID = "0x6";

@@ -1,8 +1,11 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 
 import {
+  BUCK_COIN_TYPE,
+  BUCK_VOUCHER_BANK,
   ROULETTE_MODULE_NAME, ROULETTE_PACKAGE_ID,
   SUI_COIN_TYPE,
+  SUI_VOUCHER_BANK,
 } from "../constants/mainnetConstants";
 
 interface GameInfo {
@@ -163,3 +166,36 @@ export const getAssetIndex = (coinType: string): number => {
     return 0;
   }
 };
+
+export const getVoucherBank = (coinType: string): string => {
+  if (coinType === SUI_COIN_TYPE) {
+    return SUI_VOUCHER_BANK;
+  } else if (coinType === BUCK_COIN_TYPE) {
+    return BUCK_VOUCHER_BANK;
+  }
+};
+
+export const getTypesFromVoucher = async (
+  voucherId: string,
+  suiClient: SuiClient
+): Promise<string[]> => {
+  const { data: voucherIdObject } = await suiClient.getObject({
+    id: voucherId,
+    options: {
+      showType: true,
+    },
+  });
+  const voucherIdType = voucherIdObject.type;
+  return [
+    getCoinTypeFromVoucher(voucherIdType),
+    getVoucherTypeFromVoucher(voucherIdType), 
+  ];
+}
+
+const getCoinTypeFromVoucher = (voucherType: string): string => {
+  return voucherType.split("<")[1].split(",")[0];
+}
+
+const getVoucherTypeFromVoucher = (voucherType: string): string => {
+  return voucherType.split("<")[1].split(", ")[1].replace(">", "");
+}

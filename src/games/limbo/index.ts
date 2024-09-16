@@ -1,4 +1,4 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -17,7 +17,7 @@ import {
   SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
-import { getAssetIndex } from "../../utils";
+import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
 
 type LimboResult = number;
 
@@ -35,6 +35,18 @@ export interface LimboInput {
   origin?: string; 
 }
 
+export interface LimboVoucherInput {
+  multipliers: number[];
+  betSize: number;
+  voucherId: string;
+  client: SuiClient;
+  transaction: TransactionType;
+  origin?: string;
+}
+
+interface InternalLimboVoucherInput extends LimboVoucherInput {
+  limboPackageId: string;
+}
 interface LimboParsedJson {
   game_id: string;
   player: string;
@@ -93,6 +105,48 @@ export const createLimbo = ({
         transaction.object(UNI_HOUSE_OBJ_ID),
         transaction.object(RAND_OBJ_ID),
         coin,
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(multipliers)
+        ),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+};
+
+export const createLimboWithVoucher = async ({
+  voucherId,
+  betSize,
+  client,
+  limboPackageId,
+  multipliers,
+  transaction,
+  origin
+}: InternalLimboVoucherInput) => {
+    for (let num of multipliers) {
+      if (
+        Number(num) < Number(LIMBO_MIN_MULTIPLIER) ||
+        Number(num) > Number(LIMBO_MAX_MULTIPLIER)
+      ) {
+        throw new Error("Multiplier out of range");
+      }
+    };
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let assetIndex = getAssetIndex(coinType);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.moveCall({
+      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
         transaction.pure(
           bcs.vector(bcs.U64).serialize(multipliers)
         ),
