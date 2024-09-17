@@ -4,10 +4,10 @@ import { ReactElement, ReactNode, createContext, useContext } from "react";
 
 import { DoubleUpClient } from "../client";
 
-import { CoinflipInput } from "../games/coinflip";
-import { LimboInput } from "../games/limbo";
-import { RangeInput } from "../games/ufoRange";
-import { RPSInput } from "../games/rps";
+import { CoinflipInput, CoinflipVoucherInput } from "../games/coinflip";
+import { LimboInput, LimboVoucherInput } from "../games/limbo";
+import { RangeInput, RangeVoucherInput } from "../games/ufoRange";
+import { RPSInput, RPSVoucherInput } from "../games/rps";
 import {
   BuyTicketsInput,
   BuyTicketsResponse,
@@ -29,6 +29,7 @@ import {
   PlinkoRemoveBetInput,
   PlinkoRemoveBetResponse,
   PlinkoTableInput,
+  PlinkoVoucherInput,
   StartMultiPlinkoInput,
 } from "../games/plinko";
 import {
@@ -53,6 +54,8 @@ import {
 import { 
   BlackjackInput, 
   BlackjackPlayerMoveInput, 
+  BlackjackPlayerMoveVoucherInput, 
+  BlackjackVoucherInput, 
   GetBlackjackTableInput, 
   GetBlackjackTableResponse 
 } from "../games/blackjack";
@@ -61,15 +64,20 @@ interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;
   buyLotteryTickets: (input: BuyTicketsInput) => BuyTicketsResponse;
   createCoinflip: (input: CoinflipInput) => void;
+  createCoinflipWithVoucher: (input: CoinflipVoucherInput) => void;
   createLimbo: (input: LimboInput) => void;
+  createLimboWithVoucher: (input: LimboVoucherInput) => void;
   createSinglePlinko: (input: PlinkoInput) => void;
+  createSinglePlinkoWithVoucher: (input: PlinkoVoucherInput) => void;
   createPlinkoTable: (input: PlinkoTableInput) => void;
   addPlinkoBet: (input: PlinkoAddBetInput) => PlinkoAddBetResponse;
   getPlinkoTable: (input: GetPlinkoTableInput) => Promise<GetPlinkoTableResponse>;
   removePlinkoBet: (input: PlinkoRemoveBetInput) => PlinkoRemoveBetResponse;
   startMultiPlinko: (input: StartMultiPlinkoInput) => void;
   createRange: (input: RangeInput) => void;
+  createRangeWithVoucher: (input: RangeVoucherInput) => void;
   createRockPaperScissors: (input: RPSInput) => void;
+  createRockPaperScissorsWithVoucher: (input: RPSVoucherInput) => void;
   createRouletteTable: (input: RouletteTableInput) => void;
   getRouletteTable: (input: GetRouletteTableInput) => Promise<GetRouletteTableResponse>;
   rouletteSettleOrContinue: (input: RouletteSettleOrContinueInput) => void;
@@ -93,8 +101,10 @@ interface DoubleUpContextState {
   startCraps: (input: CrapsStartInput) => void;
   crapsSettleOrContinue: (input: CrapsSettleOrContinueInput) => void;
   createBlackjackGame: (input: BlackjackInput) => void;
+  createBlackjackGameWithVoucher: (input: BlackjackVoucherInput) => void;
   getBlackjackTable: (input: GetBlackjackTableInput) => Promise<GetBlackjackTableResponse>;
   blackjackPlayerMove: (input: BlackjackPlayerMoveInput) => void;
+  blackjackPlayerMoveWithVoucher: (input: BlackjackPlayerMoveVoucherInput) => void;
 }
 
 interface DoubleupProviderProps {
@@ -145,15 +155,20 @@ const DoubleUpProvider = ({
   const buyLotteryTickets = dbClient.buyLotteryTickets;
 
   const createCoinflip = dbClient.createCoinflip;
+  const createCoinflipWithVoucher = dbClient.createCoinflipWithVoucher;
   const createLimbo = dbClient.createLimbo;
+  const createLimboWithVoucher = dbClient.createLimboWithVoucher;
   const createSinglePlinko = dbClient.createSinglePlinko;
+  const createSinglePlinkoWithVoucher = dbClient.createSinglePlinkoWithVoucher;
   const createPlinkoTable = dbClient.createPlinkoTable;
   const addPlinkoBet = dbClient.addPlinkoBet;
   const getPlinkoTable = dbClient.getPlinkoTable;
   const removePlinkoBet = dbClient.removePlinkoBet;
   const startMultiPlinko = dbClient.startMultiPlinko;
   const createRange = dbClient.createRange;
+  const createRangeWithVoucher = dbClient.createRangeWithVoucher;
   const createRockPaperScissors = dbClient.createRockPaperScissors;
+  const createRockPaperScissorsWithVoucher = dbClient.createRockPaperScissorsWithVoucher;
   const createRouletteTable = dbClient.createRouletteTable;
   const rouletteSettleOrContinue = dbClient.rouletteSettleOrContinue;
   const getRouletteTable = dbClient.getRouletteTable;
@@ -171,22 +186,29 @@ const DoubleUpProvider = ({
   const startCraps = dbClient.startCraps;
   const crapsSettleOrContinue = dbClient.crapsSettleOrContinue;
   const createBlackjackGame = dbClient.createBlackjackGame;
+  const createBlackjackGameWithVoucher = dbClient.createBlackjackGameWithVoucher;
   const getBlackjackTable = dbClient.getBlackjackTable;
   const blackjackPlayerMove = dbClient.blackjackPlayerMove;
+  const blackjackPlayerMoveWithVoucher = dbClient.blackjackPlayerMoveWithVoucher;
 
   const state: DoubleUpContextState = {
     addRouletteBet,
     buyLotteryTickets,
     createCoinflip,
+    createCoinflipWithVoucher,
     createLimbo,
+    createLimboWithVoucher,
     createSinglePlinko,
+    createSinglePlinkoWithVoucher,
     createPlinkoTable,
     addPlinkoBet,
     getPlinkoTable,
     removePlinkoBet,
     startMultiPlinko,
     createRange,
+    createRangeWithVoucher,
     createRockPaperScissors,
+    createRockPaperScissorsWithVoucher,
     createRouletteTable,
     getRouletteTable,
     rouletteSettleOrContinue,
@@ -204,8 +226,10 @@ const DoubleUpProvider = ({
     startCraps,
     crapsSettleOrContinue,
     createBlackjackGame,
+    createBlackjackGameWithVoucher,
     getBlackjackTable,
     blackjackPlayerMove,
+    blackjackPlayerMoveWithVoucher,
   };
 
   return (

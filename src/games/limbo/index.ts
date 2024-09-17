@@ -39,13 +39,13 @@ export interface LimboVoucherInput {
   multipliers: number[];
   betSize: number;
   voucherId: string;
-  client: SuiClient;
   transaction: TransactionType;
   origin?: string;
 }
 
 interface InternalLimboVoucherInput extends LimboVoucherInput {
   limboPackageId: string;
+  client: SuiClient;
 }
 interface LimboParsedJson {
   game_id: string;
@@ -127,6 +127,7 @@ export const createLimboWithVoucher = async ({
   transaction,
   origin
 }: InternalLimboVoucherInput) => {
+  try {
     for (let num of multipliers) {
       if (
         Number(num) < Number(LIMBO_MIN_MULTIPLIER) ||
@@ -158,4 +159,7 @@ export const createLimboWithVoucher = async ({
         transaction.pure.u64(assetIndex),
       ],
     });
+  } catch (e) {
+    console.error(e);
+  } 
 };

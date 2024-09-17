@@ -172,6 +172,8 @@ export const getVoucherBank = (coinType: string): string => {
     return SUI_VOUCHER_BANK;
   } else if (coinType === BUCK_COIN_TYPE) {
     return BUCK_VOUCHER_BANK;
+  } else {
+    throw new Error("Cointype not supported for vouchers");
   }
 };
 

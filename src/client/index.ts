@@ -19,9 +19,9 @@ import {
   BLACKJACK_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
-import { createCoinflip, CoinflipInput } from "../games/coinflip";
+import { createCoinflip, createCoinflipWithVoucher, CoinflipInput, CoinflipVoucherInput } from "../games/coinflip";
 
-import { createLimbo, LimboInput } from "../games/limbo";
+import { createLimbo, createLimboWithVoucher, LimboInput, LimboVoucherInput } from "../games/limbo";
 
 import {
   buyLotteryTickets,
@@ -36,6 +36,7 @@ import {
 
 import {
   createSinglePlinko,
+  createSinglePlinkoWithVoucher,
   createPlinkoTable,
   getPlinkoTable,
   addPlinkoBet,
@@ -47,9 +48,10 @@ import {
   GetPlinkoTableInput,
   PlinkoRemoveBetInput,
   StartMultiPlinkoInput,
+  PlinkoVoucherInput,
 } from "../games/plinko";
 
-import { createRange, RangeInput } from "../games/ufoRange";
+import { createRange, createRangeWithVoucher, RangeInput, RangeVoucherInput } from "../games/ufoRange";
 
 import {
   addRouletteBet,
@@ -66,7 +68,7 @@ import {
   getRouletteTable,
 } from "../games/roulette";
 
-import { createRockPaperScissors, RPSInput } from "../games/rps";
+import { createRockPaperScissors, createRockPaperScissorsWithVoucher, RPSInput, RPSVoucherInput } from "../games/rps";
 
 import {
   addCrapsBet,
@@ -85,11 +87,15 @@ import {
 
 import {
   createBlackjackGame,
+  createBlackjackGameWithVoucher, 
   BlackjackInput,
   getBlackjackTable,
   GetBlackjackTableInput,
   blackjackPlayerMove,
+  blackjackPlayerMoveWithVoucher,
   BlackjackPlayerMoveInput,
+  BlackjackVoucherInput,
+  BlackjackPlayerMoveVoucherInput,
 } from "../games/blackjack";
 
 interface DoubleUpClientInput {
@@ -192,7 +198,16 @@ export class DoubleUpClient {
 
   // coinflip
   createCoinflip = (input: CoinflipInput) =>
-    createCoinflip({ ...input, coinflipPackageId: this.coinflipPackageId });
+    createCoinflip({ 
+      ...input, 
+      coinflipPackageId: this.coinflipPackageId 
+    });
+  createCoinflipWithVoucher = (input: CoinflipVoucherInput) =>
+    createCoinflipWithVoucher({ 
+      ...input, 
+      coinflipPackageId: this.coinflipPackageId,
+      client: this.suiClient,
+    });
 
   // lottery
   buyLotteryTickets = buyLotteryTickets;
@@ -212,13 +227,28 @@ export class DoubleUpClient {
 
   // limbo
   createLimbo = (input: LimboInput) =>
-    createLimbo({ ...input, limboPackageId: this.limboPackageId });
+    createLimbo({ 
+      ...input, 
+      limboPackageId: this.limboPackageId 
+    });
+  createLimboWithVoucher = (input: LimboVoucherInput) =>
+    createLimboWithVoucher({
+      ...input, 
+      limboPackageId: this.limboPackageId,
+      client: this.suiClient,
+    });
 
   // plinko
   createSinglePlinko = (input: PlinkoInput) =>
     createSinglePlinko({
       ...input,
       plinkoPackageId: this.plinkoPackageId,
+    });
+  createSinglePlinkoWithVoucher = (input: PlinkoVoucherInput) =>
+    createSinglePlinkoWithVoucher({
+      ...input,
+      plinkoPackageId: this.plinkoPackageId,
+      client: this.suiClient,
     });
   createPlinkoTable = (input: PlinkoTableInput) =>
     createPlinkoTable({
@@ -254,6 +284,12 @@ export class DoubleUpClient {
       ...input,
       partnerNftListId: this.partnerNftListId,
       ufoRangePackageId: this.ufoRangePackageId,
+    });
+  createRangeWithVoucher = (input: RangeVoucherInput) =>
+    createRangeWithVoucher({
+      ...input,
+      ufoRangePackageId: this.ufoRangePackageId,
+      client: this.suiClient,
     });
 
   // roulette
@@ -334,6 +370,12 @@ export class DoubleUpClient {
       partnerNftListId: this.partnerNftListId,
       rpsPackageId: this.rpsPackageId,
     });
+  createRockPaperScissorsWithVoucher = (input: RPSVoucherInput) =>
+    createRockPaperScissorsWithVoucher({
+      ...input,
+      rpsPackageId: this.rpsPackageId,
+      client: this.suiClient,
+    });
 
   // blackjack
   createBlackjackGame = (input: BlackjackInput) =>
@@ -341,6 +383,13 @@ export class DoubleUpClient {
       ...input,
       blackjackCorePackageId: this.blackjackCorePackageId,
       origin: this.origin,
+    });
+  createBlackjackGameWithVoucher = (input: BlackjackVoucherInput) =>
+    createBlackjackGameWithVoucher({
+      ...input,
+      blackjackCorePackageId: this.blackjackCorePackageId,
+      origin: this.origin,
+      client: this.suiClient,
     });
   getBlackjackTable = (input: GetBlackjackTableInput) =>
     getBlackjackTable({
@@ -352,5 +401,11 @@ export class DoubleUpClient {
     blackjackPlayerMove({
       ...input,
       blackjackPackageId: this.blackjackPackageId,
+    });
+  blackjackPlayerMoveWithVoucher = (input: BlackjackPlayerMoveVoucherInput) =>
+    blackjackPlayerMoveWithVoucher({
+      ...input,
+      blackjackPackageId: this.blackjackPackageId,
+      client: this.suiClient,
     });
 }

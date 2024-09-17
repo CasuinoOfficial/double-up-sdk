@@ -45,13 +45,13 @@ export interface RPSVoucherInput {
   betTypes: Array<BetType>;
   betSize: number;
   voucherId: string;
-  client: SuiClient;
   origin?: string;
   transaction: TransactionType;
 }
 
 interface InternalRPSVoucherInput extends RPSVoucherInput {
   rpsPackageId: string;
+  client: SuiClient;
 }
 
 interface RPSSettlement {
@@ -187,27 +187,31 @@ export const createRockPaperScissorsWithVoucher = async ({
   transaction,
   origin
 }: InternalRPSVoucherInput) => {
-  let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-  let assetIndex = getAssetIndex(coinType);
-  let voucherBank = getVoucherBank(coinType);
-  transaction.moveCall({
-    target: `${rpsPackageId}::${RPS_MODULE_NAME}::play_with_voucher_0`,
-    typeArguments: [coinType, voucherType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(RAND_OBJ_ID),
-      transaction.pure(
-        bcs.vector(bcs.U64).serialize(betTypes)
-      ),
-      transaction.pure.u64(betSize),
-      transaction.object(voucherId),
-      transaction.object(voucherBank),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
-}
+  try {
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let assetIndex = getAssetIndex(coinType);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.moveCall({
+      target: `${rpsPackageId}::${RPS_MODULE_NAME}::play_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};

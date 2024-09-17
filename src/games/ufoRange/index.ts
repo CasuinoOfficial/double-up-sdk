@@ -38,7 +38,6 @@ export interface RangeVoucherInput {
   betTypes: Array<InsideOutsideBet>;
   betSize: number;
   voucherId: string;
-  client: SuiClient;
   range: number[][];
   transaction: TransactionType;
   origin?: string;
@@ -46,6 +45,7 @@ export interface RangeVoucherInput {
 
 interface InternalRangeVoucherInput extends RangeVoucherInput {
   ufoRangePackageId: string;
+  client: SuiClient;
 }
 
 const isRangeNumber = (range: number | number[]): range is number =>
@@ -98,26 +98,30 @@ export const createRangeWithVoucher = async ({
   ufoRangePackageId,
   origin,
 }: InternalRangeVoucherInput) => {
-  let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-  let assetIndex = getAssetIndex(coinType);
-  let voucherBank = getVoucherBank(coinType);
-  transaction.moveCall({
-    target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_with_voucher_0`,
-    typeArguments: [coinType, voucherType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(RAND_OBJ_ID),
-      transaction.pure.u64(betSize),
-      transaction.object(voucherId),
-      transaction.object(voucherBank),
-      transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
-      transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  try {
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let assetIndex = getAssetIndex(coinType);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.moveCall({
+      target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
+        transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } catch (e) {
+    console.error(e)
+  }
 };

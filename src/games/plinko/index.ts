@@ -38,7 +38,6 @@ interface InternalPlinkoInput extends PlinkoInput {
 export interface PlinkoVoucherInput {
   betSize: number;
   voucherId: string;
-  client: SuiClient;
   numberOfDiscs: number;
   plinkoType: PlinkoType;
   transaction: TransactionType;
@@ -47,6 +46,7 @@ export interface PlinkoVoucherInput {
 
 interface InternalPlinkoVoucherInput extends PlinkoVoucherInput {
   plinkoPackageId: string;
+  client: SuiClient;
 }
 
 export interface GetPlinkoTableInput {
@@ -300,26 +300,30 @@ export const createSinglePlinkoWithVoucher = async ({
   transaction,
   origin,
 }: InternalPlinkoVoucherInput) => {
-  let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-  let assetIndex = getAssetIndex(coinType);
-  let voucherBank = getVoucherBank(coinType);
-  transaction.moveCall({
-    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher_0`,
-    typeArguments: [coinType, voucherType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(RAND_OBJ_ID),
-      transaction.pure.u64(numberOfDiscs),
-      transaction.pure.u8(plinkoType),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.pure.u64(betSize),
-      transaction.object(voucherId),
-      transaction.object(voucherBank),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  try {
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let assetIndex = getAssetIndex(coinType);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.moveCall({
+      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(numberOfDiscs),
+        transaction.pure.u8(plinkoType),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };

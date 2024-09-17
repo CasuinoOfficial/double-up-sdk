@@ -39,13 +39,13 @@ interface InternalBlackjackInput extends BlackjackInput {
 export interface BlackjackVoucherInput {
   betSize: number;
   voucherId: string;
-  client: SuiClient;
   transaction: TransactionType;
 }
 
 interface InternalBlackjackVoucherInput extends BlackjackVoucherInput {
   blackjackCorePackageId: string;
   origin: string;
+  client: SuiClient;
 }
 
 export interface GetBlackjackTableInput {
@@ -103,13 +103,13 @@ export interface BlackjackPlayerMoveVoucherInput {
   coinType: string;
   betSize?: string;
   voucherId?: string;
-  client?: SuiClient;
   playerAction: PlayerAction;
   transaction: TransactionType;
 }
 
 interface InternalBlackjackPlayerMoveVoucherInput extends BlackjackPlayerMoveVoucherInput {
   blackjackPackageId: string;
+  client: SuiClient;
 }
 
 export const createBlackjackGame = ({
