@@ -101,7 +101,7 @@ interface InternalBlackjackPlayerMoveInput extends BlackjackPlayerMoveInput {
 
 export interface BlackjackPlayerMoveVoucherInput {
   coinType: string;
-  betSize?: string;
+  betSize?: number;
   voucherId?: string;
   playerAction: PlayerAction;
   transaction: TransactionType;
