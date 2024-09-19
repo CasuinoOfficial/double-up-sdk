@@ -153,7 +153,7 @@ export const createBlackjackGameWithVoucher = async ({
 
   transaction.moveCall({
     target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
-    typeArguments: [coinType],
+    typeArguments: [coinType, voucherType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
       transaction.object(BLACKJACK_CONFIG),
