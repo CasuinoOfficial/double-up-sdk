@@ -43,7 +43,7 @@ export interface BlackjackVoucherInput {
 }
 
 interface InternalBlackjackVoucherInput extends BlackjackVoucherInput {
-  blackjackCorePackageId: string;
+  blackjackPackageId: string;
   origin: string;
   client: SuiClient;
 }
@@ -144,7 +144,7 @@ export const createBlackjackGameWithVoucher = async ({
   voucherId,
   client,
   transaction,
-  blackjackCorePackageId,
+  blackjackPackageId,
   origin,
 }: InternalBlackjackVoucherInput) => {
   let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
@@ -152,7 +152,7 @@ export const createBlackjackGameWithVoucher = async ({
   let voucherBank = getVoucherBank(coinType);
 
   transaction.moveCall({
-    target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
     typeArguments: [coinType, voucherType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),

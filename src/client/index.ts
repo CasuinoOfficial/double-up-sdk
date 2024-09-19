@@ -387,7 +387,7 @@ export class DoubleUpClient {
   createBlackjackGameWithVoucher = (input: BlackjackVoucherInput) =>
     createBlackjackGameWithVoucher({
       ...input,
-      blackjackCorePackageId: this.blackjackCorePackageId,
+      blackjackPackageId: this.blackjackPackageId,
       origin: this.origin,
       client: this.suiClient,
     });
