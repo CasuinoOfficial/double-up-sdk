@@ -240,6 +240,7 @@ export const startMultiPlinko = ({
   origin,
 }: InternalStartMultiPlinkoInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
   transaction.moveCall({
     target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_plinko_0`,
     typeArguments: [coinType],
@@ -271,6 +272,7 @@ export const createSinglePlinko = ({
   origin,
 }: InternalPlinkoInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
   transaction.moveCall({
     target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_0`,
     typeArguments: [coinType],
@@ -304,6 +306,7 @@ export const createSinglePlinkoWithVoucher = async ({
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
     let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
+    transaction.setGasBudget(20_000_000);
     transaction.moveCall({
       target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher_0`,
       typeArguments: [coinType, voucherType],

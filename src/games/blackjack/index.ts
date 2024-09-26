@@ -120,7 +120,7 @@ export const createBlackjackGame = ({
   origin,
 }: InternalBlackjackInput) => {
   let assetIndex = getAssetIndex(coinType);
-
+  transaction.setGasBudget(50_000_000);
   transaction.moveCall({
     target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_0`,
     typeArguments: [coinType],
@@ -150,7 +150,7 @@ export const createBlackjackGameWithVoucher = async ({
   let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
   let assetIndex = getAssetIndex(coinType);
   let voucherBank = getVoucherBank(coinType);
-
+  transaction.setGasBudget(50_000_000);
   transaction.moveCall({
     target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
     typeArguments: [coinType, voucherType],
@@ -209,6 +209,7 @@ export const blackjackPlayerMove = ({
   blackjackPackageId,
 }: InternalBlackjackPlayerMoveInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
 
   if (isDoubleOrSplit(playerAction)) {
     if (!coinOpt) {
@@ -262,6 +263,7 @@ export const blackjackPlayerMoveWithVoucher = async ({
   blackjackPackageId,
 }: InternalBlackjackPlayerMoveVoucherInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
 
   if (isDoubleOrSplit(playerAction)) {
     if (!voucherId) {

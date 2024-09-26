@@ -66,18 +66,18 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 // COINFLIP
 // ===============================================================================
 export const COIN_CORE_PACKAGE_ID =
-  "0xfed36297fb9e84e50432bc94bf8ecfaaf6b27d99478b1cc582caa958d4cc8fdd";
+  "0x769c53f3c3fe689b6fdd62ade8d378428b37e5489641dd8c8ca8ec12aac6c61a";
 export const COIN_PACKAGE_ID =
-  "0xfda6e992a9322199242b42483acca976ea4cc6ac23debdd333a0505be0308a54";
+  "0x769c53f3c3fe689b6fdd62ade8d378428b37e5489641dd8c8ca8ec12aac6c61a";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 
 // LIMBO
 // ===============================================================================
 export const LIMBO_CORE_PACKAGE_ID =
-  "0x0f95abc2c2c5859ffc99165b8b410840e6b3897ce3ceca5e26df988152e33aba";
+  "0x7ce111e52191c9a607661104a9337aa6b6dd89365d0da8b228add413f5b83f91";
 export const LIMBO_PACKAGE_ID =
-  "0xb4ea23d4ee2e7d28360cbd99ec58e07c30e08d7193c5bd68be78f9658b4211a3";
+  "0x7ce111e52191c9a607661104a9337aa6b6dd89365d0da8b228add413f5b83f91";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 
@@ -89,7 +89,7 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 export const ROULETTE_CORE_PACKAGE_ID =
   "0x0eb72162cfbecb56f4dd13cd558aadc78162f52f93fe5b24627e5a6f6fe15a74";
 export const ROULETTE_PACKAGE_ID =
-  "0x2a551b9273f597a2c2e4adfc1e5bfbfa709c5351aaeb90bbc1066a4504e32796";
+  "0x0eb72162cfbecb56f4dd13cd558aadc78162f52f93fe5b24627e5a6f6fe15a74";
 export const ROULETTE_CONFIG =
   "0xa4847402c8b60dea08161f5392267a4629d80a88dbd475b5928cc21edf6f2a69";
 export const ROULETTE_MODULE_NAME = "roulette";
@@ -98,40 +98,40 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 // UFO RANGE
 // ===============================================================================
 export const UFORANGE_CORE_PACKAGE_ID =
-  "0x9e6c5e68f87e1aad622dc904aabb89c69bf613344676ef8547da7a21cd18b1b3";
+  "0xe11016147b507200b9310bfbf8434803dcd446083c26263b93f50b4fcda5a2d1";
 export const UFORANGE_PACKAGE_ID =
-  "0x267d339bc29d3c9bd34bf972d5b55ac435d59228ac793f59f89dcc935b0c499d";
+  "0xe11016147b507200b9310bfbf8434803dcd446083c26263b93f50b4fcda5a2d1";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
 // ROCK PAPER SCISSORS
 // ===============================================================================
 export const RPS_CORE_PACKAGE_ID =
-  "0x11b68e496cd739a239214df84bc99f923a2f14dfa038c8fb2aab54e28dbd0870";
+  "0x01845f70326fdbe1d0f8e3aa7adf2e1e60a4506704870133ea798020e8d5fb49";
 export const RPS_PACKAGE_ID =
-  "0x67e9b43ccae2a9424aca89326b9052b869d4f6255a3018a7e9bf9f3fab2a6cc0";
+  "0x01845f70326fdbe1d0f8e3aa7adf2e1e60a4506704870133ea798020e8d5fb49";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 
 // PLINKO
 // ===============================================================================
 export const PLINKO_CORE_PACKAGE_ID =
-  "0x80e6bdb3d4eef2cddc9c557068049d9bcc5cf10ac9a0f44f4fb3ce1a24f669f2";
+  "0x2bc5f01857bdf95112037c1ccc287fc5c6da831eb6ae58da9e789c623b2c4519";
 export const PLINKO_PACKAGE_ID =
-  "0x2a551b9273f597a2c2e4adfc1e5bfbfa709c5351aaeb90bbc1066a4504e32796";
+  "0x2bc5f01857bdf95112037c1ccc287fc5c6da831eb6ae58da9e789c623b2c4519";
 export const PLINKO_CONFIG =
-  "0xcb65ec5b5f8bbb1aee5c8f558c9a04527bd0f5293435caef899f078beb305502";
+  "0x111bd12d45768ffecfec9f64d9b16848afb8f4594ecb01e2db3705ad2a0bf141";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
 // BLACKJACK
 // ===============================================================================
 export const BLACKJACK_CORE_PACKAGE_ID =
-  "0x3022678009157811a1c50b882eff242de06a62dd4c77c2fb96a56c385c8bcc68";
+  "0xe42d2a3d2d5216ad9c57eb0b756c705462a889d980caa78e5e313479bbac11b2";
 export const BLACKJACK_PACKAGE_ID =
-  "0x3022678009157811a1c50b882eff242de06a62dd4c77c2fb96a56c385c8bcc68";
+  "0xe42d2a3d2d5216ad9c57eb0b756c705462a889d980caa78e5e313479bbac11b2";
 export const BLACKJACK_CONFIG =
-  "0x880b45b19e19526b1bac5dc1725728d910cd3bc6478466d3f56788fd2e5ebd05";
+  "0x8f99030e617c73fac23b4a9cd73346771078043bc775ccca0fc7248da475cd09";
 export const BLACKJACK_MODULE_NAME = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
 

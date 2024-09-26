@@ -124,6 +124,7 @@ export const createRockPaperScissors = ({
   origin
 }: InternalRPSInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
 
   if (
     typeof partnerNftListId === "string" &&
@@ -191,6 +192,7 @@ export const createRockPaperScissorsWithVoucher = async ({
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
     let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
+    transaction.setGasBudget(20_000_000);
     transaction.moveCall({
       target: `${rpsPackageId}::${RPS_MODULE_NAME}::play_with_voucher_0`,
       typeArguments: [coinType, voucherType],

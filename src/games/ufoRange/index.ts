@@ -69,6 +69,7 @@ export const createRange = ({
   origin,
 }: InternalRangeDiceInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
   transaction.moveCall({
     target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_0`,
     typeArguments: [coinType],
@@ -102,6 +103,7 @@ export const createRangeWithVoucher = async ({
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
     let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
+    transaction.setGasBudget(20_000_000);
     transaction.moveCall({
       target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_with_voucher_0`,
       typeArguments: [coinType, voucherType],
