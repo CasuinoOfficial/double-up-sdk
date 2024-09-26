@@ -83,44 +83,44 @@ export const testCrapsAdd = async (
         coinType: SUI_COIN_TYPE,
         transaction: txb,
     });
-//     const [coin2] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
+    // const [coin2] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount)]);
 
-//     dbClient.addCrapsBet({
-//       address,
-//       betType: PlaceBet,
-//       betNumber: 6,
-//       coin: coin2,
-//       coinType: SUI_COIN_TYPE,
-//       transaction: txb,
-//   });
-//   const [coin3, coin4, coin5] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), txb.pure.u64(betAmount), txb.pure.u64(betAmount)]);
+    // dbClient.addCrapsBet({
+    //   address,
+    //   betType: PlaceBet,
+    //   betNumber: 6,
+    //   coin: coin2,
+    //   coinType: SUI_COIN_TYPE,
+    //   transaction: txb,
+    // });
+    // const [coin3, coin4, coin5] = txb.splitCoins(txb.gas, [txb.pure.u64(betAmount), txb.pure.u64(betAmount), txb.pure.u64(betAmount)]);
 
-//   dbClient.addCrapsBet({
-//     address,
-//     betType: PlaceBet,
-//     betNumber: 8,
-//     coin: coin3,
-//     coinType: SUI_COIN_TYPE,
-//     transaction: txb,
-// });
+    // dbClient.addCrapsBet({
+    //   address,
+    //   betType: PlaceBet,
+    //   betNumber: 8,
+    //   coin: coin3,
+    //   coinType: SUI_COIN_TYPE,
+    //   transaction: txb,
+    // });
 
-// dbClient.addCrapsBet({
-//   address,
-//   betType: PlaceBet,
-//   betNumber: 5,
-//   coin: coin4,
-//   coinType: SUI_COIN_TYPE,
-//   transaction: txb,
-// });
+    // dbClient.addCrapsBet({
+    //   address,
+    //   betType: PlaceBet,
+    //   betNumber: 5,
+    //   coin: coin4,
+    //   coinType: SUI_COIN_TYPE,
+    //   transaction: txb,
+    // });
 
-// dbClient.addCrapsBet({
-//   address,
-//   betType: PlaceBet,
-//   betNumber: 9,
-//   coin: coin5,
-//   coinType: SUI_COIN_TYPE,
-//   transaction: txb,
-// });
+    // dbClient.addCrapsBet({
+    //   address,
+    //   betType: PlaceBet,
+    //   betNumber: 9,
+    //   coin: coin5,
+    //   coinType: SUI_COIN_TYPE,
+    //   transaction: txb,
+    // });
 
     const transactionResult = await client.signAndExecuteTransaction({
         signer: keypair,

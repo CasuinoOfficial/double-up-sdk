@@ -1,4 +1,4 @@
-import { SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -15,7 +15,7 @@ import {
   SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
-import { getAssetIndex } from "../../utils";
+import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
 
 // 0: Heads, 1: Tails
 export type BetType = 0 | 1;
@@ -30,6 +30,19 @@ export interface CoinflipInput {
 
 interface InternalCoinflipInput extends CoinflipInput {
   coinflipPackageId: string;
+}
+
+export interface CoinflipVoucherInput {
+  betTypes: Array<BetType>;
+  betSize: number;
+  voucherId: string;
+  transaction: TransactionType;
+  origin?: string;
+}
+
+interface InternalCoinflipVoucherInput extends CoinflipVoucherInput {
+  coinflipPackageId: string;
+  client: SuiClient;
 }
 
 interface CoinflipSettlement {
@@ -88,6 +101,7 @@ export const createCoinflip = ({
   origin
 }: InternalCoinflipInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
   transaction.moveCall({
     target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_0`,
     typeArguments: [coinType],
@@ -106,4 +120,43 @@ export const createCoinflip = ({
       transaction.pure.u64(assetIndex),
     ],
   });
+};
+
+export const createCoinflipWithVoucher = async ({
+  betTypes,
+  betSize,
+  voucherId,
+  client,
+  coinflipPackageId,
+  transaction,
+  origin
+}: InternalCoinflipVoucherInput) => {
+  try {
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let assetIndex = getAssetIndex(coinType);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.setGasBudget(20_000_000);
+    transaction.moveCall({
+      target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };

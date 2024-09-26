@@ -19,7 +19,7 @@ import {
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
 import { KioskClient } from "@mysten/kiosk";
-import { getAssetIndex } from "../../utils";
+import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
 
 // 0: Rock, 1: Paper, 2: Scissors
 export type BetType = 0 | 1 | 2;
@@ -39,6 +39,19 @@ export interface RPSInput {
 interface InternalRPSInput extends RPSInput {
   partnerNftListId?: string;
   rpsPackageId: string;
+}
+
+export interface RPSVoucherInput {
+  betTypes: Array<BetType>;
+  betSize: number;
+  voucherId: string;
+  origin?: string;
+  transaction: TransactionType;
+}
+
+interface InternalRPSVoucherInput extends RPSVoucherInput {
+  rpsPackageId: string;
+  client: SuiClient;
 }
 
 interface RPSSettlement {
@@ -111,6 +124,7 @@ export const createRockPaperScissors = ({
   origin
 }: InternalRPSInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
 
   if (
     typeof partnerNftListId === "string" &&
@@ -162,5 +176,44 @@ export const createRockPaperScissors = ({
         transaction.pure.u64(assetIndex),
       ],
     });
+  }
+};
+
+export const createRockPaperScissorsWithVoucher = async ({
+  betTypes,
+  betSize,
+  voucherId,
+  client,
+  rpsPackageId,
+  transaction,
+  origin
+}: InternalRPSVoucherInput) => {
+  try {
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let assetIndex = getAssetIndex(coinType);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.setGasBudget(20_000_000);
+    transaction.moveCall({
+      target: `${rpsPackageId}::${RPS_MODULE_NAME}::play_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } catch (e) {
+    console.error(e);
   }
 };

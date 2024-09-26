@@ -15,7 +15,7 @@ import {
   SUILEND_POND_SUI_POOL_OBJ_ID,
 } from "../../constants/mainnetConstants";
 import { SuiClient } from "@mysten/sui/client";
-import { getAssetIndex } from "../../utils";
+import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
 
 type Hit = 101;
 type Stand = 102;
@@ -34,6 +34,18 @@ export interface BlackjackInput {
 interface InternalBlackjackInput extends BlackjackInput {
   blackjackCorePackageId: string;
   origin: string;
+}
+
+export interface BlackjackVoucherInput {
+  betSize: number;
+  voucherId: string;
+  transaction: TransactionType;
+}
+
+interface InternalBlackjackVoucherInput extends BlackjackVoucherInput {
+  blackjackPackageId: string;
+  origin: string;
+  client: SuiClient;
 }
 
 export interface GetBlackjackTableInput {
@@ -87,6 +99,19 @@ interface InternalBlackjackPlayerMoveInput extends BlackjackPlayerMoveInput {
   blackjackPackageId: string;
 }
 
+export interface BlackjackPlayerMoveVoucherInput {
+  coinType: string;
+  betSize?: number;
+  voucherId?: string;
+  playerAction: PlayerAction;
+  transaction: TransactionType;
+}
+
+interface InternalBlackjackPlayerMoveVoucherInput extends BlackjackPlayerMoveVoucherInput {
+  blackjackPackageId: string;
+  client: SuiClient;
+}
+
 export const createBlackjackGame = ({
   coinType,
   coin,
@@ -95,7 +120,7 @@ export const createBlackjackGame = ({
   origin,
 }: InternalBlackjackInput) => {
   let assetIndex = getAssetIndex(coinType);
-
+  transaction.setGasBudget(50_000_000);
   transaction.moveCall({
     target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_0`,
     typeArguments: [coinType],
@@ -104,6 +129,38 @@ export const createBlackjackGame = ({
       transaction.object(BLACKJACK_CONFIG),
       transaction.object(RAND_OBJ_ID),
       coin,
+      transaction.pure.string(origin ?? "DoubleUp"),
+      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+      transaction.object(SUILEND_MARKET),
+      transaction.object(CLOCK_OBJ_ID),
+      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+      transaction.pure.u64(assetIndex),
+    ],
+  });
+};
+
+export const createBlackjackGameWithVoucher = async ({
+  betSize,
+  voucherId,
+  client,
+  transaction,
+  blackjackPackageId,
+  origin,
+}: InternalBlackjackVoucherInput) => {
+  let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+  let assetIndex = getAssetIndex(coinType);
+  let voucherBank = getVoucherBank(coinType);
+  transaction.setGasBudget(50_000_000);
+  transaction.moveCall({
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
+    typeArguments: [coinType, voucherType],
+    arguments: [
+      transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(BLACKJACK_CONFIG),
+      transaction.object(RAND_OBJ_ID),
+      transaction.pure.u64(betSize),
+      transaction.object(voucherId),
+      transaction.object(voucherBank),
       transaction.pure.string(origin ?? "DoubleUp"),
       transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
       transaction.object(SUILEND_MARKET),
@@ -152,6 +209,7 @@ export const blackjackPlayerMove = ({
   blackjackPackageId,
 }: InternalBlackjackPlayerMoveInput) => {
   let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
 
   if (isDoubleOrSplit(playerAction)) {
     if (!coinOpt) {
@@ -176,6 +234,64 @@ export const blackjackPlayerMove = ({
   } else {
     if (!!coinOpt) {
       throw new Error("Do not provide coin to HIT or STAND or SURRENDER");
+    }
+    transaction.moveCall({
+      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(playerAction),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  }
+};
+
+export const blackjackPlayerMoveWithVoucher = async ({
+  coinType,
+  betSize,
+  voucherId,
+  client,
+  playerAction,
+  transaction,
+  blackjackPackageId,
+}: InternalBlackjackPlayerMoveVoucherInput) => {
+  let assetIndex = getAssetIndex(coinType);
+  transaction.setGasBudget(20_000_000);
+
+  if (isDoubleOrSplit(playerAction)) {
+    if (!voucherId) {
+      throw new Error("Vocuher required to DOUBLE or SPLIT");
+    }
+    let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
+    let voucherBank = getVoucherBank(coinType);
+    transaction.moveCall({
+      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(playerAction),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    if (!!voucherId) {
+      throw new Error("Do not provide voucher to HIT or STAND or SURRENDER");
     }
     transaction.moveCall({
       target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
