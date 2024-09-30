@@ -357,10 +357,21 @@ interface InternalGetRouletteTableInput extends GetRouletteTableInput {
   suiClient: SuiClient;
 }
 
+export interface RouletteContractData {
+  balance: string;
+  current_bets: any;
+  host: string;
+  id: { id: string };
+  risk_manager: any;
+  round_number: string;
+  rounds_settled: any;
+  status: number;
+}
+
 export interface GetRouletteTableResponse {
   ok: boolean;
   err?: Error;
-  fields?: any;
+  fields?: RouletteContractData;
 }
 
 export interface RouletteSettleOrContinueInput {
@@ -464,7 +475,9 @@ export const getRouletteTable = async ({
     });
 
     if (data?.content?.dataType !== "moveObject") {
-      return null;
+      res.ok = false;
+      res.fields = null;
+      return res;
     }
 
     const fields = data.content.fields as any;
