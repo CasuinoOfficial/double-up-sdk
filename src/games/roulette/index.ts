@@ -341,12 +341,6 @@ interface InternalRouletteTableInput extends RouletteTableInput {
   rouletteCorePackageId: string;
 }
 
-export interface RouletteTableResponse {
-  ok: boolean;
-  err?: Error;
-  result?: TransactionArgument;
-}
-
 export interface GetRouletteTableInput {
   address: string;
   coinType: string;
@@ -366,12 +360,6 @@ export interface RouletteContractData {
   round_number: string;
   rounds_settled: any;
   status: number;
-}
-
-export interface GetRouletteTableResponse {
-  ok: boolean;
-  err?: Error;
-  fields?: RouletteContractData;
 }
 
 export interface RouletteSettleOrContinueInput {
@@ -460,35 +448,23 @@ export const getRouletteTable = async ({
   coinType,
   rouletteCorePackageId,
   suiClient,
-}: InternalGetRouletteTableInput): Promise<GetRouletteTableResponse> => {
-  const res: GetRouletteTableResponse = { ok: true };
-
-  try {
-    const { data } = await suiClient.getDynamicFieldObject({
-      parentId: ROULETTE_CONFIG,
-      name: {
-        type: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
-        value: {
-          creator: address,
-        },
+}: InternalGetRouletteTableInput): Promise<RouletteContractData | null> => {
+  const { data } = await suiClient.getDynamicFieldObject({
+    parentId: ROULETTE_CONFIG,
+    name: {
+      type: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
+      value: {
+        creator: address,
       },
-    });
+    },
+  });
 
-    if (data?.content?.dataType !== "moveObject") {
-      res.ok = false;
-      res.fields = null;
-      return res;
-    }
-
-    const fields = data.content.fields as any;
-    res.ok = true;
-    res.fields = fields;
-  } catch (err) {
-    res.ok = false;
-    res.err = err;
+  if (data?.content?.dataType !== "moveObject") {
+    return null;
   }
 
-  return res;
+  const fields = data.content.fields as any;
+  return fields;
 };
 
 export const removeRouletteBet = ({
