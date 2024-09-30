@@ -11,6 +11,7 @@ import {
   COIN_MODULE_NAME,
   PYTH_SUI_PRICE_INFO_OBJ_ID,
   RAND_OBJ_ID,
+  SUILEND_ASSET_LIST,
   SUILEND_MARKET,
   SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
@@ -101,25 +102,42 @@ export const createCoinflip = ({
   origin
 }: InternalCoinflipInput) => {
   let assetIndex = getAssetIndex(coinType);
-  transaction.setGasBudget(20_000_000);
-  transaction.moveCall({
-    target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_0`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(RAND_OBJ_ID),
-      transaction.pure(
-        bcs.vector(bcs.U64).serialize(betTypes)
-      ),
-      coin,
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  transaction.setGasBudget(100_000_000);
+  
+  if (coinType in SUILEND_ASSET_LIST) {
+    transaction.moveCall({
+      target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        coin,
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure(
+          bcs.vector(bcs.U64).serialize(betTypes)
+        ),
+        coin,
+        transaction.pure.string(origin ?? "DoubleUp"),
+      ],
+    });
+  }
 };
 
 export const createCoinflipWithVoucher = async ({
@@ -135,27 +153,48 @@ export const createCoinflipWithVoucher = async ({
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
     let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
-    transaction.setGasBudget(20_000_000);
-    transaction.moveCall({
-      target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_with_voucher_0`,
-      typeArguments: [coinType, voucherType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure(
-          bcs.vector(bcs.U64).serialize(betTypes)
-        ),
-        transaction.pure.u64(betSize),
-        transaction.object(voucherId),
-        transaction.object(voucherBank),
-        transaction.pure.string(origin ?? "DoubleUp"),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+    transaction.setGasBudget(100_000_000);
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      transaction.moveCall({
+        target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_with_voucher_0`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure(
+            bcs.vector(bcs.U64).serialize(betTypes)
+          ),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+
+    } else {
+      transaction.moveCall({
+        target: `${coinflipPackageId}::${COIN_MODULE_NAME}::play_with_voucher`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure(
+            bcs.vector(bcs.U64).serialize(betTypes)
+          ),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.pure.string(origin ?? "DoubleUp"),
+        ],
+      });
+    }
+
   } catch (e) {
     console.error(e);
   }

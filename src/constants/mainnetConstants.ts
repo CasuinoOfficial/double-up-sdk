@@ -16,6 +16,10 @@ export const SUICUNE_COIN_TYPE =
 export const VSUI_COIN_TYPE =
   "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT";
 
+export const SUILEND_ASSET_LIST: string[] = [
+  SUI_COIN_TYPE,
+];
+
 // UNIHOUSE
 // ===============================================================================
 export const UNIHOUSE_PACKAGE =
@@ -80,7 +84,6 @@ export const LIMBO_PACKAGE_ID =
   "0x7ce111e52191c9a607661104a9337aa6b6dd89365d0da8b228add413f5b83f91";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
-
 export const LIMBO_MIN_MULTIPLIER = "101";
 export const LIMBO_MAX_MULTIPLIER = "10000";
 

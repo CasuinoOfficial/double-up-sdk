@@ -97,6 +97,14 @@ import {
   BlackjackVoucherInput,
   BlackjackPlayerMoveVoucherInput,
 } from "../games/blackjack";
+import { 
+  depositUnihouse, 
+  DepositUnihouseInput,
+  requestWithdrawUnihouse,
+  WithdrawUnihouseInput,
+  getUnihouseData,
+  getRedeemRequests
+} from "../games/unihouse";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -408,4 +416,17 @@ export class DoubleUpClient {
       blackjackPackageId: this.blackjackPackageId,
       client: this.suiClient,
     });
+  // Unihouse  
+  depositUnihouse = (input: DepositUnihouseInput) => {
+    depositUnihouse({...input})
+  };
+  requestWithdrawUnihouse = (input: WithdrawUnihouseInput) => {
+    requestWithdrawUnihouse({...input})
+  };
+  getUnihouseData = () => {
+    getUnihouseData(this.suiClient)
+  };
+  getRedeemRequests = (address?: string) => {
+    getRedeemRequests(this.suiClient, address)
+  };
 }

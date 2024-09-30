@@ -15,6 +15,7 @@ import {
   PYTH_SUI_PRICE_INFO_OBJ_ID,
   SUILEND_MARKET,
   SUILEND_POND_SUI_POOL_OBJ_ID,
+  SUILEND_ASSET_LIST,
 } from "../../constants/mainnetConstants";
 import { getAssetIndex } from "../../utils";
 
@@ -534,20 +535,34 @@ export const rouletteSettleOrContinue = ({
   origin,
 }: InternalRouletteSettleOrContinueInput) => {
   let assetIndex = getAssetIndex(coinType);
-  transaction.moveCall({
-    target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::settle_or_continue_0`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(ROULETTE_CONFIG),
-      transaction.pure.address(hostAddress),
-      transaction.pure(bcs.option(bcs.U64).serialize(null)),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  if (coinType in SUILEND_ASSET_LIST) {
+    transaction.moveCall({
+      target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::settle_or_continue_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(ROULETTE_CONFIG),
+        transaction.pure.address(hostAddress),
+        transaction.pure(bcs.option(bcs.U64).serialize(null)),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::settle_or_continue`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(ROULETTE_CONFIG),
+        transaction.pure.address(hostAddress),
+        transaction.pure(bcs.option(bcs.U64).serialize(null)),
+        transaction.pure.string(origin ?? "DoubleUp"),
+      ],
+    });
+  }
 };

@@ -48,6 +48,7 @@ import {
   testCrapsSettle, 
   testGetCrapsTable 
 } from "./craps";
+import { testGetUnihouseData, testGetUnihouseRedeemRequests } from "./unihouse";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
@@ -158,6 +159,12 @@ const dbClient = new DoubleUpClient({
         break;
       case "blackjack:surrender":
         testBlackjackPlayerSurrender(dbClient, client, keypair);
+        break;
+      case "unihouse:data":
+        testGetUnihouseData(dbClient);
+        break;
+      case "unihouse:redeemrequests":
+        testGetUnihouseRedeemRequests(dbClient);
         break;
       default:
         // Test all
