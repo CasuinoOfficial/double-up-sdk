@@ -59,6 +59,14 @@ import {
   GetBlackjackTableInput, 
   GetBlackjackTableResponse 
 } from "../games/blackjack";
+import {
+  depositUnihouse,
+  requestWithdrawUnihouse,
+  getUnihouseData,
+  getRedeemRequests,
+  DepositUnihouseInput,
+  WithdrawUnihouseInput
+} from "../games/unihouse"
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;
@@ -105,6 +113,10 @@ interface DoubleUpContextState {
   getBlackjackTable: (input: GetBlackjackTableInput) => Promise<GetBlackjackTableResponse>;
   blackjackPlayerMove: (input: BlackjackPlayerMoveInput) => void;
   blackjackPlayerMoveWithVoucher: (input: BlackjackPlayerMoveVoucherInput) => void;
+  depositUnihouse: (input: DepositUnihouseInput) => void;
+  requestWithdrawUnihouse: (input: WithdrawUnihouseInput) => void;
+  getUnihouseData: (suiClient: SuiClient) => void;
+  getRedeemRequests: (suiClient: SuiClient, address?: string) => void;
 }
 
 interface DoubleupProviderProps {
@@ -151,9 +163,7 @@ const DoubleUpProvider = ({
   });
 
   const addRouletteBet = dbClient.addRouletteBet;
-
   const buyLotteryTickets = dbClient.buyLotteryTickets;
-
   const createCoinflip = dbClient.createCoinflip;
   const createCoinflipWithVoucher = dbClient.createCoinflipWithVoucher;
   const createLimbo = dbClient.createLimbo;
@@ -230,6 +240,10 @@ const DoubleUpProvider = ({
     getBlackjackTable,
     blackjackPlayerMove,
     blackjackPlayerMoveWithVoucher,
+    depositUnihouse,
+    requestWithdrawUnihouse,
+    getUnihouseData,
+    getRedeemRequests,
   };
 
   return (

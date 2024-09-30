@@ -13,6 +13,7 @@ import {
   LIMBO_MODULE_NAME,
   PYTH_SUI_PRICE_INFO_OBJ_ID,
   RAND_OBJ_ID,
+  SUILEND_ASSET_LIST,
   SUILEND_MARKET,
   SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
@@ -97,26 +98,42 @@ export const createLimbo = ({
         throw new Error("Multiplier out of range");
       }
     };
-    let assetIndex = getAssetIndex(coinType);
-    transaction.setGasBudget(20_000_000);
-    transaction.moveCall({
-      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_0`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(RAND_OBJ_ID),
-        coin,
-        transaction.pure(
-          bcs.vector(bcs.U64).serialize(multipliers)
-        ),
-        transaction.pure.string(origin ?? "DoubleUp"),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+    transaction.setGasBudget(100_000_000);
+    if (coinType in SUILEND_ASSET_LIST) {
+      let assetIndex = getAssetIndex(coinType);
+      transaction.moveCall({
+        target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_0`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          coin,
+          transaction.pure(
+            bcs.vector(bcs.U64).serialize(multipliers)
+          ),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_0`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          coin,
+          transaction.pure(
+            bcs.vector(bcs.U64).serialize(multipliers)
+          ),
+          transaction.pure.string(origin ?? "DoubleUp"),
+        ],
+      });
+    }
 };
 
 export const createLimboWithVoucher = async ({
@@ -138,29 +155,48 @@ export const createLimboWithVoucher = async ({
       }
     };
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-    let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
-    transaction.setGasBudget(20_000_000);
-    transaction.moveCall({
-      target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_with_voucher_0`,
-      typeArguments: [coinType, voucherType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(betSize),
-        transaction.object(voucherId),
-        transaction.object(voucherBank),
-        transaction.pure(
-          bcs.vector(bcs.U64).serialize(multipliers)
-        ),
-        transaction.pure.string(origin ?? "DoubleUp"),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+    transaction.setGasBudget(100_000_000);
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      let assetIndex = getAssetIndex(coinType);
+      transaction.moveCall({
+        target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_with_voucher_0`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.pure(
+            bcs.vector(bcs.U64).serialize(multipliers)
+          ),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${limboPackageId}::${LIMBO_MODULE_NAME}::play_with_voucher`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.pure(
+            bcs.vector(bcs.U64).serialize(multipliers)
+          ),
+          transaction.pure.string(origin ?? "DoubleUp"),
+        ],
+      });
+    };
   } catch (e) {
     console.error(e);
   } 

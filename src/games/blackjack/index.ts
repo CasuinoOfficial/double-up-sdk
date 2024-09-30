@@ -1,7 +1,6 @@
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
-  TransactionArgument,
 } from "@mysten/sui/transactions";
 
 import {
@@ -13,6 +12,7 @@ import {
   PYTH_SUI_PRICE_INFO_OBJ_ID,
   SUILEND_MARKET,
   SUILEND_POND_SUI_POOL_OBJ_ID,
+  SUILEND_ASSET_LIST,
 } from "../../constants/mainnetConstants";
 import { SuiClient } from "@mysten/sui/client";
 import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
@@ -120,23 +120,38 @@ export const createBlackjackGame = ({
   origin,
 }: InternalBlackjackInput) => {
   let assetIndex = getAssetIndex(coinType);
-  transaction.setGasBudget(50_000_000);
-  transaction.moveCall({
-    target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_0`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(BLACKJACK_CONFIG),
-      transaction.object(RAND_OBJ_ID),
-      coin,
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  transaction.setGasBudget(100_000_000);
+
+  if (coinType in SUILEND_ASSET_LIST) {
+    transaction.moveCall({
+      target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG),
+        transaction.object(RAND_OBJ_ID),
+        coin,
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG),
+        transaction.object(RAND_OBJ_ID),
+        coin,
+        transaction.pure.string(origin ?? "DoubleUp"),
+      ],
+    });
+  }
 };
 
 export const createBlackjackGameWithVoucher = async ({
@@ -150,25 +165,41 @@ export const createBlackjackGameWithVoucher = async ({
   let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
   let assetIndex = getAssetIndex(coinType);
   let voucherBank = getVoucherBank(coinType);
-  transaction.setGasBudget(50_000_000);
-  transaction.moveCall({
-    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
-    typeArguments: [coinType, voucherType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(BLACKJACK_CONFIG),
-      transaction.object(RAND_OBJ_ID),
-      transaction.pure.u64(betSize),
-      transaction.object(voucherId),
-      transaction.object(voucherBank),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  transaction.setGasBudget(100_000_000);
+  if (coinType in SUILEND_ASSET_LIST) {
+    transaction.moveCall({
+      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher_0`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher`,
+      typeArguments: [coinType, voucherType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(BLACKJACK_CONFIG),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(betSize),
+        transaction.object(voucherId),
+        transaction.object(voucherBank),
+        transaction.pure.string(origin ?? "DoubleUp"),
+      ],
+    });
+  }
 };
 
 export const getBlackjackTable = async ({
@@ -209,47 +240,76 @@ export const blackjackPlayerMove = ({
   blackjackPackageId,
 }: InternalBlackjackPlayerMoveInput) => {
   let assetIndex = getAssetIndex(coinType);
-  transaction.setGasBudget(20_000_000);
+  transaction.setGasBudget(100_000_000);
 
   if (isDoubleOrSplit(playerAction)) {
     if (!coinOpt) {
       throw new Error("Coin required to DOUBLE or SPLIT");
     }
-    transaction.moveCall({
-      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_0`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(BLACKJACK_CONFIG),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(playerAction),
-        coinOpt,
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_0`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+          coinOpt,
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+          coinOpt,
+        ],
+      });
+    }
   } else {
     if (!!coinOpt) {
       throw new Error("Do not provide coin to HIT or STAND or SURRENDER");
     }
-    transaction.moveCall({
-      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(BLACKJACK_CONFIG),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(playerAction),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+        ],
+      });
+    }
   }
 };
 
@@ -263,7 +323,7 @@ export const blackjackPlayerMoveWithVoucher = async ({
   blackjackPackageId,
 }: InternalBlackjackPlayerMoveVoucherInput) => {
   let assetIndex = getAssetIndex(coinType);
-  transaction.setGasBudget(20_000_000);
+  transaction.setGasBudget(100_000_000);
 
   if (isDoubleOrSplit(playerAction)) {
     if (!voucherId) {
@@ -271,42 +331,73 @@ export const blackjackPlayerMoveWithVoucher = async ({
     }
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
     let voucherBank = getVoucherBank(coinType);
-    transaction.moveCall({
-      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_with_voucher_0`,
-      typeArguments: [coinType, voucherType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(BLACKJACK_CONFIG),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(playerAction),
-        transaction.pure.u64(betSize),
-        transaction.object(voucherId),
-        transaction.object(voucherBank),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_with_voucher_0`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_with_voucher`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+        ],
+      });
+    }
   } else {
     if (!!voucherId) {
       throw new Error("Do not provide voucher to HIT or STAND or SURRENDER");
     }
-    transaction.moveCall({
-      target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
-      typeArguments: [coinType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(BLACKJACK_CONFIG),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(playerAction),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender_0`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(BLACKJACK_CONFIG),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(playerAction),
+        ],
+      });
+    }
   }
 };

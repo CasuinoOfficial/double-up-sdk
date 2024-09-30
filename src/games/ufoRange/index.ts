@@ -11,7 +11,8 @@ import {
   CLOCK_OBJ_ID,
   PYTH_SUI_PRICE_INFO_OBJ_ID,
   SUILEND_MARKET,
-  SUILEND_POND_SUI_POOL_OBJ_ID
+  SUILEND_POND_SUI_POOL_OBJ_ID,
+  SUILEND_ASSET_LIST
 } from "../../constants/mainnetConstants";
 import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
 import { SuiClient } from "@mysten/sui/dist/cjs/client";
@@ -69,24 +70,40 @@ export const createRange = ({
   origin,
 }: InternalRangeDiceInput) => {
   let assetIndex = getAssetIndex(coinType);
-  transaction.setGasBudget(20_000_000);
-  transaction.moveCall({
-    target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_0`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(RAND_OBJ_ID),
-      coin,
-      transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
-      transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+  transaction.setGasBudget(100_000_000);
+
+  if (coinType in SUILEND_ASSET_LIST) {
+    transaction.moveCall({
+      target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        coin,
+        transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
+        transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        coin,
+        transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
+        transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
+        transaction.pure.string(origin ?? "DoubleUp"),
+      ],
+    });
+  }
 };
 
 export const createRangeWithVoucher = async ({
@@ -101,28 +118,45 @@ export const createRangeWithVoucher = async ({
 }: InternalRangeVoucherInput) => {
   try {
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-    let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
-    transaction.setGasBudget(20_000_000);
-    transaction.moveCall({
-      target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_with_voucher_0`,
-      typeArguments: [coinType, voucherType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(betSize),
-        transaction.object(voucherId),
-        transaction.object(voucherBank),
-        transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
-        transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
-        transaction.pure.string(origin ?? "DoubleUp"),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+    transaction.setGasBudget(100_000_000);
+    if (coinType in SUILEND_ASSET_LIST) {
+      let assetIndex = getAssetIndex(coinType);
+      transaction.moveCall({
+        target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_with_voucher_0`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
+          transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${ufoRangePackageId}::${UFORANGE_MODULE_NAME}::play_with_voucher`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
+          transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(range)),
+          transaction.pure.string(origin ?? "DoubleUp"),
+        ],
+      });
+    }
   } catch (e) {
     console.error(e)
   }
