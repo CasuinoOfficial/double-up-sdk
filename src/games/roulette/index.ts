@@ -371,7 +371,7 @@ export interface RouletteContractData {
 export interface GetRouletteTableResponse {
   ok: boolean;
   err?: Error;
-  fields?: RouletteContractData;
+  fields: RouletteContractData;
 }
 
 export interface RouletteSettleOrContinueInput {
@@ -461,7 +461,7 @@ export const getRouletteTable = async ({
   rouletteCorePackageId,
   suiClient,
 }: InternalGetRouletteTableInput): Promise<GetRouletteTableResponse> => {
-  const res: GetRouletteTableResponse = { ok: true };
+  const res: GetRouletteTableResponse = { ok: true, fields: null };
 
   try {
     const { data } = await suiClient.getDynamicFieldObject({
@@ -476,7 +476,6 @@ export const getRouletteTable = async ({
 
     if (data?.content?.dataType !== "moveObject") {
       res.ok = false;
-      res.fields = null;
       return res;
     }
 
