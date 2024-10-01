@@ -17,7 +17,11 @@ import {
   SUILEND_POND_SUI_POOL_OBJ_ID,
   SUILEND_ASSET_LIST,
 } from "../../constants/mainnetConstants";
-import { getAssetIndex, getTypesFromVoucher, getVoucherBank } from "../../utils";
+import {
+  getAssetIndex,
+  getTypesFromVoucher,
+  getVoucherBank,
+} from "../../utils";
 
 // 0: 6 Rows, 1: 9 Rows, 2: 12 Rows
 type PlinkoType = 0 | 1 | 2;
@@ -291,23 +295,39 @@ export const createSinglePlinko = ({
 }: InternalPlinkoInput) => {
   let assetIndex = getAssetIndex(coinType);
   transaction.setGasBudget(100_000_000);
-  transaction.moveCall({
-    target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_0`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(UNI_HOUSE_OBJ_ID),
-      transaction.object(RAND_OBJ_ID),
-      transaction.pure.u64(numberOfDiscs),
-      transaction.pure.u8(plinkoType),
-      transaction.pure.string(origin ?? "DoubleUp"),
-      coin,
-      transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-      transaction.object(SUILEND_MARKET),
-      transaction.object(CLOCK_OBJ_ID),
-      transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-      transaction.pure.u64(assetIndex),
-    ],
-  });
+
+  if (coinType in SUILEND_ASSET_LIST) {
+    transaction.moveCall({
+      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_0`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(numberOfDiscs),
+        transaction.pure.u8(plinkoType),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        coin,
+        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+        transaction.object(SUILEND_MARKET),
+        transaction.object(CLOCK_OBJ_ID),
+        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+        transaction.pure.u64(assetIndex),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.object(UNI_HOUSE_OBJ_ID),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.u64(numberOfDiscs),
+        transaction.pure.u8(plinkoType),
+        transaction.pure.string(origin ?? "DoubleUp"),
+        coin,
+      ],
+    });
+  }
 };
 
 export const createSinglePlinkoWithVoucher = async ({
@@ -322,28 +342,46 @@ export const createSinglePlinkoWithVoucher = async ({
 }: InternalPlinkoVoucherInput) => {
   try {
     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-    let assetIndex = getAssetIndex(coinType);
     let voucherBank = getVoucherBank(coinType);
     transaction.setGasBudget(20_000_000);
-    transaction.moveCall({
-      target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher_0`,
-      typeArguments: [coinType, voucherType],
-      arguments: [
-        transaction.object(UNI_HOUSE_OBJ_ID),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.u64(numberOfDiscs),
-        transaction.pure.u8(plinkoType),
-        transaction.pure.string(origin ?? "DoubleUp"),
-        transaction.pure.u64(betSize),
-        transaction.object(voucherId),
-        transaction.object(voucherBank),
-        transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
-        transaction.object(SUILEND_MARKET),
-        transaction.object(CLOCK_OBJ_ID),
-        transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
-        transaction.pure.u64(assetIndex),
-      ],
-    });
+
+    if (coinType in SUILEND_ASSET_LIST) {
+      let assetIndex = getAssetIndex(coinType);
+      transaction.moveCall({
+        target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher_0`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(numberOfDiscs),
+          transaction.pure.u8(plinkoType),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+          transaction.object(SUILEND_POND_SUI_POOL_OBJ_ID),
+          transaction.object(SUILEND_MARKET),
+          transaction.object(CLOCK_OBJ_ID),
+          transaction.object(PYTH_SUI_PRICE_INFO_OBJ_ID),
+          transaction.pure.u64(assetIndex),
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: `${plinkoPackageId}::${PLINKO_MODULE_NAME}::play_singles_plinko_with_voucher`,
+        typeArguments: [coinType, voucherType],
+        arguments: [
+          transaction.object(UNI_HOUSE_OBJ_ID),
+          transaction.object(RAND_OBJ_ID),
+          transaction.pure.u64(numberOfDiscs),
+          transaction.pure.u8(plinkoType),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.pure.u64(betSize),
+          transaction.object(voucherId),
+          transaction.object(voucherBank),
+        ],
+      });
+    }
   } catch (e) {
     console.error(e);
   }
