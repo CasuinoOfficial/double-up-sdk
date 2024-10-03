@@ -190,6 +190,7 @@ export const createCrapsTable = ({
   crapsCorePackageId,
   transaction,
 }: InternalCrapsTableInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${crapsCorePackageId}::${CRAPS_MODULE_NAME}::create_craps_table`,
     typeArguments: [coinType],
@@ -229,6 +230,7 @@ export const addCrapsBet = ({
   crapsPackageId,
   transaction,
 }: InternalCrapsAddBetInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::place_bet`,
     typeArguments: [coinType],
@@ -238,7 +240,7 @@ export const addCrapsBet = ({
       transaction.pure.address(address),
       transaction.pure.u64(betType),
       transaction.pure(
-        bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
+        bcs.option(bcs.U64).serialize(betNumber ? betNumber : null),
       ),
       coin,
     ],
@@ -253,6 +255,7 @@ export const removeCrapsBet = ({
   tableOwner,
   transaction,
 }: InternalCrapsRemoveBetInput): CrapsRemoveBetResponse => {
+  transaction.setGasBudget(100_000_000);
   const [coin] = transaction.moveCall({
     target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::remove_bet`,
     typeArguments: [coinType],
@@ -261,7 +264,7 @@ export const removeCrapsBet = ({
       transaction.pure.address(tableOwner),
       transaction.pure.u64(betType),
       transaction.pure(
-        bcs.option(bcs.U64).serialize(betNumber ? betNumber : null)
+        bcs.option(bcs.U64).serialize(betNumber ? betNumber : null),
       ),
     ],
   });
@@ -274,6 +277,7 @@ export const startCraps = ({
   crapsPackageId,
   transaction,
 }: InternalCrapsStartInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::start_roll`,
     typeArguments: [coinType],
@@ -292,6 +296,7 @@ export const crapsSettleOrContinue = ({
   hostAddress,
   origin,
 }: InternalCrapsSettleOrContinueInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${crapsPackageId}::${CRAPS_MODULE_NAME}::settle_or_continue`,
     typeArguments: [coinType],

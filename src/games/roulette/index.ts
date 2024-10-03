@@ -399,7 +399,7 @@ export const addRouletteBet = ({
     } else {
       if (!!betNumber) {
         throw new Error(
-          "Invalid combination, betType does not require betNumber"
+          "Invalid combination, betType does not require betNumber",
         );
       }
     }
@@ -416,11 +416,12 @@ export const addRouletteBet = ({
         transaction.pure(
           bcs
             .option(bcs.U64)
-            .serialize(typeof betNumber === "number" ? betNumber : null)
+            .serialize(typeof betNumber === "number" ? betNumber : null),
         ),
         transaction.pure.string(origin ?? "DoubleUp"),
       ],
     });
+    transaction.setGasBudget(100_000_000);
 
     res.betId = betId;
   } catch (err) {
@@ -436,6 +437,7 @@ export const createRouletteTable = ({
   rouletteCorePackageId,
   transaction,
 }: InternalRouletteTableInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
     typeArguments: [coinType],
@@ -490,6 +492,7 @@ export const removeRouletteBet = ({
         transaction.pure.string(origin ?? "DoubleUp"),
       ],
     });
+    transaction.setGasBudget(100_000_000);
 
     res.returnedCoin = coin;
   } catch (err) {
@@ -505,6 +508,7 @@ export const startRoulette = ({
   roulettePackageId,
   transaction,
 }: InternalRouletteStartInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::start_roll`,
     typeArguments: [coinType],
@@ -523,6 +527,7 @@ export const rouletteSettleOrContinue = ({
   hostAddress,
   origin,
 }: InternalRouletteSettleOrContinueInput) => {
+  transaction.setGasBudget(100_000_000);
   transaction.moveCall({
     target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::settle_or_continue`,
     typeArguments: [coinType],
