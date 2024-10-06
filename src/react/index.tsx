@@ -56,6 +56,7 @@ import {
   BlackjackInput,
   BlackjackPlayerMoveInput,
   BlackjackPlayerMoveVoucherInput,
+  BlackjackPlayerProcessMove,
   BlackjackVoucherInput,
   GetBlackjackTableInput,
   GetBlackjackTableResponse,
@@ -128,6 +129,7 @@ interface DoubleUpContextState {
   requestWithdrawUnihouse: (input: WithdrawUnihouseInput) => void;
   getUnihouseData: (suiClient: SuiClient) => void;
   getRedeemRequests: (suiClient: SuiClient, address?: string) => void;
+  blackjackPlayerProcessMove: (input: BlackjackPlayerProcessMove) => void;
 }
 
 interface DoubleupProviderProps {
@@ -208,12 +210,13 @@ const DoubleUpProvider = ({
   const startCraps = dbClient.startCraps;
   const crapsSettleOrContinue = dbClient.crapsSettleOrContinue;
   const createBlackjackGame = dbClient.createBlackjackGame;
-  const createBlackjackGameWithVoucher =
-    dbClient.createBlackjackGameWithVoucher;
+  // const createBlackjackGameWithVoucher =
+  //   dbClient.createBlackjackGameWithVoucher;
   const getBlackjackTable = dbClient.getBlackjackTable;
   const blackjackPlayerMove = dbClient.blackjackPlayerMove;
-  const blackjackPlayerMoveWithVoucher =
-    dbClient.blackjackPlayerMoveWithVoucher;
+  // const blackjackPlayerMoveWithVoucher =
+  //   dbClient.blackjackPlayerMoveWithVoucher;
+  const blackjackPlayerProcessMove = dbClient.blackjackPlayerProcessMove;
 
   const state: DoubleUpContextState = {
     addRouletteBet,
@@ -250,14 +253,19 @@ const DoubleUpProvider = ({
     startCraps,
     crapsSettleOrContinue,
     createBlackjackGame,
-    createBlackjackGameWithVoucher,
     getBlackjackTable,
     blackjackPlayerMove,
-    blackjackPlayerMoveWithVoucher,
+    blackjackPlayerProcessMove,
     depositUnihouse,
     requestWithdrawUnihouse,
     getUnihouseData,
     getRedeemRequests,
+    createBlackjackGameWithVoucher: function (input: BlackjackVoucherInput): void {
+      throw new Error("Function not implemented.");
+    },
+    blackjackPlayerMoveWithVoucher: function (input: BlackjackPlayerMoveVoucherInput): void {
+      throw new Error("Function not implemented.");
+    }
   };
 
   return (

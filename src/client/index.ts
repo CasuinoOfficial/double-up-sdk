@@ -87,15 +87,15 @@ import {
 
 import {
   createBlackjackGame,
-  createBlackjackGameWithVoucher, 
   BlackjackInput,
   getBlackjackTable,
   GetBlackjackTableInput,
   blackjackPlayerMove,
-  blackjackPlayerMoveWithVoucher,
+  blackjackPlayerProcessMove,
   BlackjackPlayerMoveInput,
   BlackjackVoucherInput,
   BlackjackPlayerMoveVoucherInput,
+  BlackjackPlayerProcessMove,
 } from "../games/blackjack";
 import { 
   depositUnihouse, 
@@ -392,13 +392,13 @@ export class DoubleUpClient {
       blackjackCorePackageId: this.blackjackCorePackageId,
       origin: this.origin,
     });
-  createBlackjackGameWithVoucher = (input: BlackjackVoucherInput) =>
-    createBlackjackGameWithVoucher({
-      ...input,
-      blackjackPackageId: this.blackjackPackageId,
-      origin: this.origin,
-      client: this.suiClient,
-    });
+  // createBlackjackGameWithVoucher = (input: BlackjackVoucherInput) =>
+  //   createBlackjackGameWithVoucher({
+  //     ...input,
+  //     blackjackPackageId: this.blackjackPackageId,
+  //     origin: this.origin,
+  //     client: this.suiClient,
+  //   });
   getBlackjackTable = (input: GetBlackjackTableInput) =>
     getBlackjackTable({
       ...input,
@@ -410,12 +410,18 @@ export class DoubleUpClient {
       ...input,
       blackjackPackageId: this.blackjackPackageId,
     });
-  blackjackPlayerMoveWithVoucher = (input: BlackjackPlayerMoveVoucherInput) =>
-    blackjackPlayerMoveWithVoucher({
-      ...input,
-      blackjackPackageId: this.blackjackPackageId,
-      client: this.suiClient,
-    });
+  // blackjackPlayerMoveWithVoucher = (input: BlackjackPlayerMoveVoucherInput) =>
+  //   blackjackPlayerMoveWithVoucher({
+  //     ...input,
+  //     blackjackPackageId: this.blackjackPackageId,
+  //     client: this.suiClient,
+  //   });
+  blackjackPlayerProcessMove = (input: BlackjackPlayerProcessMove) => {
+    blackjackPlayerProcessMove({
+      ...input
+    })
+  };
+
   // Unihouse  
   depositUnihouse = (input: DepositUnihouseInput) => {
     depositUnihouse({...input})
