@@ -2,8 +2,8 @@
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../client";
 import { fromHEX } from "@mysten/sui/utils";
-import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
-import { decodeSuiPrivateKey } from '@mysten/sui/cryptography';
+import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
+import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 
 import { testCoinflip } from "./coinflip";
 import { testLimbo } from "./limbo";
@@ -14,7 +14,7 @@ import {
   testLotteryRedeem,
   testLotteryResults,
 } from "./lottery";
-import { 
+import {
   testPlinko,
   testMultiPlinkoCreate,
   testMultiPlinkoAdd,
@@ -22,37 +22,39 @@ import {
   testMultiPlinkoGet,
   testMultiPlinkoStart,
 } from "./plinko";
-import {
-  testRange,
-} from "./rangeDice";
+import { testRange } from "./rangeDice";
 import {
   testRouletteAdd,
   testRouletteCreate,
   testRouletteStart,
 } from "./roulette";
 import { testRPS } from "./rps";
-import { 
-  testBlackjackCreate, 
-  testBlackjackPlayerDouble, 
-  testBlackjackPlayerHit, 
-  testBlackjackPlayerSplit, 
-  testBlackjackPlayerStand, 
-  testBlackjackPlayerSurrender, 
-  testGetBlackjackTable 
+import {
+  testBlackjackCreate,
+  testBlackjackPlayerDouble,
+  testBlackjackPlayerHit,
+  testBlackjackPlayerSplit,
+  testBlackjackPlayerStand,
+  testBlackjackPlayerSurrender,
+  testGetBlackjackTable,
 } from "./blackjack";
-import { 
-  testCrapsAdd, 
-  testCrapsAddAndRemove, 
-  testCrapsCreate, 
-  testCrapsRoll, 
-  testCrapsSettle, 
-  testGetCrapsTable 
+import {
+  testCrapsAdd,
+  testCrapsAddAndRemove,
+  testCrapsCreate,
+  testCrapsRoll,
+  testCrapsSettle,
+  testGetCrapsTable,
 } from "./craps";
-import { testGetUnihouseData, testGetUnihouseRedeemRequests } from "./unihouse";
+import {
+  testGetUnihouseData,
+  testGetUnihouseRedeemRequests,
+  testGetGTokenBalance,
+} from "./unihouse";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
-console.log('got here');
+console.log("got here");
 const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
 
 const PARTNER_NFT_ID =
@@ -166,34 +168,37 @@ const dbClient = new DoubleUpClient({
       case "unihouse:redeemrequests":
         testGetUnihouseRedeemRequests(dbClient);
         break;
+      case "unihouse:getgtokenbalance":
+        testGetGTokenBalance(dbClient, keypair.toSuiAddress());
+        break;
       default:
-        // Test all
-        // testCoinflip(dbClient, client, keypair);
-        // testLimbo(dbClient, client, keypair);
-        // testPlinko(dbClient, client, keypair);
-        // testMultiPlinkoCreate(dbClient, client, keypair);
-        // testMultiPlinkoAdd(dbClient, client, keypair);
-        // testMultiPlinkoRemove(dbClient, client, keypair);
-        // testMultiPlinkoGet(dbClient, keypair);
-        // testMultiPlinkoStart(dbClient, client, keypair);
-        // testRange(dbClient, client, keypair);
-        // testRouletteAdd(dbClient, client, keypair);
-        // testRouletteCreate(dbClient, client, keypair);
-        // testRouletteStart(dbClient, client, keypair);
-        // testCrapsAdd(dbClient, client, keypair);
-        // testCrapsCreate(dbClient, client, keypair);
-        // testCrapsRoll(dbClient, client, keypair);
-        // testCrapsAddAndRemove(dbClient, client, keypair);
-        // testGetCrapsTable(dbClient, keypair);
-        // testCrapsSettle(dbClient, client, keypair);
-        // testRPS(dbClient, client, keypair);
-        // testBlackjackCreate(dbClient, client, keypair);
-        // testGetBlackjackTable(dbClient, keypair);
-        // testBlackjackPlayerHit(dbClient, client, keypair);
-        // testBlackjackPlayerStand(dbClient, client, keypair);
-        // testBlackjackPlayerDouble(dbClient, client, keypair);
-        // testBlackjackPlayerSplit(dbClient, client, keypair);
-        // testBlackjackPlayerSurrender(dbClient, client, keypair);
+      // Test all
+      // testCoinflip(dbClient, client, keypair);
+      // testLimbo(dbClient, client, keypair);
+      // testPlinko(dbClient, client, keypair);
+      // testMultiPlinkoCreate(dbClient, client, keypair);
+      // testMultiPlinkoAdd(dbClient, client, keypair);
+      // testMultiPlinkoRemove(dbClient, client, keypair);
+      // testMultiPlinkoGet(dbClient, keypair);
+      // testMultiPlinkoStart(dbClient, client, keypair);
+      // testRange(dbClient, client, keypair);
+      // testRouletteAdd(dbClient, client, keypair);
+      // testRouletteCreate(dbClient, client, keypair);
+      // testRouletteStart(dbClient, client, keypair);
+      // testCrapsAdd(dbClient, client, keypair);
+      // testCrapsCreate(dbClient, client, keypair);
+      // testCrapsRoll(dbClient, client, keypair);
+      // testCrapsAddAndRemove(dbClient, client, keypair);
+      // testGetCrapsTable(dbClient, keypair);
+      // testCrapsSettle(dbClient, client, keypair);
+      // testRPS(dbClient, client, keypair);
+      // testBlackjackCreate(dbClient, client, keypair);
+      // testGetBlackjackTable(dbClient, keypair);
+      // testBlackjackPlayerHit(dbClient, client, keypair);
+      // testBlackjackPlayerStand(dbClient, client, keypair);
+      // testBlackjackPlayerDouble(dbClient, client, keypair);
+      // testBlackjackPlayerSplit(dbClient, client, keypair);
+      // testBlackjackPlayerSurrender(dbClient, client, keypair);
     }
   } else {
     console.error(
