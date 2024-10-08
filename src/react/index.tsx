@@ -60,7 +60,7 @@ import {
   BlackjackTableInput,
   BlackjackVoucherInput,
   GetBlackjackTableInput,
-  GetBlackjackTableResponse,
+  BlackjackContractData,
 } from "../games/blackjack";
 import {
   depositUnihouse,
@@ -123,7 +123,7 @@ interface DoubleUpContextState {
   createBlackjackGameWithVoucher: (input: BlackjackVoucherInput) => void;
   getBlackjackTable: (
     input: GetBlackjackTableInput
-  ) => Promise<GetBlackjackTableResponse>;
+  ) => Promise<BlackjackContractData | null>;
   blackjackPlayerMove: (input: BlackjackPlayerMoveInput) => void;
   blackjackPlayerMoveWithVoucher: (
     input: BlackjackPlayerMoveVoucherInput

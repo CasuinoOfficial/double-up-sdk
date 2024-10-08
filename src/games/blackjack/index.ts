@@ -60,7 +60,7 @@ interface InternalGetBlackjackTableInput extends GetBlackjackTableInput {
   suiClient: SuiClient;
 }
 
-export interface GetBlackjackTableResponse {
+export interface BlackjackContractData {
   balance: string;
   creator: string;
   current_game: {
@@ -188,7 +188,7 @@ export const getBlackjackTable = async ({
   coinType,
   blackjackCorePackageId,
   suiClient,
-}: InternalGetBlackjackTableInput): Promise<GetBlackjackTableResponse> => {
+}: InternalGetBlackjackTableInput): Promise<BlackjackContractData | null> => {
   const { data } = await suiClient.getDynamicFieldObject({
     parentId: BLACKJACK_CONFIG,
     name: {
