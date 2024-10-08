@@ -256,12 +256,10 @@ export const getGTokenBalance = async (
 
   let balances: BalanceList = {};
 
-  if (ownedObjects.flat().length === 0) {
-    Object.keys(houseInfo).forEach((houseName) => {
-      balances[houseName] = 0;
-    });
-  } else {
-    ownedObjects.forEach((ownedObject) => {
+  ownedObjects.forEach((ownedObject, index) => {
+    if (ownedObject.length === 0) {
+      balances[houseNames[index]] = 0;
+    } else {
       const house = Object.values(houseInfo).find(
         (house) => house.tokenType === ownedObject[0]?.data?.type
       );
@@ -273,8 +271,8 @@ export const getGTokenBalance = async (
       }, 0);
 
       balances[house.name] = balance;
-    });
-  }
+    }
+  });
 
   return balances;
 };
