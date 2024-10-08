@@ -47,7 +47,7 @@ export const testBlackjackCreateTable = async (
 
 }
 
-export const testBlackjackCreate = async (
+export const testBlackjackCreateGame = async (
 	dbClient: DoubleUpClient,
 	client: SuiClient,
 	keypair: Secp256k1Keypair,

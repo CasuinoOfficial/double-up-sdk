@@ -30,7 +30,8 @@ import {
 } from "./roulette";
 import { testRPS } from "./rps";
 import {
-  testBlackjackCreate,
+  testBlackjackCreateTable,
+  testBlackjackCreateGame,
   testBlackjackPlayerDouble,
   testBlackjackPlayerHit,
   testBlackjackPlayerSplit,
@@ -141,8 +142,11 @@ const dbClient = new DoubleUpClient({
       case "rps":
         testRPS(dbClient, client, keypair);
         break;
-      case "blackjack:create":
-        testBlackjackCreate(dbClient, client, keypair);
+      case "blackjack:createTable":
+        testBlackjackCreateTable(dbClient, client, keypair);
+        break;
+      case "blackjack:createGame":
+        testBlackjackCreateGame(dbClient, client, keypair);
         break;
       case "blackjack:get":
         testGetBlackjackTable(dbClient, keypair);
