@@ -437,26 +437,19 @@ export class DoubleUpClient {
   //     blackjackPackageId: this.blackjackPackageId,
   //     client: this.suiClient,
   //   });
-  blackjackPlayerProcessMove = (input: BlackjackPlayerProcessMove) => {
+  blackjackPlayerProcessMove = (input: BlackjackPlayerProcessMove) =>
     blackjackPlayerProcessMove({
       ...input,
     });
-  };
 
   // Unihouse
-  depositUnihouse = (input: DepositUnihouseInput) => {
+  depositUnihouse = (input: DepositUnihouseInput) =>
     depositUnihouse({ ...input });
-  };
-  requestWithdrawUnihouse = (input: WithdrawUnihouseInput) => {
+  requestWithdrawUnihouse = (input: WithdrawUnihouseInput) =>
     requestWithdrawUnihouse({ ...input });
-  };
-  getUnihouseData = () => {
-    getUnihouseData(this.suiClient);
-  };
-  getRedeemRequests = (address?: string) => {
+  getUnihouseData = () => getUnihouseData(this.suiClient);
+  getRedeemRequests = (address?: string) =>
     getRedeemRequests(this.suiClient, address);
-  };
-  getGTokenBalance = (address: string) => {
+  getGTokenBalance = (address: string) =>
     getGTokenBalance(this.suiClient, address);
-  };
 }

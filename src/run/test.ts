@@ -169,7 +169,9 @@ const dbClient = new DoubleUpClient({
         testGetUnihouseRedeemRequests(dbClient);
         break;
       case "unihouse:getgtokenbalance":
-        testGetGTokenBalance(dbClient, keypair.toSuiAddress());
+        testGetGTokenBalance(dbClient, keypair.toSuiAddress())
+          .then((res) => console.log(res))
+          .catch((err) => console.error(err));
         break;
       default:
       // Test all
