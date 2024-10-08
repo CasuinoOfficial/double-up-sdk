@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.3.2",
+  "version": "4.3.3",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -41,7 +41,8 @@
     "test:blackjack:split": "FUNCTION=blackjack:split pnpm test",
     "test:blackjack:surrender": "FUNCTION=blackjack:surrender pnpm test",
     "test:unihouse:data": "FUNCTION=unihouse:data pnpm test",
-    "test:unihouse:redeemrequests": "FUNCTION=unihouse:redeemrequests pnpm test"
+    "test:unihouse:redeemrequests": "FUNCTION=unihouse:redeemrequests pnpm test",
+    "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

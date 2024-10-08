@@ -68,6 +68,8 @@ import {
   getRedeemRequests,
   DepositUnihouseInput,
   WithdrawUnihouseInput,
+  BalanceList,
+  getGTokenBalance,
 } from "../games/unihouse";
 
 interface DoubleUpContextState {
@@ -129,6 +131,10 @@ interface DoubleUpContextState {
   requestWithdrawUnihouse: (input: WithdrawUnihouseInput) => void;
   getUnihouseData: (suiClient: SuiClient) => void;
   getRedeemRequests: (suiClient: SuiClient, address?: string) => void;
+  getGTokenBalance: (
+    suiClient: SuiClient,
+    address?: string
+  ) => Promise<BalanceList>;
   blackjackPlayerProcessMove: (input: BlackjackPlayerProcessMove) => void;
 }
 
@@ -260,12 +266,17 @@ const DoubleUpProvider = ({
     requestWithdrawUnihouse,
     getUnihouseData,
     getRedeemRequests,
-    createBlackjackGameWithVoucher: function (input: BlackjackVoucherInput): void {
+    getGTokenBalance,
+    createBlackjackGameWithVoucher: function (
+      input: BlackjackVoucherInput
+    ): void {
       throw new Error("Function not implemented.");
     },
-    blackjackPlayerMoveWithVoucher: function (input: BlackjackPlayerMoveVoucherInput): void {
+    blackjackPlayerMoveWithVoucher: function (
+      input: BlackjackPlayerMoveVoucherInput
+    ): void {
       throw new Error("Function not implemented.");
-    }
+    },
   };
 
   return (

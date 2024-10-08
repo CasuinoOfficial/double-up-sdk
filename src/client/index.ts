@@ -19,9 +19,19 @@ import {
   BLACKJACK_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
-import { createCoinflip, createCoinflipWithVoucher, CoinflipInput, CoinflipVoucherInput } from "../games/coinflip";
+import {
+  createCoinflip,
+  createCoinflipWithVoucher,
+  CoinflipInput,
+  CoinflipVoucherInput,
+} from "../games/coinflip";
 
-import { createLimbo, createLimboWithVoucher, LimboInput, LimboVoucherInput } from "../games/limbo";
+import {
+  createLimbo,
+  createLimboWithVoucher,
+  LimboInput,
+  LimboVoucherInput,
+} from "../games/limbo";
 
 import {
   buyLotteryTickets,
@@ -51,7 +61,12 @@ import {
   PlinkoVoucherInput,
 } from "../games/plinko";
 
-import { createRange, createRangeWithVoucher, RangeInput, RangeVoucherInput } from "../games/ufoRange";
+import {
+  createRange,
+  createRangeWithVoucher,
+  RangeInput,
+  RangeVoucherInput,
+} from "../games/ufoRange";
 
 import {
   addRouletteBet,
@@ -68,7 +83,12 @@ import {
   getRouletteTable,
 } from "../games/roulette";
 
-import { createRockPaperScissors, createRockPaperScissorsWithVoucher, RPSInput, RPSVoucherInput } from "../games/rps";
+import {
+  createRockPaperScissors,
+  createRockPaperScissorsWithVoucher,
+  RPSInput,
+  RPSVoucherInput,
+} from "../games/rps";
 
 import {
   addCrapsBet,
@@ -97,13 +117,14 @@ import {
   BlackjackPlayerMoveVoucherInput,
   BlackjackPlayerProcessMove,
 } from "../games/blackjack";
-import { 
-  depositUnihouse, 
+import {
+  depositUnihouse,
   DepositUnihouseInput,
   requestWithdrawUnihouse,
   WithdrawUnihouseInput,
   getUnihouseData,
-  getRedeemRequests
+  getRedeemRequests,
+  getGTokenBalance,
 } from "../games/unihouse";
 
 interface DoubleUpClientInput {
@@ -206,13 +227,13 @@ export class DoubleUpClient {
 
   // coinflip
   createCoinflip = (input: CoinflipInput) =>
-    createCoinflip({ 
-      ...input, 
-      coinflipPackageId: this.coinflipPackageId 
+    createCoinflip({
+      ...input,
+      coinflipPackageId: this.coinflipPackageId,
     });
   createCoinflipWithVoucher = (input: CoinflipVoucherInput) =>
-    createCoinflipWithVoucher({ 
-      ...input, 
+    createCoinflipWithVoucher({
+      ...input,
       coinflipPackageId: this.coinflipPackageId,
       client: this.suiClient,
     });
@@ -235,13 +256,13 @@ export class DoubleUpClient {
 
   // limbo
   createLimbo = (input: LimboInput) =>
-    createLimbo({ 
-      ...input, 
-      limboPackageId: this.limboPackageId 
+    createLimbo({
+      ...input,
+      limboPackageId: this.limboPackageId,
     });
   createLimboWithVoucher = (input: LimboVoucherInput) =>
     createLimboWithVoucher({
-      ...input, 
+      ...input,
       limboPackageId: this.limboPackageId,
       client: this.suiClient,
     });
@@ -418,21 +439,24 @@ export class DoubleUpClient {
   //   });
   blackjackPlayerProcessMove = (input: BlackjackPlayerProcessMove) => {
     blackjackPlayerProcessMove({
-      ...input
-    })
+      ...input,
+    });
   };
 
-  // Unihouse  
+  // Unihouse
   depositUnihouse = (input: DepositUnihouseInput) => {
-    depositUnihouse({...input})
+    depositUnihouse({ ...input });
   };
   requestWithdrawUnihouse = (input: WithdrawUnihouseInput) => {
-    requestWithdrawUnihouse({...input})
+    requestWithdrawUnihouse({ ...input });
   };
   getUnihouseData = () => {
-    getUnihouseData(this.suiClient)
+    getUnihouseData(this.suiClient);
   };
   getRedeemRequests = (address?: string) => {
-    getRedeemRequests(this.suiClient, address)
+    getRedeemRequests(this.suiClient, address);
+  };
+  getGTokenBalance = (address: string) => {
+    getGTokenBalance(this.suiClient, address);
   };
 }

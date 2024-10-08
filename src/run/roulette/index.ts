@@ -1,7 +1,7 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
-import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
+import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 
 export const testRouletteAdd = async (
@@ -106,20 +106,20 @@ export const testRouletteCreate = async (
 
     console.log("Signed and sent transaction.");
 
-    const {
-      ok: getOk,
-      err: getErr,
-      fields,
-    } = await dbClient.getRouletteTable({
-      coinType: SUI_COIN_TYPE,
-      address: keypair.toSuiAddress(),
-    });
+    // const {
+    //   ok: getOk,
+    //   err: getErr,
+    //   fields,
+    // } = await dbClient.getRouletteTable({
+    //   coinType: SUI_COIN_TYPE,
+    //   address: keypair.toSuiAddress(),
+    // });
 
-    if (!getOk) {
-      throw getErr;
-    }
+    // if (!getOk) {
+    //   throw getErr;
+    // }
 
-    console.log(fields);
+    // console.log(fields);
   } catch (err) {
     console.log(err);
   }
@@ -130,44 +130,43 @@ export const testRouletteStart = async (
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-    const txb = new Transaction();
+  const txb = new Transaction();
 
-    dbClient.startRoulette({
-      coinType: SUI_COIN_TYPE,
-      transaction: txb,
-    });
+  dbClient.startRoulette({
+    coinType: SUI_COIN_TYPE,
+    transaction: txb,
+  });
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: txb as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
 
-    console.log('rolled a number', transactionResult);
-    const txb2 = new Transaction();
+  console.log("rolled a number", transactionResult);
+  const txb2 = new Transaction();
 
-    // dbClient
-    dbClient.rouletteSettleOrContinue({
-      coinType: SUI_COIN_TYPE,
-      transaction: txb2,
-      hostAddress: keypair.toSuiAddress(),
-    });
+  // dbClient
+  dbClient.rouletteSettleOrContinue({
+    coinType: SUI_COIN_TYPE,
+    transaction: txb2,
+    hostAddress: keypair.toSuiAddress(),
+  });
 
-    const transactionResult2 = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb2 as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
-    console.log('settled', transactionResult2);
-
+  const transactionResult2 = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: txb2 as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+  console.log("settled", transactionResult2);
 };
