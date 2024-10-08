@@ -69,7 +69,6 @@ import {
   DepositUnihouseInput,
   WithdrawUnihouseInput,
   BalanceList,
-  getGTokenBalance,
 } from "../games/unihouse";
 
 interface DoubleUpContextState {
@@ -131,10 +130,7 @@ interface DoubleUpContextState {
   requestWithdrawUnihouse: (input: WithdrawUnihouseInput) => void;
   getUnihouseData: (suiClient: SuiClient) => void;
   getRedeemRequests: (suiClient: SuiClient, address?: string) => void;
-  getGTokenBalance: (
-    suiClient: SuiClient,
-    address?: string
-  ) => Promise<BalanceList>;
+  getGTokenBalance: (address: string) => Promise<BalanceList>;
   blackjackPlayerProcessMove: (input: BlackjackPlayerProcessMove) => void;
 }
 
@@ -223,6 +219,7 @@ const DoubleUpProvider = ({
   // const blackjackPlayerMoveWithVoucher =
   //   dbClient.blackjackPlayerMoveWithVoucher;
   const blackjackPlayerProcessMove = dbClient.blackjackPlayerProcessMove;
+  const getGTokenBalance = dbClient.getGTokenBalance;
 
   const state: DoubleUpContextState = {
     addRouletteBet,

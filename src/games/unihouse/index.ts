@@ -213,7 +213,7 @@ export const getRedeemRequests = async (
 export const getGTokenBalance = async (
   suiClient: SuiClient,
   address: string
-) => {
+): Promise<BalanceList> => {
   if (!address) {
     throw Error("Address is required");
   }
@@ -255,19 +255,26 @@ export const getGTokenBalance = async (
   const ownedObjects = await Promise.all(promiseList);
 
   let balances: BalanceList = {};
-  ownedObjects.forEach((ownedObject) => {
-    const house = Object.values(houseInfo).find(
-      (house) => house.tokenType === ownedObject[0]?.data?.type
-    );
 
-    const balance = ownedObject.reduce((acc: number, gTokenObject: any) => {
-      if (gTokenObject?.data?.content?.fields?.balance) {
-        return acc + Number(gTokenObject.data.content.fields.balance);
-      }
-    }, 0);
+  if (ownedObjects.flat().length === 0) {
+    Object.keys(houseInfo).forEach((houseName) => {
+      balances[houseName] = 0;
+    });
+  } else {
+    ownedObjects.forEach((ownedObject) => {
+      const house = Object.values(houseInfo).find(
+        (house) => house.tokenType === ownedObject[0]?.data?.type
+      );
 
-    balances[house.name] = balance;
-  });
+      const balance = ownedObject.reduce((acc: number, gTokenObject: any) => {
+        if (gTokenObject?.data?.content?.fields?.balance) {
+          return acc + Number(gTokenObject.data.content.fields.balance);
+        }
+      }, 0);
+
+      balances[house.name] = balance;
+    });
+  }
 
   return balances;
 };
