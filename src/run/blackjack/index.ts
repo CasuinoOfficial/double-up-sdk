@@ -4,6 +4,49 @@ import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 
+export const testBlackjackCreateTable = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair
+) => {
+  const txb = new Transaction();
+
+  dbClient.createBlackjackTable({
+      coinType: SUI_COIN_TYPE,
+      transaction: txb
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+      signer: keypair,
+      transaction: txb as any,
+      options: {
+        showRawEffects: true,
+        showEffects: true,
+        showEvents: true,
+        showObjectChanges: true,
+      },
+  });
+
+  if (
+      transactionResult?.effects &&
+      transactionResult?.effects.status.status === "failure"
+    ) {
+      throw new Error(transactionResult.effects.status.error);
+    }
+
+    console.log("Signed and sent transaction.", transactionResult);
+
+    const resp = await dbClient.getBlackjackTable({
+      coinType: SUI_COIN_TYPE,
+      address: keypair.toSuiAddress(),
+    });
+
+    if (!resp) {
+      return "sad"
+    };
+
+}
+
 export const testBlackjackCreate = async (
 	dbClient: DoubleUpClient,
 	client: SuiClient,

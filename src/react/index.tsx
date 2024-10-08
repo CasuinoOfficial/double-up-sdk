@@ -57,6 +57,7 @@ import {
   BlackjackPlayerMoveInput,
   BlackjackPlayerMoveVoucherInput,
   BlackjackPlayerProcessMove,
+  BlackjackTableInput,
   BlackjackVoucherInput,
   GetBlackjackTableInput,
   GetBlackjackTableResponse,
@@ -117,6 +118,7 @@ interface DoubleUpContextState {
   removeCrapsBet: (input: CrapsRemoveBetInput) => CrapsRemoveBetResponse;
   startCraps: (input: CrapsStartInput) => void;
   crapsSettleOrContinue: (input: CrapsSettleOrContinueInput) => void;
+  createBlackjackTable: (input: BlackjackTableInput) => void;
   createBlackjackGame: (input: BlackjackInput) => void;
   createBlackjackGameWithVoucher: (input: BlackjackVoucherInput) => void;
   getBlackjackTable: (
@@ -214,6 +216,7 @@ const DoubleUpProvider = ({
   const createBlackjackGame = dbClient.createBlackjackGame;
   // const createBlackjackGameWithVoucher =
   //   dbClient.createBlackjackGameWithVoucher;
+  const createBlackjackTable = dbClient.createBlackjackTable;
   const getBlackjackTable = dbClient.getBlackjackTable;
   const blackjackPlayerMove = dbClient.blackjackPlayerMove;
   // const blackjackPlayerMoveWithVoucher =
@@ -255,6 +258,7 @@ const DoubleUpProvider = ({
     removeCrapsBet,
     startCraps,
     crapsSettleOrContinue,
+    createBlackjackTable,
     createBlackjackGame,
     getBlackjackTable,
     blackjackPlayerMove,

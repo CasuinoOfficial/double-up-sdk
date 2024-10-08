@@ -8,18 +8,8 @@ import {
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
   BLACKJACK_CONFIG,
-  CLOCK_OBJ_ID,
-  PYTH_SUI_PRICE_INFO_OBJ_ID,
-  SUILEND_MARKET,
-  SUILEND_POND_SUI_POOL_OBJ_ID,
-  SUILEND_ASSET_LIST,
 } from "../../constants/mainnetConstants";
 import { SuiClient } from "@mysten/sui/client";
-import {
-  getAssetIndex,
-  getTypesFromVoucher,
-  getVoucherBank,
-} from "../../utils";
 
 type Hit = 101;
 type Stand = 102;
@@ -52,6 +42,14 @@ interface InternalBlackjackVoucherInput extends BlackjackVoucherInput {
   client: SuiClient;
 }
 
+export interface BlackjackTableInput {
+  coinType: string;
+  transaction: TransactionType;
+}
+
+interface InternalBlackjackTableInput extends BlackjackTableInput {
+  blackjackCorePackageId: string;
+}
 export interface GetBlackjackTableInput {
   address: string;
   coinType: string;
@@ -172,6 +170,19 @@ export const createBlackjackGame = ({
 //   });
 // };
 
+export const createBlackjackTable = ({
+  coinType,
+  blackjackCorePackageId,
+  transaction,
+}: InternalBlackjackTableInput) => {
+  transaction.setGasBudget(100_000_000);
+  transaction.moveCall({
+    target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::create_blackjack_table`,
+    typeArguments: [coinType],
+    arguments: [transaction.object(BLACKJACK_CONFIG)],
+  });
+};
+
 export const getBlackjackTable = async ({
   address,
   coinType,
@@ -219,7 +230,7 @@ export const blackjackPlayerMove = ({
       target: `0x2::coin::zero`,
       typeArguments: [coinType],
     });
-  };
+  }
   transaction.moveCall({
     target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_request`,
     typeArguments: [coinType],

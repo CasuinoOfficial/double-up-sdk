@@ -108,6 +108,7 @@ import {
 import {
   createBlackjackGame,
   BlackjackInput,
+  createBlackjackTable,
   getBlackjackTable,
   GetBlackjackTableInput,
   blackjackPlayerMove,
@@ -116,6 +117,7 @@ import {
   BlackjackVoucherInput,
   BlackjackPlayerMoveVoucherInput,
   BlackjackPlayerProcessMove,
+  BlackjackTableInput,
 } from "../games/blackjack";
 import {
   depositUnihouse,
@@ -407,6 +409,11 @@ export class DoubleUpClient {
     });
 
   // blackjack
+  createBlackjackTable = (input: BlackjackTableInput) =>
+    createBlackjackTable({
+      ...input,
+      blackjackCorePackageId: this.blackjackCorePackageId,
+    });
   createBlackjackGame = (input: BlackjackInput) =>
     createBlackjackGame({
       ...input,
