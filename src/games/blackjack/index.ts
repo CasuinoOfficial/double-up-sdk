@@ -69,18 +69,22 @@ export interface BlackjackContractData {
       current_deck: number[];
       dealer_cards: number[];
       hands: {
-        cards: number[];
-        status: number;
-        current_sum: number;
-        bet_size: string;
-        is_natural_blackjack: boolean;
-        is_doubled: boolean;
-        is_settled: boolean;
-        bet_returned: number;
+        fields: {
+          bet_returned: string;
+          bet_size: string;
+          cards: number[];
+          current_sum: number;
+          is_natural_blackjack: boolean;
+          is_doubled: boolean;
+          is_settled: boolean;
+          status: number;
+        };
+        type: string;
       }[];
       origin: string;
       risk: number;
       start_epoch: number;
+      status: string;
     };
     type: string;
   };
