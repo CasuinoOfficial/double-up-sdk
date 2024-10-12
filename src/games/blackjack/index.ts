@@ -77,7 +77,7 @@ export interface BlackjackContractData {
           is_natural_blackjack: boolean;
           is_doubled: boolean;
           is_settled: boolean;
-          status: number;
+          status: string;
         };
         type: string;
       }[];
