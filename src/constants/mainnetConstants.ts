@@ -16,9 +16,7 @@ export const SUICUNE_COIN_TYPE =
 export const VSUI_COIN_TYPE =
   "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT";
 
-export const SUILEND_ASSET_LIST: string[] = [
-  SUI_COIN_TYPE,
-];
+export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 
 // UNIHOUSE
 // ===============================================================================
@@ -47,11 +45,11 @@ export const PYTH_SUI_PRICE_INFO_OBJ_ID =
 
 // VOUCHERS
 // ===============================================================================
-export const SUI_VOUCHER_BANK = 
+export const SUI_VOUCHER_BANK =
   "0xa07a0a48fc82fb86a416d46f3518a20e40dd211a3287f5dcfd599a5165d0f124";
-export const BUCK_VOUCHER_BANK = 
+export const BUCK_VOUCHER_BANK =
   "0x313de210ab58ffd3cd120608f970fbdcb598caf87c62949eeb83c928101c417d";
-export const VOUCHER_PACKAGE_ID = 
+export const VOUCHER_PACKAGE_ID =
   "0xfb3efc5a003159d418a5b864d68cd562533e13cbb73d6caa0c4c1a924321b5de";
 export const DOUBLEUP_TYPE = `${VOUCHER_PACKAGE_ID}::types::DoubleUp`;
 export const UCESPORTS_TYPE = `${VOUCHER_PACKAGE_ID}::types::UCEsports`;
@@ -130,11 +128,11 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 // BLACKJACK
 // ===============================================================================
 export const BLACKJACK_CORE_PACKAGE_ID =
-  "0xa43f534f689d4f8b7dc7cd1932330b37f93c464ae61a388affbf95a9015b3287";
+  "0x831608ea29f35dbcc61dddfeb5927fd2798d418adeb12ea1d75d708a2f93df75";
 export const BLACKJACK_PACKAGE_ID =
-  "0xa43f534f689d4f8b7dc7cd1932330b37f93c464ae61a388affbf95a9015b3287";
+  "0x831608ea29f35dbcc61dddfeb5927fd2798d418adeb12ea1d75d708a2f93df75";
 export const BLACKJACK_CONFIG =
-  "0x3d5954698533c1ebf6d537f19a9f0fbb1c31b72d3a81bf32c98488b27c14c8ab";
+  "0xadc034e86fd6900ef8480b98b10376289a2a10ecf4ae38bd79698a7320ef3816";
 export const BLACKJACK_MODULE_NAME = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
 
