@@ -147,33 +147,6 @@ export const createBlackjackGame = ({
   });
 };
 
-// export const createBlackjackGameWithVoucher = async ({
-//   betSize,
-//   voucherId,
-//   client,
-//   transaction,
-//   blackjackPackageId,
-//   origin,
-// }: InternalBlackjackVoucherInput) => {
-//   let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-//   let voucherBank = getVoucherBank(coinType);
-//   transaction.setGasBudget(100_000_000);
-
-//   transaction.moveCall({
-//     target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game_with_voucher`,
-//     typeArguments: [coinType, voucherType],
-//     arguments: [
-//       transaction.object(UNI_HOUSE_OBJ_ID),
-//       transaction.object(BLACKJACK_CONFIG),
-//       transaction.object(RAND_OBJ_ID),
-//       transaction.pure.u64(betSize),
-//       transaction.object(voucherId),
-//       transaction.object(voucherBank),
-//       transaction.pure.string(origin ?? "DoubleUp"),
-//     ],
-//   });
-// };
-
 export const createBlackjackTable = ({
   coinType,
   blackjackCorePackageId,
@@ -230,10 +203,7 @@ export const blackjackPlayerMove = ({
       throw new Error("Coin required to DOUBLE or SPLIT");
     }
   } else {
-    coinOpt = transaction.moveCall({
-      target: `0x2::coin::zero`,
-      typeArguments: [coinType],
-    });
+    coinOpt = transaction.splitCoins(coinOpt, [0])[0];
   }
   transaction.moveCall({
     target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_request`,
@@ -265,52 +235,3 @@ export const blackjackPlayerProcessMove = ({
     ],
   });
 };
-
-// export const blackjackPlayerMoveWithVoucher = async ({
-//   coinType,
-//   betSize,
-//   voucherId,
-//   client,
-//   playerAction,
-//   transaction,
-//   blackjackPackageId,
-// }: InternalBlackjackPlayerMoveVoucherInput) => {
-//   transaction.setGasBudget(100_000_000);
-
-//   if (isDoubleOrSplit(playerAction)) {
-//     if (!voucherId) {
-//       throw new Error("Vocuher required to DOUBLE or SPLIT");
-//     }
-//     let [coinType, voucherType] = await getTypesFromVoucher(voucherId, client);
-//     let voucherBank = getVoucherBank(coinType);
-
-//     transaction.moveCall({
-//       target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_double_split_with_voucher`,
-//       typeArguments: [coinType, voucherType],
-//       arguments: [
-//         transaction.object(UNI_HOUSE_OBJ_ID),
-//         transaction.object(BLACKJACK_CONFIG),
-//         transaction.object(RAND_OBJ_ID),
-//         transaction.pure.u64(playerAction),
-//         transaction.pure.u64(betSize),
-//         transaction.object(voucherId),
-//         transaction.object(voucherBank),
-//       ],
-//     });
-//   } else {
-//     if (!!voucherId) {
-//       throw new Error("Do not provide voucher to HIT or STAND or SURRENDER");
-//     }
-
-//     transaction.moveCall({
-//       target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::player_move_hit_stand_surrender`,
-//       typeArguments: [coinType],
-//       arguments: [
-//         transaction.object(UNI_HOUSE_OBJ_ID),
-//         transaction.object(BLACKJACK_CONFIG),
-//         transaction.object(RAND_OBJ_ID),
-//         transaction.pure.u64(playerAction),
-//       ],
-//     });
-//   }
-// };
