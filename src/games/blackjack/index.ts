@@ -242,8 +242,8 @@ export const blackjackPlayerMove = ({
       transaction.object(UNI_HOUSE_OBJ_ID),
       transaction.object(BLACKJACK_CONFIG),
       transaction.object(RAND_OBJ_ID),
-      transaction.pure.u64(playerAction),
       coinOpt,
+      transaction.pure.u64(playerAction),
     ],
   });
 };
