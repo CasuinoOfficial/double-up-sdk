@@ -87,7 +87,7 @@ export interface BlackjackContractData {
       status: string;
     };
     type: string;
-  };
+  } | null;
   id: {
     id: string;
   };
