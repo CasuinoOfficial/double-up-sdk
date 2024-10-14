@@ -130,7 +130,7 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 export const BLACKJACK_CORE_PACKAGE_ID =
   "0x831608ea29f35dbcc61dddfeb5927fd2798d418adeb12ea1d75d708a2f93df75";
 export const BLACKJACK_PACKAGE_ID =
-  "0x831608ea29f35dbcc61dddfeb5927fd2798d418adeb12ea1d75d708a2f93df75";
+  "0x5db3cb743779b72e3d64c80410af9bc07ba1ac0a242456f6c2030b7f6e686d69";
 export const BLACKJACK_CONFIG =
   "0xadc034e86fd6900ef8480b98b10376289a2a10ecf4ae38bd79698a7320ef3816";
 export const BLACKJACK_MODULE_NAME = "blackjack";
