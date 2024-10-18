@@ -139,10 +139,10 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 // CRAPS
 // ===============================================================================
 export const CRAPS_CORE_PACKAGE_ID =
-  "0x3c96951e6911c4739d851292a98763aa39cf78b3258ecb73aec46a72dbac8b73";
+  "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0x3c96951e6911c4739d851292a98763aa39cf78b3258ecb73aec46a72dbac8b73";
+  "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_CONFIG =
-  "0x140a75f5dc72a55ffa5d6fe13ec7e65b9fa566c8e64fe9a39c59354204816285";
+  "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
