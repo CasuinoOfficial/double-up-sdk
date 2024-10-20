@@ -167,10 +167,10 @@ const dbClient = new DoubleUpClient({
         testBlackjackPlayerSurrender(dbClient, client, keypair);
         break;
       case "unihouse:data":
-        testGetUnihouseData(dbClient);
+        testGetUnihouseData(dbClient).then((res) => console.log(res));
         break;
       case "unihouse:redeemrequests":
-        testGetUnihouseRedeemRequests(dbClient);
+        testGetUnihouseRedeemRequests(dbClient).then((res) => console.log(res));
         break;
       case "unihouse:getgtokenbalance":
         testGetGTokenBalance(dbClient, keypair.toSuiAddress())
