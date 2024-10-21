@@ -83,8 +83,9 @@ export const getUnihouseData = async (
       parentId: UNI_HOUSE_OBJ_ID,
       cursor,
     });
+
     dynamicFields.push(...response.data);
-    cursor = response.cursor;
+    cursor = response.nextCursor;
     hasNextPage = response.hasNextPage;
   }
 
@@ -123,6 +124,7 @@ export const getUnihouseData = async (
     const tokenType = `0x2::coin::Coin<${field?.supply?.type.split("<")[1]}<${
       field?.supply?.type.split("<")[2].split(">")[0]
     }>>`;
+
     const pipeDebt = field?.pipe_debt?.fields?.value;
     const totalSui = Number(pipeDebt) + Number(field?.pool);
     const totalSupply = Number(field?.supply?.fields?.value);
@@ -157,11 +159,9 @@ export const getRedeemRequests = async (
       cursor,
     });
     dynamicFields.push(...response.data);
-    cursor = response.cursor;
+    cursor = response.nextCursor;
     hasNextPage = response.hasNextPage;
   }
-
-  console.log(dynamicFields);
 
   const redeemRequests: DynamicFieldInfo[] = dynamicFields?.filter(
     (field: DynamicFieldInfo) => field?.objectType.includes("RedeemRequest")
@@ -243,8 +243,9 @@ export const getGTokenBalance = async (
           },
           cursor,
         });
+
         ownedObjects.push(...response.data);
-        cursor = response.cursor;
+        cursor = response.nextCursor;
         hasNextPage = response.hasNextPage;
       }
 
