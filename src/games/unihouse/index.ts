@@ -33,8 +33,6 @@ export type UnihouseInfo = {
     totalSupply?: string;
     maxSupply?: string;
     gTokenPrice: string;
-    decimals: number;
-    iconUrl: string;
   };
 };
 
@@ -114,22 +112,15 @@ export const getUnihouseData = async (
   let houseInfo: UnihouseInfo = {};
   if (!houseFields) return houseInfo;
 
-  const coinMetadataList = await Promise.all(
-    Object.values(houseFields).map((field) => {
-      return suiClient.getCoinMetadata({
-        coinType: field?.supply?.type.split("<")[2].split(">")[0],
-      });
-    })
-  );
-
-  if (!coinMetadataList) return houseInfo;
-
   houseFields.forEach((field, index) => {
-    const coinMetadata = coinMetadataList[index];
+    const tokenSymbol = unihouseList[index].objectType
+      .split("::")
+      .pop()
+      ?.split(">")[0];
 
-    if (!coinMetadata) return;
+    if (!tokenSymbol) return;
 
-    const houseName = `g${coinMetadata.symbol}`;
+    const houseName = `g${tokenSymbol}`;
     const tokenType = `0x2::coin::Coin<${field?.supply?.type.split("<")[1]}<${
       field?.supply?.type.split("<")[2].split(">")[0]
     }>>`;
@@ -141,15 +132,13 @@ export const getUnihouseData = async (
 
     houseInfo[houseName] = {
       id: unihouseList[index].objectId,
-      tokenSymbol: coinMetadata.symbol,
+      tokenSymbol: tokenSymbol,
       tokenType: tokenType,
       name: houseName,
       totalSupply: totalSupply.toString(),
       maxSupply: maxSupply.toString(),
       tvl: totalSui.toString(),
       gTokenPrice: (totalSui / totalSupply).toFixed(4),
-      decimals: coinMetadata.decimals,
-      iconUrl: coinMetadata.iconUrl,
     };
   });
 
