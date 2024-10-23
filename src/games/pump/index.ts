@@ -7,7 +7,6 @@ import {
 
 export const BASE_DATA_URL = 'http://suilotto.com';
 
-
 export interface GetCurvesInput {
     page: number;
     limit: number;
@@ -31,7 +30,7 @@ export interface PumpCurveItem {
     targetPoolId: string;
     timeCreated: string;
     lastTradeTimestamp: string;
-  }
+}
 
 export interface GetCurvesResponse {
     data: {
@@ -43,14 +42,14 @@ export interface GetCurvesResponse {
         totalPages: number;
         currentPage: number;
         pageSize: number;
-    }
+    };
 }
 
 export async function getCurves({
     page,
     limit
 }: GetCurvesInput): Promise<GetCurvesResponse> {
-    let url = `${BASE_DATA_URL}/curves?type=bump&sortOrder=desc&page=${page}&limit=${limit}&search=`;
+    const url = `${BASE_DATA_URL}/curves?type=bump&sortOrder=desc&page=${page}&limit=${limit}&search=`;
     const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +99,6 @@ export async function swapAsset({
                 transaction.pure.u64(0),
             ],
         });
-        
         transaction.transferObjects([resultCoin], address);
     };
 }
