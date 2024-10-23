@@ -1,4 +1,3 @@
-import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 
 export const testGetUnihouseData = async (dbClient: DoubleUpClient) => {

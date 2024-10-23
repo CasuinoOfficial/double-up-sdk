@@ -52,6 +52,7 @@ import {
   testGetUnihouseRedeemRequests,
   testGetGTokenBalance,
 } from "./unihouse";
+import { testGetCurves } from "./pump";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
@@ -177,6 +178,10 @@ const dbClient = new DoubleUpClient({
           .then((res) => console.log(res))
           .catch((err) => console.error(err));
         break;
+      case "pump:getcurves":
+          testGetCurves(dbClient).then((res) => console.log(res));
+        break;
+
       default:
       // Test all
       // testCoinflip(dbClient, client, keypair);

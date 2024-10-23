@@ -146,3 +146,20 @@ export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
+
+//************************//
+//        PUMP FUN        //
+//************************//
+export const PUMP_PACKAGE_ID =
+  "0xf202992873010d11fa2be276cee215d3f1e3ce3f416c9fbaac23f9de15cb9f13";
+export const PUMP_CORE_PACKAGE_ID =
+  "0x3f2a0baf78f98087a04431f848008bad050cb5f4427059fa08eeefaa94d56cca";
+export const PUMP_MODULE = "curve";
+export const SHARE_CURVE = `${PUMP_PACKAGE_ID}::${PUMP_MODULE}::transfer`;
+export const PUMP_LIST_CURVE_TARGET = `${PUMP_PACKAGE_ID}::${PUMP_MODULE}::list`;
+export const PUMP_BUY_TOKEN_TARGET = `${PUMP_PACKAGE_ID}::${PUMP_MODULE}::buy`;
+export const PUMP_SELL_TOKEN_TARGET = `${PUMP_PACKAGE_ID}::${PUMP_MODULE}::sell`;
+export const CONFIGURATOR_OBJ_ID =
+  "0x97f24f964264611bf19e396fe25e1fb04a2bc36e66f177621ae9a5e0206745c5";
+export const CURVE_LISTED_EVENT = `${PUMP_CORE_PACKAGE_ID}::${PUMP_MODULE}::BondingCurveListedEvent`;
+export const TRADE_EVENT = `${PUMP_CORE_PACKAGE_ID}::${PUMP_MODULE}::SwapEvent`;
