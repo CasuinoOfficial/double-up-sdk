@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.3.20",
+  "version": "4.3.21",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -43,13 +43,15 @@
     "test:blackjack:surrender": "FUNCTION=blackjack:surrender pnpm test",
     "test:unihouse:data": "FUNCTION=unihouse:data pnpm test",
     "test:unihouse:redeemrequests": "FUNCTION=unihouse:redeemrequests pnpm test",
-    "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test"
+    "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test",
+    "test:pump:getcurves": "FUNCTION=pump:getcurves pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
   "dependencies": {
-    "@mysten/sui": "1.2.1",
     "@mysten/kiosk": "0.9.10",
+    "@mysten/sui": "1.2.1",
+    "axios": "^1.7.7",
     "nanoid": "^5.0.7",
     "react": "^18.3.1"
   },
@@ -59,8 +61,8 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@mysten/sui": "1.2.1",
     "@mysten/kiosk": "0.9.10",
+    "@mysten/sui": "1.2.1",
     "nanoid": "^5.0.7"
   }
 }

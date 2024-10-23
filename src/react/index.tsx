@@ -71,6 +71,7 @@ import {
   WithdrawUnihouseInput,
   BalanceList,
 } from "../games/unihouse";
+import { GetCurvesInput, SwapAssetInput, swapAsset, getCurves, GetCurvesResponse } from "../games/pump";
 
 interface DoubleUpContextState {
   addRouletteBet: (input: RouletteAddBetInput) => void;
@@ -120,20 +121,19 @@ interface DoubleUpContextState {
   crapsSettleOrContinue: (input: CrapsSettleOrContinueInput) => void;
   createBlackjackTable: (input: BlackjackTableInput) => void;
   createBlackjackGame: (input: BlackjackInput) => void;
-  createBlackjackGameWithVoucher: (input: BlackjackVoucherInput) => void;
   getBlackjackTable: (
     input: GetBlackjackTableInput
   ) => Promise<BlackjackContractData | null>;
   blackjackPlayerMove: (input: BlackjackPlayerMoveInput) => void;
-  blackjackPlayerMoveWithVoucher: (
-    input: BlackjackPlayerMoveVoucherInput
-  ) => void;
   depositUnihouse: (input: DepositUnihouseInput) => void;
   requestWithdrawUnihouse: (input: WithdrawUnihouseInput) => void;
   getUnihouseData: (suiClient: SuiClient) => void;
   getRedeemRequests: (suiClient: SuiClient, address?: string) => void;
   getGTokenBalance: (address: string) => Promise<BalanceList>;
   blackjackPlayerProcessMove: (input: BlackjackPlayerProcessMove) => void;
+  // Pump
+  getCurves: (input: GetCurvesInput) => Promise<GetCurvesResponse>;
+  swapAsset: (input: SwapAssetInput) => void;
 }
 
 interface DoubleupProviderProps {
@@ -214,13 +214,9 @@ const DoubleUpProvider = ({
   const startCraps = dbClient.startCraps;
   const crapsSettleOrContinue = dbClient.crapsSettleOrContinue;
   const createBlackjackGame = dbClient.createBlackjackGame;
-  // const createBlackjackGameWithVoucher =
-  //   dbClient.createBlackjackGameWithVoucher;
   const createBlackjackTable = dbClient.createBlackjackTable;
   const getBlackjackTable = dbClient.getBlackjackTable;
   const blackjackPlayerMove = dbClient.blackjackPlayerMove;
-  // const blackjackPlayerMoveWithVoucher =
-  //   dbClient.blackjackPlayerMoveWithVoucher;
   const blackjackPlayerProcessMove = dbClient.blackjackPlayerProcessMove;
   const getGTokenBalance = dbClient.getGTokenBalance;
 
@@ -268,16 +264,8 @@ const DoubleUpProvider = ({
     getUnihouseData,
     getRedeemRequests,
     getGTokenBalance,
-    createBlackjackGameWithVoucher: function (
-      input: BlackjackVoucherInput
-    ): void {
-      throw new Error("Function not implemented.");
-    },
-    blackjackPlayerMoveWithVoucher: function (
-      input: BlackjackPlayerMoveVoucherInput
-    ): void {
-      throw new Error("Function not implemented.");
-    },
+    getCurves,
+    swapAsset,
   };
 
   return (

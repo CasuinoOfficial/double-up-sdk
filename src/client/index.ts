@@ -114,8 +114,6 @@ import {
   blackjackPlayerMove,
   blackjackPlayerProcessMove,
   BlackjackPlayerMoveInput,
-  BlackjackVoucherInput,
-  BlackjackPlayerMoveVoucherInput,
   BlackjackPlayerProcessMove,
   BlackjackTableInput,
 } from "../games/blackjack";
@@ -128,6 +126,12 @@ import {
   getRedeemRequests,
   getGTokenBalance,
 } from "../games/unihouse";
+import { 
+  getCurves, 
+  GetCurvesInput, 
+  swapAsset, 
+  SwapAssetInput 
+} from "../games/pump";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -420,13 +424,6 @@ export class DoubleUpClient {
       blackjackCorePackageId: this.blackjackCorePackageId,
       origin: this.origin,
     });
-  // createBlackjackGameWithVoucher = (input: BlackjackVoucherInput) =>
-  //   createBlackjackGameWithVoucher({
-  //     ...input,
-  //     blackjackPackageId: this.blackjackPackageId,
-  //     origin: this.origin,
-  //     client: this.suiClient,
-  //   });
   getBlackjackTable = (input: GetBlackjackTableInput) =>
     getBlackjackTable({
       ...input,
@@ -438,12 +435,6 @@ export class DoubleUpClient {
       ...input,
       blackjackPackageId: this.blackjackPackageId,
     });
-  // blackjackPlayerMoveWithVoucher = (input: BlackjackPlayerMoveVoucherInput) =>
-  //   blackjackPlayerMoveWithVoucher({
-  //     ...input,
-  //     blackjackPackageId: this.blackjackPackageId,
-  //     client: this.suiClient,
-  //   });
   blackjackPlayerProcessMove = (input: BlackjackPlayerProcessMove) =>
     blackjackPlayerProcessMove({
       ...input,
@@ -459,4 +450,9 @@ export class DoubleUpClient {
     getRedeemRequests(this.suiClient, address);
   getGTokenBalance = (address: string) =>
     getGTokenBalance(this.suiClient, address);
+
+  // Pump
+  getCurves = (input: GetCurvesInput) => getCurves({...input})
+  swapAsset = (input: SwapAssetInput) => swapAsset({...input})
+
 }
