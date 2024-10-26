@@ -84,6 +84,7 @@ import {
   testClaimEgg,
   testGetGachapons,
 } from "./gachapon";
+import { testGetCitizens } from "./citizens";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
@@ -429,6 +430,11 @@ const dbClient = new DoubleUpClient({
           "0x6e68a31df75ffd03f41692507d60f89ede0edcd38fffd7110a0faca3c9117e83", //ObjectId
           "0x350423e5588ea5cb9c367ff9d5ef6285e4cffa8a45c3f148a2e70605f24a47dd" //recipient
         );
+      case "citizens:getcitizens":
+        testGetCitizens(
+          dbClient,
+          "0xd94414fabb3930998c99696331b49a4fe60372abb0618a22714a0123bfc876b2"
+        ).then((res) => console.log(res));
         break;
 
       default:

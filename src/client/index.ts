@@ -140,7 +140,6 @@ import {
   getGTokenBalance,
   getMaxBet,
 } from "../games/unihouse";
-
 import {
   getCurves,
   GetCurvesInput,
@@ -231,6 +230,8 @@ import {
   DrawEggWithSecondaryCurrency,
   drawEggWithSecondaryCurrency,
 } from "../games/gachapon";
+
+import { getCitizens } from "../nfts/citizens";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -831,4 +832,8 @@ export class DoubleUpClient {
   // Pump
   getCurves = (input: GetCurvesInput) => getCurves({ ...input });
   swapAsset = (input: SwapAssetInput) => swapAsset({ ...input });
+
+  //Citizens
+  getCitizens = (address: string) =>
+    getCitizens(this.suiClient, this.kioskClient, address);
 }

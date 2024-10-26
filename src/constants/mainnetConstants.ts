@@ -225,3 +225,22 @@ export const LOTTERY_ID =
 export const LOTTERY_STORE =
   "0xde89e9f915a8b88bf5807e50aa621103c0adfb978ae4892590d5c0f0bf73848d";
 // ===============================================================================
+
+//************************//
+//        CITIZENS        //
+//************************//
+export const CITIZENS_PACKAGE_CORE_ID =
+  "0x862810efecf0296db2e9df3e075a7af8034ba374e73ff1098e88cc4bb7c15437";
+export const CITIZENS_PACKAGE_ID =
+  "0x58dd2c20332e7e412eaa37c6c832bdd22ef38022d45336858d231b3207f3a1f4";
+export const CITIZENS_MODULE_NAME = "doubleup_citizens";
+export const CITIZENS_REGISTRY =
+  "0xdbf5ddd68a04ed8f0294c8ea3565dbaaff1fadeacdeb01c1071d92530934f887";
+export const CITIZENS_INVENTORY_CONFIG =
+  "0x191091f4d43801628aead51435d3e380949afd8dc9945c4c107fda8b725d220d";
+export const CITIZENS_TRANSFER_POLICY =
+  "0x3f930eb7f18480989eee8dca460f4edad9fbd5560c68c6a2d711785a5c0d4cb1";
+export const CITIZENS_WHITELIST_MINT_COST = 35_000_000_000; // TODO: Put correct number
+export const CITIZENS_PUBLIC_MINT_COST = 50_000_000_000; // TODO: Put correct number
+export const CITIZENS_WHITELIST_TICKET_TYPE = `${CITIZENS_PACKAGE_ID}::doubleup_citizens::WhitelistTicket`;
+export const CITIZENS_UNCLAIMABLE_TYPES: string[] = [];

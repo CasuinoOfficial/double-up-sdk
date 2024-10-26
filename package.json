@@ -70,7 +70,8 @@
     "test:gachapon:testCreateFreeSpinner": "FUNCTION=gachapon:testCreateFreeSpinner pnpm test",
     "test:gachapon:testAddNftType": "FUNCTION=gachapon:testAddNftType pnpm test",
     "test:gachapon:testRemoveNftType": "FUNCTION=gachapon:testRemoveNftType pnpm test",
-    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test"
+    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test",
+    "test:citizens:getcitizens": "FUNCTION=citizens:getcitizens pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
