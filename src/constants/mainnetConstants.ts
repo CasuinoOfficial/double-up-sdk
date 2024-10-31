@@ -88,11 +88,11 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 // ROULETTE
 // ===============================================================================
 export const ROULETTE_CORE_PACKAGE_ID =
-  "0x0eb72162cfbecb56f4dd13cd558aadc78162f52f93fe5b24627e5a6f6fe15a74";
+  "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_PACKAGE_ID =
-  "0x0eb72162cfbecb56f4dd13cd558aadc78162f52f93fe5b24627e5a6f6fe15a74";
+  "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_CONFIG =
-  "0xa4847402c8b60dea08161f5392267a4629d80a88dbd475b5928cc21edf6f2a69";
+  "0x10b6c15345f843de1bfc2c0829b7d289214fd35407297f7a8d442363b48f30c1";
 export const ROULETTE_MODULE_NAME = "roulette";
 export const ROULETTE_STRUCT_NAME = "Roulette";
 
@@ -117,11 +117,11 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 // PLINKO
 // ===============================================================================
 export const PLINKO_CORE_PACKAGE_ID =
-  "0x2bc5f01857bdf95112037c1ccc287fc5c6da831eb6ae58da9e789c623b2c4519";
+  "0x512a8cd71c5bd163ea34001778ff026049e2325856246fb787ceaada8b77b7d2";
 export const PLINKO_PACKAGE_ID =
-  "0x2bc5f01857bdf95112037c1ccc287fc5c6da831eb6ae58da9e789c623b2c4519";
+  "0x512a8cd71c5bd163ea34001778ff026049e2325856246fb787ceaada8b77b7d2";
 export const PLINKO_CONFIG =
-  "0x111bd12d45768ffecfec9f64d9b16848afb8f4594ecb01e2db3705ad2a0bf141";
+  "0x4f15b4d7165833f1bedbbf114393b9d723a81ce0c27552776e00af97760eab6f";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
@@ -141,7 +141,7 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 export const CRAPS_CORE_PACKAGE_ID =
   "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
+  "0x7903c8f6bc7c28486d6a096c82f233d5101a5daf94325c15eacc61112e936e43";
 export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
