@@ -1,5 +1,5 @@
 import { bcs } from "@mysten/sui/bcs";
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiClient } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -11,13 +11,7 @@ import {
   UNI_HOUSE_OBJ_ID,
   ROULETTE_CONFIG,
   RAND_OBJ_ID,
-  CLOCK_OBJ_ID,
-  PYTH_SUI_PRICE_INFO_OBJ_ID,
-  SUILEND_MARKET,
-  SUILEND_POND_SUI_POOL_OBJ_ID,
-  SUILEND_ASSET_LIST,
 } from "../../constants/mainnetConstants";
-import { getAssetIndex } from "../../utils";
 
 // Bet Types
 type BetRed = 0;

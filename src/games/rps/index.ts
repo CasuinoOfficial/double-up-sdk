@@ -5,23 +5,13 @@ import {
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
-import { KioskOwnerCap, KioskTransaction } from "@mysten/kiosk";
-
-import { randomBytes } from "crypto";
 
 import {
-  CLOCK_OBJ_ID,
-  PYTH_SUI_PRICE_INFO_OBJ_ID,
   RAND_OBJ_ID,
   RPS_MODULE_NAME,
-  SUILEND_ASSET_LIST,
-  SUILEND_MARKET,
-  SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
-import { KioskClient } from "@mysten/kiosk";
 import {
-  getAssetIndex,
   getTypesFromVoucher,
   getVoucherBank,
 } from "../../utils";

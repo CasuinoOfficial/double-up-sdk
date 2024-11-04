@@ -8,11 +8,6 @@ import {
   UFORANGE_MODULE_NAME,
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
-  CLOCK_OBJ_ID,
-  PYTH_SUI_PRICE_INFO_OBJ_ID,
-  SUILEND_MARKET,
-  SUILEND_POND_SUI_POOL_OBJ_ID,
-  SUILEND_ASSET_LIST,
 } from "../../constants/mainnetConstants";
 import {
   getAssetIndex,
