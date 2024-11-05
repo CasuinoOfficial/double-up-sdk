@@ -22,6 +22,7 @@ export interface BuyTicketsInput {
   tickets: Ticket[];
   transaction: TransactionType;
   origin?: string;
+  referrer?: string;
 }
 
 interface InternalBuyTicketsInput extends BuyTicketsInput {
@@ -34,6 +35,7 @@ export interface BuyTicketsOnBehalfInput {
   tickets: Ticket[];
   transaction: TransactionType;
   origin?: string;
+  referrer?: string;
 }
 
 interface InternalBuyTicketsOnBehalfInput extends BuyTicketsOnBehalfInput {
@@ -173,10 +175,6 @@ interface LotteryHistoryItem {
   txDigest: string;
 }
 
-interface LotteryTicketHistory {
-
-}
-
 export interface LotteryHistoryResponse {
   ok: boolean;
   err?: Error;
@@ -190,20 +188,21 @@ interface LotteryTicket {
   epoch: number;
   timestampIssued: number;
   origin: string;
-  winningBalance: any; // TODO: figure out how to store option<balance>
+  referrer: string | null;
+  winningBalance?: any; // TODO: figure out how to store option<balance>
 }
 
 interface LotteryTicketsConfig {
-  cursor?: string;
-  filter: {
-    StructType: string;
-  };
-  limit: number;
-  options: {
-    showContent: boolean;
-    showType: boolean;
-  };
-  owner: string;
+  cursor?: any; // TODO: declare type
+  // query: {
+  //   All: [
+  //     { MoveEventType: string },
+  //     { Sender: string }
+  //   ]
+  // };
+  query: any;
+  order: "descending" | "ascending";
+  limit?: number;
 }
 
 export interface LotteryTicketsInput {
@@ -212,6 +211,7 @@ export interface LotteryTicketsInput {
 
 interface InternalLotteryTicketsInput extends LotteryTicketsInput {
   suiClient: SuiClient;
+  lotteryCorePackageId: string;
 }
 
 export interface LotteryTicketsResponse {
@@ -246,6 +246,7 @@ export const buyLotteryTickets = ({
   lotteryPackageId,
   transaction,
   origin,
+  referrer,
 }: InternalBuyTicketsInput): BuyTicketsResponse => {
   let res: BuyTicketsResponse = { ok: true };
 
@@ -261,7 +262,8 @@ export const buyLotteryTickets = ({
           transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
           transaction.pure.u8(specialNumber),
           transaction.pure.string(memeCoin),
-          transaction.pure.string(origin?? "DoubleUp"),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
           transaction.object(CLOCK_OBJ),
         ],
       });
@@ -282,6 +284,7 @@ export const buyLotteryTicketsOnBehalf = ({
   lotteryPackageId,
   transaction,
   origin,
+  referrer,
 }: InternalBuyTicketsOnBehalfInput): BuyTicketsResponse => {
   let res: BuyTicketsResponse = { ok: true };
 
@@ -299,6 +302,7 @@ export const buyLotteryTicketsOnBehalf = ({
           transaction.pure.u8(specialNumber),
           transaction.pure.string(memeCoin),
           transaction.pure.string(origin?? "DoubleUp"),
+          transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
           transaction.object(CLOCK_OBJ),
         ],
       });
@@ -434,85 +438,44 @@ export const getLotteryDrawingResult = async ({
   return res;
 };
 
-// export const getLotteryTickets = async ({
-//   address,
-//   lotteryPackageId,
-//   transaction,
-// }: InternalLotteryTicketsInput): Promise<LotteryTicketsResponse> => {
-//   const res: LotteryTicketsResponse = { ok: true };
-
-//   try {
-//     const tickets: LotteryTicket[] = [];
-
-//     const ticketHistory = transaction.moveCall({
-//       target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::get_player_ticket_history_total`,
-//       typeArguments: [SUI_COIN_TYPE],
-//       arguments: [
-//         transaction.object(LOTTERY_STORE_ID),
-//         transaction.pure.id(LOTTERY_ID),
-//         transaction.pure.address(address),
-//       ],
-//     });
-//   }
-// };
-
 export const getLotteryTickets = async ({
   address,
   suiClient,
+  lotteryCorePackageId,
 }: InternalLotteryTicketsInput): Promise<LotteryTicketsResponse> => {
   const res: LotteryTicketsResponse = { ok: true };
 
   try {
     const tickets: LotteryTicket[] = [];
+    let shouldFetchMore = true;
+    let cursor = undefined;
 
-    let cursor: string = "";
-    let shouldFetchMore: boolean = true;
+    while (shouldFetchMore) {
+      const queryParams: LotteryTicketsConfig = {
+        query: {
+            MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased<${SUI_COIN_TYPE}>`
+        },
+        order: "descending",
+      };
 
-    // while (shouldFetchMore) {
-    //   const config: LotteryTicketsConfig = {
-    //     owner: address,
-    //     options: {
-    //       showContent: true,
-    //       showType: true,
-    //     },
-    //     filter: {
-    //       StructType: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::Ticket`,
-    //     },
-    //     limit: 50,
-    //   };
+      if (!!cursor) {
+        queryParams.cursor = cursor;
+      }
 
-    //   if (!!cursor) {
-    //     config.cursor = cursor;
-    //   }
+      const resp = await suiClient.queryEvents(
+        queryParams
+      );
 
-    //   const { data, nextCursor, hasNextPage } = await suiClient.getOwnedObjects(
-    //     config
-    //   );
+      resp.data.forEach((event) => {
+        const ticket = event.parsedJson as LotteryTicket;
+        if (ticket.owner === address) {
+          tickets.push(ticket);
+        };
+      });
 
-    //   data.forEach(({ data }) => {
-    //     if (data?.content?.dataType === "moveObject") {
-    //       const fields = data.content.fields as any;
-
-    //       const ticket: LotteryTicket = {
-    //         id: fields.id.id,
-    //         picks: {
-    //           numbers: fields.picks.fields.numbers.fields.contents.map(
-    //             (number) => Number(number)
-    //           ),
-    //           specialNumber: Number(fields.picks.fields.special_number),
-    //         },
-    //         lotteryId: fields.lottery_id,
-    //         round: Number(fields.round),
-    //         timestampIssued: Number(fields.timestamp_issued),
-    //       };
-
-    //       tickets.push(ticket);
-    //     }
-    //   });
-
-    //   cursor = nextCursor;
-    //   shouldFetchMore = hasNextPage;
-    // }
+      cursor = resp.nextCursor;
+      shouldFetchMore = resp.hasNextPage;
+    };
 
     res.results = tickets;
   } catch (err) {

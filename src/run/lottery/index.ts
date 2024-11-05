@@ -18,7 +18,7 @@ export const testLotteryBuy = async (
 
     const tickets = [
       {
-        numbers: [27, 15, 30, 7, 11],
+        numbers: [27, 15, 30, 7, 11, 13],
         specialNumber: 2,
         memeCoin: "",
       } as Ticket,
@@ -53,7 +53,7 @@ export const testLotteryBuy = async (
       throw new Error(transactionResult.effects.status.error);
     }
 
-    console.log("Signed and sent transaction.");
+    console.log("Signed and sent transaction. TxDigest: ", transactionResult.digest);
   } catch (err) {
     console.log(err);
   }
@@ -74,7 +74,7 @@ export const testLotteryBuyOnBehalf = async (
 
     const tickets = [
       {
-        numbers: [27, 15, 30, 7, 11],
+        numbers: [27, 15, 30, 7, 11, 13],
         specialNumber: 2,
         memeCoin: "",
       } as Ticket,
@@ -110,7 +110,7 @@ export const testLotteryBuyOnBehalf = async (
       throw new Error(transactionResult.effects.status.error);
     }
 
-    console.log("Signed and sent transaction.");
+    console.log("Signed and sent transaction. TxDigest: ", transactionResult.digest);
   } catch (err) {
     console.log(err);
   }
@@ -169,7 +169,7 @@ export const testLotteryRedeem = async (
       throw new Error(transactionResult.effects.status.error);
     }
 
-    console.log("Signed and sent transaction.");
+    console.log("Signed and sent transaction. TxDigest: ", transactionResult.digest);
   } catch (err) {
     console.log(err);
   }
