@@ -125,9 +125,9 @@ const dbClient = new DoubleUpClient({
       case "lottery:history":
         testLotteryHistory(dbClient, client, keypair);
         break;
-      // case "lottery:tickets":
-      //   testLotteryTickets(dbClient, client, keypair);
-      //   break;
+      case "lottery:tickets":
+        testLotteryTickets(dbClient, client, keypair);
+        break;
       case "plinko":
         testPlinko(dbClient, client, keypair);
         break;

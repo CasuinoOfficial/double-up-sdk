@@ -391,6 +391,7 @@ export class DoubleUpClient {
     getLotteryTickets({
       ...input,
       suiClient: this.suiClient,
+      lotteryCorePackageId: this.lotteryCorePackageId,
     });
 
   // limbo
