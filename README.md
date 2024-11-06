@@ -94,34 +94,6 @@ const { ok: resultOk, err: resultErr, results } = await dbClient.getCoinflipResu
 });
 ```
 
-React
-
-```js
-import { useDoubleUp } from 'doubleup';
-
-...
-
-const { createCoinflip, getCoinflipResult } = useDoubleUp();
-
-...
-
-const { ok: gameOk, err: gameErr, gameSeed } = createCoinflip({
-    ...
-});
-
-...
-
-const tranactionResult = await signAndExecuteTransactionBlock({ ... });
-
-...
-
-const { ok: resultOk, err: resultErr, results } = await getCoinflipResult({
-    betType,
-    coinType,
-    gameSeed,
-    transactionResult
-});
-```
 
 ## Partner NFTs
 
@@ -130,25 +102,22 @@ The following games are enabled for a reduced house edge for holders of selected
 - Range Dice
 - Rock, Paper, Scissors
 
-When initializing the client or react provider, include the `partnerNftListId` option or prop.
+When initializing the client, include the `partnerNftListId` option or prop.
 
 Then, include `partnerNftId` in the call to the game. For example:
 
 ```js
-<DoubleUpProvider
-    {...otherProps},
-    partnerNftListId="" <<<<<<<<<<<<
->
-    <App />
-</DoubleUpProvider>
-
+const dbClient = new DoubleUpClient({
+    client: suiClient,
+    partnerNftListId: "" // <<<<<<<<<<
+});
 ...
 
 const { ok: gameOk, err: gameErr, gameSeed } = createRangeDice({
     betType,
     coin,
     coinType,
-    partnerNftId, <<<<<<<<<<<<
+    partnerNftId, // <<<<<<<<<<<<
     range,
     transaction: txb
 });

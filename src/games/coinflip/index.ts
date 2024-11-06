@@ -7,13 +7,8 @@ import {
 import { bcs } from "@mysten/sui/bcs";
 
 import {
-  CLOCK_OBJ_ID,
   COIN_MODULE_NAME,
-  PYTH_SUI_PRICE_INFO_OBJ_ID,
   RAND_OBJ_ID,
-  SUILEND_ASSET_LIST,
-  SUILEND_MARKET,
-  SUILEND_POND_SUI_POOL_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
 import {
