@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiClient, SuiTransactionBlockResponse, DynamicFieldInfo} from "@mysten/sui/client";
 
 import {
   BUCK_COIN_TYPE,
@@ -6,6 +6,7 @@ import {
   ROULETTE_MODULE_NAME, ROULETTE_PACKAGE_ID,
   SUI_COIN_TYPE,
   SUI_VOUCHER_BANK,
+  UNI_HOUSE_OBJ_ID,
 } from "../constants/mainnetConstants";
 
 interface GameInfo {
@@ -200,4 +201,32 @@ const getCoinTypeFromVoucher = (voucherType: string): string => {
 
 const getVoucherTypeFromVoucher = (voucherType: string): string => {
   return voucherType.split("<")[1].split(", ")[1].replace(">", "");
+}
+
+export const getGameSupportedCoinTypes = async (
+  suiClient: SuiClient
+): Promise<string[]> => {
+  let unihouseFields: DynamicFieldInfo[] = [];
+  let cursor;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const response: any = await suiClient.getDynamicFields({
+      parentId: UNI_HOUSE_OBJ_ID,
+      cursor: cursor || null,
+    });
+
+    const dynamicFields = response.data;
+    const unihouseList: DynamicFieldInfo[] = dynamicFields?.filter(
+      (field: DynamicFieldInfo) => field?.objectType.includes("house::House"),
+    );
+
+    if (unihouseList) {
+      unihouseFields = unihouseFields.concat(unihouseList);
+    }
+    cursor = response.nextCursor;
+    hasNextPage = response.hasNextPage;
+  }
+  const typeList = unihouseFields.map((field) => field.objectType.split("<")?.pop()?.split(">")[0] as string);
+  return typeList;
 }
