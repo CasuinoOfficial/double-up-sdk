@@ -42,6 +42,10 @@ import {
   redeemLotteryTickets,
   DrawingResultInput,
   LotteryTicketsInput,
+  RedeemTicketsInput,
+  BuyTicketsInput,
+  BuyTicketsOnBehalfInput,
+  buyLotteryTicketsOnBehalf,
 } from "../games/lottery";
 
 import {
@@ -132,6 +136,7 @@ import {
   swapAsset, 
   SwapAssetInput 
 } from "../games/pump";
+import { LOTTERY_CORE_PACKAGE_ID, LOTTERY_PACKAGE_ID } from "../constants/testnetConstants";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -154,6 +159,8 @@ interface DoubleUpClientInput {
   crapsPackageId?: string;
   blackjackCorePackageId?: string;
   blackjackPackageId?: string;
+  lotteryPackageId?: string;
+  lotteryCorePackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -178,7 +185,9 @@ export class DoubleUpClient {
     crapsPackageId = CRAPS_PACKAGE_ID,
     blackjackCorePackageId = BLACKJACK_CORE_PACKAGE_ID,
     blackjackPackageId = BLACKJACK_PACKAGE_ID,
-    suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
+    lotteryPackageId = LOTTERY_PACKAGE_ID,
+    lotteryCorePackageId = LOTTERY_CORE_PACKAGE_ID,
+    suiClient = new SuiClient({ url: getFullnodeUrl("testnet") }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
     this.coinflipPackageId = coinflipPackageId;
@@ -198,10 +207,12 @@ export class DoubleUpClient {
     this.rpsPackageId = rpsPackageId;
     this.blackjackCorePackageId = blackjackCorePackageId;
     this.blackjackPackageId = blackjackPackageId;
+    this.lotteryPackageId = lotteryPackageId;
+    this.lotteryCorePackageId = lotteryCorePackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
-      network: Network.MAINNET,
+      network: Network.TESTNET,
     });
   }
 
@@ -227,6 +238,8 @@ export class DoubleUpClient {
   crapsPackageId: string;
   blackjackCorePackageId: string;
   blackjackPackageId: string;
+  lotteryPackageId: string;
+  lotteryCorePackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -245,19 +258,38 @@ export class DoubleUpClient {
     });
 
   // lottery
-  buyLotteryTickets = buyLotteryTickets;
-  redeemLotteryTickets = redeemLotteryTickets;
+  buyLotteryTickets = (input: BuyTicketsInput) => 
+    buyLotteryTickets({
+      ...input,
+      lotteryPackageId: this.lotteryPackageId,
+    });
+  buyLotteryTicketsOnBehalf = (input: BuyTicketsOnBehalfInput) => 
+    buyLotteryTicketsOnBehalf({
+      ...input,
+      lotteryPackageId: this.lotteryPackageId,
+    });
+  redeemLotteryTickets = (input: RedeemTicketsInput) => 
+    redeemLotteryTickets({
+      ...input,
+      lotteryPackageId: this.lotteryPackageId,
+    });
   getLottery = () => getLottery({ suiClient: this.suiClient });
-  getLotteryHistory = () => getLotteryHistory({ suiClient: this.suiClient });
+  getLotteryHistory = () => 
+    getLotteryHistory({ 
+      suiClient: this.suiClient,
+      lotteryCorePackageId: this.lotteryCorePackageId, 
+    });
   getLotteryDrawingResult = (input: DrawingResultInput) =>
     getLotteryDrawingResult({
       ...input,
       suiClient: this.suiClient,
+      lotteryCorePackageId: this.lotteryCorePackageId,
     });
   getLotteryTickets = (input: LotteryTicketsInput) =>
     getLotteryTickets({
       ...input,
       suiClient: this.suiClient,
+      lotteryCorePackageId: this.lotteryCorePackageId,
     });
 
   // limbo

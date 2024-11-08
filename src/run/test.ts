@@ -13,6 +13,7 @@ import {
   testLotteryTickets,
   testLotteryRedeem,
   testLotteryResults,
+  testLotteryHistory,
 } from "./lottery";
 import {
   testPlinko,
@@ -55,7 +56,7 @@ import {
 import { testGetCurves } from "./pump";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
-const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
+const client = new SuiClient({ url: getFullnodeUrl("testnet") });
 console.log("got here");
 const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
 
@@ -77,21 +78,24 @@ const dbClient = new DoubleUpClient({
       case "limbo":
         testLimbo(dbClient, client, keypair);
         break;
-      // case "lottery:get":
-      //   testLotteryGet(dbClient, client, keypair);
-      //   break;
-      // case "lottery:buy":
-      //   testLotteryBuy(dbClient, client, keypair);
-      //   break;
-      // case "lottery:redeem":
-      //   testLotteryRedeem(dbClient, client, keypair);
-      //   break;
-      // case "lottery:results":
-      //   testLotteryResults(dbClient, client, keypair);
-      //   break;
-      // case "lottery:tickets":
-      //   testLotteryTickets(dbClient, client, keypair);
-      //   break;
+      case "lottery:get":
+        testLotteryGet(dbClient, client, keypair);
+        break;
+      case "lottery:buy":
+        testLotteryBuy(dbClient, client, keypair);
+        break;
+      case "lottery:redeem":
+        testLotteryRedeem(dbClient, client, keypair);
+        break;
+      case "lottery:results":
+        testLotteryResults(dbClient, client, keypair);
+        break;
+      case "lottery:history":
+        testLotteryHistory(dbClient, client, keypair);
+        break;
+      case "lottery:tickets":
+        testLotteryTickets(dbClient, client, keypair);
+        break;
       case "plinko":
         testPlinko(dbClient, client, keypair);
         break;
