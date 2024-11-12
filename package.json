@@ -41,6 +41,8 @@
     "test:blackjack:double": "FUNCTION=blackjack:double pnpm test",
     "test:blackjack:split": "FUNCTION=blackjack:split pnpm test",
     "test:blackjack:surrender": "FUNCTION=blackjack:surrender pnpm test",
+    "test:raffle:get": "FUNCTION=raffle:get pnpm test",
+    "test:raffle:buy": "FUNCTION=raffle:buy pnpm test",
     "test:unihouse:data": "FUNCTION=unihouse:data pnpm test",
     "test:unihouse:redeemrequests": "FUNCTION=unihouse:redeemrequests pnpm test",
     "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test",

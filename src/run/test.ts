@@ -53,6 +53,7 @@ import {
   testGetGTokenBalance,
 } from "./unihouse";
 import { testGetCurves } from "./pump";
+import { testRaffleBuy, testRaffleGet } from "./raffles";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
@@ -166,6 +167,12 @@ const dbClient = new DoubleUpClient({
         break;
       case "blackjack:surrender":
         testBlackjackPlayerSurrender(dbClient, client, keypair);
+        break;
+      case "raffle:get":
+        testRaffleGet(dbClient, client, keypair);
+        break;
+      case "raffle:buy":
+        testRaffleBuy(dbClient, client, keypair);
         break;
       case "unihouse:data":
         testGetUnihouseData(dbClient).then((res) => console.log(res));
