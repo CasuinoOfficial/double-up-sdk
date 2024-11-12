@@ -152,7 +152,7 @@ export const CRAPS_STRUCT_NAME = "Craps";
 export const RAFFLES_CORE_PACKAGE_ID =
   "0xdf0eb76181ce7c25b8cc872f0740eebe23f6cfccf05bf4ef7de9332b4de32b82";
 export const RAFFLES_PACKAGE_ID =
-  "0xf81abcf265f0f75e2d10d982a7afbe42780d0a27d4002ede71732e91af4a2ffa";
+  "0xae3b126c0524c9fc8b0b76d590b60b295745ee570af9b60da2425c84aef3fa5b";
 export const RAFFLES_SUI_TREASURY =
   "0x9bfd7b7905da759863a2c877c4f99047c2d931b0a969d028c6457fde82d0f642";
 export const RAFFLES_ID_SUI = 
