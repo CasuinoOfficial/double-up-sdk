@@ -159,7 +159,7 @@ import {
   DepositMarketBalanceInput,
   WithdrawMarketBalanceInput,
 } from "../games/alloy";
-import { buyRaffleTickets, BuyRaffleTicketsInput, getRaffle } from "../games/raffles";
+import { buyRaffleTickets, BuyRaffleTicketsInput, buyRaffleTicketsWithDeal, BuyRaffleTicketsWithDealInput, getRaffle, getTotalTicketsForUser, GetTotalTicketsForUserInput } from "../games/raffles";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -538,6 +538,17 @@ export class DoubleUpClient {
       ...input,
       rafflesPackageId: this.rafflesPackageId,
       origin: this.origin,
+    });
+  buyRaffleTicketsWithDeal = (input: BuyRaffleTicketsWithDealInput) =>
+    buyRaffleTicketsWithDeal({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
+      origin: this.origin,
+    });
+  getRaffleTickets = (input: GetTotalTicketsForUserInput) => 
+    getTotalTicketsForUser({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
     });
 
   // Unihouse
