@@ -2,7 +2,6 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
-import { bcs } from "@mysten/sui/bcs";
 import { U64FromBytes } from "../../utils";
 
 export const testRaffleGet = async (

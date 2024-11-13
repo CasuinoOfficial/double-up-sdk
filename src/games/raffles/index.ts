@@ -1,12 +1,15 @@
 import { SuiClient } from "@mysten/sui/client";
-import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import {
-  Transaction,
   TransactionObjectArgument,
   Transaction as TransactionType,
 } from "@mysten/sui/transactions";
-import { CLOCK_OBJ_ID, RAFFLES_ID_SUI, RAFFLES_MODULE_NAME, RAFFLES_SUI_TREASURY, SUI_COIN_TYPE } from "../../constants/mainnetConstants";
-import { bcs } from "@mysten/sui/bcs";
+import { 
+  CLOCK_OBJ_ID, 
+  RAFFLES_ID_SUI, 
+  RAFFLES_MODULE_NAME, 
+  RAFFLES_SUI_TREASURY, 
+  SUI_COIN_TYPE 
+} from "../../constants/mainnetConstants";
 
 export interface BuyRaffleTicketsInput {
   coin: TransactionObjectArgument;
@@ -204,7 +207,7 @@ export const getTotalTicketsForUser = ({
         transaction.pure.id(RAFFLES_ID_SUI),
       ],
     });
-    
+
     transaction.moveCall({
       target: `${rafflesPackageId}::${RAFFLES_MODULE_NAME}::tickets_bought`,
       typeArguments: [SUI_COIN_TYPE],
