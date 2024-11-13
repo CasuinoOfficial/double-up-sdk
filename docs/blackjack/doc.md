@@ -228,7 +228,7 @@ With a `Table` created this is the next call in order. It will create a `Game` t
 **Arguments**
 
 The call takes one object as argument that has 3 fields, `coinType`, `coin` and `transaction`.
-The first is a string, the second is a string and it’s the ID of the coin to be used and the last is a `Transaction`. Notice that here a coin is required and it’s value should be within accepted limits, for SUI coins, the lowest limit is 1 and the highest depends on the house, typically it is around 5000.
+The first is a string, the second is a TransactionObjectArgument, you must have split a coin previously to get that, and the last is a `Transaction`. Notice that here a coin is required and it’s value should be within accepted limits, for SUI coins, the lowest limit is 1 and the highest depends on the house, typically it is around 5000.
 
 Argument:
 
@@ -237,7 +237,7 @@ Argument:
   Fields: 
 
 - coinType: string,
-- coin: string,
+- coin: TransactionObjectArgument,
 - transaction: Transaction
 
 **Sample Code**
@@ -255,13 +255,14 @@ import {getSigner} from "path/to/utility_functions";
  // don't need this.
  const signer = getSigner();
  const coinType = "0x2::sui::SUI";
- const userCoinId = "0xaabbccddeeff123...";
+ const betAmount = 1_000_000_000; // 1 SUI
  
  const createGame = async () => {
    const tx = new Transaction();
+   const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(betAmount)]);
    DBClient.createBlackjackGame({
      coinType: coinType,
-     coin: userCoinId,
+     coin: coin,
      transaction: tx
    });
    const response = await DBClient.suiClient.signAndExecuteTransction({
@@ -315,7 +316,7 @@ import {getSigner} from "path/to/utility_functions";
  const coinType = "0x2::sui::SUI";
  
  const playerHIT = async () => {
-    const tx = Transaction();
+    const tx = new Transaction();
     DBClient.blackjackPlayerMove({
         coinType: coinType,
         playerAction: 101,
@@ -351,8 +352,8 @@ import {getSigner} from "path/to/utility_functions";
  const betAmount = 1_000_000_000; // this should be stored when it was first requested for the DoubleUpClient.createBlackjackGame call.
  
  const playerDOUBLEDOWN = async () => {
-    const tx = Transaction();
-    const coin = tx.splitCoins(tx.gas, [tx.pure.u64(betAmount)]);
+    const tx = new Transaction();
+    const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(betAmount)]);
 
     DBClient.blackjackPlayerMove({
         coinType: coinType,
@@ -428,8 +429,8 @@ import {getSigner} from "path/to/utility_functions";
  const coinType = "0x2::sui::SUI";
  const userAddress = "0xaabbcc123..."
  
- const processMove = () => {
-    const tx = new Transcation();
+ const processMove = async () => {
+    const tx = new Transaction();
     DBClient.processPlayerMove({
         coinType: coinType,
         hostAddress: userAddress,
