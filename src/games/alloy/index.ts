@@ -6,11 +6,9 @@ import {
 } from "../../constants/mainnetConstants";
 import { bcs } from "@mysten/sui/bcs";
 import {
-  TransactionArgument,
   Transaction as TransactionType,
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
 
 export interface MarketplaceInput {
   coinType: string;
