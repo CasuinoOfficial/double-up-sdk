@@ -163,3 +163,17 @@ export const CONFIGURATOR_OBJ_ID =
   "0x97f24f964264611bf19e396fe25e1fb04a2bc36e66f177621ae9a5e0206745c5";
 export const CURVE_LISTED_EVENT = `${PUMP_CORE_PACKAGE_ID}::${PUMP_MODULE}::BondingCurveListedEvent`;
 export const TRADE_EVENT = `${PUMP_CORE_PACKAGE_ID}::${PUMP_MODULE}::SwapEvent`;
+
+//************************//
+//    ALLOY PREDICTION    //
+//************************//
+export const ALLOY_CORE_PACKAGE_ID =
+  "0x9c200121e29ccd824e465e8fc95a5788558a0848aea83aee83dfdb5ce79186f3";
+export const ALLOY_PACKAGE_ID =
+  "0x9c200121e29ccd824e465e8fc95a5788558a0848aea83aee83dfdb5ce79186f3";
+export const ALLOY_MARKET_CONFIG =
+  "0xc7c367a89c8dff7f2916a310b0a86247fdff87f4d3bc4e8b5f930d43a7946c06";
+export const ALLOY_ADMIN_CAP =
+  "0x6fd0ed2cadfbd6f215d986c532c4c41ed7948531432c5510ab9f30855b5c37e1";
+export const ALLOY_MODULE_NAME = "alloy";
+export const ALLOY_STRUCT_NAME = "alloy";
