@@ -17,6 +17,8 @@ import {
   UFORANGE_PACKAGE_ID,
   BLACKJACK_CORE_PACKAGE_ID,
   BLACKJACK_PACKAGE_ID,
+  ALLOY_CORE_PACKAGE_ID,
+  ALLOY_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
 import {
@@ -117,6 +119,7 @@ import {
   BlackjackPlayerProcessMove,
   BlackjackTableInput,
 } from "../games/blackjack";
+
 import {
   depositUnihouse,
   DepositUnihouseInput,
@@ -126,12 +129,32 @@ import {
   getRedeemRequests,
   getGTokenBalance,
 } from "../games/unihouse";
-import { 
-  getCurves, 
-  GetCurvesInput, 
-  swapAsset, 
-  SwapAssetInput 
+
+import {
+  getCurves,
+  GetCurvesInput,
+  swapAsset,
+  SwapAssetInput,
 } from "../games/pump";
+
+import {
+  createMarketplace,
+  createMarket,
+  createMarketInstance,
+  placeMarketGuess,
+  setAIPrediction,
+  marketSettleOrContinue,
+  releaseUnsettledMarket,
+  depositMarketBalance,
+  MarketplaceInput,
+  MarketInput,
+  MarketInstanceInput,
+  PlaceMarketGuessInput,
+  SetAIPredictionInput,
+  MarketSettleOrContinueInput,
+  ReleaseUnsettledMarketInput,
+  DepositMarketBalanceInput,
+} from "src/games/alloy";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -154,6 +177,8 @@ interface DoubleUpClientInput {
   crapsPackageId?: string;
   blackjackCorePackageId?: string;
   blackjackPackageId?: string;
+  alloyCorePackageId?: string;
+  alloyPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -178,6 +203,8 @@ export class DoubleUpClient {
     crapsPackageId = CRAPS_PACKAGE_ID,
     blackjackCorePackageId = BLACKJACK_CORE_PACKAGE_ID,
     blackjackPackageId = BLACKJACK_PACKAGE_ID,
+    alloyCorePackageId = ALLOY_CORE_PACKAGE_ID,
+    alloyPackageId = ALLOY_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
@@ -198,6 +225,8 @@ export class DoubleUpClient {
     this.rpsPackageId = rpsPackageId;
     this.blackjackCorePackageId = blackjackCorePackageId;
     this.blackjackPackageId = blackjackPackageId;
+    this.alloyCorePackageId = alloyCorePackageId;
+    this.alloyPackageId = alloyPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -227,6 +256,8 @@ export class DoubleUpClient {
   crapsPackageId: string;
   blackjackCorePackageId: string;
   blackjackPackageId: string;
+  alloyCorePackageId: string;
+  alloyPackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -440,6 +471,48 @@ export class DoubleUpClient {
       ...input,
     });
 
+  // Alloy
+  createMarketplace = (input: MarketplaceInput) =>
+    createMarketplace({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  createMarket = (input: MarketInput) =>
+    createMarket({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  createMarketInstance = (input: MarketInstanceInput) =>
+    createMarketInstance({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  placeMarketGuess = (input: PlaceMarketGuessInput) =>
+    placeMarketGuess({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  setAIPrediction = (input: SetAIPredictionInput) =>
+    setAIPrediction({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  marketSettleOrContinue = (input: MarketSettleOrContinueInput) =>
+    marketSettleOrContinue({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  releaseUnsettledMarket = (input: ReleaseUnsettledMarketInput) =>
+    releaseUnsettledMarket({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  depositMarketBalance = (input: DepositMarketBalanceInput) =>
+    depositMarketBalance({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+
   // Unihouse
   depositUnihouse = (input: DepositUnihouseInput) =>
     depositUnihouse({ ...input });
@@ -452,7 +525,6 @@ export class DoubleUpClient {
     getGTokenBalance(this.suiClient, address);
 
   // Pump
-  getCurves = (input: GetCurvesInput) => getCurves({...input})
-  swapAsset = (input: SwapAssetInput) => swapAsset({...input})
-
+  getCurves = (input: GetCurvesInput) => getCurves({ ...input });
+  swapAsset = (input: SwapAssetInput) => swapAsset({ ...input });
 }
