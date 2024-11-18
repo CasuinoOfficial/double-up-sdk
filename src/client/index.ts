@@ -159,7 +159,7 @@ import {
   DepositMarketBalanceInput,
   WithdrawMarketBalanceInput,
 } from "../games/alloy";
-import { buyRaffleTickets, BuyRaffleTicketsInput, buyRaffleTicketsWithDeal, BuyRaffleTicketsWithDealInput, getRaffle, getTotalTicketsForUser, GetTotalTicketsForUserInput } from "../games/raffles";
+import { buyRaffleTickets, BuyRaffleTicketsInput, buyRaffleTicketsWithDeal, BuyRaffleTicketsWithDealInput, buyRaffleTicketsWithTreats, BuyRaffleTicketsWithTreatsInput, getRaffle, GetRaffleInput, getTotalTicketsForUser, GetTotalTicketsForUserInput } from "../games/raffles";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -532,7 +532,11 @@ export class DoubleUpClient {
     });
 
   // Raffles
-  getRaffle = () => getRaffle({client: this.suiClient});
+  getRaffle = (input: GetRaffleInput) => 
+    getRaffle({
+      ...input,
+      client: this.suiClient
+    });
   buyRaffleTickets = (input: BuyRaffleTicketsInput) => 
     buyRaffleTickets({
       ...input,
@@ -541,6 +545,12 @@ export class DoubleUpClient {
     });
   buyRaffleTicketsWithDeal = (input: BuyRaffleTicketsWithDealInput) =>
     buyRaffleTicketsWithDeal({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
+      origin: this.origin,
+    });
+  buyRaffleTicketsWithTreats = (input: BuyRaffleTicketsWithTreatsInput) =>
+    buyRaffleTicketsWithTreats({
       ...input,
       rafflesPackageId: this.rafflesPackageId,
       origin: this.origin,

@@ -3,6 +3,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { U64FromBytes } from "../../utils";
+import { RAFFLES_ID_SUI, SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 
 export const testRaffleGet = async (
   dbClient: DoubleUpClient,
@@ -10,7 +11,9 @@ export const testRaffleGet = async (
   keypair: Secp256k1Keypair
 ) => {
   try {
-    const raffle = await dbClient.getRaffle();
+    const raffle = await dbClient.getRaffle({
+      raffleId: RAFFLES_ID_SUI
+    });
 
     console.log(raffle);
   } catch (err) {
@@ -66,9 +69,13 @@ export const testRaffleBuy = async (
     const txb = new Transaction();
 
     let [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(price)]);
+    let coinType = SUI_COIN_TYPE;
+    let raffleId = RAFFLES_ID_SUI;
 
     const { ok, err } = dbClient.buyRaffleTickets({
       coin,
+      coinType,
+      raffleId,
       transaction: txb,
     });
 
@@ -114,9 +121,13 @@ export const testRaffleBuyWithDeal = async (
     const txb = new Transaction();
 
     let [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(price)]);
+    let coinType = SUI_COIN_TYPE;
+    let raffleId = RAFFLES_ID_SUI;
 
     const { ok, err } = dbClient.buyRaffleTicketsWithDeal({
       coin,
+      coinType,
+      raffleId,
       ticketDeal,
       transaction: txb,
     });
