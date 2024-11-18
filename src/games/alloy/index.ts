@@ -80,6 +80,13 @@ export interface DepositMarketBalanceInput {
   transaction: TransactionType;
 }
 
+export interface WithdrawMarketBalanceInput {
+  coinType: string;
+  marketplace_name: string;
+  withdraw: number;
+  transaction: TransactionType;
+}
+
 interface InternalMarketplaceInput extends MarketplaceInput {
   alloyPackageId: string;
 }
@@ -111,6 +118,11 @@ interface InternalReleaseUnsettledMarketInput
 }
 
 interface InternalDepositMarketBalanceInput extends DepositMarketBalanceInput {
+  alloyPackageId: string;
+}
+
+interface InternalWithdrawMarketBalanceInput
+  extends WithdrawMarketBalanceInput {
   alloyPackageId: string;
 }
 
@@ -302,6 +314,26 @@ export const depositMarketBalance = ({
       transaction.object(ALLOY_MARKET_CONFIG),
       transaction.pure.string(marketplace_name),
       coin,
+    ],
+  });
+};
+
+export const withdrawMarketBalance = ({
+  coinType,
+  alloyPackageId,
+  marketplace_name,
+  withdraw,
+  transaction,
+}: InternalWithdrawMarketBalanceInput) => {
+  transaction.setGasBudget(100_000_000);
+  transaction.moveCall({
+    target: `${alloyPackageId}::${ALLOY_MODULE_NAME}::withdraw_market_balance`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(ALLOY_ADMIN_CAP),
+      transaction.object(ALLOY_MARKET_CONFIG),
+      transaction.pure.string(marketplace_name),
+      transaction.pure.u64(withdraw),
     ],
   });
 };

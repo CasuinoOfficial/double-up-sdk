@@ -146,6 +146,7 @@ import {
   marketSettleOrContinue,
   releaseUnsettledMarket,
   depositMarketBalance,
+  withdrawMarketBalance,
   MarketplaceInput,
   MarketInput,
   MarketInstanceInput,
@@ -154,6 +155,7 @@ import {
   MarketSettleOrContinueInput,
   ReleaseUnsettledMarketInput,
   DepositMarketBalanceInput,
+  WithdrawMarketBalanceInput,
 } from "../games/alloy";
 
 interface DoubleUpClientInput {
@@ -509,6 +511,11 @@ export class DoubleUpClient {
     });
   depositMarketBalance = (input: DepositMarketBalanceInput) =>
     depositMarketBalance({
+      ...input,
+      alloyPackageId: this.alloyPackageId,
+    });
+  withdrawMarketBalance = (input: WithdrawMarketBalanceInput) =>
+    withdrawMarketBalance({
       ...input,
       alloyPackageId: this.alloyPackageId,
     });
