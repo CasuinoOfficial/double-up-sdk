@@ -154,7 +154,7 @@ import {
   MarketSettleOrContinueInput,
   ReleaseUnsettledMarketInput,
   DepositMarketBalanceInput,
-} from "src/games/alloy";
+} from "../games/alloy";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
