@@ -6,7 +6,6 @@ import {
 import { 
   CLOCK_OBJ_ID, 
   DOGHOUSE, 
-  RAFFLES_ID_SUI, 
   RAFFLES_MODULE_NAME, 
   RAFFLES_TREASURY, 
   SUI_COIN_TYPE 
@@ -52,6 +51,7 @@ export interface BuyRaffleTicketsWithDealResponse {
 
 export interface BuyRaffleTicketsWithTreatsInput {
   amount: string | number;
+  doghouse: string;
   raffleId: string;
   transaction: TransactionType;
 }
@@ -119,6 +119,7 @@ export interface RaffleResponse {
 
 export interface GetTotalTicketsForUserInput {
   address: string;
+  raffleId: string;
   transaction: TransactionType;
 }
 
@@ -129,6 +130,21 @@ interface InternalGetTotalTicketsForUserInput extends GetTotalTicketsForUserInpu
 export interface GetTotalTicketsForUserResponse {
   ok: boolean;
   err?: Error;
+}
+
+export interface GetCoinTypesInput {
+  transaction: TransactionType;
+  raffleId: string;
+}
+
+interface InternalGetCoinTypesInput extends GetCoinTypesInput {
+  rafflesPackageId: string;
+}
+
+export interface GetCoinTypesResponse {
+  ok: boolean;
+  err?: Error;
+  result?: string[];
 }
 
 export const getRaffle = async ({
@@ -235,6 +251,7 @@ export const buyRaffleTicketsWithDeal = ({
 export const buyRaffleTicketsWithTreats = ({
   amount,
   raffleId,
+  doghouse,
   transaction,
   rafflesPackageId,
   origin
@@ -246,7 +263,7 @@ export const buyRaffleTicketsWithTreats = ({
       target: `${rafflesPackageId}::${RAFFLES_MODULE_NAME}::buy_tickets_with_treats`,
       arguments: [
         transaction.object(RAFFLES_TREASURY),
-        transaction.object(DOGHOUSE),
+        transaction.object(doghouse),
         transaction.object(CLOCK_OBJ_ID),
         transaction.pure.id(raffleId),
         transaction.pure.u64(Number(amount)),
@@ -263,6 +280,7 @@ export const buyRaffleTicketsWithTreats = ({
 
 export const getTotalTicketsForUser = ({
   address,
+  raffleId,
   transaction,
   rafflesPackageId,
 }: InternalGetTotalTicketsForUserInput): GetTotalTicketsForUserResponse => {
@@ -271,16 +289,14 @@ export const getTotalTicketsForUser = ({
   try {
     let raffle = transaction.moveCall({
       target: `${rafflesPackageId}::${RAFFLES_MODULE_NAME}::borrow_raffle`,
-      typeArguments: [SUI_COIN_TYPE],
       arguments: [
         transaction.object(RAFFLES_TREASURY),
-        transaction.pure.id(RAFFLES_ID_SUI),
+        transaction.pure.id(raffleId),
       ],
     });
 
     transaction.moveCall({
       target: `${rafflesPackageId}::${RAFFLES_MODULE_NAME}::tickets_bought`,
-      typeArguments: [SUI_COIN_TYPE],
       arguments: [
         raffle,
         transaction.pure.address(address),
@@ -294,10 +310,19 @@ export const getTotalTicketsForUser = ({
   return res;
 }
 
-export const getRaffleSupportedCoinTypes = (
-  transaction: TransactionType,
-  raffleId: string,
-  rafflesPackageId: string,
-) => {
-  let 
-}
+// export const getRaffleSupportedCoinTypes = ({
+//   transaction,
+//   raffleId,
+//   rafflesPackageId,
+// }: InternalGetCoinTypesInput): GetCoinTypesResponse => {
+//   const res: GetCoinTypesResponse = { ok: true };
+
+//   try {
+
+//   } catch (err) {
+//     res.ok = false;
+//     res.err = err;
+//   };
+
+//   return res;
+// }

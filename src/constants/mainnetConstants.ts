@@ -150,13 +150,11 @@ export const CRAPS_STRUCT_NAME = "Craps";
 // RAFFLES
 // ===============================================================================
 export const RAFFLES_CORE_PACKAGE_ID =
-  "0xdf0eb76181ce7c25b8cc872f0740eebe23f6cfccf05bf4ef7de9332b4de32b82";
+  "0xbe8090ef7d91b307024766220db52e161021b0016c0164300ee5941c7e517ab9";
 export const RAFFLES_PACKAGE_ID =
-  "0xae3b126c0524c9fc8b0b76d590b60b295745ee570af9b60da2425c84aef3fa5b";
+  "0xbe8090ef7d91b307024766220db52e161021b0016c0164300ee5941c7e517ab9";
 export const RAFFLES_TREASURY =
-  "0x9bfd7b7905da759863a2c877c4f99047c2d931b0a969d028c6457fde82d0f642";
-export const RAFFLES_ID_SUI = 
-  "0x332bb1bc4252c314a28a776643f9ab6fb27ac9ba0f2d3c03a6d857bde0f4d564";
+  "0xa7f05a7ba45ba8dc4227d7d3128f4042af4d1f4b8883fbeb7bd047e42232f240";
 export const RAFFLES_MODULE_NAME = "raffles";
 export const RAFFLES_STRUCT_NAME = "Raffles";
 
