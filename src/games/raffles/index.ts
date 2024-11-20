@@ -95,15 +95,23 @@ interface InternalGetRaffleInput extends GetRaffleInput {
 }
 
 interface RaffleData {
+  accepted_coin_types: {
+    fields: { contents: any[] };
+    type: string;
+  };
   collected: number;
   count: number;
   cover_image: string;
   description: string;
   end_date: number;
-  id: {
-    id: string;
+  id: { id: string };
+  participants: {
+    fields: { 
+      id: { id: string };
+      size: number;
+    };
+    type: string;
   };
-  participants: Record<string, RaffleParticipant>;
   title: string;
   total_participants: number;
   total_tickets: number;
