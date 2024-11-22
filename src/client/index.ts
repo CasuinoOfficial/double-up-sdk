@@ -21,6 +21,7 @@ import {
   ALLOY_PACKAGE_ID,
   RAFFLES_CORE_PACKAGE_ID,
   RAFFLES_PACKAGE_ID,
+  GACHAPON_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
 import {
@@ -159,7 +160,20 @@ import {
   DepositMarketBalanceInput,
   WithdrawMarketBalanceInput,
 } from "../games/alloy";
-import { buyRaffleTickets, BuyRaffleTicketsInput, buyRaffleTicketsWithDeal, BuyRaffleTicketsWithDealInput, buyRaffleTicketsWithTreats, BuyRaffleTicketsWithTreatsInput, getRaffle, GetRaffleInput, getTotalTicketsForUser, GetTotalTicketsForUserInput } from "../games/raffles";
+import {
+  buyRaffleTickets,
+  BuyRaffleTicketsInput,
+  buyRaffleTicketsWithDeal,
+  BuyRaffleTicketsWithDealInput,
+  buyRaffleTicketsWithTreats,
+  BuyRaffleTicketsWithTreatsInput,
+  getRaffle,
+  GetRaffleInput,
+  getTotalTicketsForUser,
+  GetTotalTicketsForUserInput,
+} from "../games/raffles";
+
+import { createGachapon, CreateGachaponInput } from "src/games/gachapon";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -186,6 +200,7 @@ interface DoubleUpClientInput {
   alloyPackageId?: string;
   rafflesCorePackageId?: string;
   rafflesPackageId?: string;
+  gachaponPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -214,6 +229,7 @@ export class DoubleUpClient {
     alloyPackageId = ALLOY_PACKAGE_ID,
     rafflesCorePackageId = RAFFLES_CORE_PACKAGE_ID,
     rafflesPackageId = RAFFLES_PACKAGE_ID,
+    gachaponPackageId = GACHAPON_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
@@ -238,6 +254,7 @@ export class DoubleUpClient {
     this.alloyPackageId = alloyPackageId;
     this.rafflesCorePackageId = rafflesCorePackageId;
     this.rafflesPackageId = rafflesPackageId;
+    this.gachaponPackageId = gachaponPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -271,6 +288,7 @@ export class DoubleUpClient {
   alloyPackageId: string;
   rafflesCorePackageId: string;
   rafflesPackageId: string;
+  gachaponPackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -532,12 +550,12 @@ export class DoubleUpClient {
     });
 
   // Raffles
-  getRaffle = (input: GetRaffleInput) => 
+  getRaffle = (input: GetRaffleInput) =>
     getRaffle({
       ...input,
-      client: this.suiClient
+      client: this.suiClient,
     });
-  buyRaffleTickets = (input: BuyRaffleTicketsInput) => 
+  buyRaffleTickets = (input: BuyRaffleTicketsInput) =>
     buyRaffleTickets({
       ...input,
       rafflesPackageId: this.rafflesPackageId,
@@ -555,10 +573,16 @@ export class DoubleUpClient {
       rafflesPackageId: this.rafflesPackageId,
       origin: this.origin,
     });
-  getRaffleTickets = (input: GetTotalTicketsForUserInput) => 
+  getRaffleTickets = (input: GetTotalTicketsForUserInput) =>
     getTotalTicketsForUser({
       ...input,
       rafflesPackageId: this.rafflesPackageId,
+    });
+  // Gachapon
+  createGachapon = (input: CreateGachaponInput) =>
+    createGachapon({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
     });
 
   // Unihouse

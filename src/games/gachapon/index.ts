@@ -5,12 +5,21 @@ import {
 } from "@mysten/sui/dist/cjs/transactions";
 import { GACHAPON_MODULE_NAME } from "src/constants/mainnetConstants";
 
-interface ICreateGachaponInput {
+export interface CreateGachaponInput {
   cost: number;
   coinType: string;
   initSupplyer: string;
   transaction: Transaction;
+}
+
+interface InternalCreateGachaponInput extends CreateGachaponInput {
   gachaponPackageId: string;
+}
+
+interface ICloseGachapon {
+  gachaponId: string;
+  keeperCap: string;
+  transaction: Transaction;
 }
 
 interface IClaimGachaponTreasury {}
@@ -18,9 +27,11 @@ interface IClaimGachaponTreasury {}
 interface IAddEgg {
   isLocked: boolean;
   coinType: string;
+  gachaponId: string;
   kioskId: string;
   objectId: string;
   transaction: Transaction;
+  gachaponPackageId: string;
 }
 
 // Create new gachapon mechine
@@ -31,7 +42,7 @@ export const createGachapon = async ({
   initSupplyer,
   transaction,
   gachaponPackageId,
-}: ICreateGachaponInput) => {
+}: InternalCreateGachaponInput) => {
   transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::create`,
     typeArguments: [coinType],
@@ -42,18 +53,40 @@ export const createGachapon = async ({
   });
 };
 
+export const closeGachapon = async () => {};
+
 export const claimGachaponTreasury = async () => {};
 
 export const addEgg = async ({
   isLocked,
   coinType,
+  gachaponId,
   kioskId,
   objectId,
   transaction,
+  gachaponPackageId,
 }: IAddEgg) => {
   if (isLocked) {
     // Add locked egg
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::lock`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.pure.string(coinType),
+        transaction.object(kioskId),
+        transaction.object(objectId),
+      ],
+    });
   } else {
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::place`,
+      typeArguments: [coinType],
+      arguments: [
+        transaction.pure.string(coinType),
+        transaction.object(kioskId),
+        transaction.object(objectId),
+      ],
+    });
   }
 };
 

@@ -53,7 +53,13 @@ import {
   testGetGTokenBalance,
 } from "./unihouse";
 import { testGetCurves } from "./pump";
-import { testRaffleBuy, testRaffleBuyWithDeal, testRaffleGet, testRaffleGetTickets } from "./raffles";
+import {
+  testRaffleBuy,
+  testRaffleBuyWithDeal,
+  testRaffleGet,
+  testRaffleGetTickets,
+} from "./raffles";
+import { testCreateGachapon } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
@@ -165,7 +171,7 @@ const dbClient = new DoubleUpClient({
         testRaffleGetTickets(dbClient, client, keypair);
         break;
       case "unihouse:data":
-        console.log("hit")
+        console.log("hit");
         testGetUnihouseData(dbClient).then((res) => console.log(res));
         break;
       case "unihouse:redeemrequests":
@@ -177,7 +183,17 @@ const dbClient = new DoubleUpClient({
           .catch((err) => console.error(err));
         break;
       case "pump:getcurves":
-          testGetCurves(dbClient).then((res) => console.log(res));
+        testGetCurves(dbClient).then((res) => console.log(res));
+        break;
+      case "gachapon:createGachapon":
+        testCreateGachapon(
+          dbClient,
+          client,
+          keypair,
+          0,
+          "0x2::sui::SUI",
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866"
+        );
         break;
 
       default:
