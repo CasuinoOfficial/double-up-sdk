@@ -159,6 +159,14 @@ export const RAFFLES_MODULE_NAME = "raffles";
 export const RAFFLES_STRUCT_NAME = "Raffles";
 
 export const DOGHOUSE = "";
+// GACHAPON
+// ===============================================================================
+export const GACHAPON_CORE_PACKAGE_ID =
+  "0x73dbea229550ab310c478e4b5fad642792862f9fe0f704a2e2735bb702d392da";
+export const GACHAPON_PACKAGE_ID =
+  "0x73dbea229550ab310c478e4b5fad642792862f9fe0f704a2e2735bb702d392da";
+export const GACHAPON_CONFIG = "";
+export const GACHAPON_MODULE_NAME = "gachapon";
 
 //************************//
 //        PUMP FUN        //
