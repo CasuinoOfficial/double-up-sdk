@@ -173,7 +173,7 @@ import {
   GetTotalTicketsForUserInput,
 } from "../games/raffles";
 
-import { createGachapon, CreateGachaponInput } from "src/games/gachapon";
+import { createGachapon, CreateGachaponInput } from "../games/gachapon";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;

@@ -13,12 +13,14 @@ export const testCreateGachapon = async (
 ) => {
   const tx = new Transaction();
 
-  dbClient.createGachapon({
+  const gachapon = dbClient.createGachapon({
     cost,
     coinType,
     initSupplyer,
     transaction: tx,
   });
+
+  tx.transferObjects([gachapon], keypair.toSuiAddress());
 
   const transactionResult = await client.signAndExecuteTransaction({
     signer: keypair,
