@@ -465,3 +465,6 @@ export function sliceArrayIntoChunks(arr: any[], chunkSize: number): any[][] {
   }
   return result;
 }
+export const shortenAddress = (address: string) => {
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};

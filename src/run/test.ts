@@ -84,7 +84,7 @@ import {
   testClaimEgg,
   testGetGachapons,
 } from "./gachapon";
-import { testGetCitizens } from "./citizens";
+import { testGetCitizens, testGetCitizenInventories } from "./citizens";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
@@ -433,8 +433,23 @@ const dbClient = new DoubleUpClient({
       case "citizens:getcitizens":
         testGetCitizens(
           dbClient,
-          "0xd94414fabb3930998c99696331b49a4fe60372abb0618a22714a0123bfc876b2"
-        ).then((res) => console.log(res));
+          "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557"
+        ).then((res) => {
+          console.log(res);
+          console.log(
+            "0x8b23228a6a6bdbed7c4cdbbb041d263d265546717a86182eca2b5222db9cdb91",
+            res[
+              "0x8b23228a6a6bdbed7c4cdbbb041d263d265546717a86182eca2b5222db9cdb91"
+            ]
+          );
+        });
+        break;
+      case "citizens:getcitizeninventories":
+        testGetCitizenInventories(
+          dbClient,
+          "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557",
+          "0x8b23228a6a6bdbed7c4cdbbb041d263d265546717a86182eca2b5222db9cdb91"
+        );
         break;
 
       default:

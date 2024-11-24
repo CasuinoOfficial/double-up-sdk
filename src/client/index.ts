@@ -231,7 +231,7 @@ import {
   drawEggWithSecondaryCurrency,
 } from "../games/gachapon";
 
-import { getCitizens } from "../nfts/citizens";
+import { getCitizenInventories, getCitizens } from "../nfts/citizens";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -836,4 +836,8 @@ export class DoubleUpClient {
   //Citizens
   getCitizens = (address: string) =>
     getCitizens(this.suiClient, this.kioskClient, address);
+
+  getCitizenInventories = async (citizenId: string, isRevealed: boolean) => {
+    getCitizenInventories(this.suiClient, citizenId, isRevealed);
+  };
 }

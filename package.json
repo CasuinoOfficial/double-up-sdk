@@ -51,6 +51,8 @@
     "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test",
     "test:unihouse:getmaxbet": "FUNCTION=unihouse:getmaxbet pnpm test",
     "test:pump:getcurves": "FUNCTION=pump:getcurves pnpm test",
+    "test:citizens:getcitizens": "FUNCTION=citizens:getcitizens pnpm test",
+    "test:citizens:getcitizeninventories": "FUNCTION=citizens:getcitizeninventories pnpm test",
     "test:gachapon:createGachapon": "FUNCTION=gachapon:createGachapon pnpm test",
     "test:gachapon:closeGachapon": "FUNCTION=gachapon:closeGachapon pnpm test",
     "test:gachapon:testGetGachapon": "FUNCTION=gachapon:testGetGachapon pnpm test",
@@ -70,8 +72,7 @@
     "test:gachapon:testCreateFreeSpinner": "FUNCTION=gachapon:testCreateFreeSpinner pnpm test",
     "test:gachapon:testAddNftType": "FUNCTION=gachapon:testAddNftType pnpm test",
     "test:gachapon:testRemoveNftType": "FUNCTION=gachapon:testRemoveNftType pnpm test",
-    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test",
-    "test:citizens:getcitizens": "FUNCTION=citizens:getcitizens pnpm test"
+    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
