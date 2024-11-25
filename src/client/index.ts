@@ -19,6 +19,8 @@ import {
   BLACKJACK_PACKAGE_ID,
   ALLOY_CORE_PACKAGE_ID,
   ALLOY_PACKAGE_ID,
+  RAFFLES_CORE_PACKAGE_ID,
+  RAFFLES_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
 import {
@@ -157,6 +159,7 @@ import {
   DepositMarketBalanceInput,
   WithdrawMarketBalanceInput,
 } from "../games/alloy";
+import { buyRaffleTickets, BuyRaffleTicketsInput, buyRaffleTicketsWithDeal, BuyRaffleTicketsWithDealInput, buyRaffleTicketsWithTreats, BuyRaffleTicketsWithTreatsInput, getRaffle, GetRaffleInput, getTotalTicketsForUser, GetTotalTicketsForUserInput } from "../games/raffles";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -181,6 +184,8 @@ interface DoubleUpClientInput {
   blackjackPackageId?: string;
   alloyCorePackageId?: string;
   alloyPackageId?: string;
+  rafflesCorePackageId?: string;
+  rafflesPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -207,6 +212,8 @@ export class DoubleUpClient {
     blackjackPackageId = BLACKJACK_PACKAGE_ID,
     alloyCorePackageId = ALLOY_CORE_PACKAGE_ID,
     alloyPackageId = ALLOY_PACKAGE_ID,
+    rafflesCorePackageId = RAFFLES_CORE_PACKAGE_ID,
+    rafflesPackageId = RAFFLES_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
@@ -229,6 +236,8 @@ export class DoubleUpClient {
     this.blackjackPackageId = blackjackPackageId;
     this.alloyCorePackageId = alloyCorePackageId;
     this.alloyPackageId = alloyPackageId;
+    this.rafflesCorePackageId = rafflesCorePackageId;
+    this.rafflesPackageId = rafflesPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -260,6 +269,8 @@ export class DoubleUpClient {
   blackjackPackageId: string;
   alloyCorePackageId: string;
   alloyPackageId: string;
+  rafflesCorePackageId: string;
+  rafflesPackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -518,6 +529,36 @@ export class DoubleUpClient {
     withdrawMarketBalance({
       ...input,
       alloyPackageId: this.alloyPackageId,
+    });
+
+  // Raffles
+  getRaffle = (input: GetRaffleInput) => 
+    getRaffle({
+      ...input,
+      client: this.suiClient
+    });
+  buyRaffleTickets = (input: BuyRaffleTicketsInput) => 
+    buyRaffleTickets({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
+      origin: this.origin,
+    });
+  buyRaffleTicketsWithDeal = (input: BuyRaffleTicketsWithDealInput) =>
+    buyRaffleTicketsWithDeal({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
+      origin: this.origin,
+    });
+  buyRaffleTicketsWithTreats = (input: BuyRaffleTicketsWithTreatsInput) =>
+    buyRaffleTicketsWithTreats({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
+      origin: this.origin,
+    });
+  getRaffleTickets = (input: GetTotalTicketsForUserInput) => 
+    getTotalTicketsForUser({
+      ...input,
+      rafflesPackageId: this.rafflesPackageId,
     });
 
   // Unihouse

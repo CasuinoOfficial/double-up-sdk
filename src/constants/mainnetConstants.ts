@@ -147,6 +147,19 @@ export const CRAPS_CONFIG =
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
 
+// RAFFLES
+// ===============================================================================
+export const RAFFLES_CORE_PACKAGE_ID =
+  "0xbe8090ef7d91b307024766220db52e161021b0016c0164300ee5941c7e517ab9";
+export const RAFFLES_PACKAGE_ID =
+  "0xbe8090ef7d91b307024766220db52e161021b0016c0164300ee5941c7e517ab9";
+export const RAFFLES_TREASURY =
+  "0xa7f05a7ba45ba8dc4227d7d3128f4042af4d1f4b8883fbeb7bd047e42232f240";
+export const RAFFLES_MODULE_NAME = "raffles";
+export const RAFFLES_STRUCT_NAME = "Raffles";
+
+export const DOGHOUSE = "";
+
 //************************//
 //        PUMP FUN        //
 //************************//
