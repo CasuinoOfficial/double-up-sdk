@@ -436,19 +436,12 @@ const dbClient = new DoubleUpClient({
           "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557"
         ).then((res) => {
           console.log(res);
-          console.log(
-            "0x8b23228a6a6bdbed7c4cdbbb041d263d265546717a86182eca2b5222db9cdb91",
-            res[
-              "0x8b23228a6a6bdbed7c4cdbbb041d263d265546717a86182eca2b5222db9cdb91"
-            ]
-          );
         });
         break;
       case "citizens:getcitizeninventories":
         testGetCitizenInventories(
           dbClient,
-          "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557",
-          "0x8b23228a6a6bdbed7c4cdbbb041d263d265546717a86182eca2b5222db9cdb91"
+          "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557"
         );
         break;
 
