@@ -57,7 +57,6 @@ import { testRaffleBuy, testRaffleBuyWithDeal, testRaffleGet, testRaffleGetTicke
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
-console.log("got here");
 const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
 
 const PARTNER_NFT_ID =
@@ -78,21 +77,6 @@ const dbClient = new DoubleUpClient({
       case "limbo":
         testLimbo(dbClient, client, keypair);
         break;
-      // case "lottery:get":
-      //   testLotteryGet(dbClient, client, keypair);
-      //   break;
-      // case "lottery:buy":
-      //   testLotteryBuy(dbClient, client, keypair);
-      //   break;
-      // case "lottery:redeem":
-      //   testLotteryRedeem(dbClient, client, keypair);
-      //   break;
-      // case "lottery:results":
-      //   testLotteryResults(dbClient, client, keypair);
-      //   break;
-      // case "lottery:tickets":
-      //   testLotteryTickets(dbClient, client, keypair);
-      //   break;
       case "plinko":
         testPlinko(dbClient, client, keypair);
         break;
@@ -181,6 +165,7 @@ const dbClient = new DoubleUpClient({
         testRaffleGetTickets(dbClient, client, keypair);
         break;
       case "unihouse:data":
+        console.log("hit")
         testGetUnihouseData(dbClient).then((res) => console.log(res));
         break;
       case "unihouse:redeemrequests":

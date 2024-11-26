@@ -26,6 +26,7 @@ export type UnihouseInfo = {
   [key: string]: {
     id: string;
     tokenSymbol: string;
+    coinType: string;
     tokenType: string;
     name: string;
     apy?: string;
@@ -118,6 +119,10 @@ export const getUnihouseData = async (
       .pop()
       ?.split(">")[0];
 
+    const coinType = `${
+      field?.supply?.type.split("<")[2].split(">")[0]
+    }`;
+
     if (!tokenSymbol) return;
 
     const houseName = `g${tokenSymbol}`;
@@ -130,8 +135,9 @@ export const getUnihouseData = async (
     const totalSupply = Number(field?.supply?.fields?.value);
     const maxSupply = Number(field?.max_supply);
 
-    houseInfo[houseName] = {
+    houseInfo[coinType] = {
       id: unihouseList[index].objectId,
+      coinType: coinType,
       tokenSymbol: tokenSymbol,
       tokenType: tokenType,
       name: houseName,
