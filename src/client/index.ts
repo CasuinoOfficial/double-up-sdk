@@ -173,7 +173,12 @@ import {
   GetTotalTicketsForUserInput,
 } from "../games/raffles";
 
-import { createGachapon, CreateGachaponInput } from "../games/gachapon";
+import {
+  addEgg,
+  AddEgg,
+  createGachapon,
+  CreateGachaponInput,
+} from "../games/gachapon";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -582,6 +587,13 @@ export class DoubleUpClient {
   createGachapon = (input: CreateGachaponInput) =>
     createGachapon({
       ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addEgg = (input: AddEgg) =>
+    addEgg({
+      ...input,
+      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 

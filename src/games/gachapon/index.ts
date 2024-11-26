@@ -2,9 +2,13 @@ import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import {
   Transaction,
   TransactionArgument,
+  TransactionObjectArgument,
   TransactionResult,
 } from "@mysten/sui/dist/cjs/transactions";
-import { GACHAPON_MODULE_NAME } from "../../constants/mainnetConstants";
+import {
+  GACHAPON_MODULE_NAME,
+  RAND_OBJ_ID,
+} from "../../constants/mainnetConstants";
 
 export interface CreateGachaponInput {
   cost: number;
@@ -17,7 +21,7 @@ interface InternalCreateGachaponInput extends CreateGachaponInput {
   gachaponPackageId: string;
 }
 
-interface CloseGachapon {
+export interface CloseGachapon {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
@@ -29,21 +33,19 @@ interface InternalCloseGachapon extends CloseGachapon {
   gachaponPackageId: string;
 }
 
-interface AddEgg {
-  isLocked: boolean;
-  coinType: string;
+export interface AddEgg {
+  address: string;
   gachaponId: string;
-  kioskId: string;
-  objectType: string;
   objectId: string;
   transaction: Transaction;
 }
 
 interface InternalAddEgg extends AddEgg {
+  suiClient: SuiClient;
   gachaponPackageId: string;
 }
 
-interface RemoveEgg {
+export interface RemoveEgg {
   coinType: string;
   gachaponId: string;
   kioskId: string;
@@ -56,7 +58,7 @@ interface InternalRemoveEgg extends RemoveEgg {
   gachaponPackageId: string;
 }
 
-interface AddEmptyEgg {
+export interface AddEmptyEgg {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
@@ -68,7 +70,7 @@ interface InternalAddEmptyEgg extends AddEmptyEgg {
   gachaponPackageId: string;
 }
 
-interface ClaimGachaponTreasury {
+export interface ClaimGachaponTreasury {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
@@ -79,7 +81,7 @@ interface InternalClaimGachaponTreasury extends ClaimGachaponTreasury {
   gachaponPackageId: string;
 }
 
-interface UpdateCost {
+export interface UpdateCost {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
@@ -91,7 +93,7 @@ interface InternalUpdateCost extends UpdateCost {
   gachaponPackageId: string;
 }
 
-interface AddSupplier {
+export interface AddSupplier {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
@@ -103,7 +105,7 @@ interface InternalAddSupplier extends AddSupplier {
   gachaponPackageId: string;
 }
 
-interface RemoveSupplier {
+export interface RemoveSupplier {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
@@ -115,8 +117,9 @@ interface InternalRemoveSupplier extends RemoveSupplier {
   gachaponPackageId: string;
 }
 
-interface DrawEgg {
+export interface DrawEgg {
   coinType: string;
+  coin: TransactionObjectArgument;
   gachaponId: string;
   count: number;
   recipient: string;
@@ -127,7 +130,7 @@ interface InternalDrawEgg extends DrawEgg {
   gachaponPackageId: string;
 }
 
-interface DestroyEgg {
+export interface DestroyEgg {
   eggId: string;
   transaction: Transaction;
 }
@@ -136,7 +139,7 @@ interface InternalDestroyEgg extends DestroyEgg {
   gachaponPackageId: string;
 }
 
-interface ClaimEgg {
+export interface ClaimEgg {
   coinType: string;
   gachaponId: string;
   kioskId: string;
@@ -147,6 +150,24 @@ interface ClaimEgg {
 
 interface InternalClaimEgg extends ClaimEgg {
   gachaponPackageId: string;
+}
+
+export interface CreateFreeSpinner {
+  coinType: string;
+  gachaponId: string;
+  keeperCapId: string;
+  transaction: Transaction;
+}
+
+interface InternalCreateFreeSpinner extends CreateFreeSpinner {
+  gachaponPackageId: string;
+}
+
+export interface AddNftType {
+  coinType: string;
+  gachaponId: string;
+  keeperCapId: string;
+  transaction: Transaction;
 }
 // Create new gachapon mechine
 // Only admin user can create gachapon mechine
@@ -192,30 +213,55 @@ export const closeGachapon = ({
   });
 };
 
-export const addEgg = ({
-  isLocked,
-  coinType,
+export const addEgg = async ({
+  address,
   gachaponId,
-  kioskId,
-  objectType,
   objectId,
   transaction,
+  suiClient,
   gachaponPackageId,
 }: InternalAddEgg) => {
-  transaction.setGasBudget(100_000_000);
+  let cursor = null;
+  let hasNextPage = true;
+  let dynamicFields: any = [];
 
-  if (isLocked) {
-    // Add locked egg
-    transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::lock`,
-      typeArguments: [coinType, objectType],
-      arguments: [
-        transaction.object(gachaponId),
-        transaction.object(kioskId),
-        transaction.object(objectId),
-      ],
-    });
-  } else {
+  const gachaponResponse = await suiClient.getObject({
+    id: gachaponId,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  const gachaponData = gachaponResponse.data;
+  const coinType = gachaponData?.type?.split("<")[1].split(">")[0];
+
+  const objectResponse = await suiClient.getObject({
+    id: objectId,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  const objectData = objectResponse.data;
+
+  // console.log("objectData", objectData);
+
+  //if object is kiosk or object in a kiosk. And the object might locked or not
+
+  if (
+    gachaponData.content?.dataType === "moveObject" &&
+    objectData.content?.dataType === "moveObject"
+  ) {
+    console.log("check 1");
+
+    const gachaponFields = gachaponData.content?.fields as any;
+    const objectType = objectData?.type;
+    const kioskId = gachaponFields.kiosk_id;
+
+    transaction.setGasBudget(100_000_000);
+
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::place`,
       typeArguments: [coinType, objectType],
@@ -226,6 +272,29 @@ export const addEgg = ({
       ],
     });
   }
+
+  // if (isLocked) {
+  //   // Add locked egg
+  //   transaction.moveCall({
+  //     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::lock`,
+  //     typeArguments: [coinType, objectType],
+  //     arguments: [
+  //       transaction.object(gachaponId),
+  //       transaction.object(kioskId),
+  //       transaction.object(objectId),
+  //     ],
+  //   });
+  // } else {
+  //   transaction.moveCall({
+  //     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::place`,
+  //     typeArguments: [coinType, objectType],
+  //     arguments: [
+  //       transaction.object(gachaponId),
+  //       transaction.object(kioskId),
+  //       transaction.object(objectId),
+  //     ],
+  //   });
+  // }
 };
 
 export const removeEgg = ({
@@ -295,10 +364,144 @@ export const claimGachaponTreasury = ({
   return treasury;
 };
 
-export const updateCost = () => {};
+export const updateCost = ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  newCost,
+  transaction,
+  gachaponPackageId,
+}: InternalUpdateCost) => {
+  transaction.setGasBudget(100_000_000);
 
-export const drawEgg = async () => {};
+  const updatedCost = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::update_cost`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+      transaction.pure.u64(newCost),
+    ],
+  });
 
-export const destroyEgg = async () => {};
+  return updatedCost;
+};
 
-export const claimEgg = async () => {};
+export const addSupplier = ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  newSupplierAddress,
+  transaction,
+  gachaponPackageId,
+}: InternalAddSupplier) => {
+  transaction.setGasBudget(100_000_000);
+
+  const addedSupplier = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::add_supplier`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+      transaction.object(newSupplierAddress),
+    ],
+  });
+
+  return addedSupplier;
+};
+
+export const removeSupplier = ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  supplierAddress,
+  transaction,
+  gachaponPackageId,
+}: InternalRemoveSupplier) => {
+  transaction.setGasBudget(100_000_000);
+
+  const removedSupplier = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::remove_supplier`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+      transaction.object(supplierAddress),
+    ],
+  });
+
+  return removedSupplier;
+};
+
+export const drawEgg = async ({
+  coinType,
+  coin,
+  gachaponId,
+  count,
+  recipient,
+  transaction,
+  gachaponPackageId,
+}: InternalDrawEgg) => {
+  transaction.setGasBudget(100_000_000);
+
+  const draw = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(RAND_OBJ_ID),
+      transaction.pure.u64(count),
+      coin,
+      transaction.object(recipient),
+    ],
+  });
+
+  return draw;
+};
+
+export const destroyEgg = async ({
+  eggId,
+  transaction,
+  gachaponPackageId,
+}: InternalDestroyEgg) => {
+  transaction.setGasBudget(100_000_000);
+
+  const destroyedEgg = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
+    arguments: [transaction.object(eggId)],
+  });
+
+  return destroyedEgg;
+};
+
+export const claimEgg = async ({
+  coinType,
+  gachaponId,
+  kioskId,
+  eggId,
+  recipient,
+  transaction,
+  gachaponPackageId,
+}: InternalClaimEgg) => {
+  transaction.setGasBudget(100_000_000);
+
+  const isLocked = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::is_locked`,
+    arguments: [transaction.object(eggId)],
+  });
+
+  const claimedEgg = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::claim`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(kioskId),
+      transaction.object(eggId),
+      transaction.object(recipient),
+    ],
+  });
+
+  return claimedEgg;
+};
+
+export const CreateFreeSpinner = async ({}) => {};

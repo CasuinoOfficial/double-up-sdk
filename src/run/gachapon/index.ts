@@ -42,3 +42,59 @@ export const testCreateGachapon = async (
 
   console.log("Signed and sent transaction.", transactionResult);
 };
+
+export const testCloaseGachapon = async () => {};
+
+export const testAddEgg = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  gachaponId: string,
+  objectId: string | string[]
+) => {
+  const tx = new Transaction();
+
+  const keypairAddress = keypair.toSuiAddress();
+
+  if (typeof objectId === "string") {
+    await dbClient.addEgg({
+      address: keypairAddress,
+      gachaponId,
+      objectId,
+      transaction: tx,
+    });
+  } else {
+    await dbClient.addEgg({
+      address: keypairAddress,
+      gachaponId,
+      objectId: objectId[0],
+      transaction: tx,
+    });
+  }
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+
+  // Get Gachapon Object
+
+  // Check supplier
+
+  // Get Object Info, type, isLocked or not
+};
