@@ -45,6 +45,22 @@ export const testCreateGachapon = async (
 
 export const testCloaseGachapon = async () => {};
 
+export const testGetGachapon = async (
+  dbClient: DoubleUpClient,
+  gachaponId: string
+) => {
+  // const gachapons = await dbClient.getGachapons(address);
+};
+
+export const testAdminGetGachapons = async (
+  dbClient: DoubleUpClient,
+  keypair: Secp256k1Keypair
+) => {
+  const address = keypair.toSuiAddress();
+
+  return dbClient.adminGetGachapons(address);
+};
+
 export const testAddEgg = async (
   dbClient: DoubleUpClient,
   client: SuiClient,

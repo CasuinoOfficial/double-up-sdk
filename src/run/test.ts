@@ -59,7 +59,12 @@ import {
   testRaffleGet,
   testRaffleGetTickets,
 } from "./raffles";
-import { testAddEgg, testCreateGachapon } from "./gachapon";
+import {
+  testAddEgg,
+  testCreateGachapon,
+  testGetGachapon,
+  testAdminGetGachapons,
+} from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
@@ -193,6 +198,17 @@ const dbClient = new DoubleUpClient({
           0,
           "0x2::sui::SUI",
           "0x6f9c618b5e4e90bd5f55528f314c264562a1bfe3cb07aea03cbe9266b349f37d"
+        );
+        break;
+      case "gachapon:testAdminGetGachapons":
+        testAdminGetGachapons(dbClient, keypair).then((res) =>
+          console.log(res)
+        );
+        break;
+      case "gachapon:testGetGachapon":
+        testGetGachapon(
+          dbClient,
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a"
         );
         break;
       case "gachapon:testAddEgg":

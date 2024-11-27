@@ -1,4 +1,8 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import {
+  SuiClient,
+  SuiObjectData,
+  SuiTransactionBlockResponse,
+} from "@mysten/sui/client";
 import {
   Transaction,
   TransactionArgument,
@@ -6,6 +10,7 @@ import {
   TransactionResult,
 } from "@mysten/sui/dist/cjs/transactions";
 import {
+  GACHAPON_CORE_PACKAGE_ID,
   GACHAPON_MODULE_NAME,
   RAND_OBJ_ID,
 } from "../../constants/mainnetConstants";
@@ -169,6 +174,26 @@ export interface AddNftType {
   keeperCapId: string;
   transaction: Transaction;
 }
+
+type KeeperCap = { id: string; gachaponId: string };
+
+export type AdminGachapon = {
+  id: string;
+  keeperCapId: string;
+  kioskId: string;
+  coinType: string;
+  cost: number;
+  suppliers: string[];
+  lootbox: {
+    id: string;
+    eggCounts: string;
+  };
+  treasury: string;
+};
+
+export type AdminGachapons = {
+  [key: string]: AdminGachapon;
+};
 // Create new gachapon mechine
 // Only admin user can create gachapon mechine
 export const createGachapon = ({
@@ -213,6 +238,92 @@ export const closeGachapon = ({
   });
 };
 
+const getKeeperData = (data: SuiObjectData): any | null => {
+  if (data.content?.dataType !== "moveObject") {
+    return null;
+  }
+
+  const fields = data.content.fields as unknown as any;
+
+  const keeperCap = { id: fields.id.id, gachaponId: fields.gachapon_id };
+  if (keeperCap) {
+    return keeperCap;
+  } else {
+    return null;
+  }
+};
+
+export const getGachapon = async (
+  suiClient: SuiClient,
+  gachaponId: string
+) => {};
+
+export const adminGetGachapons = async (
+  suiClient: SuiClient,
+  address: string
+) => {
+  let gachapons: AdminGachapons = {};
+  let keeperCaps: KeeperCap[] = [];
+  let cursor;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const response = await suiClient.getOwnedObjects({
+      owner: address,
+      filter: {
+        StructType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::KeeperCap`,
+      },
+      options: { showContent: true },
+      cursor: cursor || null,
+    });
+
+    response.data.forEach((item: any) => {
+      const keeperCap = getKeeperData(item.data);
+
+      keeperCaps.push(keeperCap);
+    });
+    cursor = response.nextCursor;
+    hasNextPage = response.hasNextPage;
+  }
+
+  const PromiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
+    suiClient.getObject({
+      id: keeperCap.gachaponId,
+      options: {
+        showContent: true,
+        showType: true,
+      },
+    })
+  );
+
+  const responseList = await Promise.all(PromiseList);
+
+  responseList.forEach((response, index) => {
+    const data = response.data;
+    const coinType = data?.type?.split("<")[1].split(">")[0];
+    const fields = data?.content?.fields as any;
+    const suppliers = fields?.suppliers?.fields?.contents as any;
+
+    const gachapon = {
+      id: keeperCaps[index].gachaponId,
+      keeperCapId: keeperCaps[index].id,
+      kioskId: fields.kiosk_id,
+      coinType: coinType,
+      cost: fields.cost,
+      suppliers: suppliers,
+      lootbox: {
+        id: fields?.lootbox?.fields?.id?.id,
+        eggCounts: fields?.lootbox?.fields?.length,
+      },
+      treasury: fields.treasury,
+    };
+
+    gachapons[keeperCaps[index].gachaponId] = gachapon;
+  });
+
+  return gachapons;
+};
+
 export const addEgg = async ({
   address,
   gachaponId,
@@ -221,10 +332,6 @@ export const addEgg = async ({
   suiClient,
   gachaponPackageId,
 }: InternalAddEgg) => {
-  let cursor = null;
-  let hasNextPage = true;
-  let dynamicFields: any = [];
-
   const gachaponResponse = await suiClient.getObject({
     id: gachaponId,
     options: {
@@ -254,8 +361,6 @@ export const addEgg = async ({
     gachaponData.content?.dataType === "moveObject" &&
     objectData.content?.dataType === "moveObject"
   ) {
-    console.log("check 1");
-
     const gachaponFields = gachaponData.content?.fields as any;
     const objectType = objectData?.type;
     const kioskId = gachaponFields.kiosk_id;

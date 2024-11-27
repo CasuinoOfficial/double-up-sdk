@@ -50,6 +50,8 @@
     "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test",
     "test:pump:getcurves": "FUNCTION=pump:getcurves pnpm test",
     "test:gachapon:createGachapon": "FUNCTION=gachapon:createGachapon pnpm test",
+    "test:gachapon:testGetGachapon": "FUNCTION=gachapon:testGetGachapon pnpm test",
+    "test:gachapon:testAdminGetGachapons": "FUNCTION=gachapon:testAdminGetGachapons pnpm test",
     "test:gachapon:testAddEgg": "FUNCTION=gachapon:testAddEgg pnpm test"
   },
   "author": "degenxdev",

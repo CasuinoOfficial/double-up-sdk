@@ -178,6 +178,8 @@ import {
   AddEgg,
   createGachapon,
   CreateGachaponInput,
+  getGachapon,
+  adminGetGachapons,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -589,6 +591,11 @@ export class DoubleUpClient {
       ...input,
       gachaponPackageId: this.gachaponPackageId,
     });
+
+  getGachapon = (gachaponId?: string) =>
+    getGachapon(this.suiClient, gachaponId);
+  adminGetGachapons = (address?: string) =>
+    adminGetGachapons(this.suiClient, address);
 
   addEgg = (input: AddEgg) =>
     addEgg({
