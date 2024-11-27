@@ -168,11 +168,30 @@ interface InternalCreateFreeSpinner extends CreateFreeSpinner {
   gachaponPackageId: string;
 }
 
-export interface AddNftType {
+export interface NftType {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
+  objectId: string;
   transaction: Transaction;
+}
+
+interface InternalNftType extends NftType {
+  suiClient: SuiClient;
+  gachaponPackageId: string;
+}
+
+export interface DrawFreeSpin {
+  coinType: string;
+  gachaponId: string;
+  objectId: string;
+  recipient: string;
+  transaction: Transaction;
+}
+
+interface InternalDrawFreeSpin extends DrawFreeSpin {
+  suiClient: SuiClient;
+  gachaponPackageId: string;
 }
 
 type KeeperCap = { id: string; gachaponId: string };
@@ -421,8 +440,8 @@ export const addEgg = async ({
 export const removeEgg = ({
   coinType,
   gachaponId,
-  kioskId,
   keeperCapId,
+  kioskId,
   index,
   transaction,
   gachaponPackageId,
@@ -495,7 +514,7 @@ export const updateCost = ({
 }: InternalUpdateCost) => {
   transaction.setGasBudget(100_000_000);
 
-  const updatedCost = transaction.moveCall({
+  transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::update_cost`,
     typeArguments: [coinType],
     arguments: [
@@ -504,8 +523,6 @@ export const updateCost = ({
       transaction.pure.u64(newCost),
     ],
   });
-
-  return updatedCost;
 };
 
 export const addSupplier = ({
@@ -518,17 +535,15 @@ export const addSupplier = ({
 }: InternalAddSupplier) => {
   transaction.setGasBudget(100_000_000);
 
-  const addedSupplier = transaction.moveCall({
+  transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::add_supplier`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(gachaponId),
       transaction.object(keeperCapId),
-      transaction.object(newSupplierAddress),
+      transaction.pure.address(newSupplierAddress),
     ],
   });
-
-  return addedSupplier;
 };
 
 export const removeSupplier = ({
@@ -541,20 +556,18 @@ export const removeSupplier = ({
 }: InternalRemoveSupplier) => {
   transaction.setGasBudget(100_000_000);
 
-  const removedSupplier = transaction.moveCall({
+  transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::remove_supplier`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(gachaponId),
       transaction.object(keeperCapId),
-      transaction.object(supplierAddress),
+      transaction.pure.address(supplierAddress),
     ],
   });
-
-  return removedSupplier;
 };
 
-export const drawEgg = async ({
+export const drawEgg = ({
   coinType,
   coin,
   gachaponId,
@@ -565,7 +578,7 @@ export const drawEgg = async ({
 }: InternalDrawEgg) => {
   transaction.setGasBudget(100_000_000);
 
-  const draw = transaction.moveCall({
+  transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw`,
     typeArguments: [coinType],
     arguments: [
@@ -573,26 +586,22 @@ export const drawEgg = async ({
       transaction.object(RAND_OBJ_ID),
       transaction.pure.u64(count),
       coin,
-      transaction.object(recipient),
+      transaction.pure.address(recipient),
     ],
   });
-
-  return draw;
 };
 
-export const destroyEgg = async ({
+export const destroyEgg = ({
   eggId,
   transaction,
   gachaponPackageId,
 }: InternalDestroyEgg) => {
   transaction.setGasBudget(100_000_000);
 
-  const destroyedEgg = transaction.moveCall({
+  transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
     arguments: [transaction.object(eggId)],
   });
-
-  return destroyedEgg;
 };
 
 export const claimEgg = async ({
@@ -625,4 +634,97 @@ export const claimEgg = async ({
   return claimedEgg;
 };
 
-export const CreateFreeSpinner = async ({}) => {};
+export const createFreeSpinner = async ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  transaction,
+  gachaponPackageId,
+}: InternalCreateFreeSpinner) => {
+  transaction.setGasBudget(100_000_000);
+
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::create_free_spinner`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+    ],
+  });
+};
+
+export const addNftType = async ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  objectId,
+  transaction,
+  suiClient,
+  gachaponPackageId,
+}: InternalNftType) => {
+  const objectResponse = await suiClient.getObject({
+    id: objectId,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  const objectData = objectResponse.data;
+
+  if (objectData.content?.dataType !== "moveObject") {
+    const objectType = objectData?.type;
+
+    transaction.setGasBudget(100_000_000);
+
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::add_nft_type`,
+      typeArguments: [coinType, objectType],
+      arguments: [
+        transaction.object(gachaponId),
+        transaction.object(keeperCapId),
+      ],
+    });
+  } else {
+    throw new Error("Invalid object type");
+  }
+};
+
+export const drawFreeSpin = async ({
+  coinType,
+  gachaponId,
+  objectId,
+  recipient,
+  transaction,
+  suiClient,
+  gachaponPackageId,
+}: InternalDrawFreeSpin) => {
+  const objectResponse = await suiClient.getObject({
+    id: objectId,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  const objectData = objectResponse.data;
+
+  if (objectData.content?.dataType !== "moveObject") {
+    const objectType = objectData?.type;
+
+    transaction.setGasBudget(100_000_000);
+
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
+      typeArguments: [coinType, objectType],
+      arguments: [
+        transaction.object(gachaponId),
+        transaction.object(objectId),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.address(recipient),
+      ],
+    });
+  } else {
+    throw new Error("Invalid object type");
+  }
+};

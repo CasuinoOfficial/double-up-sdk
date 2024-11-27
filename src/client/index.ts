@@ -185,6 +185,26 @@ import {
   closeGachapon,
   AddEmptyEgg,
   addEmptyEgg,
+  removeEgg,
+  RemoveEgg,
+  ClaimGachaponTreasury,
+  claimGachaponTreasury,
+  UpdateCost,
+  updateCost,
+  AddSupplier,
+  addSupplier,
+  RemoveSupplier,
+  removeSupplier,
+  DrawEgg,
+  drawEgg,
+  destroyEgg,
+  DestroyEgg,
+  ClaimEgg,
+  claimEgg,
+  CreateFreeSpinner,
+  createFreeSpinner,
+  DrawFreeSpin,
+  drawFreeSpin,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -616,9 +636,61 @@ export class DoubleUpClient {
       gachaponPackageId: this.gachaponPackageId,
     });
 
+  removeEgg = (input: RemoveEgg) =>
+    removeEgg({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
   addEmptyEgg = (input: AddEmptyEgg) =>
     addEmptyEgg({
       ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  claimGachaponTreasury = (input: ClaimGachaponTreasury) =>
+    claimGachaponTreasury({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  updateCost = (input: UpdateCost) =>
+    updateCost({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addSupplier = (input: AddSupplier) =>
+    addSupplier({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeSupplier = (input: RemoveSupplier) =>
+    removeSupplier({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  drawEgg = (input: DrawEgg) =>
+    drawEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+
+  destroyEgg = (input: DestroyEgg) =>
+    destroyEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+
+  claimEgg = (input: ClaimEgg) =>
+    claimEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+
+  createFreeSpinner = (input: CreateFreeSpinner) =>
+    createFreeSpinner({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  drawFreeSpin = (input: DrawFreeSpin) =>
+    drawFreeSpin({
+      ...input,
+      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 

@@ -163,6 +163,50 @@ export const testAddEgg = async (
   // Get Object Info, type, isLocked or not
 };
 
+export const testRemoveEgg = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string,
+  kioskId: string,
+  index: number
+) => {
+  const tx = new Transaction();
+
+  const removedEgg = dbClient.removeEgg({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    kioskId,
+    index,
+    transaction: tx,
+  });
+
+  tx.transferObjects([removedEgg], keypair.toSuiAddress());
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
 export const testAddEmptyEgg = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
@@ -182,7 +226,349 @@ export const testAddEmptyEgg = async (
     transaction: tx,
   });
 
-  console.log("check1");
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testClaimGachaponTreasury = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string
+) => {
+  const tx = new Transaction();
+
+  const treasury = dbClient.claimGachaponTreasury({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    transaction: tx,
+  });
+
+  tx.transferObjects([treasury], keypair.toSuiAddress());
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testUpdateCost = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string,
+  newCost: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.updateCost({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    newCost,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testAddSupplier = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string,
+  newSupplierAddress: string
+) => {
+  if (!newSupplierAddress || newSupplierAddress === "") {
+    throw new Error("newSupplierAddress is empty or undefined");
+  }
+
+  const tx = new Transaction();
+
+  dbClient.addSupplier({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    newSupplierAddress,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testRemoveSupplier = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string,
+  supplierAddress: string
+) => {
+  if (!supplierAddress || supplierAddress === "") {
+    throw new Error("supplierAddress is empty or undefined");
+  }
+
+  const tx = new Transaction();
+
+  dbClient.removeSupplier({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    supplierAddress,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testDrawEgg = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  count: number,
+  recipient: string
+) => {
+  const gachaponInfo = await client.getObject({
+    id: gachaponId,
+    options: {
+      showContent: true,
+    },
+  });
+
+  const gachaponContent = gachaponInfo?.data?.content;
+
+  if (!gachaponContent) {
+    throw new Error("Gachapon not found");
+  } else if (gachaponContent?.dataType !== "moveObject") {
+    throw new Error("Wrong dataType");
+  }
+
+  const fields = gachaponContent?.fields as any;
+
+  const tx = new Transaction();
+
+  const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(fields.cost * count)]);
+
+  dbClient.drawEgg({
+    coinType,
+    coin,
+    gachaponId,
+    count,
+    recipient,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testDestroyEgg = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  eggId: string
+) => {
+  if (!eggId || eggId === "") {
+    throw new Error("eggId is empty or undefined");
+  }
+
+  const tx = new Transaction();
+
+  dbClient.destroyEgg({
+    eggId,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testCreateFreeSpinner = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.createFreeSpinner({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testDrawFreeSpin = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  objectId: string,
+  recipient: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.drawFreeSpin({
+    coinType,
+    gachaponId,
+    objectId,
+    recipient,
+    transaction: tx,
+  });
 
   const transactionResult = await client.signAndExecuteTransaction({
     signer: keypair,

@@ -55,7 +55,16 @@
     "test:gachapon:testAdminGetGachapons": "FUNCTION=gachapon:testAdminGetGachapons pnpm test",
     "test:gachapon:testAdminGetEggs": "FUNCTION=gachapon:testAdminGetEggs pnpm test",
     "test:gachapon:testAddEgg": "FUNCTION=gachapon:testAddEgg pnpm test",
-    "test:gachapon:testAddEmptyEgg": "FUNCTION=gachapon:testAddEmptyEgg pnpm test"
+    "test:gachapon:testRemoveEgg": "FUNCTION=gachapon:testRemoveEgg pnpm test",
+    "test:gachapon:testAddEmptyEgg": "FUNCTION=gachapon:testAddEmptyEgg pnpm test",
+    "test:gachapon:testClaimGachaponTreasury": "FUNCTION=gachapon:testClaimGachaponTreasury pnpm test",
+    "test:gachapon:testUpdateCost": "FUNCTION=gachapon:testUpdateCost pnpm test",
+    "test:gachapon:testAddSupplier": "FUNCTION=gachapon:testAddSupplier pnpm test",
+    "test:gachapon:testRemoveSupplier": "FUNCTION=gachapon:testRemoveSupplier pnpm test",
+    "test:gachapon:testDrawEgg": "FUNCTION=gachapon:testDrawEgg pnpm test",
+    "test:gachapon:testDestroyEgg": "FUNCTION=gachapon:testDestroyEgg pnpm test",
+    "test:gachapon:testCreateFreeSpinner": "FUNCTION=gachapon:testCreateFreeSpinner pnpm test",
+    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
