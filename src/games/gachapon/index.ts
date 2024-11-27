@@ -227,7 +227,7 @@ export const closeGachapon = ({
 }: InternalCloseGachapon) => {
   transaction.setGasBudget(100_000_000);
 
-  transaction.moveCall({
+  const rest = transaction.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::close`,
     typeArguments: [coinType],
     arguments: [
@@ -236,6 +236,8 @@ export const closeGachapon = ({
       transaction.object(kioskId),
     ],
   });
+
+  return rest;
 };
 
 const getKeeperData = (data: SuiObjectData): any | null => {
@@ -322,6 +324,20 @@ export const adminGetGachapons = async (
   });
 
   return gachapons;
+};
+
+export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
+  const lootboxResponse = await suiClient.getObject({
+    id: lootboxId,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  console.log("lootboxResponse", lootboxResponse);
+
+  return lootboxResponse.data;
 };
 
 export const addEgg = async ({

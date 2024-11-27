@@ -64,6 +64,8 @@ import {
   testCreateGachapon,
   testGetGachapon,
   testAdminGetGachapons,
+  testAdminGetEggs,
+  testCloseGachapon,
 } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -200,10 +202,27 @@ const dbClient = new DoubleUpClient({
           "0x6f9c618b5e4e90bd5f55528f314c264562a1bfe3cb07aea03cbe9266b349f37d"
         );
         break;
+      case "gachapon:closeGachapon":
+        testCloseGachapon(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0xfa8a633987d661524381bd8672b3bfd3e2d00340781f76846a4223d2d7a79251", // gachaponId
+          "0xacf0ea9eaa7a8487bdc7d74463f676f4cfe79b6224a3f1eda572f8e0b9544756", // keeperCapId
+          "0x56a2c6d30965696bcf123d591587951ac0dd87590c6616b6d3b89ed7b201a8da" // kioskId
+        );
+        break;
       case "gachapon:testAdminGetGachapons":
         testAdminGetGachapons(dbClient, keypair).then((res) =>
           console.log(res)
         );
+        break;
+      case "gachapon:testAdminGetEggs":
+        testAdminGetEggs(
+          dbClient,
+          "0x6defc515ae3aca587c2c02fe6e9dd51f73865e70d15ced342e9c7a506ebfa40b"
+        ).then((res) => console.log(res));
         break;
       case "gachapon:testGetGachapon":
         testGetGachapon(

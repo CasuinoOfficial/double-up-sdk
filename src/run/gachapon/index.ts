@@ -43,7 +43,48 @@ export const testCreateGachapon = async (
   console.log("Signed and sent transaction.", transactionResult);
 };
 
-export const testCloaseGachapon = async () => {};
+export const testCloseGachapon = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string,
+  kioskId: string
+) => {
+  const tx = new Transaction();
+
+  //[tCoin, suiCoin]
+  const [tCoin, suiCoin] = dbClient.closeGachapon({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    kioskId,
+    transaction: tx,
+  });
+
+  tx.transferObjects([tCoin, suiCoin], keypair.toSuiAddress());
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
 
 export const testGetGachapon = async (
   dbClient: DoubleUpClient,
@@ -59,6 +100,13 @@ export const testAdminGetGachapons = async (
   const address = keypair.toSuiAddress();
 
   return dbClient.adminGetGachapons(address);
+};
+
+export const testAdminGetEggs = async (
+  dbClient: DoubleUpClient,
+  lootboxId: string
+) => {
+  return dbClient.adminGetEggs(lootboxId);
 };
 
 export const testAddEgg = async (
