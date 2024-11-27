@@ -91,9 +91,8 @@ export const getUnihouseData = async (
   }
 
   const unihouseList: DynamicFieldInfo[] = dynamicFields?.filter(
-    (field: DynamicFieldInfo) => field?.objectType.includes("house::House")
+    (field: DynamicFieldInfo) => field?.objectType.includes("house::House<")
   );
-
   if (!unihouseList) return {};
   const unihouseIdList = unihouseList.map((house) => house.objectId);
 
