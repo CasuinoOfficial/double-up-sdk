@@ -183,6 +183,8 @@ import {
   adminGetEggs,
   CloseGachapon,
   closeGachapon,
+  AddEmptyEgg,
+  addEmptyEgg,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -611,6 +613,12 @@ export class DoubleUpClient {
     addEgg({
       ...input,
       suiClient: this.suiClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addEmptyEgg = (input: AddEmptyEgg) =>
+    addEmptyEgg({
+      ...input,
       gachaponPackageId: this.gachaponPackageId,
     });
 

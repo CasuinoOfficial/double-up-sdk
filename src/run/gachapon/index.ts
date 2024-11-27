@@ -162,3 +162,45 @@ export const testAddEgg = async (
 
   // Get Object Info, type, isLocked or not
 };
+
+export const testAddEmptyEgg = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  keeperCapId: string,
+  count: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.addEmptyEgg({
+    coinType,
+    gachaponId,
+    keeperCapId,
+    count,
+    transaction: tx,
+  });
+
+  console.log("check1");
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};

@@ -66,6 +66,7 @@ import {
   testAdminGetGachapons,
   testAdminGetEggs,
   testCloseGachapon,
+  testAddEmptyEgg,
 } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -238,6 +239,17 @@ const dbClient = new DoubleUpClient({
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a",
           "0xadd182b49ca349924b3ac36df1e2303bd506183944b7bd76ae37e96cb19fa19e"
         );
+        break;
+      case "gachapon:testAddEmptyEgg":
+        testAddEmptyEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
+          2
+        ).then((res) => console.log(res));
         break;
 
       default:
