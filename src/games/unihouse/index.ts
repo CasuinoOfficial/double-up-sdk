@@ -265,8 +265,7 @@ export const getGTokenBalance = async (
 
   ownedObjects.forEach((ownedObject, index) => {
     if (ownedObject.length === 0) {
-      const house = houseInfo[houseNames[index]]
-      balances[house.name] = 0;
+      balances[houseNames[index]] = 0;
     } else {
       const house = Object.values(houseInfo).find(
         (house) => house.tokenType === ownedObject[0]?.data?.type
@@ -278,7 +277,7 @@ export const getGTokenBalance = async (
         }
       }, 0);
 
-      balances[house.name] = balance;
+      balances[houseNames[index]] = balance;
     }
   });
 
