@@ -90,7 +90,7 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 export const ROULETTE_CORE_PACKAGE_ID =
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_PACKAGE_ID =
-  "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
+  "0x50cc4347ff5d5790d6bd7ac4fa28f5be6e36e10973d4eb54b7da4a85604c5ecb";
 export const ROULETTE_CONFIG =
   "0x10b6c15345f843de1bfc2c0829b7d289214fd35407297f7a8d442363b48f30c1";
 export const ROULETTE_MODULE_NAME = "roulette";
@@ -99,18 +99,18 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 // UFO RANGE
 // ===============================================================================
 export const UFORANGE_CORE_PACKAGE_ID =
-  "0xe11016147b507200b9310bfbf8434803dcd446083c26263b93f50b4fcda5a2d1";
+  "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
 export const UFORANGE_PACKAGE_ID =
-  "0xe11016147b507200b9310bfbf8434803dcd446083c26263b93f50b4fcda5a2d1";
+  "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
 // ROCK PAPER SCISSORS
 // ===============================================================================
 export const RPS_CORE_PACKAGE_ID =
-  "0x01845f70326fdbe1d0f8e3aa7adf2e1e60a4506704870133ea798020e8d5fb49";
+  "0x15aacb18b7139dd8a11bd53eb87b5c6bb7163c2d20b8df5097a231ea96daee1a";
 export const RPS_PACKAGE_ID =
-  "0x01845f70326fdbe1d0f8e3aa7adf2e1e60a4506704870133ea798020e8d5fb49";
+  "0x15aacb18b7139dd8a11bd53eb87b5c6bb7163c2d20b8df5097a231ea96daee1a";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 
@@ -119,7 +119,7 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 export const PLINKO_CORE_PACKAGE_ID =
   "0x512a8cd71c5bd163ea34001778ff026049e2325856246fb787ceaada8b77b7d2";
 export const PLINKO_PACKAGE_ID =
-  "0x512a8cd71c5bd163ea34001778ff026049e2325856246fb787ceaada8b77b7d2";
+  "0x9f5b8e6f9985f9d1fe06458d1cf17dd49ec3ce2581797d5a820e522651e3475b";
 export const PLINKO_CONFIG =
   "0x4f15b4d7165833f1bedbbf114393b9d723a81ce0c27552776e00af97760eab6f";
 export const PLINKO_MODULE_NAME = "multi_plinko";
@@ -130,7 +130,7 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 export const BLACKJACK_CORE_PACKAGE_ID =
   "0x5e2f4359b5c0311954f502c4e1e12a845e85152b67e033ca6f8590b5781606ff";
 export const BLACKJACK_PACKAGE_ID =
-  "0x33ae287c573c088d5c1155f6ff3d2633288e45b08d91749afe13cf5d02221672";
+  "0x9a2bf41fdc9f72e862af9d0809b5466aefe581ea45848425456647a9658a9589";
 export const BLACKJACK_CONFIG =
   "0xc5bc486dfb1f35147440ea457e42154c24ea123055c372b80980051384d241fa";
 export const BLACKJACK_MODULE_NAME = "blackjack";
@@ -141,7 +141,7 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 export const CRAPS_CORE_PACKAGE_ID =
   "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0x415097ccc204d7a353099e375d25bdfaf7ee2a60b3d4a6f51b5b5646e0bc43d1";
+  "0x9960751493250c4a2e942ff3ae394e784e82d84bce291df3e010139d91ff4371";
 export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
