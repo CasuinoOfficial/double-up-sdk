@@ -77,9 +77,9 @@ export const COIN_STRUCT_NAME = "Coinflip";
 // LIMBO
 // ===============================================================================
 export const LIMBO_CORE_PACKAGE_ID =
-  "0x7ce111e52191c9a607661104a9337aa6b6dd89365d0da8b228add413f5b83f91";
+  "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
 export const LIMBO_PACKAGE_ID =
-  "0x7ce111e52191c9a607661104a9337aa6b6dd89365d0da8b228add413f5b83f91";
+  "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 export const LIMBO_MIN_MULTIPLIER = "101";
