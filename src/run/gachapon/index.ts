@@ -136,31 +136,25 @@ export const testAddEgg = async (
     });
   }
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  // const transactionResult = await client.signAndExecuteTransaction({
+  //   signer: keypair,
+  //   transaction: tx as any,
+  //   options: {
+  //     showRawEffects: true,
+  //     showEffects: true,
+  //     showEvents: true,
+  //     showObjectChanges: true,
+  //   },
+  // });
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
+  // if (
+  //   transactionResult?.effects &&
+  //   transactionResult?.effects.status.status === "failure"
+  // ) {
+  //   throw new Error(transactionResult.effects.status.error);
+  // }
 
-  console.log("Signed and sent transaction.", transactionResult);
-
-  // Get Gachapon Object
-
-  // Check supplier
-
-  // Get Object Info, type, isLocked or not
+  // console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveEgg = async (

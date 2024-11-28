@@ -633,6 +633,7 @@ export class DoubleUpClient {
     addEgg({
       ...input,
       suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 

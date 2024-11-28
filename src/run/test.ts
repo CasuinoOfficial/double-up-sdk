@@ -246,7 +246,7 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a",
-          "0xadd182b49ca349924b3ac36df1e2303bd506183944b7bd76ae37e96cb19fa19e"
+          "0x5f7a1821df9cd733ba352673238ada8d3303594ed07c3bac1648b4e4f6d1612a"
         );
         break;
       case "gachapon:testRemoveEgg":
@@ -290,7 +290,7 @@ const dbClient = new DoubleUpClient({
           "0x2::sui::SUI", //coinType
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
           "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
-          2_000_000_000 //newCost
+          10_000_000 //newCost
         );
         break;
       case "gachapon:testAddSupplier":
@@ -301,7 +301,7 @@ const dbClient = new DoubleUpClient({
           "0x2::sui::SUI", //coinType
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
           "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
-          "" //newSupplierAddress
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //newSupplierAddress
         );
         break;
       case "gachapon:testRemoveSupplier":
@@ -312,7 +312,7 @@ const dbClient = new DoubleUpClient({
           "0x2::sui::SUI", //coinType
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
           "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
-          "" //supplierAddress
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //supplierAddress
         );
         break;
       case "gachapon:testDrawEgg":
@@ -322,8 +322,8 @@ const dbClient = new DoubleUpClient({
           keypair,
           "0x2::sui::SUI", //coinType
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
-          2, //count
-          "" //recipient
+          1, //count
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //recipient
         );
         break;
       case "gachapon:testDestroyEgg":

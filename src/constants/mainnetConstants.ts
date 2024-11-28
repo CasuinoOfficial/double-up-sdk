@@ -205,3 +205,6 @@ export const ALLOY_MARKET_ID =
   "0x40ec1fc667e2fa0618f30d3256284b1f40bf5b6f1716c50033e35591499eaa5c";
 export const ALLOY_MODULE_NAME = "alloy";
 export const ALLOY_STRUCT_NAME = "alloy";
+
+export const PERSONAL_KIOSK_PACKAGE =
+  "0x34cc6762780f4f6f153c924c0680cfe2a1fb4601e7d33cc28a92297b62de1e0e";
