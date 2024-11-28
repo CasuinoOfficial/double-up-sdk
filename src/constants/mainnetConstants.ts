@@ -68,9 +68,9 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 // COINFLIP
 // ===============================================================================
 export const COIN_CORE_PACKAGE_ID =
-  "0x769c53f3c3fe689b6fdd62ade8d378428b37e5489641dd8c8ca8ec12aac6c61a";
+  "0x2e7e7e71cd8cb283c4e4dbb652b9155b85dd5afce6bdd7881ae228eb26fc4082";
 export const COIN_PACKAGE_ID =
-  "0x769c53f3c3fe689b6fdd62ade8d378428b37e5489641dd8c8ca8ec12aac6c61a";
+  "0xc7a14e8e58abc21100a5c218d4e4f89cf8f1ac1af7066b451dfb05f976002f15";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 
