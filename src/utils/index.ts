@@ -13,7 +13,13 @@ import {
   SUI_VOUCHER_BANK,
   UNI_HOUSE_OBJ_ID,
 } from "../constants/mainnetConstants";
-import { KIOSK_ITEM, KioskClient, TransferPolicy } from "@mysten/kiosk";
+import {
+  KIOSK_ITEM,
+  KIOSK_LOCK_RULE,
+  KioskClient,
+  ROYALTY_RULE,
+  TransferPolicy,
+} from "@mysten/kiosk";
 
 interface GameInfo {
   gameCoinType: string;
@@ -260,7 +266,12 @@ export const checkIsInKiosk = async (
     isPersonal: boolean;
     koiskOwnerCapId: string;
     kioskId: string;
-    transferPoilcies: TransferPolicy[];
+    hasLockingRule: boolean;
+    royaltyFee: {
+      amountBp: number;
+      minAmount: string;
+    } | null;
+    transferPoilcies: TransferPolicy;
   };
 }> => {
   const { data: objectData } = await suiClient.getObject({
@@ -334,6 +345,55 @@ export const checkIsInKiosk = async (
     (item) => item?.objectId === objectId
   );
 
+  const hasLockingRule = objectTransferPolicies.some((policy) =>
+    policy.rules.some((rule) => rule.includes(KIOSK_LOCK_RULE))
+  );
+
+  const royaltyPolicies = objectTransferPolicies.filter((policy) =>
+    policy.rules.some((rule) => rule.includes(ROYALTY_RULE))
+  );
+
+  if (royaltyPolicies.length === 0) {
+    return {
+      isInKiosk: true,
+      objectType: objectType,
+      kioskInfo: {
+        isLocked: objectKioskInfo.isLocked,
+        isPersonal: kioskOwnerCap?.isPersonal,
+        koiskOwnerCapId: kioskOwnerCap?.objectId,
+        kioskId: objectKioskInfo.kioskId,
+        hasLockingRule,
+        royaltyFee: null,
+        transferPoilcies: objectTransferPolicies[0],
+      },
+    };
+  }
+
+  const royaltyRuleType = royaltyPolicies[0].rules.find((rule) =>
+    rule.includes(ROYALTY_RULE)
+  );
+
+  const royaltyPoliciesDynamicFields = await suiClient.getDynamicFieldObject({
+    parentId: royaltyPolicies[0].id,
+    name: {
+      type: `0x2::transfer_policy::RuleKey<0x${royaltyRuleType}>`,
+      value: { dummy_field: false },
+    },
+  });
+
+  const royaltyPoliciesContent = royaltyPoliciesDynamicFields.data.content;
+
+  if (royaltyPoliciesContent.dataType !== "moveObject") {
+    throw new Error("Invalid royalty rule object type");
+  }
+
+  const fields = royaltyPoliciesContent.fields as any;
+
+  const royaltyFeeSettings = {
+    amountBp: fields?.value.fields.amount_bp,
+    minAmount: fields?.value.fields.min_amount,
+  };
+
   return {
     isInKiosk: true,
     objectType: objectType,
@@ -342,7 +402,9 @@ export const checkIsInKiosk = async (
       isPersonal: kioskOwnerCap?.isPersonal,
       koiskOwnerCapId: kioskOwnerCap?.objectId,
       kioskId: objectKioskInfo.kioskId,
-      transferPoilcies: objectTransferPolicies,
+      hasLockingRule,
+      royaltyFee: royaltyFeeSettings,
+      transferPoilcies: royaltyPolicies[0],
     },
   };
 };

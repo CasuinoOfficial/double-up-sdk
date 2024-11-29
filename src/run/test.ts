@@ -3,6 +3,7 @@ import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../client";
 import { fromHEX } from "@mysten/sui/utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 
 import { testCoinflip } from "./coinflip";
@@ -245,8 +246,8 @@ const dbClient = new DoubleUpClient({
           dbClient,
           client,
           keypair,
-          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a",
-          "0x5f7a1821df9cd733ba352673238ada8d3303594ed07c3bac1648b4e4f6d1612a"
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x145b60bacd3bbfaecefed9e5e00148a468eaeed08273bfe50ebc020603f9f80e" //objectId
         );
         break;
       case "gachapon:testRemoveEgg":
