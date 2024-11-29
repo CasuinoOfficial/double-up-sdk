@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.4.16",
+  "version": "4.5.0",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
