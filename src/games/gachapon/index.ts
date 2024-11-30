@@ -1,5 +1,7 @@
 import {
+  PaginatedEvents,
   SuiClient,
+  SuiEvent,
   SuiObjectData,
   SuiTransactionBlockResponse,
 } from "@mysten/sui/client";
@@ -295,10 +297,13 @@ export const adminGetGachapons = async (
   suiClient: SuiClient,
   address: string
 ) => {
+  const createdTimes: Record<string, string> = {};
   let gachapons: AdminGachapons = {};
   let keeperCaps: KeeperCap[] = [];
   let cursor;
   let hasNextPage = true;
+
+  //Get gachapon keeper cap
 
   while (hasNextPage) {
     const response = await suiClient.getOwnedObjects({
@@ -319,6 +324,28 @@ export const adminGetGachapons = async (
     hasNextPage = response.hasNextPage;
   }
 
+  //Get create gachapon event
+  cursor = null;
+  hasNextPage = true;
+
+  while (hasNextPage) {
+    const eventResponse = await suiClient.queryEvents({
+      query: {
+        MoveEventType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::NewGachapon`,
+      },
+      cursor: cursor || null,
+    });
+
+    for (let item of eventResponse.data) {
+      const parsedJson = item.parsedJson as any;
+
+      createdTimes[parsedJson?.gachapon_id] = item.timestampMs;
+    }
+
+    cursor = eventResponse.nextCursor;
+    hasNextPage = eventResponse.hasNextPage;
+  }
+
   const promiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
     suiClient.getObject({
       id: keeperCap.gachaponId,
@@ -331,18 +358,6 @@ export const adminGetGachapons = async (
   );
 
   const responseList = await Promise.all(promiseList);
-
-  const createTransactionDigests = responseList.map(
-    (response) => response.data.previousTransaction
-  );
-
-  const transactionDigestsPromises = createTransactionDigests.map((digest) =>
-    suiClient.getTransactionBlock({
-      digest,
-    })
-  );
-
-  const transactionDigests = await Promise.all(transactionDigestsPromises);
 
   responseList.forEach((response, index) => {
     const data = response.data;
@@ -362,7 +377,7 @@ export const adminGetGachapons = async (
         eggCounts: fields?.lootbox?.fields?.length,
       },
       treasury: fields.treasury,
-      createdAt: transactionDigests[index].timestampMs,
+      createdAt: createdTimes[keeperCaps[index].gachaponId],
     };
 
     gachapons[keeperCaps[index].gachaponId] = gachapon;
