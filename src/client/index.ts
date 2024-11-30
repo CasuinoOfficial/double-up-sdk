@@ -205,6 +205,9 @@ import {
   createFreeSpinner,
   DrawFreeSpin,
   drawFreeSpin,
+  NftType,
+  addNftType,
+  removeNftType,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -685,6 +688,20 @@ export class DoubleUpClient {
   createFreeSpinner = (input: CreateFreeSpinner) =>
     createFreeSpinner({
       ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addNftType = (input: NftType) =>
+    addNftType({
+      ...input,
+      suiClient: this.suiClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeNftType = (input: NftType) =>
+    removeNftType({
+      ...input,
+      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 

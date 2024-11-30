@@ -77,6 +77,8 @@ import {
   testDestroyEgg,
   testCreateFreeSpinner,
   testDrawFreeSpin,
+  testAddNftType,
+  testRemoveNftType,
 } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -341,6 +343,30 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
+        );
+        break;
+
+      case "gachapon:testAddNftType":
+        testAddNftType(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "", //objectId
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
+        );
+        break;
+
+      case "gachapon:testRemoveNftType":
+        testRemoveNftType(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "", //objectId
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
           "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
         );

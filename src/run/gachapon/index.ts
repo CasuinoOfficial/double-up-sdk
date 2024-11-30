@@ -545,6 +545,86 @@ export const testCreateFreeSpinner = async (
   console.log("Signed and sent transaction.", transactionResult);
 };
 
+export const testAddNftType = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  objectId: string,
+  gachaponId: string,
+  keeperCapId: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.addNftType({
+    coinType,
+    objectId,
+    gachaponId,
+    keeperCapId,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testRemoveNftType = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  objectId: string,
+  gachaponId: string,
+  keeperCapId: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.removeNftType({
+    coinType,
+    objectId,
+    gachaponId,
+    keeperCapId,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
 export const testDrawFreeSpin = async (
   dbClient: DoubleUpClient,
   client: SuiClient,

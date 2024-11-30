@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.5.1",
+  "version": "4.5.2",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -64,6 +64,8 @@
     "test:gachapon:testDrawEgg": "FUNCTION=gachapon:testDrawEgg pnpm test",
     "test:gachapon:testDestroyEgg": "FUNCTION=gachapon:testDestroyEgg pnpm test",
     "test:gachapon:testCreateFreeSpinner": "FUNCTION=gachapon:testCreateFreeSpinner pnpm test",
+    "test:gachapon:testAddNftType": "FUNCTION=gachapon:testAddNftType pnpm test",
+    "test:gachapon:testRemoveNftType": "FUNCTION=gachapon:testRemoveNftType pnpm test",
     "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test"
   },
   "author": "degenxdev",
