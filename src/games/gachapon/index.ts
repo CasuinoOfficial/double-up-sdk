@@ -212,13 +212,14 @@ export type AdminGachapon = {
   keeperCapId: string;
   kioskId: string;
   coinType: string;
-  cost: number;
+  cost: string;
   suppliers: string[];
   lootbox: {
     id: string;
     eggCounts: string;
   };
   treasury: string;
+  createdAt: string;
 };
 
 export type AdminGachapons = {
@@ -318,17 +319,30 @@ export const adminGetGachapons = async (
     hasNextPage = response.hasNextPage;
   }
 
-  const PromiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
+  const promiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
     suiClient.getObject({
       id: keeperCap.gachaponId,
       options: {
         showContent: true,
+        showPreviousTransaction: true,
         showType: true,
       },
     })
   );
 
-  const responseList = await Promise.all(PromiseList);
+  const responseList = await Promise.all(promiseList);
+
+  const createTransactionDigests = responseList.map(
+    (response) => response.data.previousTransaction
+  );
+
+  const transactionDigestsPromises = createTransactionDigests.map((digest) =>
+    suiClient.getTransactionBlock({
+      digest,
+    })
+  );
+
+  const transactionDigests = await Promise.all(transactionDigestsPromises);
 
   responseList.forEach((response, index) => {
     const data = response.data;
@@ -348,6 +362,7 @@ export const adminGetGachapons = async (
         eggCounts: fields?.lootbox?.fields?.length,
       },
       treasury: fields.treasury,
+      createdAt: transactionDigests[index].timestampMs,
     };
 
     gachapons[keeperCaps[index].gachaponId] = gachapon;
