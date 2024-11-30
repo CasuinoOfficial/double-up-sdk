@@ -72,6 +72,7 @@
     "@mysten/kiosk": "0.9.10",
     "@mysten/sui": "1.2.1",
     "axios": "^1.7.7",
+    "decimal.js": "^10.4.3",
     "nanoid": "^5.0.7"
   },
   "devDependencies": {

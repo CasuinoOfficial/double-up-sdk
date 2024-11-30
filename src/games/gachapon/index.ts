@@ -23,6 +23,7 @@ import {
   ROYALTY_RULE,
 } from "@mysten/kiosk";
 import { checkIsInKiosk } from "../../utils";
+import { Decimal } from "decimal.js";
 
 export interface CreateGachaponInput {
   cost: number;
@@ -402,10 +403,6 @@ export const addEgg = async ({
     kioskClient
   );
 
-  console.log("isInKiosk", isInKiosk);
-  console.log("objectType", objectType);
-  // console.log("kioskInfo", kioskInfo);
-
   transaction.setGasBudget(100_000_000);
 
   if (!isInKiosk || kioskInfo === null) {
@@ -526,6 +523,12 @@ export const addEgg = async ({
             transaction.object(kioskInfo?.transferPoilcies?.id),
             objectToEgg,
           ],
+        });
+
+        transaction.moveCall({
+          target: `${PERSONAL_KIOSK_PACKAGE}::kiosk_lock_rule::prove`,
+          typeArguments: [objectType],
+          arguments: [result[1], transaction.object(gachaponKioskId)],
         });
       }
 
