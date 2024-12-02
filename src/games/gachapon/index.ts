@@ -3,6 +3,7 @@ import {
   SuiClient,
   SuiEvent,
   SuiObjectData,
+  SuiObjectResponse,
   SuiTransactionBlockResponse,
 } from "@mysten/sui/client";
 import {
@@ -226,6 +227,19 @@ export type AdminGachapon = {
 export type AdminGachapons = {
   [key: string]: AdminGachapon;
 };
+
+export type EggInfo = {
+  eggId: string;
+  isLocked: boolean;
+  objectId: string;
+};
+
+export type EggObjectInfo = {
+  eggId: string;
+  isLocked: boolean;
+  objectId: string;
+  object: any;
+};
 // Create new gachapon mechine
 // Only admin user can create gachapon mechine
 export const createGachapon = ({
@@ -413,11 +427,7 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
   const eggsFields = eggsContent?.fields as any;
   const eggs = eggsFields.value;
 
-  const eggsInfoList: {
-    eggId: string;
-    isLocked: boolean;
-    objectId: string;
-  } = eggs.map((egg: any) => {
+  const eggsInfoList: EggInfo[] = eggs.map((egg: any) => {
     return {
       eggId: egg?.fields?.id?.id,
       isLocked: egg?.fields?.content?.fields?.is_locked,
@@ -425,7 +435,53 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
     };
   });
 
-  return eggsInfoList;
+  const eggObjectPromises: (Promise<SuiObjectResponse> | undefined)[] =
+    eggsInfoList.map((egg: EggInfo) => {
+      if (!egg?.objectId) {
+        return undefined;
+      } else {
+        return suiClient.getObject({
+          id: egg.objectId,
+          options: {
+            showContent: true,
+            showType: true,
+          },
+        });
+      }
+    });
+
+  const eggObjects = await Promise.all(eggObjectPromises.filter((egg) => egg));
+
+  return eggsInfoList.map((egg, index) => {
+    if (!egg?.objectId) {
+      return {
+        eggId: egg.eggId,
+        isLocked: egg.isLocked,
+        objectId: egg.objectId,
+        objectInfo: null,
+      };
+    }
+
+    const objectContent = eggObjects.find(
+      (eggObject) => eggObject?.data?.objectId === egg.objectId
+    ).data?.content;
+
+    if (objectContent?.dataType !== "moveObject") {
+      return {
+        eggId: egg.eggId,
+        isLocked: egg.isLocked,
+        objectId: egg.objectId,
+        objectInfo: null,
+      };
+    }
+
+    return {
+      eggId: egg.eggId,
+      isLocked: egg.isLocked,
+      objectId: egg.objectId,
+      objectInfo: objectContent?.fields as any,
+    };
+  });
 };
 
 export const addEgg = async ({

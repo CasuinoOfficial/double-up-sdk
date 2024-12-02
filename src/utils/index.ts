@@ -286,8 +286,6 @@ export const checkIsInKiosk = async (
     throw new Error("Object not found");
   }
 
-  console.log("objectData", objectData);
-
   const objectType = objectData?.type;
   const owner = objectData?.owner as Record<string, string>;
 
