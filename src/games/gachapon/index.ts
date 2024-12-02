@@ -385,11 +385,7 @@ export const adminGetGachapons = async (
   return gachapons;
 };
 
-export const adminGetEggs = async (
-  suiClient: SuiClient,
-  lootboxId: string,
-  eggCounts: number
-) => {
+export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
   const lootboxVector = await suiClient.getDynamicFieldObject({
     parentId: lootboxId,
     name: {
