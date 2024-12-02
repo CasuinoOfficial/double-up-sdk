@@ -286,8 +286,19 @@ export const checkIsInKiosk = async (
     throw new Error("Object not found");
   }
 
+  console.log("objectData", objectData);
+
   const objectType = objectData?.type;
-  const owner = objectData?.owner as any;
+  const owner = objectData?.owner as Record<string, string>;
+
+  if (owner.hasOwnProperty("AddressOwner")) {
+    return {
+      isInKiosk: false,
+      objectType: objectType,
+      kioskInfo: null,
+    };
+  }
+
   const ownerId = owner?.ObjectOwner as string;
 
   if (!ownerId || ownerId === "") {

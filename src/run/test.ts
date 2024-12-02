@@ -249,7 +249,7 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
-          "0x47ab4875d1380bd790e6246f953b2bc4b2812f98d59dcdba02c52d38ab199ebd" //objectId
+          "0xcaa8b6842fa64b1a39078b5c012d08b0c1e1ee00108740de5b5d67dcc2236a94" //objectId
         );
         break;
       case "gachapon:testRemoveEgg":

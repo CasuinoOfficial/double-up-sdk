@@ -413,7 +413,11 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
   const eggsFields = eggsContent?.fields as any;
   const eggs = eggsFields.value;
 
-  const eggsInfoList = eggs.map((egg: any) => {
+  const eggsInfoList: {
+    eggId: string;
+    isLocked: boolean;
+    objectId: string;
+  } = eggs.map((egg: any) => {
     return {
       eggId: egg?.fields?.id?.id,
       isLocked: egg?.fields?.content?.fields?.is_locked,
