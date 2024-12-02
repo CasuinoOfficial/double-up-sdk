@@ -234,7 +234,8 @@ const dbClient = new DoubleUpClient({
       case "gachapon:testAdminGetEggs":
         testAdminGetEggs(
           dbClient,
-          "0x6defc515ae3aca587c2c02fe6e9dd51f73865e70d15ced342e9c7a506ebfa40b"
+          "0x6defc515ae3aca587c2c02fe6e9dd51f73865e70d15ced342e9c7a506ebfa40b", // lootboxId
+          4 //eggCounts
         ).then((res) => console.log(res));
         break;
       case "gachapon:testGetGachapon":

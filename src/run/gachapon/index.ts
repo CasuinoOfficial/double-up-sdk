@@ -104,9 +104,10 @@ export const testAdminGetGachapons = async (
 
 export const testAdminGetEggs = async (
   dbClient: DoubleUpClient,
-  lootboxId: string
+  lootboxId: string,
+  eggCounts: number
 ) => {
-  return dbClient.adminGetEggs(lootboxId);
+  return dbClient.adminGetEggs(lootboxId, eggCounts);
 };
 
 export const testAddEgg = async (

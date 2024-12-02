@@ -385,16 +385,47 @@ export const adminGetGachapons = async (
   return gachapons;
 };
 
-export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
-  const lootboxResponse = await suiClient.getObject({
-    id: lootboxId,
+export const adminGetEggs = async (
+  suiClient: SuiClient,
+  lootboxId: string,
+  eggCounts: number
+) => {
+  const lootboxVector = await suiClient.getDynamicFieldObject({
+    parentId: lootboxId,
+    name: {
+      type: "u64",
+      value: "1",
+    },
+  });
+
+  const lootboxVectorData = lootboxVector.data;
+
+  const eggsResponse = await suiClient.getObject({
+    id: lootboxVectorData.objectId,
     options: {
       showContent: true,
       showType: true,
     },
   });
 
-  return lootboxResponse.data;
+  const eggsContent = eggsResponse?.data?.content;
+
+  if (eggsContent.dataType !== "moveObject") {
+    throw new Error("Invalid object type of gachapon eggs");
+  }
+
+  const eggsFields = eggsContent?.fields as any;
+  const eggs = eggsFields.value;
+
+  const eggsInfoList = eggs.map((egg: any) => {
+    return {
+      eggId: egg?.fields?.id?.id,
+      isLocked: egg?.fields?.content?.fields?.is_locked,
+      objectId: egg?.fields?.content?.fields?.obj_id,
+    };
+  });
+
+  return eggsInfoList;
 };
 
 export const addEgg = async ({
