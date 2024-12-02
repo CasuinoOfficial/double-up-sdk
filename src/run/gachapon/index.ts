@@ -122,14 +122,12 @@ export const testAddEgg = async (
 
   if (typeof objectId === "string") {
     await dbClient.addEgg({
-      address: keypairAddress,
       gachaponId,
       objectId,
       transaction: tx,
     });
   } else {
     await dbClient.addEgg({
-      address: keypairAddress,
       gachaponId,
       objectId: objectId[0],
       transaction: tx,

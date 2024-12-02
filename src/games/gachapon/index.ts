@@ -51,7 +51,6 @@ interface InternalCloseGachapon extends CloseGachapon {
 }
 
 export interface AddEgg {
-  address: string;
   gachaponId: string;
   objectId: string;
   transaction: Transaction;
