@@ -469,6 +469,8 @@ export const testDrawEgg = async (
   console.log("Signed and sent transaction.", transactionResult);
 };
 
+export const testClaimEgg = async () => {};
+
 export const testDestroyEgg = async (
   dbClient: DoubleUpClient,
   client: SuiClient,

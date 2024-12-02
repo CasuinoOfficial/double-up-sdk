@@ -395,13 +395,10 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
     },
   });
 
-  console.log("lootboxResponse", lootboxResponse);
-
   return lootboxResponse.data;
 };
 
 export const addEgg = async ({
-  address,
   gachaponId,
   objectId,
   transaction,
