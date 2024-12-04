@@ -57,6 +57,7 @@
     "test:gachapon:testAddEgg": "FUNCTION=gachapon:testAddEgg pnpm test",
     "test:gachapon:testRemoveEgg": "FUNCTION=gachapon:testRemoveEgg pnpm test",
     "test:gachapon:testAddEmptyEgg": "FUNCTION=gachapon:testAddEmptyEgg pnpm test",
+    "test:gachapon:testClaimEgg": "FUNCTION=gachapon:testClaimEgg pnpm test",
     "test:gachapon:testClaimGachaponTreasury": "FUNCTION=gachapon:testClaimGachaponTreasury pnpm test",
     "test:gachapon:testUpdateCost": "FUNCTION=gachapon:testUpdateCost pnpm test",
     "test:gachapon:testAddSupplier": "FUNCTION=gachapon:testAddSupplier pnpm test",

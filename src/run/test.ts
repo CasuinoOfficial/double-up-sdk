@@ -79,6 +79,7 @@ import {
   testDrawFreeSpin,
   testAddNftType,
   testRemoveNftType,
+  testClaimEgg,
 } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -275,6 +276,17 @@ const dbClient = new DoubleUpClient({
           2
         );
         break;
+      case "gachapon:testClaimEgg":
+        testClaimEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0xd128f31b1d94a47f7b5ec4249f4e4fb3886dc036cc615aad70d1a9f3eec8872d", // gachaponId
+          "0xfce0005aeae02b68fbbd3f8804426a9326e30ec9313c5eccbac54d66920e93d5", // kioskId
+          "0xf9d99f19e774678222a8386d36bd7aa7c8b13dcafbb770c374ddd7728394cb8b" // eggId
+        ).then((res) => console.log(res));
+        break;
       case "gachapon:testClaimGachaponTreasury":
         testClaimGachaponTreasury(
           dbClient,
@@ -326,7 +338,7 @@ const dbClient = new DoubleUpClient({
           "0x2::sui::SUI", //coinType
           "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
           1, //count
-          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //recipient
+          keypair.toSuiAddress() //recipient
         );
         break;
       case "gachapon:testDestroyEgg":

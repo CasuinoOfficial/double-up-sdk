@@ -683,7 +683,12 @@ export class DoubleUpClient {
     destroyEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
 
   claimEgg = (input: ClaimEgg) =>
-    claimEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+    claimEgg({
+      ...input,
+      suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
 
   createFreeSpinner = (input: CreateFreeSpinner) =>
     createFreeSpinner({

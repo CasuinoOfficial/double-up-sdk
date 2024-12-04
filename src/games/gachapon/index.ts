@@ -148,6 +148,20 @@ interface InternalDrawEgg extends DrawEgg {
   gachaponPackageId: string;
 }
 
+export interface ClaimEgg {
+  coinType: string;
+  gachaponId: string;
+  kioskId: string;
+  eggId: string;
+  transaction: Transaction;
+}
+
+interface InternalClaimEgg extends ClaimEgg {
+  suiClient: SuiClient;
+  kioskClient: KioskClient;
+  gachaponPackageId: string;
+}
+
 export interface DestroyEgg {
   eggId: string;
   transaction: Transaction;
@@ -162,7 +176,6 @@ export interface ClaimEgg {
   gachaponId: string;
   kioskId: string;
   eggId: string;
-  recipient: string;
   transaction: Transaction;
 }
 
@@ -714,6 +727,138 @@ export const addEmptyEgg = ({
   });
 };
 
+export const claimEgg = async ({
+  coinType,
+  gachaponId,
+  kioskId,
+  eggId,
+  transaction,
+  suiClient,
+  kioskClient,
+  gachaponPackageId,
+}: InternalClaimEgg) => {
+  transaction.setGasBudget(100_000_000);
+
+  const eggResponse = await suiClient.getObject({
+    id: eggId,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  const eggContent = eggResponse?.data?.content;
+
+  if (eggContent?.dataType !== "moveObject") {
+    throw new Error("Invalid object type of gachapon egg");
+  }
+
+  const eggFields = eggContent?.fields as any;
+
+  if (eggFields.content === null) {
+    return null;
+  }
+
+  const { is_locked, obj_id } = eggFields.content.fields;
+
+  const objResponse = await suiClient.getObject({
+    id: obj_id,
+    options: {
+      showType: true,
+    },
+  });
+
+  const objType = objResponse.data.type;
+
+  if (!is_locked) {
+    const claimedEgg = transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
+      typeArguments: [coinType, objType],
+      arguments: [
+        transaction.object(gachaponId),
+        transaction.object(kioskId),
+        transaction.object(eggId),
+      ],
+    });
+
+    return claimedEgg;
+  } else {
+    const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
+      obj_id,
+      suiClient,
+      kioskClient
+    );
+
+    const payment = transaction.moveCall({
+      target: "0x2::coin::zero",
+      typeArguments: ["0x2::sui::SUI"],
+    });
+
+    const claimedEgg = transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_locked`,
+      typeArguments: [coinType, objType],
+      arguments: [
+        transaction.object(gachaponId),
+        transaction.object(kioskId),
+        payment,
+        transaction.object(eggId),
+      ],
+    });
+
+    if (kioskInfo.royaltyFee != null) {
+      if (Number(kioskInfo.royaltyFee.minAmount) === 0) {
+        const royalty = transaction.moveCall({
+          target: "0x2::coin::zero",
+          typeArguments: ["0x2::sui::SUI"],
+        });
+
+        transaction.moveCall({
+          target: `${PERSONAL_KIOSK_PACKAGE}::royalty_rule::pay`,
+          typeArguments: [objectType],
+          arguments: [
+            transaction.object(kioskInfo.transferPoilcies.id),
+            claimedEgg[1],
+            royalty,
+          ],
+        });
+      } else {
+        const [coin] = transaction.splitCoins(transaction.gas, [
+          transaction.pure.u64(kioskInfo.royaltyFee.minAmount),
+        ]);
+
+        transaction.moveCall({
+          target: `${PERSONAL_KIOSK_PACKAGE}::royalty_rule::pay`,
+          typeArguments: [objectType],
+          arguments: [
+            transaction.object(kioskInfo.transferPoilcies.id),
+            claimedEgg[1],
+            coin,
+          ],
+        });
+      }
+    }
+
+    if (kioskInfo.hasLockingRule) {
+      transaction.moveCall({
+        target: `${PERSONAL_KIOSK_PACKAGE}::kiosk_lock_rule::prove`,
+        typeArguments: [objectType],
+        arguments: [claimedEgg[1], transaction.object(kioskInfo.kioskId)],
+      });
+    }
+
+    transaction.moveCall({
+      target: "0x2::transfer_policy::confirm_request",
+      typeArguments: [objectType],
+      arguments: [
+        transaction.object(kioskInfo.transferPoilcies.id),
+        claimedEgg[1],
+      ],
+    });
+
+    return claimedEgg;
+  }
+};
+
 export const claimGachaponTreasury = ({
   coinType,
   gachaponId,
@@ -833,36 +978,6 @@ export const destroyEgg = ({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
     arguments: [transaction.object(eggId)],
   });
-};
-
-export const claimEgg = async ({
-  coinType,
-  gachaponId,
-  kioskId,
-  eggId,
-  recipient,
-  transaction,
-  gachaponPackageId,
-}: InternalClaimEgg) => {
-  transaction.setGasBudget(100_000_000);
-
-  const isLocked = transaction.moveCall({
-    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::is_locked`,
-    arguments: [transaction.object(eggId)],
-  });
-
-  const claimedEgg = transaction.moveCall({
-    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::claim`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(gachaponId),
-      transaction.object(kioskId),
-      transaction.object(eggId),
-      transaction.object(recipient),
-    ],
-  });
-
-  return claimedEgg;
 };
 
 export const createFreeSpinner = async ({

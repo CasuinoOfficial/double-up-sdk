@@ -239,6 +239,48 @@ export const testAddEmptyEgg = async (
   console.log("Signed and sent transaction.", transactionResult);
 };
 
+export const testClaimEgg = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair,
+  coinType: string,
+  gachaponId: string,
+  kioskId: string,
+  eggId: string
+) => {
+  const tx = new Transaction();
+
+  const egg = await dbClient.claimEgg({
+    coinType,
+    gachaponId,
+    kioskId,
+    eggId,
+    transaction: tx,
+  });
+
+  if (egg === null) {
+    dbClient.destroyEgg({
+      eggId,
+      transaction: tx,
+    });
+  } else {
+    tx.transferObjects([egg], keypair.toSuiAddress());
+  }
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
 export const testClaimGachaponTreasury = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
@@ -466,8 +508,6 @@ export const testDrawEgg = async (
 
   console.log("Signed and sent transaction.", transactionResult);
 };
-
-export const testClaimEgg = async () => {};
 
 export const testDestroyEgg = async (
   dbClient: DoubleUpClient,
