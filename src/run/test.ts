@@ -84,7 +84,12 @@ import {
   testClaimEgg,
   testGetGachapons,
 } from "./gachapon";
-import { testGetCitizens, testGetCitizenInventories } from "./citizens";
+import {
+  testGetCitizens,
+  testGetCitizenInventories,
+  testLockCitizen,
+} from "./citizens";
+import { KioskClient, Network } from "@mysten/kiosk";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
@@ -92,6 +97,11 @@ const secpKeypair = Secp256k1Keypair.deriveKeypair(SECP_MNEMONICS);
 const keypair = Ed25519Keypair.fromSecretKey(
   decodeSuiPrivateKey(MNEMONICS).secretKey
 );
+const kioskClient = new KioskClient({
+  client,
+  network: Network.MAINNET,
+});
+console.log("got here");
 
 const PARTNER_NFT_ID =
   "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
@@ -442,6 +452,15 @@ const dbClient = new DoubleUpClient({
         testGetCitizenInventories(
           dbClient,
           "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557"
+        );
+        break;
+
+      case "citizens:testLockCitizen":
+        testLockCitizen(
+          keypair,
+          client,
+          kioskClient,
+          "0x0b3898bfed2720f5cca97b0da110d4c46503a67b2c946303d9f40068ca95e73d"
         );
         break;
 

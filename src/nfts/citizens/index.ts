@@ -1,6 +1,6 @@
 import { SuiClient, SuiObjectData } from "@mysten/sui/client";
 
-import { KioskClient, KioskOwnerCap } from "@mysten/kiosk";
+import { KioskClient, KioskOwnerCap, KioskTransaction } from "@mysten/kiosk";
 import {
   CITIZENS_PACKAGE_CORE_ID,
   CITIZENS_UNCLAIMABLE_TYPES,
@@ -8,6 +8,7 @@ import {
   UNIHOUSE_PACKAGE,
 } from "../../constants/mainnetConstants";
 import { shortenAddress } from "../../utils";
+import { Transaction } from "@mysten/sui/dist/cjs/transactions";
 
 export type Citizen = {
   id: string;

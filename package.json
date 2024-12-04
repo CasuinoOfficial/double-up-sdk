@@ -53,6 +53,7 @@
     "test:pump:getcurves": "FUNCTION=pump:getcurves pnpm test",
     "test:citizens:getcitizens": "FUNCTION=citizens:getcitizens pnpm test",
     "test:citizens:getcitizeninventories": "FUNCTION=citizens:getcitizeninventories pnpm test",
+    "test:citizens:testLockCitizen": "FUNCTION=citizens:testLockCitizen pnpm test",
     "test:gachapon:createGachapon": "FUNCTION=gachapon:createGachapon pnpm test",
     "test:gachapon:closeGachapon": "FUNCTION=gachapon:closeGachapon pnpm test",
     "test:gachapon:testGetGachapon": "FUNCTION=gachapon:testGetGachapon pnpm test",
