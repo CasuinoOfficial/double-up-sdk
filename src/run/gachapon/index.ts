@@ -589,7 +589,7 @@ export const testAddNftType = async (
   client: SuiClient,
   keypair: Secp256k1Keypair,
   coinType: string,
-  objectId: string,
+  objectType: string,
   gachaponId: string,
   keeperCapId: string
 ) => {
@@ -597,7 +597,7 @@ export const testAddNftType = async (
 
   dbClient.addNftType({
     coinType,
-    objectId,
+    objectType,
     gachaponId,
     keeperCapId,
     transaction: tx,
@@ -629,7 +629,7 @@ export const testRemoveNftType = async (
   client: SuiClient,
   keypair: Secp256k1Keypair,
   coinType: string,
-  objectId: string,
+  objectType: string,
   gachaponId: string,
   keeperCapId: string
 ) => {
@@ -637,7 +637,7 @@ export const testRemoveNftType = async (
 
   dbClient.removeNftType({
     coinType,
-    objectId,
+    objectType,
     gachaponId,
     keeperCapId,
     transaction: tx,

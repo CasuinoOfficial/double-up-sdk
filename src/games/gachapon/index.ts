@@ -187,7 +187,7 @@ export interface NftType {
   coinType: string;
   gachaponId: string;
   keeperCapId: string;
-  objectId: string;
+  objectType: string;
   transaction: Transaction;
 }
 
@@ -1031,74 +1031,74 @@ export const addNftType = async ({
   coinType,
   gachaponId,
   keeperCapId,
-  objectId,
+  objectType,
   transaction,
   suiClient,
   gachaponPackageId,
 }: InternalNftType) => {
-  const objectResponse = await suiClient.getObject({
-    id: objectId,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  // const objectResponse = await suiClient.getObject({
+  //   id: objectId,
+  //   options: {
+  //     showContent: true,
+  //     showType: true,
+  //   },
+  // });
+
+  // const objectData = objectResponse.data;
+
+  // if (objectData.content?.dataType !== "moveObject") {
+  // const objectType = objectData?.type;
+
+  transaction.setGasBudget(100_000_000);
+
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::add_nft_type`,
+    typeArguments: [coinType, objectType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+    ],
   });
-
-  const objectData = objectResponse.data;
-
-  if (objectData.content?.dataType !== "moveObject") {
-    const objectType = objectData?.type;
-
-    transaction.setGasBudget(100_000_000);
-
-    transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::add_nft_type`,
-      typeArguments: [coinType, objectType],
-      arguments: [
-        transaction.object(gachaponId),
-        transaction.object(keeperCapId),
-      ],
-    });
-  } else {
-    throw new Error("Invalid object type");
-  }
+  // } else {
+  //   throw new Error("Invalid object type");
+  // }
 };
 
 export const removeNftType = async ({
   coinType,
   gachaponId,
   keeperCapId,
-  objectId,
+  objectType,
   transaction,
   suiClient,
   gachaponPackageId,
 }: InternalNftType) => {
-  const objectResponse = await suiClient.getObject({
-    id: objectId,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  // const objectResponse = await suiClient.getObject({
+  //   id: objectId,
+  //   options: {
+  //     showContent: true,
+  //     showType: true,
+  //   },
+  // });
+
+  // const objectData = objectResponse.data;
+
+  // if (objectData.content?.dataType !== "moveObject") {
+  //   const objectType = objectData?.type;
+
+  transaction.setGasBudget(100_000_000);
+
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::remove_nft_type`,
+    typeArguments: [coinType, objectType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+    ],
   });
-
-  const objectData = objectResponse.data;
-
-  if (objectData.content?.dataType !== "moveObject") {
-    const objectType = objectData?.type;
-
-    transaction.setGasBudget(100_000_000);
-
-    transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::remove_nft_type`,
-      typeArguments: [coinType, objectType],
-      arguments: [
-        transaction.object(gachaponId),
-        transaction.object(keeperCapId),
-      ],
-    });
-  } else {
-    throw new Error("Invalid object type");
-  }
+  // } else {
+  //   throw new Error("Invalid object type");
+  // }
 };
 
 export const drawFreeSpin = async ({
