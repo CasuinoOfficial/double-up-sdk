@@ -251,6 +251,7 @@ export const testClaimEgg = async (
   const tx = new Transaction();
 
   const egg = await dbClient.claimEgg({
+    address: keypair.toSuiAddress(),
     coinType,
     gachaponId,
     kioskId,
@@ -263,8 +264,6 @@ export const testClaimEgg = async (
       eggId,
       transaction: tx,
     });
-  } else {
-    tx.transferObjects([egg], keypair.toSuiAddress());
   }
 
   const transactionResult = await client.signAndExecuteTransaction({

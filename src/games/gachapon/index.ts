@@ -25,7 +25,7 @@ import {
   PERSONAL_KIOSK_RULE_ADDRESS,
   ROYALTY_RULE,
 } from "@mysten/kiosk";
-import { checkIsInKiosk } from "../../utils";
+import { checkHasKiosk, checkIsInKiosk } from "../../utils";
 import { Decimal } from "decimal.js";
 
 export interface CreateGachaponInput {
@@ -149,6 +149,7 @@ interface InternalDrawEgg extends DrawEgg {
 }
 
 export interface ClaimEgg {
+  address: string;
   coinType: string;
   gachaponId: string;
   kioskId: string;
@@ -168,18 +169,6 @@ export interface DestroyEgg {
 }
 
 interface InternalDestroyEgg extends DestroyEgg {
-  gachaponPackageId: string;
-}
-
-export interface ClaimEgg {
-  coinType: string;
-  gachaponId: string;
-  kioskId: string;
-  eggId: string;
-  transaction: Transaction;
-}
-
-interface InternalClaimEgg extends ClaimEgg {
   gachaponPackageId: string;
 }
 
@@ -728,6 +717,7 @@ export const addEmptyEgg = ({
 };
 
 export const claimEgg = async ({
+  address,
   coinType,
   gachaponId,
   kioskId,
@@ -781,13 +771,26 @@ export const claimEgg = async ({
       ],
     });
 
+    transaction.transferObjects([claimedEgg], address);
+
     return claimedEgg;
   } else {
-    const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
-      obj_id,
-      suiClient,
-      kioskClient
-    );
+    // let newKiosk: TransactionResult; //[kiosk, kioskOwnerCap]
+    let ownedKiosk: TransactionArgument;
+    let kioskOwnerCap: TransactionArgument;
+
+    const { kioskInfo } = await checkIsInKiosk(obj_id, suiClient, kioskClient);
+
+    const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
+
+    if (ownedKioskOwnerCap === null || ownedKioskOwnerCap.isPersonal) {
+      [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
+        target: "0x2::kiosk::new",
+      });
+    } else {
+      ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
+      kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
+    }
 
     const payment = transaction.moveCall({
       target: "0x2::coin::zero",
@@ -814,7 +817,7 @@ export const claimEgg = async ({
 
         transaction.moveCall({
           target: `${PERSONAL_KIOSK_PACKAGE}::royalty_rule::pay`,
-          typeArguments: [objectType],
+          typeArguments: [objType],
           arguments: [
             transaction.object(kioskInfo.transferPoilcies.id),
             claimedEgg[1],
@@ -828,7 +831,7 @@ export const claimEgg = async ({
 
         transaction.moveCall({
           target: `${PERSONAL_KIOSK_PACKAGE}::royalty_rule::pay`,
-          typeArguments: [objectType],
+          typeArguments: [objType],
           arguments: [
             transaction.object(kioskInfo.transferPoilcies.id),
             claimedEgg[1],
@@ -838,21 +841,46 @@ export const claimEgg = async ({
       }
     }
 
-    if (kioskInfo.hasLockingRule) {
+    if (!kioskInfo.hasLockingRule) {
+      transaction.moveCall({
+        target: "0x2::kiosk::place",
+        typeArguments: [objType],
+        arguments: [ownedKiosk, kioskOwnerCap, claimedEgg[0]],
+      });
+    } else {
+      transaction.moveCall({
+        target: "0x2::kiosk::lock",
+        typeArguments: [objType],
+        arguments: [
+          ownedKiosk,
+          kioskOwnerCap,
+          transaction.object(kioskInfo.transferPoilcies.id),
+          claimedEgg[0],
+        ],
+      });
+
       transaction.moveCall({
         target: `${PERSONAL_KIOSK_PACKAGE}::kiosk_lock_rule::prove`,
-        typeArguments: [objectType],
-        arguments: [claimedEgg[1], transaction.object(kioskInfo.kioskId)],
+        typeArguments: [objType],
+        arguments: [claimedEgg[1], ownedKiosk],
       });
     }
 
     transaction.moveCall({
       target: "0x2::transfer_policy::confirm_request",
-      typeArguments: [objectType],
+      typeArguments: [objType],
       arguments: [
         transaction.object(kioskInfo.transferPoilcies.id),
         claimedEgg[1],
       ],
+    });
+
+    transaction.transferObjects([kioskOwnerCap], address);
+
+    transaction.moveCall({
+      target: "0x2::transfer::public_share_object",
+      typeArguments: ["0x2::kiosk::Kiosk"],
+      arguments: [ownedKiosk],
     });
 
     return claimedEgg;

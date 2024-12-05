@@ -417,3 +417,18 @@ export const checkIsInKiosk = async (
     },
   };
 };
+
+export const checkHasKiosk = async (
+  address: string,
+  kioskClient: KioskClient
+) => {
+  const response = await kioskClient.getOwnedKiosks({
+    address,
+  });
+
+  if (!response.kioskOwnerCaps || response.kioskOwnerCaps.length === 0) {
+    return null;
+  }
+
+  return response.kioskOwnerCaps.filter((cap) => !cap.isPersonal)[0];
+};
