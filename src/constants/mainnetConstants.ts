@@ -159,6 +159,15 @@ export const RAFFLES_MODULE_NAME = "raffles";
 export const RAFFLES_STRUCT_NAME = "Raffles";
 
 export const DOGHOUSE = "";
+// GACHAPON
+// ===============================================================================
+export const GACHAPON_CORE_PACKAGE_ID =
+  "0xe181e5d2f61a661cf2d61270dc5fb33a024ce21d32ef06786bc367f76fea541b";
+export const GACHAPON_PACKAGE_ID =
+  "0xe181e5d2f61a661cf2d61270dc5fb33a024ce21d32ef06786bc367f76fea541b";
+export const GACHAPON_CONFIG = "";
+export const GACHAPON_MODULE_NAME = "gachapon";
+export const GACHAPON_RULE_MODULE_NAME = "gachapon_rule";
 
 //************************//
 //        PUMP FUN        //
@@ -196,3 +205,6 @@ export const ALLOY_MARKET_ID =
   "0x40ec1fc667e2fa0618f30d3256284b1f40bf5b6f1716c50033e35591499eaa5c";
 export const ALLOY_MODULE_NAME = "alloy";
 export const ALLOY_STRUCT_NAME = "alloy";
+
+export const PERSONAL_KIOSK_PACKAGE =
+  "0xdfb4f1d4e43e0c3ad834dcd369f0d39005c872e118c9dc1c5da9765bb93ee5f3";
