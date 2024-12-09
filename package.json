@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.5.6",
+  "version": "4.5.8",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -52,6 +52,7 @@
     "test:gachapon:createGachapon": "FUNCTION=gachapon:createGachapon pnpm test",
     "test:gachapon:closeGachapon": "FUNCTION=gachapon:closeGachapon pnpm test",
     "test:gachapon:testGetGachapon": "FUNCTION=gachapon:testGetGachapon pnpm test",
+    "test:gachapon:testGetGachapons": "FUNCTION=gachapon:testGetGachapons pnpm test",
     "test:gachapon:testAdminGetGachapons": "FUNCTION=gachapon:testAdminGetGachapons pnpm test",
     "test:gachapon:testAdminGetEggs": "FUNCTION=gachapon:testAdminGetEggs pnpm test",
     "test:gachapon:testAddEgg": "FUNCTION=gachapon:testAddEgg pnpm test",

@@ -192,7 +192,6 @@ export interface NftType {
 }
 
 interface InternalNftType extends NftType {
-  suiClient: SuiClient;
   gachaponPackageId: string;
 }
 
@@ -210,6 +209,23 @@ interface InternalDrawFreeSpin extends DrawFreeSpin {
 }
 
 type KeeperCap = { id: string; gachaponId: string };
+
+export type Gachapon = {
+  id: string;
+  keeperCapId: string;
+  kioskId: string;
+  coinType: string;
+  cost: string;
+  lootbox: {
+    id: string;
+    eggCounts: string;
+  };
+  createdAt: string;
+};
+
+export type Gachapons = {
+  [key: string]: Gachapon;
+};
 
 export type AdminGachapon = {
   id: string;
@@ -303,10 +319,91 @@ const getKeeperData = (data: SuiObjectData): any | null => {
   }
 };
 
-export const getGachapon = async (
-  suiClient: SuiClient,
-  gachaponId: string
-) => {};
+export const getGachapons = async (suiClient: SuiClient, address: string) => {
+  const createdTimes: Record<string, string> = {};
+  let gachapons: Gachapons = {};
+  let keeperCaps: KeeperCap[] = [];
+  let cursor;
+  let hasNextPage = true;
+
+  //Get gachapon keeper cap
+  while (hasNextPage) {
+    const response = await suiClient.getOwnedObjects({
+      owner: address,
+      filter: {
+        StructType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::KeeperCap`,
+      },
+      options: { showContent: true },
+      cursor: cursor || null,
+    });
+
+    response.data.forEach((item: any) => {
+      const keeperCap = getKeeperData(item.data);
+
+      keeperCaps.push(keeperCap);
+    });
+    cursor = response.nextCursor;
+    hasNextPage = response.hasNextPage;
+  }
+
+  //Get create gachapon event
+  cursor = null;
+  hasNextPage = true;
+
+  while (hasNextPage) {
+    const eventResponse = await suiClient.queryEvents({
+      query: {
+        MoveEventType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::NewGachapon`,
+      },
+      cursor: cursor || null,
+    });
+
+    for (let item of eventResponse.data) {
+      const parsedJson = item.parsedJson as any;
+
+      createdTimes[parsedJson?.gachapon_id] = item.timestampMs;
+    }
+
+    cursor = eventResponse.nextCursor;
+    hasNextPage = eventResponse.hasNextPage;
+  }
+
+  const promiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
+    suiClient.getObject({
+      id: keeperCap.gachaponId,
+      options: {
+        showContent: true,
+        showPreviousTransaction: true,
+        showType: true,
+      },
+    })
+  );
+
+  const responseList = await Promise.all(promiseList);
+
+  responseList.forEach((response, index) => {
+    const data = response.data;
+    const coinType = data?.type?.split("<")[1].split(">")[0];
+    const fields = data?.content?.fields as any;
+
+    const gachapon = {
+      id: keeperCaps[index].gachaponId,
+      keeperCapId: keeperCaps[index].id,
+      kioskId: fields.kiosk_id,
+      coinType: coinType,
+      cost: fields.cost,
+      lootbox: {
+        id: fields?.lootbox?.fields?.id?.id,
+        eggCounts: fields?.lootbox?.fields?.length,
+      },
+      createdAt: createdTimes[keeperCaps[index].gachaponId],
+    };
+
+    gachapons[keeperCaps[index].gachaponId] = gachapon;
+  });
+
+  return gachapons;
+};
 
 export const adminGetGachapons = async (
   suiClient: SuiClient,
@@ -319,7 +416,6 @@ export const adminGetGachapons = async (
   let hasNextPage = true;
 
   //Get gachapon keeper cap
-
   while (hasNextPage) {
     const response = await suiClient.getOwnedObjects({
       owner: address,
@@ -1033,22 +1129,8 @@ export const addNftType = async ({
   keeperCapId,
   objectType,
   transaction,
-  suiClient,
   gachaponPackageId,
 }: InternalNftType) => {
-  // const objectResponse = await suiClient.getObject({
-  //   id: objectId,
-  //   options: {
-  //     showContent: true,
-  //     showType: true,
-  //   },
-  // });
-
-  // const objectData = objectResponse.data;
-
-  // if (objectData.content?.dataType !== "moveObject") {
-  // const objectType = objectData?.type;
-
   transaction.setGasBudget(100_000_000);
 
   transaction.moveCall({
@@ -1059,9 +1141,6 @@ export const addNftType = async ({
       transaction.object(keeperCapId),
     ],
   });
-  // } else {
-  //   throw new Error("Invalid object type");
-  // }
 };
 
 export const removeNftType = async ({
@@ -1070,22 +1149,8 @@ export const removeNftType = async ({
   keeperCapId,
   objectType,
   transaction,
-  suiClient,
   gachaponPackageId,
 }: InternalNftType) => {
-  // const objectResponse = await suiClient.getObject({
-  //   id: objectId,
-  //   options: {
-  //     showContent: true,
-  //     showType: true,
-  //   },
-  // });
-
-  // const objectData = objectResponse.data;
-
-  // if (objectData.content?.dataType !== "moveObject") {
-  //   const objectType = objectData?.type;
-
   transaction.setGasBudget(100_000_000);
 
   transaction.moveCall({
@@ -1096,9 +1161,6 @@ export const removeNftType = async ({
       transaction.object(keeperCapId),
     ],
   });
-  // } else {
-  //   throw new Error("Invalid object type");
-  // }
 };
 
 export const drawFreeSpin = async ({

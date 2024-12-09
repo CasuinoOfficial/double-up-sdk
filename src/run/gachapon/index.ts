@@ -93,6 +93,15 @@ export const testGetGachapon = async (
   // const gachapons = await dbClient.getGachapons(address);
 };
 
+export const testGetGachapons = async (
+  dbClient: DoubleUpClient,
+  keypair: Secp256k1Keypair
+) => {
+  const address = keypair.toSuiAddress();
+
+  return dbClient.getGachapons(address);
+};
+
 export const testAdminGetGachapons = async (
   dbClient: DoubleUpClient,
   keypair: Secp256k1Keypair

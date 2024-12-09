@@ -178,7 +178,7 @@ import {
   AddEgg,
   createGachapon,
   CreateGachaponInput,
-  getGachapon,
+  getGachapons,
   adminGetGachapons,
   adminGetEggs,
   CloseGachapon,
@@ -626,8 +626,7 @@ export class DoubleUpClient {
       gachaponPackageId: this.gachaponPackageId,
     });
 
-  getGachapon = (gachaponId?: string) =>
-    getGachapon(this.suiClient, gachaponId);
+  getGachapons = (address?: string) => getGachapons(this.suiClient, address);
   adminGetGachapons = (address?: string) =>
     adminGetGachapons(this.suiClient, address);
   adminGetEggs = (lootboxId: string) => adminGetEggs(this.suiClient, lootboxId);
@@ -699,14 +698,12 @@ export class DoubleUpClient {
   addNftType = (input: NftType) =>
     addNftType({
       ...input,
-      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 
   removeNftType = (input: NftType) =>
     removeNftType({
       ...input,
-      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 

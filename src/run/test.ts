@@ -80,6 +80,7 @@ import {
   testAddNftType,
   testRemoveNftType,
   testClaimEgg,
+  testGetGachapons,
 } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
@@ -227,6 +228,9 @@ const dbClient = new DoubleUpClient({
           "0x56a2c6d30965696bcf123d591587951ac0dd87590c6616b6d3b89ed7b201a8da" // kioskId
         );
         break;
+      case "gachapon:testGetGachapons":
+        testGetGachapons(dbClient, keypair).then((res) => console.log(res));
+        break;
       case "gachapon:testAdminGetGachapons":
         testAdminGetGachapons(dbClient, keypair).then((res) =>
           console.log(res)
@@ -366,9 +370,9 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI", //coinType
-          "", //objectType
-          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
-          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
+          "0xbb35722bdffea8d6b19cbb329673d1ae77f17ee83e1cab23615e9c0c55dc4dfa::keepsake_nft::KEEPSAKE", //objectType
+          "0xd128f31b1d94a47f7b5ec4249f4e4fb3886dc036cc615aad70d1a9f3eec8872d", // gachaponId
+          "0xda623f352d59703adf558a1e2741c6279a26c562f3052553c04a38d8a195a3ff" // keeperCapId
         );
         break;
 
