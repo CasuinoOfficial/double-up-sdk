@@ -7,19 +7,18 @@ import { bcs } from "@mysten/sui/bcs";
 
 import {
   CLOCK_OBJ,
-  LOTTERY_ID,
-  LOTTERY_MODULE_NAME,
-  LOTTERY_PACKAGE_ID,
-  LOTTERY_STORE_ID,
   SUI_COIN_TYPE,
 } from "../../constants/testnetConstants";
 import { sleep } from "../../utils";
+import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "src/constants/mainnetConstants";
 
 const LOTTERY_TYPE = 
   "0x232a8d0feaf3d8857ccf5bfc1eb0318c4ae798932df8cd895982f42124d53467::lottery::Lottery<0x2::sui::SUI>";
 export interface BuyTicketsInput {
   coin: TransactionObjectArgument;
   tickets: Ticket[];
+  lotteryId: string;
+  coinType: string;
   transaction: TransactionType;
   origin?: string;
   referrer?: string;
@@ -33,6 +32,8 @@ export interface BuyTicketsOnBehalfInput {
   recipient: string;
   coin: TransactionObjectArgument;
   tickets: Ticket[];
+  lotteryId: string;
+  coinType: string;
   transaction: TransactionType;
   origin?: string;
   referrer?: string;
@@ -154,11 +155,16 @@ interface LotteryData {
 };
 
 export interface LotteryInput {
-  suiClient: SuiClient;
+  lotteryId: string;
 }
 
 interface InternalLotteryInput extends LotteryInput {
+  suiClient: SuiClient;
+}
+
+interface InternalLotteryHistoryInput {
   lotteryCorePackageId: string;
+  suiClient: SuiClient;
 }
 
 export interface LotteryResponse {
@@ -222,6 +228,8 @@ export interface LotteryTicketsResponse {
 
 export interface RedeemTicketsInput {
   epochs: string[];
+  lotteryId: string;
+  coinType: string;
   transaction: TransactionType;
 }
 
@@ -237,12 +245,13 @@ export interface RedeemTicketsResponse {
 export interface Ticket {
   numbers: number[];
   specialNumber: number;
-  memeCoin: string;
 }
 
 export const buyLotteryTickets = ({
   coin,
   tickets: ticketsInput,
+  lotteryId,
+  coinType,
   lotteryPackageId,
   transaction,
   origin,
@@ -251,17 +260,16 @@ export const buyLotteryTickets = ({
   let res: BuyTicketsResponse = { ok: true };
 
   try {
-    for (const { numbers, specialNumber, memeCoin } of ticketsInput) {
+    for (const { numbers, specialNumber } of ticketsInput) {
       transaction.moveCall({
         target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket`,
-        typeArguments: [SUI_COIN_TYPE],
+        typeArguments: [coinType],
         arguments: [
-          transaction.object(LOTTERY_STORE_ID),
-          transaction.pure.id(LOTTERY_ID),
+          transaction.object(LOTTERY_STORE),
+          transaction.pure.id(lotteryId),
           coin,
           transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
           transaction.pure.u8(specialNumber),
-          transaction.pure.string(memeCoin),
           transaction.pure.string(origin ?? "DoubleUp"),
           transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
           transaction.object(CLOCK_OBJ),
@@ -281,6 +289,8 @@ export const buyLotteryTicketsOnBehalf = ({
   recipient,
   coin,
   tickets: ticketsInput,
+  lotteryId,
+  coinType,
   lotteryPackageId,
   transaction,
   origin,
@@ -289,18 +299,17 @@ export const buyLotteryTicketsOnBehalf = ({
   let res: BuyTicketsResponse = { ok: true };
 
   try {
-    for (const { numbers, specialNumber, memeCoin } of ticketsInput) {
+    for (const { numbers, specialNumber} of ticketsInput) {
       transaction.moveCall({
         target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket_on_behalf`,
-        typeArguments: [SUI_COIN_TYPE],
+        typeArguments: [coinType],
         arguments: [
-          transaction.object(LOTTERY_STORE_ID),
-          transaction.pure.id(LOTTERY_ID),
+          transaction.object(LOTTERY_STORE),
+          transaction.pure.id(lotteryId),
           coin,
           transaction.pure.address(recipient),
           transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
           transaction.pure.u8(specialNumber),
-          transaction.pure.string(memeCoin),
           transaction.pure.string(origin?? "DoubleUp"),
           transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
           transaction.object(CLOCK_OBJ),
@@ -317,17 +326,18 @@ export const buyLotteryTicketsOnBehalf = ({
 };
 
 export const getLottery = async ({
+  lotteryId,
   suiClient,
-}: LotteryInput): Promise<LotteryResponse> => {
+}: InternalLotteryInput): Promise<LotteryResponse> => {
   const res: LotteryResponse = { ok: true };
 
   try {
     const fieldsResp = await suiClient.getDynamicFieldObject({
       name: {
         type: "0x2::object::ID",
-        value: LOTTERY_ID,
+        value: lotteryId,
       },
-      parentId: LOTTERY_STORE_ID,
+      parentId: LOTTERY_STORE,
     });
 
     if (fieldsResp?.data?.content?.dataType !== "moveObject") {
@@ -348,7 +358,7 @@ export const getLottery = async ({
 export const getLotteryHistory = async ({
   suiClient,
   lotteryCorePackageId,
-}: InternalLotteryInput): Promise<LotteryHistoryResponse> => {
+}: InternalLotteryHistoryInput): Promise<LotteryHistoryResponse> => {
   let res: LotteryHistoryResponse = { ok: true };
 
   try {
@@ -357,7 +367,7 @@ export const getLotteryHistory = async ({
     while (results.length === 0) {
       const events = await suiClient.queryEvents({
         query: {
-          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult<${SUI_COIN_TYPE}>`,
+          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
         },
         order: "descending",
       });
@@ -400,7 +410,7 @@ export const getLotteryDrawingResult = async ({
     while (results.length === 0) {
       const events = await suiClient.queryEvents({
         query: {
-          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult<${SUI_COIN_TYPE}>`,
+          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
         },
         order: "descending",
         limit: 2,
@@ -453,7 +463,7 @@ export const getLotteryTickets = async ({
     while (shouldFetchMore) {
       const queryParams: LotteryTicketsConfig = {
         query: {
-            MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased<${SUI_COIN_TYPE}>`
+            MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased`
         },
         order: "descending",
       };
@@ -488,6 +498,8 @@ export const getLotteryTickets = async ({
 
 export const redeemLotteryTickets = ({
   epochs,
+  lotteryId,
+  coinType,
   transaction,
   lotteryPackageId
 }: InternalRedeemTicketsInput): RedeemTicketsResponse => {
@@ -497,10 +509,10 @@ export const redeemLotteryTickets = ({
     for (const epoch of epochs) {
       transaction.moveCall({
         target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::redeem`,
-        typeArguments: [SUI_COIN_TYPE],
+        typeArguments: [coinType],
         arguments: [
-          transaction.object(LOTTERY_STORE_ID),
-          transaction.pure.id(LOTTERY_ID),
+          transaction.object(LOTTERY_STORE),
+          transaction.pure.id(lotteryId),
           transaction.pure.u64(epoch),
         ],
       });

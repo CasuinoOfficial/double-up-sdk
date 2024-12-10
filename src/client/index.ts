@@ -21,7 +21,12 @@ import {
   ALLOY_PACKAGE_ID,
   RAFFLES_CORE_PACKAGE_ID,
   RAFFLES_PACKAGE_ID,
+<<<<<<< HEAD
   GACHAPON_PACKAGE_ID,
+=======
+  LOTTERY_PACKAGE_ID,
+  LOTTERY_CORE_PACKAGE_ID,
+>>>>>>> 01e2db9 (updating lottery functions)
 } from "../constants/mainnetConstants";
 
 import {
@@ -51,6 +56,7 @@ import {
   BuyTicketsInput,
   BuyTicketsOnBehalfInput,
   buyLotteryTicketsOnBehalf,
+  LotteryInput,
 } from "../games/lottery";
 
 import {
@@ -375,7 +381,11 @@ export class DoubleUpClient {
       ...input,
       lotteryPackageId: this.lotteryPackageId,
     });
-  getLottery = () => getLottery({ suiClient: this.suiClient });
+  getLottery = (input: LotteryInput) =>
+    getLottery({ 
+      ...input,
+      suiClient: this.suiClient 
+    });
   getLotteryHistory = () => 
     getLotteryHistory({ 
       suiClient: this.suiClient,
