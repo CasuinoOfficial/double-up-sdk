@@ -1225,8 +1225,6 @@ export const drawFreeSpin = async ({
       borrowPotato = result[1];
     }
 
-    console.log("kioskInfo", kioskInfo);
-
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
       typeArguments: [coinType, objectType],
