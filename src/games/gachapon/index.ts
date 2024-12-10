@@ -1183,6 +1183,8 @@ export const drawFreeSpin = async ({
   const objectData = objectResponse.data;
 
   if (objectData.content?.dataType !== "moveObject") {
+    throw new Error("Invalid object type");
+  } else {
     const objectType = objectData?.type;
 
     transaction.setGasBudget(100_000_000);
@@ -1197,7 +1199,5 @@ export const drawFreeSpin = async ({
         transaction.pure.address(recipient),
       ],
     });
-  } else {
-    throw new Error("Invalid object type");
   }
 };
