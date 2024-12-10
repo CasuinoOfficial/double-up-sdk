@@ -543,6 +543,7 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
           id: egg.objectId,
           options: {
             showContent: true,
+            showDisplay: true,
             showType: true,
           },
         });
@@ -561,24 +562,15 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
       } as EggObjectInfo;
     }
 
-    const objectContent = eggObjects.find(
+    const objectDisplay = eggObjects.find(
       (eggObject) => eggObject?.data?.objectId === egg.objectId
-    ).data?.content;
-
-    if (objectContent?.dataType !== "moveObject") {
-      return {
-        eggId: egg.eggId,
-        isLocked: egg.isLocked,
-        objectId: egg.objectId,
-        objectInfo: null,
-      };
-    }
+    ).data?.display?.data;
 
     return {
       eggId: egg.eggId,
       isLocked: egg.isLocked,
       objectId: egg.objectId,
-      objectInfo: objectContent?.fields as any,
+      objectInfo: objectDisplay,
     } as EggObjectInfo;
   });
 };
@@ -1233,12 +1225,14 @@ export const drawFreeSpin = async ({
       borrowPotato = result[1];
     }
 
+    console.log("kioskInfo", kioskInfo);
+
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
       typeArguments: [coinType, objectType],
       arguments: [
         transaction.object(gachaponId),
-        transaction.object(objectId),
+        kioskCap,
         transaction.object(RAND_OBJ_ID),
         transaction.pure.address(recipient),
       ],
