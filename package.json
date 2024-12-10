@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.4.16",
+  "version": "4.5.10",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -48,7 +48,27 @@
     "test:unihouse:data": "FUNCTION=unihouse:data pnpm test",
     "test:unihouse:redeemrequests": "FUNCTION=unihouse:redeemrequests pnpm test",
     "test:unihouse:getgtokenbalance": "FUNCTION=unihouse:getgtokenbalance pnpm test",
-    "test:pump:getcurves": "FUNCTION=pump:getcurves pnpm test"
+    "test:pump:getcurves": "FUNCTION=pump:getcurves pnpm test",
+    "test:gachapon:createGachapon": "FUNCTION=gachapon:createGachapon pnpm test",
+    "test:gachapon:closeGachapon": "FUNCTION=gachapon:closeGachapon pnpm test",
+    "test:gachapon:testGetGachapon": "FUNCTION=gachapon:testGetGachapon pnpm test",
+    "test:gachapon:testGetGachapons": "FUNCTION=gachapon:testGetGachapons pnpm test",
+    "test:gachapon:testAdminGetGachapons": "FUNCTION=gachapon:testAdminGetGachapons pnpm test",
+    "test:gachapon:testAdminGetEggs": "FUNCTION=gachapon:testAdminGetEggs pnpm test",
+    "test:gachapon:testAddEgg": "FUNCTION=gachapon:testAddEgg pnpm test",
+    "test:gachapon:testRemoveEgg": "FUNCTION=gachapon:testRemoveEgg pnpm test",
+    "test:gachapon:testAddEmptyEgg": "FUNCTION=gachapon:testAddEmptyEgg pnpm test",
+    "test:gachapon:testClaimEgg": "FUNCTION=gachapon:testClaimEgg pnpm test",
+    "test:gachapon:testClaimGachaponTreasury": "FUNCTION=gachapon:testClaimGachaponTreasury pnpm test",
+    "test:gachapon:testUpdateCost": "FUNCTION=gachapon:testUpdateCost pnpm test",
+    "test:gachapon:testAddSupplier": "FUNCTION=gachapon:testAddSupplier pnpm test",
+    "test:gachapon:testRemoveSupplier": "FUNCTION=gachapon:testRemoveSupplier pnpm test",
+    "test:gachapon:testDrawEgg": "FUNCTION=gachapon:testDrawEgg pnpm test",
+    "test:gachapon:testDestroyEgg": "FUNCTION=gachapon:testDestroyEgg pnpm test",
+    "test:gachapon:testCreateFreeSpinner": "FUNCTION=gachapon:testCreateFreeSpinner pnpm test",
+    "test:gachapon:testAddNftType": "FUNCTION=gachapon:testAddNftType pnpm test",
+    "test:gachapon:testRemoveNftType": "FUNCTION=gachapon:testRemoveNftType pnpm test",
+    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",
@@ -56,6 +76,7 @@
     "@mysten/kiosk": "0.9.10",
     "@mysten/sui": "1.2.1",
     "axios": "^1.7.7",
+    "decimal.js": "^10.4.3",
     "nanoid": "^5.0.7"
   },
   "devDependencies": {

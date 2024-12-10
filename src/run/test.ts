@@ -3,6 +3,7 @@ import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../client";
 import { fromHEX } from "@mysten/sui/utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 
 import { testCoinflip } from "./coinflip";
@@ -53,7 +54,34 @@ import {
   testGetGTokenBalance,
 } from "./unihouse";
 import { testGetCurves } from "./pump";
-import { testRaffleBuy, testRaffleBuyWithDeal, testRaffleGet, testRaffleGetTickets } from "./raffles";
+import {
+  testRaffleBuy,
+  testRaffleBuyWithDeal,
+  testRaffleGet,
+  testRaffleGetTickets,
+} from "./raffles";
+import {
+  testAddEgg,
+  testCreateGachapon,
+  testGetGachapon,
+  testAdminGetGachapons,
+  testAdminGetEggs,
+  testCloseGachapon,
+  testAddEmptyEgg,
+  testRemoveEgg,
+  testClaimGachaponTreasury,
+  testUpdateCost,
+  testAddSupplier,
+  testRemoveSupplier,
+  testDrawEgg,
+  testDestroyEgg,
+  testCreateFreeSpinner,
+  testDrawFreeSpin,
+  testAddNftType,
+  testRemoveNftType,
+  testClaimEgg,
+  testGetGachapons,
+} from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
@@ -165,7 +193,7 @@ const dbClient = new DoubleUpClient({
         testRaffleGetTickets(dbClient, client, keypair);
         break;
       case "unihouse:data":
-        console.log("hit")
+        console.log("hit");
         testGetUnihouseData(dbClient).then((res) => console.log(res));
         break;
       case "unihouse:redeemrequests":
@@ -177,7 +205,198 @@ const dbClient = new DoubleUpClient({
           .catch((err) => console.error(err));
         break;
       case "pump:getcurves":
-          testGetCurves(dbClient).then((res) => console.log(res));
+        testGetCurves(dbClient).then((res) => console.log(res));
+        break;
+      case "gachapon:createGachapon":
+        testCreateGachapon(
+          dbClient,
+          client,
+          keypair,
+          0,
+          "0x2::sui::SUI",
+          "0x6f9c618b5e4e90bd5f55528f314c264562a1bfe3cb07aea03cbe9266b349f37d"
+        );
+        break;
+      case "gachapon:closeGachapon":
+        testCloseGachapon(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0xfa8a633987d661524381bd8672b3bfd3e2d00340781f76846a4223d2d7a79251", // gachaponId
+          "0xacf0ea9eaa7a8487bdc7d74463f676f4cfe79b6224a3f1eda572f8e0b9544756", // keeperCapId
+          "0x56a2c6d30965696bcf123d591587951ac0dd87590c6616b6d3b89ed7b201a8da" // kioskId
+        );
+        break;
+      case "gachapon:testGetGachapons":
+        testGetGachapons(dbClient, keypair).then((res) => console.log(res));
+        break;
+      case "gachapon:testAdminGetGachapons":
+        testAdminGetGachapons(dbClient, keypair).then((res) =>
+          console.log(res)
+        );
+        break;
+      case "gachapon:testAdminGetEggs":
+        testAdminGetEggs(
+          dbClient,
+          "0x6defc515ae3aca587c2c02fe6e9dd51f73865e70d15ced342e9c7a506ebfa40b" // lootboxId
+        ).then((res) => console.log(res));
+        break;
+      case "gachapon:testGetGachapon":
+        testGetGachapon(
+          dbClient,
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a"
+        );
+        break;
+      case "gachapon:testAddEgg":
+        testAddEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0xcaa8b6842fa64b1a39078b5c012d08b0c1e1ee00108740de5b5d67dcc2236a94" //objectId
+        );
+        break;
+      case "gachapon:testRemoveEgg":
+        testRemoveEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
+          "0x78562bb6bc2d6a470128179ae8e48f46daa8078e54c0c7db09fd691759bc546a", // kioskId
+          3 // index
+        );
+        break;
+      case "gachapon:testAddEmptyEgg":
+        testAddEmptyEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
+          2
+        );
+        break;
+      case "gachapon:testClaimEgg":
+        testClaimEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x78562bb6bc2d6a470128179ae8e48f46daa8078e54c0c7db09fd691759bc546a", // kioskId
+          "0x32bd4de51aa17a6506027e5a7b87de512cd2950f45776353c894228e822ef641" // eggId
+        ).then((res) => console.log(res));
+        break;
+      case "gachapon:testClaimGachaponTreasury":
+        testClaimGachaponTreasury(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
+        );
+        break;
+      case "gachapon:testUpdateCost":
+        testUpdateCost(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
+          10_000_000 //newCost
+        );
+        break;
+      case "gachapon:testAddSupplier":
+        testAddSupplier(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //newSupplierAddress
+        );
+        break;
+      case "gachapon:testRemoveSupplier":
+        testRemoveSupplier(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //supplierAddress
+        );
+        break;
+      case "gachapon:testDrawEgg":
+        testDrawEgg(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          1, //count
+          keypair.toSuiAddress() //recipient
+        );
+        break;
+      case "gachapon:testDestroyEgg":
+        testDestroyEgg(
+          dbClient,
+          client,
+          keypair,
+          "" // eggId
+        );
+        break;
+      case "gachapon:testCreateFreeSpinner":
+        testCreateFreeSpinner(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
+        );
+        break;
+
+      case "gachapon:testAddNftType":
+        testAddNftType(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0xbb35722bdffea8d6b19cbb329673d1ae77f17ee83e1cab23615e9c0c55dc4dfa::keepsake_nft::KEEPSAKE", //objectType
+          "0xd128f31b1d94a47f7b5ec4249f4e4fb3886dc036cc615aad70d1a9f3eec8872d", // gachaponId
+          "0xda623f352d59703adf558a1e2741c6279a26c562f3052553c04a38d8a195a3ff" // keeperCapId
+        );
+        break;
+
+      case "gachapon:testRemoveNftType":
+        testRemoveNftType(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "", //objectType
+          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
+          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5" // keeperCapId
+        );
+        break;
+      case "gachapon:testDrawFreeSpin":
+        testDrawFreeSpin(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI", //coinType
+          "0xd128f31b1d94a47f7b5ec4249f4e4fb3886dc036cc615aad70d1a9f3eec8872d", // gachaponId
+          "0x47ab4875d1380bd790e6246f953b2bc4b2812f98d59dcdba02c52d38ab199ebd", //ObjectId
+          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //recipient
+        );
         break;
 
       default:

@@ -1,13 +1,25 @@
-import { SuiClient, SuiTransactionBlockResponse, DynamicFieldInfo} from "@mysten/sui/client";
+import {
+  SuiClient,
+  SuiTransactionBlockResponse,
+  DynamicFieldInfo,
+} from "@mysten/sui/client";
 
 import {
   BUCK_COIN_TYPE,
   BUCK_VOUCHER_BANK,
-  ROULETTE_MODULE_NAME, ROULETTE_PACKAGE_ID,
+  ROULETTE_MODULE_NAME,
+  ROULETTE_PACKAGE_ID,
   SUI_COIN_TYPE,
   SUI_VOUCHER_BANK,
   UNI_HOUSE_OBJ_ID,
 } from "../constants/mainnetConstants";
+import {
+  KIOSK_ITEM,
+  KIOSK_LOCK_RULE,
+  KioskClient,
+  ROYALTY_RULE,
+  TransferPolicy,
+} from "@mysten/kiosk";
 
 interface GameInfo {
   gameCoinType: string;
@@ -191,17 +203,17 @@ export const getTypesFromVoucher = async (
   const voucherIdType = voucherIdObject.type;
   return [
     getCoinTypeFromVoucher(voucherIdType),
-    getVoucherTypeFromVoucher(voucherIdType), 
+    getVoucherTypeFromVoucher(voucherIdType),
   ];
-}
+};
 
 const getCoinTypeFromVoucher = (voucherType: string): string => {
   return voucherType.split("<")[1].split(",")[0];
-}
+};
 
 const getVoucherTypeFromVoucher = (voucherType: string): string => {
   return voucherType.split("<")[1].split(", ")[1].replace(">", "");
-}
+};
 
 export const getGameSupportedCoinTypes = async (
   suiClient: SuiClient
@@ -218,7 +230,7 @@ export const getGameSupportedCoinTypes = async (
 
     const dynamicFields = response.data;
     const unihouseList: DynamicFieldInfo[] = dynamicFields?.filter(
-      (field: DynamicFieldInfo) => field?.objectType.includes("house::House"),
+      (field: DynamicFieldInfo) => field?.objectType.includes("house::House")
     );
 
     if (unihouseList) {
@@ -227,9 +239,11 @@ export const getGameSupportedCoinTypes = async (
     cursor = response.nextCursor;
     hasNextPage = response.hasNextPage;
   }
-  const typeList = unihouseFields.map((field) => field.objectType.split("<")?.pop()?.split(">")[0] as string);
+  const typeList = unihouseFields.map(
+    (field) => field.objectType.split("<")?.pop()?.split(">")[0] as string
+  );
   return typeList;
-}
+};
 
 export function U64FromBytes(x: number[]) {
   let u64 = BigInt(0);
@@ -238,3 +252,183 @@ export function U64FromBytes(x: number[]) {
   }
   return u64;
 }
+
+// Function to check if an object is in a kiosk, so shouldn't give kiosk Id
+export const checkIsInKiosk = async (
+  objectId: string,
+  suiClient: SuiClient,
+  kioskClient: KioskClient
+): Promise<{
+  isInKiosk: boolean;
+  objectType: string;
+  kioskInfo: {
+    isLocked: boolean;
+    isPersonal: boolean;
+    koiskOwnerCapId: string;
+    kioskId: string;
+    hasLockingRule: boolean;
+    royaltyFee: {
+      amountBp: number;
+      minAmount: string;
+    } | null;
+    transferPoilcies: TransferPolicy;
+  };
+}> => {
+  const { data: objectData } = await suiClient.getObject({
+    id: objectId,
+    options: {
+      showType: true,
+      showOwner: true,
+    },
+  });
+
+  if (!objectData) {
+    throw new Error("Object not found");
+  }
+
+  const objectType = objectData?.type;
+  const owner = objectData?.owner as Record<string, string>;
+
+  if (owner.hasOwnProperty("AddressOwner")) {
+    return {
+      isInKiosk: false,
+      objectType: objectType,
+      kioskInfo: null,
+    };
+  }
+
+  const ownerId = owner?.ObjectOwner as string;
+
+  if (!ownerId || ownerId === "") {
+    throw new Error("Owner not found");
+  }
+
+  const { data: ownerObjectData } = await suiClient.getObject({
+    id: ownerId,
+    options: {
+      showType: true,
+      showContent: true,
+      showOwner: true,
+    },
+  });
+
+  if (!ownerObjectData) {
+    throw new Error("Owner not found");
+  }
+
+  const ownerObjectType = ownerObjectData?.type;
+  const isKioskItem = ownerObjectType.includes(KIOSK_ITEM);
+
+  if (!isKioskItem) {
+    return {
+      isInKiosk: false,
+      objectType: objectType,
+      kioskInfo: null,
+    };
+  }
+
+  const objectTransferPolicies = await kioskClient.getTransferPolicies({
+    type: objectType,
+  });
+
+  const itemOwner = ownerObjectData?.owner as any;
+  const kioskId = itemOwner?.ObjectOwner as string;
+
+  const kiosk = await kioskClient.getKiosk({
+    id: kioskId,
+    options: {
+      withKioskFields: true,
+      withListingPrices: true,
+    },
+  });
+
+  const kioskOwner = kiosk?.kiosk?.owner;
+
+  const { kioskOwnerCaps, kioskIds } = await kioskClient.getOwnedKiosks({
+    address: kioskOwner,
+  });
+
+  const kioskOwnerCap = kioskOwnerCaps?.find((cap) => cap?.kioskId === kioskId);
+
+  const objectKioskInfo = kiosk?.items?.find(
+    (item) => item?.objectId === objectId
+  );
+
+  const hasLockingRule = objectTransferPolicies.some((policy) =>
+    policy.rules.some((rule) => rule.includes(KIOSK_LOCK_RULE))
+  );
+
+  const royaltyPolicies = objectTransferPolicies.filter((policy) =>
+    policy.rules.some((rule) => rule.includes(ROYALTY_RULE))
+  );
+
+  if (royaltyPolicies.length === 0) {
+    return {
+      isInKiosk: true,
+      objectType: objectType,
+      kioskInfo: {
+        isLocked: objectKioskInfo.isLocked,
+        isPersonal: kioskOwnerCap?.isPersonal,
+        koiskOwnerCapId: kioskOwnerCap?.objectId,
+        kioskId: objectKioskInfo.kioskId,
+        hasLockingRule,
+        royaltyFee: null,
+        transferPoilcies: objectTransferPolicies[0],
+      },
+    };
+  }
+
+  const royaltyRuleType = royaltyPolicies[0].rules.find((rule) =>
+    rule.includes(ROYALTY_RULE)
+  );
+
+  const royaltyPoliciesDynamicFields = await suiClient.getDynamicFieldObject({
+    parentId: royaltyPolicies[0].id,
+    name: {
+      type: `0x2::transfer_policy::RuleKey<0x${royaltyRuleType}>`,
+      value: { dummy_field: false },
+    },
+  });
+
+  const royaltyPoliciesContent = royaltyPoliciesDynamicFields.data.content;
+
+  if (royaltyPoliciesContent.dataType !== "moveObject") {
+    throw new Error("Invalid royalty rule object type");
+  }
+
+  const fields = royaltyPoliciesContent.fields as any;
+
+  const royaltyFeeSettings = {
+    amountBp: fields?.value.fields.amount_bp,
+    minAmount: fields?.value.fields.min_amount,
+  };
+
+  return {
+    isInKiosk: true,
+    objectType: objectType,
+    kioskInfo: {
+      isLocked: objectKioskInfo.isLocked,
+      isPersonal: kioskOwnerCap?.isPersonal,
+      koiskOwnerCapId: kioskOwnerCap?.objectId,
+      kioskId: objectKioskInfo.kioskId,
+      hasLockingRule,
+      royaltyFee: royaltyFeeSettings,
+      transferPoilcies: royaltyPolicies[0],
+    },
+  };
+};
+
+export const checkHasKiosk = async (
+  address: string,
+  kioskClient: KioskClient
+) => {
+  const response = await kioskClient.getOwnedKiosks({
+    address,
+  });
+
+  if (!response.kioskOwnerCaps || response.kioskOwnerCaps.length === 0) {
+    return null;
+  }
+
+  return response.kioskOwnerCaps.filter((cap) => !cap.isPersonal)[0];
+};

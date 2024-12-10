@@ -21,6 +21,7 @@ import {
   ALLOY_PACKAGE_ID,
   RAFFLES_CORE_PACKAGE_ID,
   RAFFLES_PACKAGE_ID,
+  GACHAPON_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
 import {
@@ -159,7 +160,55 @@ import {
   DepositMarketBalanceInput,
   WithdrawMarketBalanceInput,
 } from "../games/alloy";
-import { buyRaffleTickets, BuyRaffleTicketsInput, buyRaffleTicketsWithDeal, BuyRaffleTicketsWithDealInput, buyRaffleTicketsWithTreats, BuyRaffleTicketsWithTreatsInput, getRaffle, GetRaffleInput, getTotalTicketsForUser, GetTotalTicketsForUserInput } from "../games/raffles";
+import {
+  buyRaffleTickets,
+  BuyRaffleTicketsInput,
+  buyRaffleTicketsWithDeal,
+  BuyRaffleTicketsWithDealInput,
+  buyRaffleTicketsWithTreats,
+  BuyRaffleTicketsWithTreatsInput,
+  getRaffle,
+  GetRaffleInput,
+  getTotalTicketsForUser,
+  GetTotalTicketsForUserInput,
+} from "../games/raffles";
+
+import {
+  addEgg,
+  AddEgg,
+  createGachapon,
+  CreateGachaponInput,
+  getGachapons,
+  adminGetGachapons,
+  adminGetEggs,
+  CloseGachapon,
+  closeGachapon,
+  AddEmptyEgg,
+  addEmptyEgg,
+  removeEgg,
+  RemoveEgg,
+  ClaimGachaponTreasury,
+  claimGachaponTreasury,
+  UpdateCost,
+  updateCost,
+  AddSupplier,
+  addSupplier,
+  RemoveSupplier,
+  removeSupplier,
+  DrawEgg,
+  drawEgg,
+  destroyEgg,
+  DestroyEgg,
+  ClaimEgg,
+  claimEgg,
+  CreateFreeSpinner,
+  createFreeSpinner,
+  DrawFreeSpin,
+  drawFreeSpin,
+  NftType,
+  addNftType,
+  removeNftType,
+} from "../games/gachapon";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -186,6 +235,7 @@ interface DoubleUpClientInput {
   alloyPackageId?: string;
   rafflesCorePackageId?: string;
   rafflesPackageId?: string;
+  gachaponPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -214,6 +264,7 @@ export class DoubleUpClient {
     alloyPackageId = ALLOY_PACKAGE_ID,
     rafflesCorePackageId = RAFFLES_CORE_PACKAGE_ID,
     rafflesPackageId = RAFFLES_PACKAGE_ID,
+    gachaponPackageId = GACHAPON_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
@@ -238,6 +289,7 @@ export class DoubleUpClient {
     this.alloyPackageId = alloyPackageId;
     this.rafflesCorePackageId = rafflesCorePackageId;
     this.rafflesPackageId = rafflesPackageId;
+    this.gachaponPackageId = gachaponPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -271,6 +323,7 @@ export class DoubleUpClient {
   alloyPackageId: string;
   rafflesCorePackageId: string;
   rafflesPackageId: string;
+  gachaponPackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -532,12 +585,12 @@ export class DoubleUpClient {
     });
 
   // Raffles
-  getRaffle = (input: GetRaffleInput) => 
+  getRaffle = (input: GetRaffleInput) =>
     getRaffle({
       ...input,
-      client: this.suiClient
+      client: this.suiClient,
     });
-  buyRaffleTickets = (input: BuyRaffleTicketsInput) => 
+  buyRaffleTickets = (input: BuyRaffleTicketsInput) =>
     buyRaffleTickets({
       ...input,
       rafflesPackageId: this.rafflesPackageId,
@@ -555,10 +608,110 @@ export class DoubleUpClient {
       rafflesPackageId: this.rafflesPackageId,
       origin: this.origin,
     });
-  getRaffleTickets = (input: GetTotalTicketsForUserInput) => 
+  getRaffleTickets = (input: GetTotalTicketsForUserInput) =>
     getTotalTicketsForUser({
       ...input,
       rafflesPackageId: this.rafflesPackageId,
+    });
+  // Gachapon
+  createGachapon = (input: CreateGachaponInput) =>
+    createGachapon({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  closeGachapon = (input: CloseGachapon) =>
+    closeGachapon({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  getGachapons = (address?: string) => getGachapons(this.suiClient, address);
+  adminGetGachapons = (address?: string) =>
+    adminGetGachapons(this.suiClient, address);
+  adminGetEggs = (lootboxId: string) => adminGetEggs(this.suiClient, lootboxId);
+
+  addEgg = (input: AddEgg) =>
+    addEgg({
+      ...input,
+      suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeEgg = (input: RemoveEgg) =>
+    removeEgg({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addEmptyEgg = (input: AddEmptyEgg) =>
+    addEmptyEgg({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  claimGachaponTreasury = (input: ClaimGachaponTreasury) =>
+    claimGachaponTreasury({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  updateCost = (input: UpdateCost) =>
+    updateCost({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addSupplier = (input: AddSupplier) =>
+    addSupplier({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeSupplier = (input: RemoveSupplier) =>
+    removeSupplier({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  drawEgg = (input: DrawEgg) =>
+    drawEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+
+  destroyEgg = (input: DestroyEgg) =>
+    destroyEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+
+  claimEgg = (input: ClaimEgg) =>
+    claimEgg({
+      ...input,
+      suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  createFreeSpinner = (input: CreateFreeSpinner) =>
+    createFreeSpinner({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  addNftType = (input: NftType) =>
+    addNftType({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeNftType = (input: NftType) =>
+    removeNftType({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  drawFreeSpin = (input: DrawFreeSpin) =>
+    drawFreeSpin({
+      ...input,
+      suiClient: this.suiClient,
+      gachaponPackageId: this.gachaponPackageId,
     });
 
   // Unihouse
