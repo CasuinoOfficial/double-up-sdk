@@ -256,7 +256,7 @@ export type EggObjectInfo = {
   eggId: string;
   isLocked: boolean;
   objectId: string;
-  object: any;
+  objectInfo: any | null;
 };
 // Create new gachapon mechine
 // Only admin user can create gachapon mechine
@@ -557,7 +557,7 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
         isLocked: egg.isLocked,
         objectId: egg.objectId,
         objectInfo: null,
-      };
+      } as EggObjectInfo;
     }
 
     const objectContent = eggObjects.find(
@@ -578,7 +578,7 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
       isLocked: egg.isLocked,
       objectId: egg.objectId,
       objectInfo: objectContent?.fields as any,
-    };
+    } as EggObjectInfo;
   });
 };
 
