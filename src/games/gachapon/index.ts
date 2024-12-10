@@ -205,6 +205,7 @@ export interface DrawFreeSpin {
 
 interface InternalDrawFreeSpin extends DrawFreeSpin {
   suiClient: SuiClient;
+  kioskClient: KioskClient;
   gachaponPackageId: string;
 }
 
@@ -542,6 +543,7 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
           id: egg.objectId,
           options: {
             showContent: true,
+            showDisplay: true,
             showType: true,
           },
         });
@@ -560,24 +562,15 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
       } as EggObjectInfo;
     }
 
-    const objectContent = eggObjects.find(
+    const objectDisplay = eggObjects.find(
       (eggObject) => eggObject?.data?.objectId === egg.objectId
-    ).data?.content;
-
-    if (objectContent?.dataType !== "moveObject") {
-      return {
-        eggId: egg.eggId,
-        isLocked: egg.isLocked,
-        objectId: egg.objectId,
-        objectInfo: null,
-      };
-    }
+    ).data?.display?.data;
 
     return {
       eggId: egg.eggId,
       isLocked: egg.isLocked,
       objectId: egg.objectId,
-      objectInfo: objectContent?.fields as any,
+      objectInfo: objectDisplay,
     } as EggObjectInfo;
   });
 };
@@ -1170,6 +1163,7 @@ export const drawFreeSpin = async ({
   recipient,
   transaction,
   suiClient,
+  kioskClient,
   gachaponPackageId,
 }: InternalDrawFreeSpin) => {
   const objectResponse = await suiClient.getObject({
@@ -1184,11 +1178,17 @@ export const drawFreeSpin = async ({
 
   if (objectData.content?.dataType !== "moveObject") {
     throw new Error("Invalid object type");
-  } else {
-    const objectType = objectData?.type;
+  }
 
-    transaction.setGasBudget(100_000_000);
+  const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
+    objectId,
+    suiClient,
+    kioskClient
+  );
 
+  transaction.setGasBudget(100_000_000);
+
+  if (!isInKiosk || kioskInfo === null) {
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
       typeArguments: [coinType, objectType],
@@ -1199,5 +1199,64 @@ export const drawFreeSpin = async ({
         transaction.pure.address(recipient),
       ],
     });
+  } else {
+    let kioskCap: TransactionArgument;
+    let borrowPotato: TransactionArgument | null = null;
+
+    if (kioskInfo.isPersonal) {
+      const result = transaction.moveCall({
+        target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::borrow_val`,
+        arguments: [transaction.object(kioskInfo.koiskOwnerCapId)],
+      });
+      kioskCap = result[0];
+      borrowPotato = result[1];
+    } else {
+      const result = transaction.moveCall({
+        target: "0x2::kiosk::borrow_val",
+        typeArguments: [objectType],
+        arguments: [
+          transaction.object(kioskInfo.kioskId),
+          transaction.object(kioskInfo.koiskOwnerCapId),
+          transaction.object(objectId),
+        ],
+      });
+
+      kioskCap = result[0];
+      borrowPotato = result[1];
+    }
+
+    console.log("kioskInfo", kioskInfo);
+
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
+      typeArguments: [coinType, objectType],
+      arguments: [
+        transaction.object(gachaponId),
+        kioskCap,
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.address(recipient),
+      ],
+    });
+
+    if (kioskInfo.isPersonal && borrowPotato != null) {
+      transaction.moveCall({
+        target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::return_val`,
+        arguments: [
+          transaction.object(kioskInfo.koiskOwnerCapId),
+          kioskCap,
+          borrowPotato,
+        ],
+      });
+    } else {
+      transaction.moveCall({
+        target: "0x2::kiosk::return_val",
+        typeArguments: [objectType],
+        arguments: [
+          transaction.object(kioskInfo.kioskId),
+          kioskCap,
+          borrowPotato,
+        ],
+      });
+    }
   }
 };

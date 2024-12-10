@@ -711,6 +711,7 @@ export class DoubleUpClient {
     drawFreeSpin({
       ...input,
       suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 
