@@ -4,14 +4,16 @@ import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { U64FromBytes } from "../../utils";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 // ps5 raffle live until end of year 2024
-const raffleId = "0x51a8ea62752d855ea89c22a33971074125d64331149b24618ab86136297fdd3e";
+const raffleId =
+  "0x51a8ea62752d855ea89c22a33971074125d64331149b24618ab86136297fdd3e";
 
 export const testRaffleGet = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const raffle = await dbClient.getRaffle({
@@ -27,9 +29,10 @@ export const testRaffleGet = async (
 export const testRaffleGetTickets = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
-  const address = '0xee007c079c848cb24775f644fde8bd0c3c49ccf0645cb8c81346135ea3dc5446';
+  const address =
+    "0xee007c079c848cb24775f644fde8bd0c3c49ccf0645cb8c81346135ea3dc5446";
   const sender = keypair.toSuiAddress();
 
   try {
@@ -63,7 +66,7 @@ export const testRaffleGetTickets = async (
 export const testRaffleBuy = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const ticketsAmount = 2;
   const ticketPrice = 2_000_000_000;
@@ -113,7 +116,7 @@ export const testRaffleBuy = async (
 export const testRaffleBuyWithDeal = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const ticketsAmount = 2;
   const ticketPrice = 2_000_000_000;

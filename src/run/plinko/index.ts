@@ -1,15 +1,16 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
-import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
+import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { PlinkoRemoveBetResponse } from "../../games/plinko";
 
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testPlinko = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betAmount = 50000000;
   const numberOfDiscs = 100;
@@ -31,7 +32,7 @@ export const testPlinko = async (
   });
 
   console.log("Added plinko to transaction block.");
-  
+
   const transactionResult = await client.signAndExecuteTransaction({
     signer: keypair,
     transaction: txb as any,
@@ -42,7 +43,7 @@ export const testPlinko = async (
       showObjectChanges: true,
     },
   });
-  console.log('result', transactionResult);
+  console.log("result", transactionResult);
 
   if (
     transactionResult?.effects &&
@@ -52,13 +53,12 @@ export const testPlinko = async (
   }
 
   console.log("Signed and sent transaction.");
-
 };
 
 export const testMultiPlinkoCreate = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const txb = new Transaction();
@@ -111,7 +111,7 @@ export const testMultiPlinkoCreate = async (
 
 export const testMultiPlinkoGet = async (
   dbClient: DoubleUpClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const {
@@ -129,14 +129,14 @@ export const testMultiPlinkoGet = async (
 
     console.log(fields);
   } catch (err) {
-      console.log(err);
+    console.log(err);
   }
-}
+};
 
 export const testMultiPlinkoAdd = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betSize = 500000000;
 
@@ -186,26 +186,27 @@ export const testMultiPlinkoAdd = async (
 export const testMultiPlinkoRemove = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const address = keypair.getPublicKey().toSuiAddress();
 
     const txb2 = new Transaction();
-    let { ok, err, returnedCoin} : PlinkoRemoveBetResponse = dbClient.removePlinkoBet({
+    let { ok, err, returnedCoin }: PlinkoRemoveBetResponse =
+      dbClient.removePlinkoBet({
         creator: address,
         player: address,
         coinType: SUI_COIN_TYPE,
         transaction: txb2,
-    });
+      });
 
     if (!returnedCoin) {
       throw err;
     }
-    
+
     txb2.transferObjects([returnedCoin], keypair.toSuiAddress());
 
-  const transactionResult2 = await client.signAndExecuteTransaction({
+    const transactionResult2 = await client.signAndExecuteTransaction({
       signer: keypair,
       transaction: txb2 as any,
       options: {
@@ -220,16 +221,16 @@ export const testMultiPlinkoRemove = async (
   } catch (err) {
     console.log(err);
   }
-}
+};
 
-export const testMultiPlinkoStart = async(
+export const testMultiPlinkoStart = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const txb2 = new Transaction();
-    
+
     dbClient.startMultiPlinko({
       coinType: SUI_COIN_TYPE,
       creator: keypair.toSuiAddress(),
@@ -260,9 +261,8 @@ export const testMultiPlinkoStart = async(
       throw new Error(transactionResult2.effects.status.error);
     }
 
-  console.log("Signed and sent transaction.", transactionResult2);
-
+    console.log("Signed and sent transaction.", transactionResult2);
   } catch (err) {
     console.log(err);
   }
-}
+};
