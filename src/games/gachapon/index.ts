@@ -86,7 +86,6 @@ export interface RemoveEgg {
   index: number;
   transaction: Transaction;
   objId: string;
-  objType: string;
   isEmpty?: boolean;
   isLocked?: boolean;
 }
@@ -903,7 +902,6 @@ export const removeEgg = async ({
   index,
   transaction,
   objId,
-  objType,
   isEmpty,
   isLocked,
   suiClient,
@@ -929,6 +927,16 @@ export const removeEgg = async ({
       arguments: [removedEgg],
     });
   } else {
+    const objResponse = await suiClient.getObject({
+      id: objId,
+      options: {
+        showType: true,
+      },
+    });
+
+    const objData = objResponse.data;
+    const objType = objData?.type;
+
     if (!isLocked) {
       const claimedEgg = transaction.moveCall({
         target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
