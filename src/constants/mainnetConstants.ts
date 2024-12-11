@@ -209,3 +209,18 @@ export const ALLOY_STRUCT_NAME = "alloy";
 
 export const PERSONAL_KIOSK_PACKAGE =
   "0xdfb4f1d4e43e0c3ad834dcd369f0d39005c872e118c9dc1c5da9765bb93ee5f3";
+
+// lottery
+// ===============================================================================
+export const LOTTERY_CORE_PACKAGE_ID = 
+  "";
+export const LOTTERY_PACKAGE_ID =
+  "";
+export const LOTTERY_MODULE_NAME = "lottery";
+export const LOTTERY_STRUCT_NAME = "Lottery";
+
+export const LOTTERY_ID =
+  "";
+export const LOTTERY_STORE =
+  "";
+// ===============================================================================

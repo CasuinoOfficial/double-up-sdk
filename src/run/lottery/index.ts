@@ -3,6 +3,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ticket } from "../../games/lottery";
+import { LOTTERY_ID, SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 
 export const testLotteryBuy = async (
   dbClient: DoubleUpClient,
@@ -10,6 +11,8 @@ export const testLotteryBuy = async (
   keypair: Secp256k1Keypair
 ) => {
   const amount = 2000000000;
+  const lotteryId = LOTTERY_ID;
+  const coinType = SUI_COIN_TYPE;
 
   try {
     const txb = new Transaction();
@@ -20,13 +23,14 @@ export const testLotteryBuy = async (
       {
         numbers: [27, 15, 30, 7, 11, 13],
         specialNumber: 2,
-        memeCoin: "",
       } as Ticket,
     ];
 
     const { ok, err } = dbClient.buyLotteryTickets({
       coin,
       tickets,
+      lotteryId,
+      coinType,
       transaction: txb,
       origin: "TEST",
     });
@@ -69,6 +73,8 @@ export const testLotteryBuyOnBehalf = async (
 
   try {
     const txb = new Transaction();
+    const lotteryId = LOTTERY_ID;
+    const coinType = SUI_COIN_TYPE;
 
     const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(amount)]);
 
@@ -76,13 +82,14 @@ export const testLotteryBuyOnBehalf = async (
       {
         numbers: [27, 15, 30, 7, 11, 13],
         specialNumber: 2,
-        memeCoin: "",
       } as Ticket,
     ];
 
     const { ok, err } = dbClient.buyLotteryTicketsOnBehalf({
       coin,
       tickets,
+      lotteryId,
+      coinType,
       transaction: txb,
       origin: "TEST",
       recipient: address,
@@ -122,7 +129,8 @@ export const testLotteryGet = async (
   keypair: Secp256k1Keypair
 ) => {
   try {
-    const lottery = await dbClient.getLottery();
+    const lotteryId = LOTTERY_ID;
+    const lottery = await dbClient.getLottery({lotteryId});
 
     console.dir(lottery, {depth: 3});
   } catch (err) {
@@ -138,6 +146,8 @@ export const testLotteryRedeem = async (
   const epochs = [
     "540",
   ];
+  const lotteryId = LOTTERY_ID;
+  const coinType = SUI_COIN_TYPE;
 
   try {
     const txb = new Transaction();
@@ -145,6 +155,8 @@ export const testLotteryRedeem = async (
     const { ok, err } = dbClient.redeemLotteryTickets({
       epochs,
       transaction: txb,
+      lotteryId,
+      coinType
     });
 
     if (!ok) {

@@ -21,12 +21,9 @@ import {
   ALLOY_PACKAGE_ID,
   RAFFLES_CORE_PACKAGE_ID,
   RAFFLES_PACKAGE_ID,
-<<<<<<< HEAD
   GACHAPON_PACKAGE_ID,
-=======
-  LOTTERY_PACKAGE_ID,
-  LOTTERY_CORE_PACKAGE_ID,
->>>>>>> 01e2db9 (updating lottery functions)
+  LOTTERY_CORE_PACKAGE_ID, 
+  LOTTERY_PACKAGE_ID
 } from "../constants/mainnetConstants";
 
 import {
@@ -224,7 +221,6 @@ import {
   removeMultipleEggs,
   RemoveMultipleEggs,
 } from "../games/gachapon";
-import { LOTTERY_CORE_PACKAGE_ID, LOTTERY_PACKAGE_ID } from "../constants/testnetConstants";
 
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
@@ -315,7 +311,7 @@ export class DoubleUpClient {
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
-      network: Network.TESTNET,
+      network: Network.MAINNET,
     });
   }
 

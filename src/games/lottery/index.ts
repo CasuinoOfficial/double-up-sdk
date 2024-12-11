@@ -12,8 +12,6 @@ import {
 import { sleep } from "../../utils";
 import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "src/constants/mainnetConstants";
 
-const LOTTERY_TYPE = 
-  "0x232a8d0feaf3d8857ccf5bfc1eb0318c4ae798932df8cd895982f42124d53467::lottery::Lottery<0x2::sui::SUI>";
 export interface BuyTicketsInput {
   coin: TransactionObjectArgument;
   tickets: Ticket[];
