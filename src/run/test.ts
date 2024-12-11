@@ -52,6 +52,7 @@ import {
   testGetUnihouseData,
   testGetUnihouseRedeemRequests,
   testGetGTokenBalance,
+  testGetMaxBet,
 } from "./unihouse";
 import { testGetCurves } from "./pump";
 import {
@@ -201,6 +202,11 @@ const dbClient = new DoubleUpClient({
         break;
       case "unihouse:getgtokenbalance":
         testGetGTokenBalance(dbClient, keypair.toSuiAddress())
+          .then((res) => console.log(res))
+          .catch((err) => console.error(err));
+        break;
+      case "unihouse:getmaxbet":
+        testGetMaxBet(dbClient)
           .then((res) => console.log(res))
           .catch((err) => console.error(err));
         break;
