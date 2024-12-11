@@ -177,16 +177,16 @@ export const testRemoveEgg = async (
 ) => {
   const tx = new Transaction();
 
-  const removedEgg = dbClient.removeEgg({
-    coinType,
-    gachaponId,
-    keeperCapId,
-    kioskId,
-    index,
-    transaction: tx,
-  });
+  // const removedEgg = dbClient.removeEgg({
+  //   coinType,
+  //   gachaponId,
+  //   keeperCapId,
+  //   kioskId,
+  //   index,
+  //   transaction: tx,
+  // });
 
-  tx.transferObjects([removedEgg], keypair.toSuiAddress());
+  // tx.transferObjects([removedEgg], keypair.toSuiAddress());
 
   const transactionResult = await client.signAndExecuteTransaction({
     signer: keypair,

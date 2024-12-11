@@ -651,6 +651,8 @@ export class DoubleUpClient {
   removeEgg = (input: RemoveEgg) =>
     removeEgg({
       ...input,
+      suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 
