@@ -64,6 +64,19 @@ interface InternalAddEgg extends AddEgg {
   gachaponPackageId: string;
 }
 
+export interface AddCoinToEgg {
+  gachaponId: string;
+  gachaponKioskId: string;
+  gachaponCoinType: string;
+  coin: TransactionObjectArgument;
+  coinType: string;
+  transaction: Transaction;
+}
+
+interface InternalAddCoinToEgg extends AddCoinToEgg {
+  gachaponPackageId: string;
+}
+
 export interface RemoveEgg {
   coinType: string;
   gachaponId: string;
@@ -827,6 +840,26 @@ export const addEgg = async ({
       }
     }
   }
+};
+
+export const addCoinToEgg = async ({
+  gachaponId,
+  gachaponKioskId,
+  gachaponCoinType,
+  coin,
+  coinType,
+  transaction,
+  gachaponPackageId,
+}: InternalAddCoinToEgg) => {
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::place`,
+    typeArguments: [gachaponCoinType, coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(gachaponKioskId),
+      coin,
+    ],
+  });
 };
 
 export const removeEgg = ({

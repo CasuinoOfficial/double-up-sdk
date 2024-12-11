@@ -209,6 +209,8 @@ import {
   NftType,
   addNftType,
   removeNftType,
+  addCoinToEgg,
+  AddCoinToEgg,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -640,6 +642,12 @@ export class DoubleUpClient {
       gachaponPackageId: this.gachaponPackageId,
     });
 
+  addCoinToEgg = (input: AddCoinToEgg) =>
+    addCoinToEgg({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
   removeEgg = (input: RemoveEgg) =>
     removeEgg({
       ...input,
@@ -726,8 +734,7 @@ export class DoubleUpClient {
     getRedeemRequests(this.suiClient, address);
   getGTokenBalance = (address: string) =>
     getGTokenBalance(this.suiClient, address);
-  getMaxBet = (coinType) => 
-    getMaxBet(this.suiClient, coinType);
+  getMaxBet = (coinType) => getMaxBet(this.suiClient, coinType);
 
   // Pump
   getCurves = (input: GetCurvesInput) => getCurves({ ...input });
