@@ -17,6 +17,7 @@ import {
   GACHAPON_MODULE_NAME,
   PERSONAL_KIOSK_PACKAGE,
   RAND_OBJ_ID,
+  SUI_COIN_TYPE,
 } from "../../constants/mainnetConstants";
 import {
   KIOSK_LOCK_RULE,
@@ -257,8 +258,7 @@ export type EggObjectInfo = {
   eggId: string;
   isLocked: boolean;
   objectId: string;
-  objectDisplay: any | null;
-  objectContent: any | null;
+  objectInfo: any | null;
 };
 // Create new gachapon mechine
 // Only admin user can create gachapon mechine
@@ -553,15 +553,52 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
 
   const eggObjects = await Promise.all(eggObjectPromises.filter((egg) => egg));
 
+  const coins = {};
+
+  const coinTypeList = eggObjects
+    .filter((eggObject) => {
+      return (
+        eggObject?.data?.type === SUI_COIN_TYPE ||
+        eggObject?.data?.type?.includes("0x2::coin::Coin")
+      );
+    })
+    .map((eggObject) => eggObject?.data?.type);
+
+  if (coinTypeList.length > 0) {
+    const coinMetadataPromises = coinTypeList.map((coinType) => {
+      return suiClient.getCoinMetadata({
+        coinType:
+          coinType === SUI_COIN_TYPE
+            ? coinType
+            : coinType.split("<")[1].split(">")[0],
+      });
+    });
+
+    const coinMetadataList = await Promise.all(coinMetadataPromises);
+
+    coinMetadataList.forEach((coinMetadata, index) => {
+      coins[coinTypeList[index]] = coinMetadata;
+    });
+  }
+
   return eggsInfoList.map((egg, index) => {
     if (!egg?.objectId) {
       return {
         eggId: egg.eggId,
         isLocked: egg.isLocked,
         objectId: egg.objectId,
-        objectDisplay: null,
-        objectContent: null,
+        objectInfo: null,
       } as EggObjectInfo;
+    }
+
+    const objectType = eggObjects.find(
+      (eggObject) => eggObject?.data?.objectId === egg.objectId
+    ).data?.type;
+
+    if (
+      objectType === SUI_COIN_TYPE ||
+      objectType.includes("0x2::coin::Coin")
+    ) {
     }
 
     const objectDisplay = eggObjects.find(
@@ -573,13 +610,38 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
         .data?.content as any
     ).fields;
 
-    return {
-      eggId: egg.eggId,
-      isLocked: egg.isLocked,
-      objectId: egg.objectId,
-      objectDisplay,
-      objectContent,
-    } as EggObjectInfo;
+    if (Object.keys(coins).length > 0 && coins.hasOwnProperty(objectType)) {
+      const objectInfo = {
+        description: objectDisplay?.description,
+        image_url: coins[objectType].iconUrl,
+        name: objectDisplay?.name,
+        ...objectDisplay,
+        ...objectContent,
+        ...coins[objectType],
+      };
+
+      return {
+        eggId: egg.eggId,
+        isLocked: egg.isLocked,
+        objectId: egg.objectId,
+        objectInfo,
+      } as EggObjectInfo;
+    } else {
+      const objectInfo = {
+        description: objectDisplay?.description,
+        image_url: objectDisplay?.image_url ?? objectContent?.image_url,
+        name: objectDisplay?.name,
+        ...objectDisplay,
+        ...objectContent,
+      };
+
+      return {
+        eggId: egg.eggId,
+        isLocked: egg.isLocked,
+        objectId: egg.objectId,
+        objectInfo,
+      } as EggObjectInfo;
+    }
   });
 };
 
