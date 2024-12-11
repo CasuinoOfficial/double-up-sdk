@@ -403,8 +403,8 @@ const dbClient = new DoubleUpClient({
           keypair,
           "0x2::sui::SUI", //coinType
           "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
-          "0x47ab4875d1380bd790e6246f953b2bc4b2812f98d59dcdba02c52d38ab199ebd", //ObjectId
-          "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866" //recipient
+          "0x2e124cfa72bc6035437777a465d01ef9fab2486e8a7593534a205716c59f38f5", //ObjectId
+          "0x56d68ef58f60f574c9afd7a705ced8b83cee1508340e1409f8783c31b0edbe61" //recipient
         );
         break;
 

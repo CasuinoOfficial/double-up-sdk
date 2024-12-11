@@ -1250,81 +1250,87 @@ export const drawFreeSpin = async ({
     throw new Error("Invalid object type");
   }
 
+  console.log("check 3");
+
   const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
     objectId,
     suiClient,
     kioskClient
   );
 
-  transaction.setGasBudget(100_000_000);
+  // transaction.setGasBudget(100_000_000);
 
-  if (!isInKiosk || kioskInfo === null) {
-    transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
-      typeArguments: [coinType, objectType],
-      arguments: [
-        transaction.object(gachaponId),
-        transaction.object(objectId),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.address(recipient),
-      ],
-    });
-  } else {
-    let kioskCap: TransactionArgument;
-    let borrowPotato: TransactionArgument | null = null;
+  console.log("check 4");
 
-    if (kioskInfo.isPersonal) {
-      const result = transaction.moveCall({
-        target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::borrow_val`,
-        arguments: [transaction.object(kioskInfo.koiskOwnerCapId)],
-      });
-      kioskCap = result[0];
-      borrowPotato = result[1];
-    } else {
-      const result = transaction.moveCall({
-        target: "0x2::kiosk::borrow_val",
-        typeArguments: [objectType],
-        arguments: [
-          transaction.object(kioskInfo.kioskId),
-          transaction.object(kioskInfo.koiskOwnerCapId),
-          transaction.object(objectId),
-        ],
-      });
+  // if (!isInKiosk || kioskInfo === null) {
+  //   console.log("not in kiosk");
+  //   transaction.moveCall({
+  //     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
+  //     typeArguments: [coinType, objectType],
+  //     arguments: [
+  //       transaction.object(gachaponId),
+  //       transaction.object(objectId),
+  //       transaction.object(RAND_OBJ_ID),
+  //       transaction.pure.address(recipient),
+  //     ],
+  //   });
+  // } else {
+  console.log("check 5");
 
-      kioskCap = result[0];
-      borrowPotato = result[1];
-    }
+  let objResult: TransactionResult;
+  let kioskCap: TransactionArgument;
+  let borrowPotato: TransactionArgument;
 
-    transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
-      typeArguments: [coinType, objectType],
-      arguments: [
-        transaction.object(gachaponId),
-        kioskCap,
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.address(recipient),
-      ],
-    });
+  // if (kioskInfo.isPersonal) {
+  console.log("personal kiosk", kioskInfo.koiskOwnerCapId);
+  const result = transaction.moveCall({
+    target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::borrow_val`,
+    arguments: [transaction.object(kioskInfo.koiskOwnerCapId)],
+  });
+  kioskCap = result[0];
+  borrowPotato = result[1];
 
-    if (kioskInfo.isPersonal && borrowPotato != null) {
-      transaction.moveCall({
-        target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::return_val`,
-        arguments: [
-          transaction.object(kioskInfo.koiskOwnerCapId),
-          kioskCap,
-          borrowPotato,
-        ],
-      });
-    } else {
-      transaction.moveCall({
-        target: "0x2::kiosk::return_val",
-        typeArguments: [objectType],
-        arguments: [
-          transaction.object(kioskInfo.kioskId),
-          kioskCap,
-          borrowPotato,
-        ],
-      });
-    }
-  }
+  let [cap] = transaction.moveCall({
+    target: "0x2::kiosk::borrow_val",
+    typeArguments: [objectType],
+    arguments: [
+      transaction.object(kioskInfo.kioskId),
+      kioskCap,
+      transaction.object(objectId),
+    ],
+  });
+
+  transaction.moveCall({
+    target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::return_val`,
+    arguments: [
+      transaction.object(kioskInfo.koiskOwnerCapId),
+      kioskCap,
+      borrowPotato,
+    ],
+  });
+  // } else {
+  //   result = transaction.moveCall({
+  //     target: "0x2::kiosk::borrow",
+  //     typeArguments: [objectType],
+  //     arguments: [
+  //       transaction.object(kioskInfo.kioskId),
+  //       transaction.object(kioskInfo.koiskOwnerCapId),
+  //       transaction.object(objectId),
+  //     ],
+  //   });
+  // }
+
+  console.log("check 6");
+
+  // transaction.moveCall({
+  //   target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
+  //   typeArguments: [coinType, objectType],
+  //   arguments: [
+  //     transaction.object(gachaponId),
+  //     objResult,
+  //     transaction.object(RAND_OBJ_ID),
+  //     transaction.pure.address(recipient),
+  //   ],
+  // });
+  // }
 };
