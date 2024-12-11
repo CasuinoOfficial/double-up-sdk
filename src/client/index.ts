@@ -131,6 +131,7 @@ import {
   getUnihouseData,
   getRedeemRequests,
   getGTokenBalance,
+  getMaxBet,
 } from "../games/unihouse";
 
 import {
@@ -724,6 +725,8 @@ export class DoubleUpClient {
     getRedeemRequests(this.suiClient, address);
   getGTokenBalance = (address: string) =>
     getGTokenBalance(this.suiClient, address);
+  getMaxBet = (coinType) => 
+    getMaxBet(this.suiClient, coinType);
 
   // Pump
   getCurves = (input: GetCurvesInput) => getCurves({ ...input });

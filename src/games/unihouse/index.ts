@@ -282,3 +282,16 @@ export const getGTokenBalance = async (
 
   return balances;
 };
+
+export const getMaxBet = async (
+  suiClient,
+  coinType
+): Promise<number> => {
+  let houseInfo = await getUnihouseData(suiClient);
+
+  if (!houseInfo[coinType]) { 
+    throw new Error("House not found for cointype")
+  }
+
+  return Math.floor(Number(houseInfo[coinType].tvl) / 20)
+}
