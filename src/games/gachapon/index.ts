@@ -921,6 +921,8 @@ export const removeEgg = async ({
     ],
   });
 
+  transaction.transferObjects([removedEgg], address);
+
   if (isEmpty) {
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
