@@ -275,7 +275,7 @@ const dbClient = new DoubleUpClient({
           "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
           "0x4212aa2a6d148a75b9cfc344e61725e785cec303dbbc52cde69768105cf33bb7", // keeperCapId
           "0x7bcaa9d2a4d4df16297d9ea83f6eee62273472834acd822ebc1b42bc758e470b", // kioskId
-          18, // index
+          2, // index
           "0xee4294311c50cbd288bff90cbaa20b1c0b5c4038b1822d484a16a10ac4056c56", // objectId
           false, // isEmpty
           true // isLocked
@@ -298,9 +298,9 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI", //coinType
-          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
-          "0x78562bb6bc2d6a470128179ae8e48f46daa8078e54c0c7db09fd691759bc546a", // kioskId
-          "0x32bd4de51aa17a6506027e5a7b87de512cd2950f45776353c894228e822ef641" // eggId
+          "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
+          "0x7bcaa9d2a4d4df16297d9ea83f6eee62273472834acd822ebc1b42bc758e470b", // kioskId
+          "0x276b5e02bda8716d8dbe00b92a4791e086c47076487050d7beca0c77944ed267" // eggId
         ).then((res) => console.log(res));
         break;
       case "gachapon:testClaimGachaponTreasury":

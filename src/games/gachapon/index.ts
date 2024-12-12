@@ -966,10 +966,12 @@ export const removeEgg = async ({
       const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
 
       if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
+        console.log("check 2.1", ownedKioskOwnerCap.kioskId);
         [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
           target: "0x2::kiosk::new",
         });
       } else {
+        console.log("check 2.2", ownedKioskOwnerCap.kioskId);
         ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
         kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
       }
@@ -991,6 +993,8 @@ export const removeEgg = async ({
           removedEgg,
         ],
       });
+
+      console.log("check 4");
 
       if (kioskInfo.royaltyFee != null) {
         if (Number(kioskInfo.royaltyFee.minAmount) === 0) {
@@ -1025,7 +1029,7 @@ export const removeEgg = async ({
         }
       }
 
-      console.log("check 4");
+      console.log("check 5");
 
       if (!kioskInfo.hasLockingRule) {
         transaction.moveCall({
@@ -1052,7 +1056,7 @@ export const removeEgg = async ({
         });
       }
 
-      console.log("check 5");
+      console.log("check 6");
 
       transaction.moveCall({
         target: "0x2::transfer_policy::confirm_request",
@@ -1065,13 +1069,15 @@ export const removeEgg = async ({
 
       transaction.transferObjects([kioskOwnerCap], address);
 
-      transaction.moveCall({
-        target: "0x2::transfer::public_share_object",
-        typeArguments: ["0x2::kiosk::Kiosk"],
-        arguments: [ownedKiosk],
-      });
+      if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
+        transaction.moveCall({
+          target: "0x2::transfer::public_share_object",
+          typeArguments: ["0x2::kiosk::Kiosk"],
+          arguments: [ownedKiosk],
+        });
+      }
 
-      transaction.transferObjects([claimedEgg], address);
+      // transaction.transferObjects([claimedEgg], address);
     }
   }
 };
@@ -1132,6 +1138,9 @@ export const claimEgg = async ({
 
   const { is_locked, obj_id } = eggFields.content.fields;
 
+  console.log("check 1", is_locked);
+  console.log("check 1", obj_id);
+
   const objResponse = await suiClient.getObject({
     id: obj_id,
     options: {
@@ -1165,10 +1174,12 @@ export const claimEgg = async ({
     const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
 
     if (ownedKioskOwnerCap === null || ownedKioskOwnerCap.isPersonal) {
+      console.log("check 2.1", ownedKioskOwnerCap.kioskId);
       [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
         target: "0x2::kiosk::new",
       });
     } else {
+      console.log("check 2.2", ownedKioskOwnerCap.kioskId);
       ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
       kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
     }
@@ -1258,11 +1269,13 @@ export const claimEgg = async ({
 
     transaction.transferObjects([kioskOwnerCap], address);
 
-    transaction.moveCall({
-      target: "0x2::transfer::public_share_object",
-      typeArguments: ["0x2::kiosk::Kiosk"],
-      arguments: [ownedKiosk],
-    });
+    if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
+      transaction.moveCall({
+        target: "0x2::transfer::public_share_object",
+        typeArguments: ["0x2::kiosk::Kiosk"],
+        arguments: [ownedKiosk],
+      });
+    }
 
     return claimedEgg;
   }
