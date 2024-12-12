@@ -1076,8 +1076,6 @@ export const removeEgg = async ({
           arguments: [ownedKiosk],
         });
       }
-
-      // transaction.transferObjects([claimedEgg], address);
     }
   }
 };

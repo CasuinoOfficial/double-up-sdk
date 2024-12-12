@@ -180,7 +180,7 @@ export const testRemoveEgg = async (
 ) => {
   const tx = new Transaction();
 
-  const removedEgg = dbClient.removeEgg({
+  const removedEgg = await dbClient.removeEgg({
     address: keypair.toSuiAddress(),
     coinType,
     gachaponId,
