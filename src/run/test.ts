@@ -85,7 +85,7 @@ import {
 } from "./gachapon";
 
 const { FUNCTION = "", MNEMONICS = "" } = process.env;
-const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
+const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
 // const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
 const keypair = Ed25519Keypair.fromSecretKey(
   decodeSuiPrivateKey(MNEMONICS).secretKey
@@ -248,7 +248,7 @@ const dbClient = new DoubleUpClient({
       case "gachapon:testAdminGetEggs":
         testAdminGetEggs(
           dbClient,
-          "0xa60703f425799ef6fa1bb230074d3cffcee9df32c15cb3f5d8f4dd72779c61d9" // lootboxId
+          "0x32872396a244b5ed76bbeeb7cf5008833904d0fa50a8d45af43d48252a3dcd0a" // lootboxId
         ).then((res) => console.log(res));
         break;
       case "gachapon:testGetGachapon":
@@ -371,8 +371,8 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI", //coinType
-          "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
-          "0x4212aa2a6d148a75b9cfc344e61725e785cec303dbbc52cde69768105cf33bb7" // keeperCapId
+          "0xa92ab35da991f299a919ced409b1b37478ef83d9df77823d6343f322676d106b", // gachaponId
+          "0xb11d0b5afa3c2fe3cf1777c54462cd848fc5b303bb50af6e99ccae801c2da64b" // keeperCapId
         );
         break;
 

@@ -211,6 +211,8 @@ import {
   removeNftType,
   addCoinToEgg,
   AddCoinToEgg,
+  removeMultipleEggs,
+  RemoveMultipleEggs,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -268,7 +270,7 @@ export class DoubleUpClient {
     rafflesCorePackageId = RAFFLES_CORE_PACKAGE_ID,
     rafflesPackageId = RAFFLES_PACKAGE_ID,
     gachaponPackageId = GACHAPON_PACKAGE_ID,
-    suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
+    suiClient = new SuiClient({ url: "https://fullnode-doubleup.com" }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
     this.coinflipPackageId = coinflipPackageId;
@@ -653,6 +655,13 @@ export class DoubleUpClient {
       ...input,
       suiClient: this.suiClient,
       kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeMultipleEggs = (input: RemoveMultipleEggs) =>
+    removeMultipleEggs({
+      ...input,
+      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 
