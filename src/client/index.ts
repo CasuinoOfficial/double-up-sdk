@@ -211,6 +211,8 @@ import {
   removeNftType,
   addCoinToEgg,
   AddCoinToEgg,
+  removeMultipleEggs,
+  RemoveMultipleEggs,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -653,6 +655,13 @@ export class DoubleUpClient {
       ...input,
       suiClient: this.suiClient,
       kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeMultipleEggs = (input: RemoveMultipleEggs) =>
+    removeMultipleEggs({
+      ...input,
+      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 

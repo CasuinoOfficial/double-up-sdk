@@ -96,6 +96,23 @@ interface InternalRemoveEgg extends RemoveEgg {
   gachaponPackageId: string;
 }
 
+export interface RemoveMultipleEggs {
+  address: string;
+  coinType: string;
+  gachaponId: string;
+  kioskId: string;
+  keeperCapId: string;
+  index: number[];
+  transaction: Transaction;
+  objId: string[];
+  isEmpty?: boolean;
+}
+
+interface InternalRemoveMultipleEggs extends RemoveMultipleEggs {
+  suiClient: SuiClient;
+  gachaponPackageId: string;
+}
+
 export interface AddEmptyEgg {
   coinType: string;
   gachaponId: string;
@@ -1077,6 +1094,88 @@ export const removeEgg = async ({
         });
       }
     }
+  }
+};
+
+export const removeMultipleEggs = async ({
+  address,
+  coinType,
+  gachaponId,
+  keeperCapId,
+  kioskId,
+  index,
+  transaction,
+  objId,
+  isEmpty,
+  suiClient,
+  gachaponPackageId,
+}: InternalRemoveMultipleEggs) => {
+  transaction.setGasBudget(100_000_000);
+
+  if (isEmpty) {
+    for (let i = 0; i < index.length; i++) {
+      const removedEgg = transaction.moveCall({
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::take`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(gachaponId),
+          transaction.object(kioskId),
+          transaction.object(keeperCapId),
+          transaction.pure.u64(i),
+        ],
+      });
+
+      transaction.moveCall({
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
+        arguments: [removedEgg],
+      });
+    }
+  } else {
+    console.log("check 1");
+
+    const objPromises = objId.map((id) =>
+      suiClient.getObject({
+        id,
+        options: {
+          showType: true,
+        },
+      })
+    );
+
+    const objResponses = await Promise.all(objPromises);
+
+    const objData = objResponses.map((response) => response.data);
+    const objTypes = objData.map((data) => data?.type);
+
+    let claimedEggs: TransactionResult[] = [];
+    console.log("check 2, no lock");
+
+    for (let i = 0; i < index.length; i++) {
+      const removedEgg = transaction.moveCall({
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::take`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(gachaponId),
+          transaction.object(kioskId),
+          transaction.object(keeperCapId),
+          transaction.pure.u64(i),
+        ],
+      });
+
+      const claimedEgg = transaction.moveCall({
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
+        typeArguments: [coinType, objTypes[i]],
+        arguments: [
+          transaction.object(gachaponId),
+          transaction.object(kioskId),
+          removedEgg,
+        ],
+      });
+
+      claimedEggs.push(claimedEgg);
+    }
+
+    transaction.transferObjects(claimedEggs, address);
   }
 };
 
