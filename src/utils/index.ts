@@ -430,7 +430,5 @@ export const checkHasKiosk = async (
     return null;
   }
 
-  console.log("kioskOwnerCaps", response.kioskOwnerCaps);
-
   return response.kioskOwnerCaps.filter((cap) => !cap.isPersonal)[0];
 };

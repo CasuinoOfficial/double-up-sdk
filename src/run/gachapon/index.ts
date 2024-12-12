@@ -173,18 +173,25 @@ export const testRemoveEgg = async (
   gachaponId: string,
   keeperCapId: string,
   kioskId: string,
-  index: number
+  index: number,
+  objectId: string,
+  isEmpty: boolean,
+  isLocked: boolean
 ) => {
   const tx = new Transaction();
 
-  // const removedEgg = dbClient.removeEgg({
-  //   coinType,
-  //   gachaponId,
-  //   keeperCapId,
-  //   kioskId,
-  //   index,
-  //   transaction: tx,
-  // });
+  const removedEgg = dbClient.removeEgg({
+    address: keypair.toSuiAddress(),
+    coinType,
+    gachaponId,
+    keeperCapId,
+    kioskId,
+    index,
+    transaction: tx,
+    objId: isEmpty ? "" : objectId,
+    isEmpty,
+    isLocked,
+  });
 
   // tx.transferObjects([removedEgg], keypair.toSuiAddress());
 

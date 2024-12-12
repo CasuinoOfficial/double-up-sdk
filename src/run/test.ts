@@ -272,10 +272,13 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI", //coinType
-          "0x421c1b4dc2022b14e7905bb57d555651617111bb9947c19563b825eeee962f1a", // gachaponId
-          "0x904862e7054e948c89d6b2a3971e182af88542925f034d2e872357660a4f51e5", // keeperCapId
-          "0x78562bb6bc2d6a470128179ae8e48f46daa8078e54c0c7db09fd691759bc546a", // kioskId
-          3 // index
+          "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
+          "0x4212aa2a6d148a75b9cfc344e61725e785cec303dbbc52cde69768105cf33bb7", // keeperCapId
+          "0x7bcaa9d2a4d4df16297d9ea83f6eee62273472834acd822ebc1b42bc758e470b", // kioskId
+          10, // index
+          "0xaded43c3e26bb80339959b32ebd2fb2afe97b2512b764fe768a63f229a15a54f", // objectId
+          false, // isEmpty
+          true // isLocked
         );
         break;
       case "gachapon:testAddEmptyEgg":
