@@ -1121,7 +1121,7 @@ export const removeMultipleEggs = async ({
           transaction.object(gachaponId),
           transaction.object(kioskId),
           transaction.object(keeperCapId),
-          transaction.pure.u64(i),
+          transaction.pure.u64(index[i]),
         ],
       });
 
@@ -1158,7 +1158,7 @@ export const removeMultipleEggs = async ({
           transaction.object(gachaponId),
           transaction.object(kioskId),
           transaction.object(keeperCapId),
-          transaction.pure.u64(i),
+          transaction.pure.u64(index[i]),
         ],
       });
 
