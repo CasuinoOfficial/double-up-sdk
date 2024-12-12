@@ -17,6 +17,7 @@ import {
   GACHAPON_MODULE_NAME,
   PERSONAL_KIOSK_PACKAGE,
   RAND_OBJ_ID,
+  SUI_COIN_TYPE,
 } from "../../constants/mainnetConstants";
 import {
   KIOSK_LOCK_RULE,
@@ -63,16 +64,35 @@ interface InternalAddEgg extends AddEgg {
   gachaponPackageId: string;
 }
 
+export interface AddCoinToEgg {
+  gachaponId: string;
+  gachaponKioskId: string;
+  gachaponCoinType: string;
+  coin: TransactionObjectArgument;
+  coinType: string;
+  transaction: Transaction;
+}
+
+interface InternalAddCoinToEgg extends AddCoinToEgg {
+  gachaponPackageId: string;
+}
+
 export interface RemoveEgg {
+  address: string;
   coinType: string;
   gachaponId: string;
   kioskId: string;
   keeperCapId: string;
   index: number;
   transaction: Transaction;
+  objId: string;
+  isEmpty?: boolean;
+  isLocked?: boolean;
 }
 
 interface InternalRemoveEgg extends RemoveEgg {
+  suiClient: SuiClient;
+  kioskClient: KioskClient;
   gachaponPackageId: string;
 }
 
@@ -205,6 +225,7 @@ export interface DrawFreeSpin {
 
 interface InternalDrawFreeSpin extends DrawFreeSpin {
   suiClient: SuiClient;
+  kioskClient: KioskClient;
   gachaponPackageId: string;
 }
 
@@ -542,6 +563,7 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
           id: egg.objectId,
           options: {
             showContent: true,
+            showDisplay: true,
             showType: true,
           },
         });
@@ -549,6 +571,34 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
     });
 
   const eggObjects = await Promise.all(eggObjectPromises.filter((egg) => egg));
+
+  const coins = {};
+
+  const coinTypeList = eggObjects
+    .filter((eggObject) => {
+      return (
+        eggObject?.data?.type === SUI_COIN_TYPE ||
+        eggObject?.data?.type?.includes("0x2::coin::Coin")
+      );
+    })
+    .map((eggObject) => eggObject?.data?.type);
+
+  if (coinTypeList.length > 0) {
+    const coinMetadataPromises = coinTypeList.map((coinType) => {
+      return suiClient.getCoinMetadata({
+        coinType:
+          coinType === SUI_COIN_TYPE
+            ? coinType
+            : coinType.split("<")[1].split(">")[0],
+      });
+    });
+
+    const coinMetadataList = await Promise.all(coinMetadataPromises);
+
+    coinMetadataList.forEach((coinMetadata, index) => {
+      coins[coinTypeList[index]] = coinMetadata;
+    });
+  }
 
   return eggsInfoList.map((egg, index) => {
     if (!egg?.objectId) {
@@ -560,25 +610,57 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
       } as EggObjectInfo;
     }
 
-    const objectContent = eggObjects.find(
+    const objectType = eggObjects.find(
       (eggObject) => eggObject?.data?.objectId === egg.objectId
-    ).data?.content;
+    ).data?.type;
 
-    if (objectContent?.dataType !== "moveObject") {
+    if (
+      objectType === SUI_COIN_TYPE ||
+      objectType.includes("0x2::coin::Coin")
+    ) {
+    }
+
+    const objectDisplay = eggObjects.find(
+      (eggObject) => eggObject?.data?.objectId === egg.objectId
+    ).data?.display?.data;
+
+    const objectContent = (
+      eggObjects.find((eggObject) => eggObject?.data?.objectId === egg.objectId)
+        .data?.content as any
+    ).fields;
+
+    if (Object.keys(coins).length > 0 && coins.hasOwnProperty(objectType)) {
+      const objectInfo = {
+        description: objectDisplay?.description,
+        image_url: coins[objectType].iconUrl,
+        name: objectDisplay?.name,
+        ...objectDisplay,
+        ...objectContent,
+        ...coins[objectType],
+      };
+
       return {
         eggId: egg.eggId,
         isLocked: egg.isLocked,
         objectId: egg.objectId,
-        objectInfo: null,
+        objectInfo,
+      } as EggObjectInfo;
+    } else {
+      const objectInfo = {
+        description: objectDisplay?.description,
+        image_url: objectDisplay?.image_url ?? objectContent?.image_url,
+        name: objectDisplay?.name,
+        ...objectDisplay,
+        ...objectContent,
       };
-    }
 
-    return {
-      eggId: egg.eggId,
-      isLocked: egg.isLocked,
-      objectId: egg.objectId,
-      objectInfo: objectContent?.fields as any,
-    } as EggObjectInfo;
+      return {
+        eggId: egg.eggId,
+        isLocked: egg.isLocked,
+        objectId: egg.objectId,
+        objectInfo,
+      } as EggObjectInfo;
+    }
   });
 };
 
@@ -766,7 +848,27 @@ export const addEgg = async ({
   }
 };
 
-export const removeEgg = ({
+export const addCoinToEgg = async ({
+  gachaponId,
+  gachaponKioskId,
+  gachaponCoinType,
+  coin,
+  coinType,
+  transaction,
+  gachaponPackageId,
+}: InternalAddCoinToEgg) => {
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::place`,
+    typeArguments: [gachaponCoinType, coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(gachaponKioskId),
+      coin,
+    ],
+  });
+};
+
+export const simpleRemoveEgg = ({
   coinType,
   gachaponId,
   keeperCapId,
@@ -789,6 +891,193 @@ export const removeEgg = ({
   });
 
   return removedEgg;
+};
+
+export const removeEgg = async ({
+  address,
+  coinType,
+  gachaponId,
+  keeperCapId,
+  kioskId,
+  index,
+  transaction,
+  objId,
+  isEmpty,
+  isLocked,
+  suiClient,
+  kioskClient,
+  gachaponPackageId,
+}: InternalRemoveEgg) => {
+  transaction.setGasBudget(100_000_000);
+
+  const removedEgg = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::take`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(kioskId),
+      transaction.object(keeperCapId),
+      transaction.pure.u64(index),
+    ],
+  });
+
+  if (isEmpty) {
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
+      arguments: [removedEgg],
+    });
+  } else {
+    console.log("check 1");
+
+    const objResponse = await suiClient.getObject({
+      id: objId,
+      options: {
+        showType: true,
+      },
+    });
+
+    const objData = objResponse.data;
+    const objType = objData?.type;
+
+    if (!isLocked) {
+      console.log("check 2, no lock");
+
+      const claimedEgg = transaction.moveCall({
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
+        typeArguments: [coinType, objType],
+        arguments: [
+          transaction.object(gachaponId),
+          transaction.object(kioskId),
+          removedEgg,
+        ],
+      });
+
+      transaction.transferObjects([claimedEgg], address);
+
+      // return claimedEgg;
+    } else {
+      console.log("check 2, lock");
+
+      let ownedKiosk: TransactionArgument;
+      let kioskOwnerCap: TransactionArgument;
+
+      const { kioskInfo } = await checkIsInKiosk(objId, suiClient, kioskClient);
+
+      const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
+
+      if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
+        console.log("check 2.1", ownedKioskOwnerCap.kioskId);
+        [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
+          target: "0x2::kiosk::new",
+        });
+      } else {
+        console.log("check 2.2", ownedKioskOwnerCap.kioskId);
+        ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
+        kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
+      }
+
+      const payment = transaction.moveCall({
+        target: "0x2::coin::zero",
+        typeArguments: ["0x2::sui::SUI"],
+      });
+
+      console.log("check 3", objType);
+
+      const claimedEgg = transaction.moveCall({
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_locked`,
+        typeArguments: [coinType, objType],
+        arguments: [
+          transaction.object(gachaponId),
+          transaction.object(kioskId),
+          payment,
+          removedEgg,
+        ],
+      });
+
+      console.log("check 4");
+
+      if (kioskInfo.royaltyFee != null) {
+        if (Number(kioskInfo.royaltyFee.minAmount) === 0) {
+          const royalty = transaction.moveCall({
+            target: "0x2::coin::zero",
+            typeArguments: ["0x2::sui::SUI"],
+          });
+
+          transaction.moveCall({
+            target: `${PERSONAL_KIOSK_PACKAGE}::royalty_rule::pay`,
+            typeArguments: [objType],
+            arguments: [
+              transaction.object(kioskInfo.transferPoilcies.id),
+              claimedEgg[1],
+              royalty,
+            ],
+          });
+        } else {
+          const [coin] = transaction.splitCoins(transaction.gas, [
+            transaction.pure.u64(kioskInfo.royaltyFee.minAmount),
+          ]);
+
+          transaction.moveCall({
+            target: `${PERSONAL_KIOSK_PACKAGE}::royalty_rule::pay`,
+            typeArguments: [objType],
+            arguments: [
+              transaction.object(kioskInfo.transferPoilcies.id),
+              claimedEgg[1],
+              coin,
+            ],
+          });
+        }
+      }
+
+      console.log("check 5");
+
+      if (!kioskInfo.hasLockingRule) {
+        transaction.moveCall({
+          target: "0x2::kiosk::place",
+          typeArguments: [objType],
+          arguments: [ownedKiosk, kioskOwnerCap, claimedEgg[0]],
+        });
+      } else {
+        transaction.moveCall({
+          target: "0x2::kiosk::lock",
+          typeArguments: [objType],
+          arguments: [
+            ownedKiosk,
+            kioskOwnerCap,
+            transaction.object(kioskInfo.transferPoilcies.id),
+            claimedEgg[0],
+          ],
+        });
+
+        transaction.moveCall({
+          target: `${PERSONAL_KIOSK_PACKAGE}::kiosk_lock_rule::prove`,
+          typeArguments: [objType],
+          arguments: [claimedEgg[1], ownedKiosk],
+        });
+      }
+
+      console.log("check 6");
+
+      transaction.moveCall({
+        target: "0x2::transfer_policy::confirm_request",
+        typeArguments: [objType],
+        arguments: [
+          transaction.object(kioskInfo.transferPoilcies.id),
+          claimedEgg[1],
+        ],
+      });
+
+      transaction.transferObjects([kioskOwnerCap], address);
+
+      if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
+        transaction.moveCall({
+          target: "0x2::transfer::public_share_object",
+          typeArguments: ["0x2::kiosk::Kiosk"],
+          arguments: [ownedKiosk],
+        });
+      }
+    }
+  }
 };
 
 export const addEmptyEgg = ({
@@ -847,6 +1136,9 @@ export const claimEgg = async ({
 
   const { is_locked, obj_id } = eggFields.content.fields;
 
+  console.log("check 1", is_locked);
+  console.log("check 1", obj_id);
+
   const objResponse = await suiClient.getObject({
     id: obj_id,
     options: {
@@ -880,10 +1172,12 @@ export const claimEgg = async ({
     const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
 
     if (ownedKioskOwnerCap === null || ownedKioskOwnerCap.isPersonal) {
+      console.log("check 2.1", ownedKioskOwnerCap.kioskId);
       [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
         target: "0x2::kiosk::new",
       });
     } else {
+      console.log("check 2.2", ownedKioskOwnerCap.kioskId);
       ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
       kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
     }
@@ -973,11 +1267,13 @@ export const claimEgg = async ({
 
     transaction.transferObjects([kioskOwnerCap], address);
 
-    transaction.moveCall({
-      target: "0x2::transfer::public_share_object",
-      typeArguments: ["0x2::kiosk::Kiosk"],
-      arguments: [ownedKiosk],
-    });
+    if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
+      transaction.moveCall({
+        target: "0x2::transfer::public_share_object",
+        typeArguments: ["0x2::kiosk::Kiosk"],
+        arguments: [ownedKiosk],
+      });
+    }
 
     return claimedEgg;
   }
@@ -1170,6 +1466,7 @@ export const drawFreeSpin = async ({
   recipient,
   transaction,
   suiClient,
+  kioskClient,
   gachaponPackageId,
 }: InternalDrawFreeSpin) => {
   const objectResponse = await suiClient.getObject({
@@ -1184,20 +1481,89 @@ export const drawFreeSpin = async ({
 
   if (objectData.content?.dataType !== "moveObject") {
     throw new Error("Invalid object type");
-  } else {
-    const objectType = objectData?.type;
-
-    transaction.setGasBudget(100_000_000);
-
-    transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
-      typeArguments: [coinType, objectType],
-      arguments: [
-        transaction.object(gachaponId),
-        transaction.object(objectId),
-        transaction.object(RAND_OBJ_ID),
-        transaction.pure.address(recipient),
-      ],
-    });
   }
+
+  console.log("check 3");
+
+  const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
+    objectId,
+    suiClient,
+    kioskClient
+  );
+
+  // transaction.setGasBudget(100_000_000);
+
+  console.log("check 4");
+
+  // if (!isInKiosk || kioskInfo === null) {
+  //   console.log("not in kiosk");
+  //   transaction.moveCall({
+  //     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
+  //     typeArguments: [coinType, objectType],
+  //     arguments: [
+  //       transaction.object(gachaponId),
+  //       transaction.object(objectId),
+  //       transaction.object(RAND_OBJ_ID),
+  //       transaction.pure.address(recipient),
+  //     ],
+  //   });
+  // } else {
+  console.log("check 5");
+
+  let objResult: TransactionResult;
+  let kioskCap: TransactionArgument;
+  let borrowPotato: TransactionArgument;
+
+  // if (kioskInfo.isPersonal) {
+  console.log("personal kiosk", kioskInfo.koiskOwnerCapId);
+  const result = transaction.moveCall({
+    target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::borrow_val`,
+    arguments: [transaction.object(kioskInfo.koiskOwnerCapId)],
+  });
+  kioskCap = result[0];
+  borrowPotato = result[1];
+
+  let [cap] = transaction.moveCall({
+    target: "0x2::kiosk::borrow_val",
+    typeArguments: [objectType],
+    arguments: [
+      transaction.object(kioskInfo.kioskId),
+      kioskCap,
+      transaction.object(objectId),
+    ],
+  });
+
+  transaction.moveCall({
+    target: `${PERSONAL_KIOSK_PACKAGE}::personal_kiosk::return_val`,
+    arguments: [
+      transaction.object(kioskInfo.koiskOwnerCapId),
+      kioskCap,
+      borrowPotato,
+    ],
+  });
+  // } else {
+  //   result = transaction.moveCall({
+  //     target: "0x2::kiosk::borrow",
+  //     typeArguments: [objectType],
+  //     arguments: [
+  //       transaction.object(kioskInfo.kioskId),
+  //       transaction.object(kioskInfo.koiskOwnerCapId),
+  //       transaction.object(objectId),
+  //     ],
+  //   });
+  // }
+
+  console.log("check 6");
+
+  // transaction.moveCall({
+  //   target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
+  //   typeArguments: [coinType, objectType],
+  //   arguments: [
+  //     transaction.object(gachaponId),
+  //     objResult,
+  //     transaction.object(RAND_OBJ_ID),
+  //     transaction.pure.address(recipient),
+  //   ],
+  // });
+  // }
 };

@@ -12,11 +12,12 @@ import {
 } from "../../constants/mainnetConstants";
 import { InsideOutsideBet } from "../../games/ufoRange";
 import { bcs } from "@mysten/sui/bcs";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testRange = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   // inside / outside
   const betTypes: InsideOutsideBet[] = [0, 1];

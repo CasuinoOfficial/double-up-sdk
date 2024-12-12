@@ -430,5 +430,13 @@ export const checkHasKiosk = async (
     return null;
   }
 
-  return response.kioskOwnerCaps.filter((cap) => !cap.isPersonal)[0];
+  const normalKioskList = response.kioskOwnerCaps.filter(
+    (cap) => !cap.isPersonal
+  );
+
+  if (normalKioskList.length === 0) {
+    return null;
+  }
+
+  return normalKioskList[0];
 };
