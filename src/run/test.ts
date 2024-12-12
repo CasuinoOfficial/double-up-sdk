@@ -275,8 +275,8 @@ const dbClient = new DoubleUpClient({
           "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
           "0x4212aa2a6d148a75b9cfc344e61725e785cec303dbbc52cde69768105cf33bb7", // keeperCapId
           "0x7bcaa9d2a4d4df16297d9ea83f6eee62273472834acd822ebc1b42bc758e470b", // kioskId
-          10, // index
-          "0xaded43c3e26bb80339959b32ebd2fb2afe97b2512b764fe768a63f229a15a54f", // objectId
+          18, // index
+          "0xee4294311c50cbd288bff90cbaa20b1c0b5c4038b1822d484a16a10ac4056c56", // objectId
           false, // isEmpty
           true // isLocked
         );

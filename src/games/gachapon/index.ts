@@ -921,14 +921,14 @@ export const removeEgg = async ({
     ],
   });
 
-  transaction.transferObjects([removedEgg], address);
-
   if (isEmpty) {
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::destroy_empty`,
       arguments: [removedEgg],
     });
   } else {
+    console.log("check 1");
+
     const objResponse = await suiClient.getObject({
       id: objId,
       options: {
@@ -940,6 +940,8 @@ export const removeEgg = async ({
     const objType = objData?.type;
 
     if (!isLocked) {
+      console.log("check 2, no lock");
+
       const claimedEgg = transaction.moveCall({
         target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
         typeArguments: [coinType, objType],
@@ -952,16 +954,16 @@ export const removeEgg = async ({
 
       transaction.transferObjects([claimedEgg], address);
 
-      return claimedEgg;
+      // return claimedEgg;
     } else {
+      console.log("check 2, lock");
+
       let ownedKiosk: TransactionArgument;
       let kioskOwnerCap: TransactionArgument;
 
       const { kioskInfo } = await checkIsInKiosk(objId, suiClient, kioskClient);
 
       const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
-
-      console.log("ownedKioskOwnerCap", ownedKioskOwnerCap);
 
       if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
         [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
@@ -976,6 +978,8 @@ export const removeEgg = async ({
         target: "0x2::coin::zero",
         typeArguments: ["0x2::sui::SUI"],
       });
+
+      console.log("check 3", objType);
 
       const claimedEgg = transaction.moveCall({
         target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_locked`,
@@ -1021,6 +1025,8 @@ export const removeEgg = async ({
         }
       }
 
+      console.log("check 4");
+
       if (!kioskInfo.hasLockingRule) {
         transaction.moveCall({
           target: "0x2::kiosk::place",
@@ -1046,6 +1052,8 @@ export const removeEgg = async ({
         });
       }
 
+      console.log("check 5");
+
       transaction.moveCall({
         target: "0x2::transfer_policy::confirm_request",
         typeArguments: [objType],
@@ -1063,7 +1071,7 @@ export const removeEgg = async ({
         arguments: [ownedKiosk],
       });
 
-      return claimedEgg;
+      transaction.transferObjects([claimedEgg], address);
     }
   }
 };
