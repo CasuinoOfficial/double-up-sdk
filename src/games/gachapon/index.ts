@@ -961,7 +961,7 @@ export const removeEgg = async ({
 
       const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
 
-      if (ownedKioskOwnerCap === null || ownedKioskOwnerCap.isPersonal) {
+      if (ownedKioskOwnerCap === null || ownedKioskOwnerCap?.isPersonal) {
         [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
           target: "0x2::kiosk::new",
         });
