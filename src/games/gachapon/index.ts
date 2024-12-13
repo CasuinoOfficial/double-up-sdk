@@ -945,8 +945,6 @@ export const removeEgg = async ({
       arguments: [removedEgg],
     });
   } else {
-    console.log("check 1");
-
     const objResponse = await suiClient.getObject({
       id: objId,
       options: {
@@ -958,8 +956,6 @@ export const removeEgg = async ({
     const objType = objData?.type;
 
     if (!isLocked) {
-      console.log("check 2, no lock");
-
       const claimedEgg = transaction.moveCall({
         target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
         typeArguments: [coinType, objType],
@@ -974,8 +970,6 @@ export const removeEgg = async ({
 
       // return claimedEgg;
     } else {
-      console.log("check 2, lock");
-
       let ownedKiosk: TransactionArgument;
       let kioskOwnerCap: TransactionArgument;
 
@@ -984,12 +978,10 @@ export const removeEgg = async ({
       const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
 
       if (!ownedKioskOwnerCap || ownedKioskOwnerCap?.isPersonal) {
-        console.log("check 2.1", ownedKioskOwnerCap.kioskId);
         [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
           target: "0x2::kiosk::new",
         });
       } else {
-        console.log("check 2.2", ownedKioskOwnerCap.kioskId);
         ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
         kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
       }
@@ -998,8 +990,6 @@ export const removeEgg = async ({
         target: "0x2::coin::zero",
         typeArguments: ["0x2::sui::SUI"],
       });
-
-      console.log("check 3", objType);
 
       const claimedEgg = transaction.moveCall({
         target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_locked`,
@@ -1011,8 +1001,6 @@ export const removeEgg = async ({
           removedEgg,
         ],
       });
-
-      console.log("check 4");
 
       if (kioskInfo.royaltyFee != null) {
         if (Number(kioskInfo.royaltyFee.minAmount) === 0) {
@@ -1047,8 +1035,6 @@ export const removeEgg = async ({
         }
       }
 
-      console.log("check 5");
-
       if (!kioskInfo.hasLockingRule) {
         transaction.moveCall({
           target: "0x2::kiosk::place",
@@ -1073,8 +1059,6 @@ export const removeEgg = async ({
           arguments: [claimedEgg[1], ownedKiosk],
         });
       }
-
-      console.log("check 6");
 
       transaction.moveCall({
         target: "0x2::transfer_policy::confirm_request",
@@ -1132,8 +1116,6 @@ export const removeMultipleEggs = async ({
       });
     }
   } else {
-    console.log("check 1");
-
     const objPromises = objId.map((id) =>
       suiClient.getObject({
         id,
@@ -1149,7 +1131,6 @@ export const removeMultipleEggs = async ({
     const objTypes = objData.map((data) => data?.type);
 
     let claimedEggs: TransactionResult[] = [];
-    console.log("check 2, no lock");
 
     for (let i = 0; i < index.length; i++) {
       const removedEgg = transaction.moveCall({
@@ -1236,9 +1217,6 @@ export const claimEgg = async ({
 
   const { is_locked, obj_id } = eggFields.content.fields;
 
-  console.log("check 1", is_locked);
-  console.log("check 1", obj_id);
-
   const objResponse = await suiClient.getObject({
     id: obj_id,
     options: {
@@ -1272,12 +1250,10 @@ export const claimEgg = async ({
     const ownedKioskOwnerCap = await checkHasKiosk(address, kioskClient);
 
     if (ownedKioskOwnerCap === null || ownedKioskOwnerCap.isPersonal) {
-      console.log("check 2.1", ownedKioskOwnerCap.kioskId);
       [ownedKiosk, kioskOwnerCap] = transaction.moveCall({
         target: "0x2::kiosk::new",
       });
     } else {
-      console.log("check 2.2", ownedKioskOwnerCap.kioskId);
       ownedKiosk = transaction.object(ownedKioskOwnerCap.kioskId);
       kioskOwnerCap = transaction.object(ownedKioskOwnerCap.objectId);
     }
@@ -1569,8 +1545,6 @@ export const drawFreeSpin = async ({
   kioskClient,
   gachaponPackageId,
 }: InternalDrawFreeSpin) => {
-  console.log("check 1");
-
   const objectResponse = await suiClient.getObject({
     id: objectId,
     options: {
@@ -1585,8 +1559,6 @@ export const drawFreeSpin = async ({
     throw new Error("Invalid object type");
   }
 
-  console.log("check 3");
-
   const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
     objectId,
     suiClient,
@@ -1595,10 +1567,7 @@ export const drawFreeSpin = async ({
 
   transaction.setGasBudget(100_000_000);
 
-  console.log("check 4");
-
   if (!isInKiosk || kioskInfo === null) {
-    console.log("not in kiosk");
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin`,
       typeArguments: [coinType, objectType],
@@ -1610,10 +1579,7 @@ export const drawFreeSpin = async ({
       ],
     });
   } else {
-    console.log("check 5");
-
     if (kioskInfo.isPersonal) {
-      console.log("check 6.1 personal");
       const ID = bcs.fixedArray(32, bcs.u8()).transform({
         input: (id: string) => fromHEX(id),
         output: (id) => toHEX(Uint8Array.from(id)),
@@ -1631,10 +1597,6 @@ export const drawFreeSpin = async ({
         ],
       });
     } else {
-      console.log("check 6.2 normal kiosk");
-      console.log("kioskId", kioskInfo.kioskId);
-      console.log("koiskOwnerCapId", kioskInfo.koiskOwnerCapId);
-
       const ID = bcs.fixedArray(32, bcs.u8()).transform({
         input: (id: string) => fromHEX(id),
         output: (id) => toHEX(Uint8Array.from(id)),
