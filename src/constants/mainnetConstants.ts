@@ -190,19 +190,19 @@ export const TRADE_EVENT = `${PUMP_CORE_PACKAGE_ID}::${PUMP_MODULE}::SwapEvent`;
 //    ALLOY PREDICTION    //
 //************************//
 export const ALLOY_CORE_PACKAGE_ID =
-  "0xf1141ac1fab94efea093439f0689fb4e6ea3be9fcd9911c815358973599fef29";
+  "0xf8b38dcac4253dcc4c471a4afbdacbebfac4eba79e55ce8b42605ba42aacaa99";
 export const ALLOY_PACKAGE_ID =
-  "0xf1141ac1fab94efea093439f0689fb4e6ea3be9fcd9911c815358973599fef29";
+  "0xf8b38dcac4253dcc4c471a4afbdacbebfac4eba79e55ce8b42605ba42aacaa99";
 export const ALLOY_MARKET_CONFIG =
-  "0x04da0e86c5ad00dfcaa0039db2678dcfa9a5611a0fc8f6829cb13672c1d873f1";
+  "0x3c73c1a315f7ddd1e1648bffbf21e74b4aa611a8709e55329384d884074f4dd9";
 export const ALLOY_ADMIN_CAP =
-  "0x1e1efc2e6af1bb99543a9069ad2397a69267c43abeb8bd3a95ea431470955066";
+  "0x756e0e4f8ab28d1e333d4bd498e4078c78afd595639ce6c813c53d9c6244031f";
 export const ALLOY_UPGRADE_CAP =
-  "0x302812d285afe7130e0ce13ee70279ffb0e4d1196c899a883c2bd3b8c49cfb0a";
+  "0xf18881ad856651cb0c4e06ae9525e0a44667d06d7a786aaa45ac3243bc7a9b23";
 export const ALLOY_MARKETPLACE_ID =
-  "0xe5a99f1e3e920c0890e4207422dd554e0c73ad4ae00c204099dbb845911071af";
+  "0x78a69cc766d4a907c7d7514f270e84ff660c4d5724c030154d30e4d5a93b63e3";
 export const ALLOY_MARKET_ID =
-  "0x226ab65b1b387a66287df3a76e740d78782e66f0edc602acd2e776a8c1a81367";
+  "0x5ecec9880377ab27749ea8a36c90b8aaad6333ec426aa1572c6b2a52bcdcd442";
 
 export const ALLOY_MODULE_NAME = "alloy";
 export const ALLOY_STRUCT_NAME = "alloy";
