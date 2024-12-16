@@ -15,6 +15,8 @@ export const SUICUNE_COIN_TYPE =
   "0x8c47c0bde84b7056520a44f46c56383e714cc9b6a55e919d8736a34ec7ccb533::suicune::SUICUNE";
 export const VSUI_COIN_TYPE =
   "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT";
+export const USDC_COIN_TYPE = 
+  "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC";
 
 export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 
@@ -213,14 +215,13 @@ export const PERSONAL_KIOSK_PACKAGE =
 // lottery
 // ===============================================================================
 export const LOTTERY_CORE_PACKAGE_ID = 
-  "";
+  "0xf90de56d52b43ddf4a00dfe9176994fb4d1e6ed6058774cde38cd8c4124c7307";
 export const LOTTERY_PACKAGE_ID =
-  "";
+  "0xf90de56d52b43ddf4a00dfe9176994fb4d1e6ed6058774cde38cd8c4124c7307";
 export const LOTTERY_MODULE_NAME = "lottery";
 export const LOTTERY_STRUCT_NAME = "Lottery";
-
 export const LOTTERY_ID =
-  "";
+  "0x628241b86fa0dbc29919f7b796869e59950f51894f5532fc90fd36f65a7f1ca0";
 export const LOTTERY_STORE =
-  "";
+  "0x69041a34aa2ea846e314b4ed94ce9a897d8f6713072ed06ea02ffe5e67b112aa";
 // ===============================================================================

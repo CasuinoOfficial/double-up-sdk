@@ -3,21 +3,22 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ticket } from "../../games/lottery";
-import { LOTTERY_ID, SUI_COIN_TYPE } from "../../constants/mainnetConstants";
+import { LOTTERY_ID, USDC_COIN_TYPE } from "../../constants/mainnetConstants";
 
 export const testLotteryBuy = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-  const amount = 2000000000;
+  const amount = 100000;
   const lotteryId = LOTTERY_ID;
-  const coinType = SUI_COIN_TYPE;
+  const coinType = USDC_COIN_TYPE;
+  const inputCoinUSDC = "0x3321979541ddd816a3ce0f49bdc1ae3ca4ddb8468b61e7d29ee8d9bddf54f867";
 
   try {
     const txb = new Transaction();
 
-    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(amount)]);
+    const [coin] = txb.splitCoins(inputCoinUSDC, [txb.pure.u64(amount)]);
 
     const tickets = [
       {
@@ -69,14 +70,15 @@ export const testLotteryBuyOnBehalf = async (
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-  const amount = 2000000000;
+  const amount = 100000;
 
   try {
     const txb = new Transaction();
     const lotteryId = LOTTERY_ID;
-    const coinType = SUI_COIN_TYPE;
+    const coinType = USDC_COIN_TYPE;
+    const inputCoinUSDC = "0x3321979541ddd816a3ce0f49bdc1ae3ca4ddb8468b61e7d29ee8d9bddf54f867";
 
-    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(amount)]);
+    const [coin] = txb.splitCoins(inputCoinUSDC, [txb.pure.u64(amount)]);
 
     const tickets = [
       {
@@ -144,10 +146,10 @@ export const testLotteryRedeem = async (
   keypair: Secp256k1Keypair
 ) => {
   const epochs = [
-    "540",
+    "610",
   ];
   const lotteryId = LOTTERY_ID;
-  const coinType = SUI_COIN_TYPE;
+  const coinType = USDC_COIN_TYPE;
 
   try {
     const txb = new Transaction();
@@ -192,7 +194,7 @@ export const testLotteryResults = async (
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-  const epoch = 540;
+  const epoch = 610;
 
   try {
     const { ok, err, result } = await dbClient.getLotteryDrawingResult({

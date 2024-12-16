@@ -10,7 +10,7 @@ import {
   SUI_COIN_TYPE,
 } from "../../constants/testnetConstants";
 import { sleep } from "../../utils";
-import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "src/constants/mainnetConstants";
+import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "../../constants/mainnetConstants";
 
 export interface BuyTicketsInput {
   coin: TransactionObjectArgument;
@@ -77,13 +77,7 @@ interface LotteryData {
   id: {
     id: string;
   };
-  jackpot_winners: {
-    type: string;
-    fields: {
-      id: string;
-      size: string;
-    };
-  };
+  jackpot_winners: string[];
   lottery_fees: string;
   lottery_prize_pool: string;
   lottery_prize_pool_size: string;
