@@ -263,6 +263,7 @@ export type Gachapon = {
   lootbox: {
     id: string;
     eggCounts: string;
+    sliceCount: string;
   };
   createdAt: string;
 };
@@ -281,6 +282,7 @@ export type AdminGachapon = {
   lootbox: {
     id: string;
     eggCounts: string;
+    sliceCount: string;
   };
   treasury: string;
   createdAt: string;
