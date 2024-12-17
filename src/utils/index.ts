@@ -440,3 +440,11 @@ export const checkHasKiosk = async (
 
   return normalKioskList[0];
 };
+
+export function sliceArrayIntoChunks(arr: any[], chunkSize: number): any[][] {
+  const result = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    result.push(arr.slice(i, i + chunkSize));
+  }
+  return result;
+}

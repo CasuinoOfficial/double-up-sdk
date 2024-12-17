@@ -672,7 +672,8 @@ export class DoubleUpClient {
   getGachapons = (address?: string) => getGachapons(this.suiClient, address);
   adminGetGachapons = (address?: string) =>
     adminGetGachapons(this.suiClient, address);
-  adminGetEggs = (lootboxId: string) => adminGetEggs(this.suiClient, lootboxId);
+  adminGetEggs = (lootboxId: string, sliceCount: string) =>
+    adminGetEggs(this.suiClient, lootboxId, sliceCount);
 
   addEgg = (input: AddEgg) =>
     addEgg({
