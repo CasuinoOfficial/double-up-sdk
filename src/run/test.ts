@@ -14,6 +14,7 @@ import {
   testLotteryTickets,
   testLotteryRedeem,
   testLotteryResults,
+  testLotteryHistory,
 } from "./lottery";
 import {
   testPlinko,
@@ -84,9 +85,9 @@ import {
   testGetGachapons,
 } from "./gachapon";
 
-const { FUNCTION = "", MNEMONICS = "" } = process.env;
+const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
-// const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
+const secpKeypair = Secp256k1Keypair.deriveKeypair(SECP_MNEMONICS);
 const keypair = Ed25519Keypair.fromSecretKey(
   decodeSuiPrivateKey(MNEMONICS).secretKey
 );
@@ -108,6 +109,24 @@ const dbClient = new DoubleUpClient({
         break;
       case "limbo":
         testLimbo(dbClient, client, keypair);
+        break;
+      case "lottery:get":
+        testLotteryGet(dbClient, client, secpKeypair);
+        break;
+      case "lottery:buy":
+        testLotteryBuy(dbClient, client, secpKeypair);
+        break;
+      case "lottery:redeem":
+        testLotteryRedeem(dbClient, client, secpKeypair);
+        break;
+      case "lottery:results":
+        testLotteryResults(dbClient, client, secpKeypair);
+        break;
+      case "lottery:history":
+        testLotteryHistory(dbClient, client, secpKeypair);
+        break;
+      case "lottery:tickets":
+        testLotteryTickets(dbClient, client, secpKeypair);
         break;
       case "plinko":
         testPlinko(dbClient, client, keypair);

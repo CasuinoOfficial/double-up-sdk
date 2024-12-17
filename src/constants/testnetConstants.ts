@@ -40,16 +40,18 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 
 // lottery
 // ===============================================================================
-export const LOTTERY_CORE_PACKAGE_ID = "";
+export const LOTTERY_CORE_PACKAGE_ID = "0x232a8d0feaf3d8857ccf5bfc1eb0318c4ae798932df8cd895982f42124d53467";
 export const LOTTERY_PACKAGE_ID =
-  "0x5fad208418200537f2785aefdca3c8e15e2843ebdffd524956e6d6d6aca845a9";
+  "0x59ab3e2871fb51978aa631dc5cb0b6af4d22d5cfbb252de11a855bca54d153a8";
 export const LOTTERY_MODULE_NAME = "lottery";
 export const LOTTERY_STRUCT_NAME = "Lottery";
 
 export const LOTTERY_ID =
-  "0x447953794edc1dd42891ca3cfbcc21ef510d42fc90db9a6d9189a2913c570f23";
+  "0xae16e91d14a9c40712dc63645cd150c835d8f6d7a97f583d491dae35f6b5c13d";
 export const LOTTERY_STORE_ID =
-  "0x212509ffef4a7615c8e0f26d70ac84c93cbf88d6eb3f9f363a27d5ba2526f684";
+  "0x32966da53b5c91311cf1d4905ae03306495150400a0577697a8589eb82c54951";
+export const LOTTERY_STORE_ADMIN_CAP = 
+  "0xd441d399b36d1ac3e9a6081e2208b1e0573c20f10cfe20a34eaf872aad4e53b6";
 // ===============================================================================
 
 // plinko

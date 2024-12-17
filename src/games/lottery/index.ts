@@ -7,19 +7,38 @@ import { bcs } from "@mysten/sui/bcs";
 
 import {
   CLOCK_OBJ,
-  LOTTERY_ID,
-  LOTTERY_MODULE_NAME,
-  LOTTERY_PACKAGE_ID,
-  LOTTERY_STORE_ID,
   SUI_COIN_TYPE,
 } from "../../constants/testnetConstants";
 import { sleep } from "../../utils";
+import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "../../constants/mainnetConstants";
 
 export interface BuyTicketsInput {
-  address: string;
   coin: TransactionObjectArgument;
   tickets: Ticket[];
+  lotteryId: string;
+  coinType: string;
   transaction: TransactionType;
+  origin?: string;
+  referrer?: string;
+}
+
+interface InternalBuyTicketsInput extends BuyTicketsInput {
+  lotteryPackageId: string;
+}
+
+export interface BuyTicketsOnBehalfInput {
+  recipient: string;
+  coin: TransactionObjectArgument;
+  tickets: Ticket[];
+  lotteryId: string;
+  coinType: string;
+  transaction: TransactionType;
+  origin?: string;
+  referrer?: string;
+}
+
+interface InternalBuyTicketsOnBehalfInput extends BuyTicketsOnBehalfInput {
+  lotteryPackageId: string;
 }
 
 export interface BuyTicketsResponse {
@@ -29,11 +48,12 @@ export interface BuyTicketsResponse {
 
 export interface DrawingResultInput {
   pollInterval?: number;
-  round: number;
+  epoch: number;
 }
 
 interface InternalDrawingResultInput extends DrawingResultInput {
   suiClient: SuiClient;
+  lotteryCorePackageId: string;
 }
 
 export interface DrawingResultResponse {
@@ -43,46 +63,67 @@ export interface DrawingResultResponse {
 }
 
 interface LotteryData {
-  current_round: string;
-  drawing_time_ms: string;
-  id: {
-    id: string;
-  };
-  jackpot_winners: {
+  current_epoch: string;
+  current_round_picks: any;
+  epochs_settled: {
     type: string;
     fields: {
-      id: string;
+      id: {
+        id: string;
+      },
       size: string;
     };
   };
+  id: {
+    id: string;
+  };
+  jackpot_winners: string[];
   lottery_fees: string;
   lottery_prize_pool: string;
+  lottery_prize_pool_size: string;
   max_normal_ball: number;
   max_special_ball: number;
   minimum_jackpot: string;
   normal_ball_count: number;
+  picks_history: {
+    type: string;
+    fields: {
+      id: {
+        id: string;
+      },
+      size: string;
+    };
+  };
   redemptions_allowed: {
     type: string;
     fields: {
-      id: string;
+      id: {
+        id: string;
+      },
       size: string;
     };
   };
+  referral_rate: string;
   reward_structure_table: {
     type: string;
     fields: {
-      id: string;
+      id: {
+        id: string;
+      },
       size: string;
     };
   };
-  rounds_settled: {
+  status: string;
+  ticket_cost: string;
+  ticket_history: {
     type: string;
     fields: {
-      id: string;
+      id: {
+        id: string;
+      },
       size: string;
     };
   };
-  ticket_cost: string;
   tickets: {
     type: string;
     fields: {
@@ -90,20 +131,31 @@ interface LotteryData {
       length: string;
       max_slice_size: string;
       next_id: string;
-      spill: any;
+      spill: object;
       tail: any[];
     };
   };
   winning_tickets: {
     type: string;
     fields: {
-      id: string;
+      id: {
+        id: string;
+      },
       size: string;
     };
   };
-}
+};
 
 export interface LotteryInput {
+  lotteryId: string;
+}
+
+interface InternalLotteryInput extends LotteryInput {
+  suiClient: SuiClient;
+}
+
+interface InternalLotteryHistoryInput {
+  lotteryCorePackageId: string;
   suiClient: SuiClient;
 }
 
@@ -116,7 +168,7 @@ export interface LotteryResponse {
 interface LotteryHistoryItem {
   lotteryId: string;
   results: any;
-  round: number;
+  epoch: number;
   timestampDrawn: number;
   txDigest: string;
 }
@@ -128,24 +180,27 @@ export interface LotteryHistoryResponse {
 }
 
 interface LotteryTicket {
-  id: string;
+  owner: string;
   lotteryId: string;
   picks: Ticket;
-  round: number;
+  epoch: number;
   timestampIssued: number;
+  origin: string;
+  referrer: string | null;
+  winningBalance?: any; // TODO: figure out how to store option<balance>
 }
 
 interface LotteryTicketsConfig {
-  cursor?: string;
-  filter: {
-    StructType: string;
-  };
-  limit: number;
-  options: {
-    showContent: boolean;
-    showType: boolean;
-  };
-  owner: string;
+  cursor?: any; // TODO: declare type
+  // query: {
+  //   All: [
+  //     { MoveEventType: string },
+  //     { Sender: string }
+  //   ]
+  // };
+  query: any;
+  order: "descending" | "ascending";
+  limit?: number;
 }
 
 export interface LotteryTicketsInput {
@@ -154,6 +209,7 @@ export interface LotteryTicketsInput {
 
 interface InternalLotteryTicketsInput extends LotteryTicketsInput {
   suiClient: SuiClient;
+  lotteryCorePackageId: string;
 }
 
 export interface LotteryTicketsResponse {
@@ -163,8 +219,14 @@ export interface LotteryTicketsResponse {
 }
 
 export interface RedeemTicketsInput {
-  ticketIds: string[];
+  epochs: string[];
+  lotteryId: string;
+  coinType: string;
   transaction: TransactionType;
+}
+
+interface InternalRedeemTicketsInput extends RedeemTicketsInput {
+  lotteryPackageId: string;
 }
 
 export interface RedeemTicketsResponse {
@@ -178,34 +240,75 @@ export interface Ticket {
 }
 
 export const buyLotteryTickets = ({
-  address,
   coin,
   tickets: ticketsInput,
+  lotteryId,
+  coinType,
+  lotteryPackageId,
   transaction,
-}: BuyTicketsInput): BuyTicketsResponse => {
+  origin,
+  referrer,
+}: InternalBuyTicketsInput): BuyTicketsResponse => {
   let res: BuyTicketsResponse = { ok: true };
 
   try {
-    const tickets = [];
-
     for (const { numbers, specialNumber } of ticketsInput) {
-      const ticket = transaction.moveCall({
-        target: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::buy_ticket`,
-        typeArguments: [SUI_COIN_TYPE],
+      transaction.moveCall({
+        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket`,
+        typeArguments: [coinType],
         arguments: [
-          transaction.object(LOTTERY_STORE_ID),
-          transaction.pure.id(LOTTERY_ID),
+          transaction.object(LOTTERY_STORE),
+          transaction.pure.id(lotteryId),
           coin,
           transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
           transaction.pure.u8(specialNumber),
+          transaction.pure.string(origin ?? "DoubleUp"),
+          transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
           transaction.object(CLOCK_OBJ),
         ],
       });
-
-      tickets.push(ticket);
     }
 
-    transaction.transferObjects(tickets, address);
+  } catch (err) {
+    res.ok = false;
+    res.err = err;
+  }
+
+  return res;
+};
+
+export const buyLotteryTicketsOnBehalf = ({
+  recipient,
+  coin,
+  tickets: ticketsInput,
+  lotteryId,
+  coinType,
+  lotteryPackageId,
+  transaction,
+  origin,
+  referrer,
+}: InternalBuyTicketsOnBehalfInput): BuyTicketsResponse => {
+  let res: BuyTicketsResponse = { ok: true };
+
+  try {
+    for (const { numbers, specialNumber} of ticketsInput) {
+      transaction.moveCall({
+        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket_on_behalf`,
+        typeArguments: [coinType],
+        arguments: [
+          transaction.object(LOTTERY_STORE),
+          transaction.pure.id(lotteryId),
+          coin,
+          transaction.pure.address(recipient),
+          transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
+          transaction.pure.u8(specialNumber),
+          transaction.pure.string(origin?? "DoubleUp"),
+          transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
+          transaction.object(CLOCK_OBJ),
+        ],
+      });
+    }
+
   } catch (err) {
     res.ok = false;
     res.err = err;
@@ -215,23 +318,25 @@ export const buyLotteryTickets = ({
 };
 
 export const getLottery = async ({
+  lotteryId,
   suiClient,
-}: LotteryInput): Promise<LotteryResponse> => {
+}: InternalLotteryInput): Promise<LotteryResponse> => {
   const res: LotteryResponse = { ok: true };
 
   try {
-    const lottery = await suiClient.getObject({
-      id: LOTTERY_ID,
-      options: {
-        showContent: true,
+    const fieldsResp = await suiClient.getDynamicFieldObject({
+      name: {
+        type: "0x2::object::ID",
+        value: lotteryId,
       },
+      parentId: LOTTERY_STORE,
     });
 
-    if (lottery?.data?.content?.dataType !== "moveObject") {
+    if (fieldsResp?.data?.content?.dataType !== "moveObject") {
       throw new Error("Invalid data type, expected moveObject");
     }
 
-    const lotteryData = lottery.data.content.fields as unknown;
+    const lotteryData = fieldsResp.data.content.fields as unknown;
 
     res.result = lotteryData as LotteryData;
   } catch (err) {
@@ -244,7 +349,8 @@ export const getLottery = async ({
 
 export const getLotteryHistory = async ({
   suiClient,
-}: LotteryInput): Promise<LotteryHistoryResponse> => {
+  lotteryCorePackageId,
+}: InternalLotteryHistoryInput): Promise<LotteryHistoryResponse> => {
   let res: LotteryHistoryResponse = { ok: true };
 
   try {
@@ -253,7 +359,7 @@ export const getLotteryHistory = async ({
     while (results.length === 0) {
       const events = await suiClient.queryEvents({
         query: {
-          MoveEventType: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::RoundResult<${SUI_COIN_TYPE}>`,
+          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
         },
         order: "descending",
       });
@@ -261,7 +367,7 @@ export const getLotteryHistory = async ({
       const validData = events.data
         .filter((item) => item.parsedJson && item.id)
         .map(({ parsedJson, id }: any) => ({
-          round: Number(parsedJson.round),
+          epoch: Number(parsedJson.epoch),
           lotteryId: parsedJson.lottery_id,
           results: parsedJson.results,
           timestampDrawn: Number(parsedJson.timestamp_drawn),
@@ -284,8 +390,9 @@ export const getLotteryHistory = async ({
 
 export const getLotteryDrawingResult = async ({
   pollInterval = 3000,
-  round,
+  epoch,
   suiClient,
+  lotteryCorePackageId
 }: InternalDrawingResultInput): Promise<DrawingResultResponse> => {
   const res: DrawingResultResponse = { ok: true };
 
@@ -295,7 +402,7 @@ export const getLotteryDrawingResult = async ({
     while (results.length === 0) {
       const events = await suiClient.queryEvents({
         query: {
-          MoveEventType: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::RoundResult<${SUI_COIN_TYPE}>`,
+          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
         },
         order: "descending",
         limit: 2,
@@ -304,10 +411,10 @@ export const getLotteryDrawingResult = async ({
       results = events.data
         .filter(
           (item: any) =>
-            item.parsedJson && Number(item.parsedJson.round) === round
+            item.parsedJson && Number(item.parsedJson.epoch) === epoch
         )
         .map(({ parsedJson, id }: any) => ({
-          round: Number(parsedJson.round),
+          epoch: Number(parsedJson.epoch),
           lotteryId: parsedJson.lottery_id,
           results: parsedJson.results,
           timestampDrawn: Number(parsedJson.timestamp_drawn),
@@ -336,60 +443,41 @@ export const getLotteryDrawingResult = async ({
 export const getLotteryTickets = async ({
   address,
   suiClient,
+  lotteryCorePackageId,
 }: InternalLotteryTicketsInput): Promise<LotteryTicketsResponse> => {
   const res: LotteryTicketsResponse = { ok: true };
 
   try {
     const tickets: LotteryTicket[] = [];
-
-    let cursor: string = "";
-    let shouldFetchMore: boolean = true;
+    let shouldFetchMore = true;
+    let cursor = undefined;
 
     while (shouldFetchMore) {
-      const config: LotteryTicketsConfig = {
-        owner: address,
-        options: {
-          showContent: true,
-          showType: true,
+      const queryParams: LotteryTicketsConfig = {
+        query: {
+            MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased`
         },
-        filter: {
-          StructType: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::Ticket`,
-        },
-        limit: 50,
+        order: "descending",
       };
 
       if (!!cursor) {
-        config.cursor = cursor;
+        queryParams.cursor = cursor;
       }
 
-      const { data, nextCursor, hasNextPage } = await suiClient.getOwnedObjects(
-        config
+      const resp = await suiClient.queryEvents(
+        queryParams
       );
 
-      data.forEach(({ data }) => {
-        if (data?.content?.dataType === "moveObject") {
-          const fields = data.content.fields as any;
-
-          const ticket: LotteryTicket = {
-            id: fields.id.id,
-            picks: {
-              numbers: fields.picks.fields.numbers.fields.contents.map(
-                (number) => Number(number)
-              ),
-              specialNumber: Number(fields.picks.fields.special_number),
-            },
-            lotteryId: fields.lottery_id,
-            round: Number(fields.round),
-            timestampIssued: Number(fields.timestamp_issued),
-          };
-
+      resp.data.forEach((event) => {
+        const ticket = event.parsedJson as LotteryTicket;
+        if (ticket.owner === address) {
           tickets.push(ticket);
-        }
+        };
       });
 
-      cursor = nextCursor;
-      shouldFetchMore = hasNextPage;
-    }
+      cursor = resp.nextCursor;
+      shouldFetchMore = resp.hasNextPage;
+    };
 
     res.results = tickets;
   } catch (err) {
@@ -401,33 +489,24 @@ export const getLotteryTickets = async ({
 };
 
 export const redeemLotteryTickets = ({
-  ticketIds,
+  epochs,
+  lotteryId,
+  coinType,
   transaction,
-}: RedeemTicketsInput): RedeemTicketsResponse => {
+  lotteryPackageId
+}: InternalRedeemTicketsInput): RedeemTicketsResponse => {
   const res: RedeemTicketsResponse = { ok: true };
 
   try {
-    for (const ticketId of ticketIds) {
-      const optionalCoin = transaction.moveCall({
-        target: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::redeem`,
-        typeArguments: [SUI_COIN_TYPE],
+    for (const epoch of epochs) {
+      transaction.moveCall({
+        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::redeem`,
+        typeArguments: [coinType],
         arguments: [
-          transaction.object(ticketId),
-          transaction.object(LOTTERY_STORE_ID),
-          transaction.pure.id(LOTTERY_ID),
+          transaction.object(LOTTERY_STORE),
+          transaction.pure.id(lotteryId),
+          transaction.pure.u64(epoch),
         ],
-      });
-
-      transaction.moveCall({
-        target: `${LOTTERY_PACKAGE_ID}::${LOTTERY_MODULE_NAME}::transfer_optional_coin`,
-        typeArguments: [SUI_COIN_TYPE],
-        arguments: [optionalCoin],
-      });
-
-      transaction.moveCall({
-        target: `0x1::option::destroy_none`,
-        typeArguments: [`0x2::coin::Coin<${SUI_COIN_TYPE}>`],
-        arguments: [optionalCoin],
       });
     }
   } catch (err) {
