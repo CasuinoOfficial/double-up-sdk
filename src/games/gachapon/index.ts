@@ -439,6 +439,7 @@ export const getGachapons = async (suiClient: SuiClient, address: string) => {
       lootbox: {
         id: fields?.lootbox?.fields?.id?.id,
         eggCounts: fields?.lootbox?.fields?.length,
+        sliceCount: fields?.lootbox?.fields?.slice_count,
       },
       createdAt: createdTimes[keeperCaps[index].gachaponId],
     };
@@ -530,6 +531,7 @@ export const adminGetGachapons = async (
       lootbox: {
         id: fields?.lootbox?.fields?.id?.id,
         eggCounts: fields?.lootbox?.fields?.length,
+        sliceCount: fields?.lootbox?.fields?.slice_count,
       },
       treasury: fields.treasury,
       createdAt: createdTimes[keeperCaps[index].gachaponId],
