@@ -4,6 +4,7 @@ import {
   SuiEvent,
   SuiObjectData,
   SuiObjectResponse,
+  SuiParsedData,
   SuiTransactionBlockResponse,
 } from "@mysten/sui/client";
 import {
@@ -26,7 +27,11 @@ import {
   PERSONAL_KIOSK_RULE_ADDRESS,
   ROYALTY_RULE,
 } from "@mysten/kiosk";
-import { checkHasKiosk, checkIsInKiosk } from "../../utils";
+import {
+  checkHasKiosk,
+  checkIsInKiosk,
+  sliceArrayIntoChunks,
+} from "../../utils";
 import { Decimal } from "decimal.js";
 import { bcs } from "@mysten/sui/bcs";
 import { fromHEX, toHEX } from "@mysten/sui/utils";
@@ -258,6 +263,7 @@ export type Gachapon = {
   lootbox: {
     id: string;
     eggCounts: string;
+    sliceCount: string;
   };
   createdAt: string;
 };
@@ -276,6 +282,7 @@ export type AdminGachapon = {
   lootbox: {
     id: string;
     eggCounts: string;
+    sliceCount: string;
   };
   treasury: string;
   createdAt: string;
@@ -434,6 +441,7 @@ export const getGachapons = async (suiClient: SuiClient, address: string) => {
       lootbox: {
         id: fields?.lootbox?.fields?.id?.id,
         eggCounts: fields?.lootbox?.fields?.length,
+        sliceCount: fields?.lootbox?.fields?.slice_count,
       },
       createdAt: createdTimes[keeperCaps[index].gachaponId],
     };
@@ -525,6 +533,7 @@ export const adminGetGachapons = async (
       lootbox: {
         id: fields?.lootbox?.fields?.id?.id,
         eggCounts: fields?.lootbox?.fields?.length,
+        sliceCount: fields?.lootbox?.fields?.slice_count,
       },
       treasury: fields.treasury,
       createdAt: createdTimes[keeperCaps[index].gachaponId],
@@ -536,27 +545,7 @@ export const adminGetGachapons = async (
   return gachapons;
 };
 
-export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
-  const lootboxVector = await suiClient.getDynamicFieldObject({
-    parentId: lootboxId,
-    name: {
-      type: "u64",
-      value: "1",
-    },
-  });
-
-  const lootboxVectorData = lootboxVector.data;
-
-  const eggsResponse = await suiClient.getObject({
-    id: lootboxVectorData.objectId,
-    options: {
-      showContent: true,
-      showType: true,
-    },
-  });
-
-  const eggsContent = eggsResponse?.data?.content;
-
+const getEggData = (eggsContent: SuiParsedData) => {
   if (eggsContent.dataType !== "moveObject") {
     throw new Error("Invalid object type of gachapon eggs");
   }
@@ -572,34 +561,92 @@ export const adminGetEggs = async (suiClient: SuiClient, lootboxId: string) => {
     };
   });
 
-  const eggObjectPromises: (Promise<SuiObjectResponse> | undefined)[] =
-    eggsInfoList.map((egg: EggInfo) => {
-      if (!egg?.objectId) {
-        return undefined;
-      } else {
-        return suiClient.getObject({
-          id: egg.objectId,
-          options: {
-            showContent: true,
-            showDisplay: true,
-            showType: true,
-          },
-        });
-      }
-    });
+  return eggsInfoList;
+};
 
-  const eggObjects = await Promise.all(eggObjectPromises.filter((egg) => egg));
+export const adminGetEggs = async (
+  suiClient: SuiClient,
+  lootboxId: string,
+  slice_count: string
+) => {
+  const lootboxVecotrPromises = [...Array(Number(slice_count))].map(
+    (_, index) =>
+      suiClient.getDynamicFieldObject({
+        parentId: lootboxId,
+        name: {
+          type: "u64",
+          value: (index + 1).toString(),
+        },
+      })
+  );
+
+  const lootboxVectorResponse = await Promise.all(lootboxVecotrPromises);
+
+  const lootboxVectorData = lootboxVectorResponse.map(
+    (response) => response.data
+  );
+
+  const eggsPromises = lootboxVectorData.map((lootbox) =>
+    suiClient.getObject({
+      id: lootbox.objectId,
+      options: {
+        showContent: true,
+        showType: true,
+      },
+    })
+  );
+
+  const eggsResponses = await Promise.all(eggsPromises);
+
+  const eggsContentList = eggsResponses.map((egg) => egg.data.content);
+
+  const eggsDataList = eggsContentList.map((eggsContent) =>
+    getEggData(eggsContent)
+  );
+
+  const eggsInfoList = eggsDataList.flat();
+
+  const chunkedEggsInfoList: EggInfo[][] = sliceArrayIntoChunks(
+    eggsInfoList,
+    50
+  );
+
+  const chunkedEggObjectPromises: (Promise<SuiObjectResponse[]> | undefined)[] =
+    chunkedEggsInfoList.map((eggs: EggInfo[]) =>
+      suiClient.multiGetObjects({
+        ids: eggs.map((egg) => egg.objectId),
+        options: {
+          showContent: true,
+          showDisplay: true,
+          showType: true,
+        },
+      })
+    );
+
+  const chunkedEggObjects = await Promise.all(
+    chunkedEggObjectPromises.filter((egg) => egg)
+  );
+
+  const eggObjects = chunkedEggObjects.flat();
 
   const coins = {};
 
-  const coinTypeList = eggObjects
-    .filter((eggObject) => {
-      return (
-        eggObject?.data?.type === SUI_COIN_TYPE ||
-        eggObject?.data?.type?.includes("0x2::coin::Coin")
-      );
-    })
-    .map((eggObject) => eggObject?.data?.type);
+  const coinObjectList = eggObjects.filter((eggObject) => {
+    return (
+      eggObject?.data?.type === SUI_COIN_TYPE ||
+      eggObject?.data?.type?.includes("0x2::coin::Coin")
+    );
+  });
+
+  for (const coin of coinObjectList) {
+    if (coins.hasOwnProperty(coin?.data?.type)) {
+      continue;
+    } else {
+      coins[coin?.data?.type] = null;
+    }
+  }
+
+  const coinTypeList = Object.keys(coins);
 
   if (coinTypeList.length > 0) {
     const coinMetadataPromises = coinTypeList.map((coinType) => {

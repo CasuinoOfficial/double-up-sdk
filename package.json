@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "4.5.36",
+  "version": "4.5.40",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "test:lottery:get": "FUNCTION=lottery:get pnpm test",
     "test:lottery:redeem": "FUNCTION=lottery:redeem pnpm test",
     "test:lottery:results": "FUNCTION=lottery:results pnpm test",
+    "test:lottery:history": "FUNCTION=lottery:history pnpm test",
     "test:lottery:tickets": "FUNCTION=lottery:tickets pnpm test",
     "test:plinko": "FUNCTION=plinko pnpm test",
     "test:multiplinko:create": "FUNCTION=multiplinko:create pnpm test",
