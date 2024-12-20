@@ -182,7 +182,10 @@ export interface LotteryHistoryResponse {
 interface LotteryTicket {
   owner: string;
   lotteryId: string;
-  picks: Ticket;
+  picks: {
+    numbers: { contents: number[] },
+    specialNumber: number,
+  };
   epoch: number;
   timestampIssued: number;
   origin: string;
