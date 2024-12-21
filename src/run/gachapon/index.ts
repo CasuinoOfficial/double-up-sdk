@@ -693,8 +693,6 @@ export const testDrawFreeSpin = async (
 ) => {
   const tx = new Transaction();
 
-  console.log("check 1");
-
   await dbClient.drawFreeSpin({
     coinType,
     gachaponId,
@@ -702,8 +700,6 @@ export const testDrawFreeSpin = async (
     recipient,
     transaction: tx,
   });
-
-  console.log("check out");
 
   const transactionResult = await client.signAndExecuteTransaction({
     signer: keypair,
