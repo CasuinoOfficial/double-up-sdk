@@ -17,6 +17,7 @@ import {
   KIOSK_ITEM,
   KIOSK_LOCK_RULE,
   KioskClient,
+  KioskOwnerCap,
   ROYALTY_RULE,
   TransferPolicy,
 } from "@mysten/kiosk";
@@ -344,11 +345,27 @@ export const checkIsInKiosk = async (
 
   const kioskOwner = kiosk?.kiosk?.owner;
 
-  const { kioskOwnerCaps, kioskIds } = await kioskClient.getOwnedKiosks({
-    address: kioskOwner,
-  });
+  let allUserKiosks: KioskOwnerCap[] = [];
+  let cursorKiosk;
+  let hasNextPage = true;
 
-  const kioskOwnerCap = kioskOwnerCaps?.find((cap) => cap?.kioskId === kioskId);
+  while (hasNextPage) {
+    const response = await kioskClient.getOwnedKiosks({
+      address: kioskOwner,
+      pagination: {
+        cursor: cursorKiosk || undefined,
+      },
+    });
+
+    if (response.kioskOwnerCaps.length > 0) {
+      allUserKiosks = allUserKiosks.concat(response.kioskOwnerCaps);
+    }
+
+    cursorKiosk = response.nextCursor;
+    hasNextPage = response.hasNextPage;
+  }
+
+  const kioskOwnerCap = allUserKiosks?.find((cap) => cap?.kioskId === kioskId);
 
   const objectKioskInfo = kiosk?.items?.find(
     (item) => item?.objectId === objectId

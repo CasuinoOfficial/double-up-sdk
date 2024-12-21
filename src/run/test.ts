@@ -425,9 +425,9 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI", //coinType
-          "0x9e9572976a5fa31be2b9e9ee57d396aa270934b1a6f1fbedd5e34d81dec8af2a", // gachaponId
-          "0x2e124cfa72bc6035437777a465d01ef9fab2486e8a7593534a205716c59f38f5", //ObjectId
-          "0x56d68ef58f60f574c9afd7a705ced8b83cee1508340e1409f8783c31b0edbe61" //recipient
+          "0xa92ab35da991f299a919ced409b1b37478ef83d9df77823d6343f322676d106b", // gachaponId
+          "0x6e68a31df75ffd03f41692507d60f89ede0edcd38fffd7110a0faca3c9117e83", //ObjectId
+          "0x350423e5588ea5cb9c367ff9d5ef6285e4cffa8a45c3f148a2e70605f24a47dd" //recipient
         );
         break;
 
