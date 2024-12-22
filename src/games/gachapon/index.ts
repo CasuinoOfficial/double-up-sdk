@@ -246,7 +246,21 @@ export interface DrawFreeSpin {
   transaction: Transaction;
 }
 
+export interface DrawFreeSpinMultiple {
+  coinType: string;
+  gachaponId: string;
+  objectIds: string[];
+  recipient: string;
+  transaction: Transaction;
+}
+
 interface InternalDrawFreeSpin extends DrawFreeSpin {
+  suiClient: SuiClient;
+  kioskClient: KioskClient;
+  gachaponPackageId: string;
+}
+
+interface InternalDrawFreeSpinMultiple extends DrawFreeSpinMultiple {
   suiClient: SuiClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
@@ -1662,5 +1676,80 @@ export const drawFreeSpin = async ({
         ],
       });
     }
+  }
+};
+
+export const drawFreeSpinMultiple = async ({
+  coinType,
+  gachaponId,
+  objectIds,
+  recipient,
+  transaction,
+  suiClient,
+  kioskClient,
+  gachaponPackageId,
+}: InternalDrawFreeSpinMultiple) => {
+  const objectResponse = await suiClient.multiGetObjects({
+    ids: objectIds,
+    options: {
+      showContent: true,
+      showType: true,
+    },
+  });
+
+  const objectDatas = objectResponse.map((response) => response.data);
+  const objectTypes = objectDatas.map((data) => data?.type);
+
+  if (objectTypes.length === 0)
+    throw new Error("Wasn't able to fetch object types.");
+
+  const firstObjectId = objectIds[0];
+  const firstType = objectTypes[0];
+
+  if (objectTypes.every((type) => type !== firstType)) {
+    throw new Error(
+      "Invalid object type. Every object should be the same type"
+    );
+  }
+
+  const { isInKiosk, kioskInfo } = await checkIsInKiosk(
+    firstObjectId,
+    suiClient,
+    kioskClient
+  );
+
+  if (!isInKiosk || kioskInfo === null) throw new Error("Invalid object type");
+
+  if (!kioskInfo) throw new Error("Invalid kiosk");
+
+  if (kioskInfo.isPersonal) {
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin_with_personal_kiosk`,
+      typeArguments: [coinType, firstType],
+      arguments: [
+        transaction.object(gachaponId),
+        transaction.object(kioskInfo.kioskId),
+        transaction.makeMoveVec({
+          elements: objectIds.map((objectId) => transaction.pure.id(objectId)),
+        }),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.address(recipient),
+      ],
+    });
+  } else {
+    transaction.moveCall({
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin_with_kiosk`,
+      typeArguments: [coinType, firstType],
+      arguments: [
+        transaction.object(gachaponId),
+        transaction.object(kioskInfo.kioskId),
+        transaction.object(kioskInfo.koiskOwnerCapId),
+        transaction.makeMoveVec({
+          elements: objectIds.map((objectId) => transaction.pure.id(objectId)),
+        }),
+        transaction.object(RAND_OBJ_ID),
+        transaction.pure.address(recipient),
+      ],
+    });
   }
 };
