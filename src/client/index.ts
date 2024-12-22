@@ -22,8 +22,8 @@ import {
   RAFFLES_CORE_PACKAGE_ID,
   RAFFLES_PACKAGE_ID,
   GACHAPON_PACKAGE_ID,
-  LOTTERY_CORE_PACKAGE_ID, 
-  LOTTERY_PACKAGE_ID
+  LOTTERY_CORE_PACKAGE_ID,
+  LOTTERY_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
 import {
@@ -220,6 +220,8 @@ import {
   AddCoinToEgg,
   removeMultipleEggs,
   RemoveMultipleEggs,
+  DrawFreeSpinMultiple,
+  drawFreeSpinMultiple,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -362,30 +364,30 @@ export class DoubleUpClient {
     });
 
   // lottery
-  buyLotteryTickets = (input: BuyTicketsInput) => 
+  buyLotteryTickets = (input: BuyTicketsInput) =>
     buyLotteryTickets({
       ...input,
       lotteryPackageId: this.lotteryPackageId,
     });
-  buyLotteryTicketsOnBehalf = (input: BuyTicketsOnBehalfInput) => 
+  buyLotteryTicketsOnBehalf = (input: BuyTicketsOnBehalfInput) =>
     buyLotteryTicketsOnBehalf({
       ...input,
       lotteryPackageId: this.lotteryPackageId,
     });
-  redeemLotteryTickets = (input: RedeemTicketsInput) => 
+  redeemLotteryTickets = (input: RedeemTicketsInput) =>
     redeemLotteryTickets({
       ...input,
       lotteryPackageId: this.lotteryPackageId,
     });
   getLottery = (input: LotteryInput) =>
-    getLottery({ 
+    getLottery({
       ...input,
-      suiClient: this.suiClient 
-    });
-  getLotteryHistory = () => 
-    getLotteryHistory({ 
       suiClient: this.suiClient,
-      lotteryCorePackageId: this.lotteryCorePackageId, 
+    });
+  getLotteryHistory = () =>
+    getLotteryHistory({
+      suiClient: this.suiClient,
+      lotteryCorePackageId: this.lotteryCorePackageId,
     });
   getLotteryDrawingResult = (input: DrawingResultInput) =>
     getLotteryDrawingResult({
@@ -768,6 +770,14 @@ export class DoubleUpClient {
 
   drawFreeSpin = (input: DrawFreeSpin) =>
     drawFreeSpin({
+      ...input,
+      suiClient: this.suiClient,
+      kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  drawFreeSpinMultiple = (input: DrawFreeSpinMultiple) =>
+    drawFreeSpinMultiple({
       ...input,
       suiClient: this.suiClient,
       kioskClient: this.kioskClient,
