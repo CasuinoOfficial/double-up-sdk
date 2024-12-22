@@ -1703,6 +1703,7 @@ export const drawFreeSpinMultiple = async ({
   if (objectTypes.length === 0)
     throw new Error("Wasn't able to fetch object types.");
 
+  const firstObjectId = objectIds[0];
   const firstType = objectTypes[0];
 
   if (objectTypes.every((type) => type !== firstType)) {
@@ -1711,49 +1712,23 @@ export const drawFreeSpinMultiple = async ({
     );
   }
 
-  let kiosk: string | null = null;
-  let kioskOwnerCap: string | null = null;
-  let isPersonal: boolean = false;
+  const { isInKiosk, kioskInfo } = await checkIsInKiosk(
+    firstObjectId,
+    suiClient,
+    kioskClient
+  );
 
-  for (let i = 0; i < objectIds.length; i++) {
-    const objectId = objectIds[i];
-    const objectType = objectTypes[i];
+  if (!isInKiosk || kioskInfo === null) throw new Error("Invalid object type");
 
-    if (objectType === "moveObject") {
-      const { isInKiosk, kioskInfo } = await checkIsInKiosk(
-        objectId,
-        suiClient,
-        kioskClient
-      );
+  if (!kioskInfo) throw new Error("Invalid kiosk");
 
-      if (!isInKiosk || kioskInfo === null) {
-        throw new Error("Invalid object type");
-      }
-
-      if (!kiosk) {
-        kiosk = kioskInfo.kioskId;
-        kioskOwnerCap = kioskInfo.koiskOwnerCapId;
-        isPersonal = kioskInfo.isPersonal;
-      }
-
-      if (kiosk !== kioskInfo.kioskId)
-        throw new Error(
-          "Invalid kiosk. You should merge all nfts to one kiosk"
-        );
-    } else {
-      throw new Error("Invalid object type");
-    }
-  }
-
-  if (!kiosk) throw new Error("Invalid kiosk");
-
-  if (isPersonal) {
+  if (kioskInfo.isPersonal) {
     transaction.moveCall({
       target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_free_spin_with_personal_kiosk`,
       typeArguments: [coinType, firstType],
       arguments: [
         transaction.object(gachaponId),
-        transaction.object(kiosk),
+        transaction.object(kioskInfo.kioskId),
         transaction.makeMoveVec({
           elements: objectIds.map((objectId) => transaction.pure.id(objectId)),
         }),
@@ -1767,8 +1742,8 @@ export const drawFreeSpinMultiple = async ({
       typeArguments: [coinType, firstType],
       arguments: [
         transaction.object(gachaponId),
-        transaction.object(kiosk),
-        transaction.object(kioskOwnerCap),
+        transaction.object(kioskInfo.kioskId),
+        transaction.object(kioskInfo.koiskOwnerCapId),
         transaction.makeMoveVec({
           elements: objectIds.map((objectId) => transaction.pure.id(objectId)),
         }),
