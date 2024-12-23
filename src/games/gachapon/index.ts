@@ -1731,6 +1731,7 @@ export const drawFreeSpinMultiple = async ({
         transaction.object(kioskInfo.kioskId),
         transaction.makeMoveVec({
           elements: objectIds.map((objectId) => transaction.pure.id(objectId)),
+          type: "0x2::object::ID",
         }),
         transaction.object(RAND_OBJ_ID),
         transaction.pure.address(recipient),
@@ -1746,6 +1747,7 @@ export const drawFreeSpinMultiple = async ({
         transaction.object(kioskInfo.koiskOwnerCapId),
         transaction.makeMoveVec({
           elements: objectIds.map((objectId) => transaction.pure.id(objectId)),
+          type: "0x2::object::ID",
         }),
         transaction.object(RAND_OBJ_ID),
         transaction.pure.address(recipient),
