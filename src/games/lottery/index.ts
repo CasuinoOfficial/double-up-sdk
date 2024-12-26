@@ -181,16 +181,16 @@ export interface LotteryHistoryResponse {
 
 interface LotteryTicket {
   owner: string;
-  lotteryId: string;
+  lottery_id: string;
   picks: {
     numbers: { contents: number[] },
-    specialNumber: number,
+    special_number: number,
   };
   epoch: number;
-  timestampIssued: number;
+  timestamp_issued: number;
   origin: string;
   referrer: string | null;
-  winningBalance?: any; // TODO: figure out how to store option<balance>
+  winning_balance?: any; // TODO: figure out how to store option<balance>
 }
 
 interface LotteryTicketsConfig {
