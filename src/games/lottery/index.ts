@@ -12,21 +12,23 @@ import {
 import { sleep } from "../../utils";
 import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "../../constants/mainnetConstants";
 
-export interface BuyTicketsInput {
+export interface BuyTicketsAlternativeCoinInput {
+  recipient: string;
   coin: TransactionObjectArgument;
+  coinType: string;
   tickets: Ticket[];
   lotteryId: string;
-  coinType: string;
+  lotteryType: string;
   transaction: TransactionType;
   origin?: string;
   referrer?: string;
 }
 
-interface InternalBuyTicketsInput extends BuyTicketsInput {
+interface InternalBuyTicketsAlternativeCoinInput extends BuyTicketsAlternativeCoinInput {
   lotteryPackageId: string;
 }
 
-export interface BuyTicketsOnBehalfInput {
+export interface BuyTicketsInput {
   recipient: string;
   coin: TransactionObjectArgument;
   tickets: Ticket[];
@@ -37,7 +39,7 @@ export interface BuyTicketsOnBehalfInput {
   referrer?: string;
 }
 
-interface InternalBuyTicketsOnBehalfInput extends BuyTicketsOnBehalfInput {
+interface InternalBuyTicketsInput extends BuyTicketsInput {
   lotteryPackageId: string;
 }
 
@@ -242,27 +244,30 @@ export interface Ticket {
   specialNumber: number;
 }
 
-export const buyLotteryTickets = ({
+export const buyLotteryTicketsAlternativePrice = ({
+  recipient,
   coin,
+  coinType,
   tickets: ticketsInput,
   lotteryId,
-  coinType,
+  lotteryType,
   lotteryPackageId,
   transaction,
   origin,
   referrer,
-}: InternalBuyTicketsInput): BuyTicketsResponse => {
+}: InternalBuyTicketsAlternativeCoinInput): BuyTicketsResponse => {
   let res: BuyTicketsResponse = { ok: true };
 
   try {
     for (const { numbers, specialNumber } of ticketsInput) {
       transaction.moveCall({
-        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket`,
-        typeArguments: [coinType],
+        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket_alternative_price`,
+        typeArguments: [lotteryType, coinType],
         arguments: [
           transaction.object(LOTTERY_STORE),
           transaction.pure.id(lotteryId),
           coin,
+          transaction.pure.address(recipient),
           transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
           transaction.pure.u8(specialNumber),
           transaction.pure.string(origin ?? "DoubleUp"),
@@ -280,7 +285,7 @@ export const buyLotteryTickets = ({
   return res;
 };
 
-export const buyLotteryTicketsOnBehalf = ({
+export const buyLotteryTickets = ({
   recipient,
   coin,
   tickets: ticketsInput,
@@ -290,13 +295,13 @@ export const buyLotteryTicketsOnBehalf = ({
   transaction,
   origin,
   referrer,
-}: InternalBuyTicketsOnBehalfInput): BuyTicketsResponse => {
+}: InternalBuyTicketsInput): BuyTicketsResponse => {
   let res: BuyTicketsResponse = { ok: true };
 
   try {
     for (const { numbers, specialNumber} of ticketsInput) {
       transaction.moveCall({
-        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket_on_behalf`,
+        target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket`,
         typeArguments: [coinType],
         arguments: [
           transaction.object(LOTTERY_STORE),

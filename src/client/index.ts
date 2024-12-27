@@ -51,8 +51,8 @@ import {
   LotteryTicketsInput,
   RedeemTicketsInput,
   BuyTicketsInput,
-  BuyTicketsOnBehalfInput,
-  buyLotteryTicketsOnBehalf,
+  BuyTicketsAlternativeCoinInput,
+  buyLotteryTicketsAlternativePrice,
   LotteryInput,
 } from "../games/lottery";
 
@@ -369,8 +369,8 @@ export class DoubleUpClient {
       ...input,
       lotteryPackageId: this.lotteryPackageId,
     });
-  buyLotteryTicketsOnBehalf = (input: BuyTicketsOnBehalfInput) =>
-    buyLotteryTicketsOnBehalf({
+  buyLotteryTicketsAlternativePrice = (input: BuyTicketsAlternativeCoinInput) =>
+    buyLotteryTicketsAlternativePrice({
       ...input,
       lotteryPackageId: this.lotteryPackageId,
     });
