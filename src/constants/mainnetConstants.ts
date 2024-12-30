@@ -15,7 +15,7 @@ export const SUICUNE_COIN_TYPE =
   "0x8c47c0bde84b7056520a44f46c56383e714cc9b6a55e919d8736a34ec7ccb533::suicune::SUICUNE";
 export const VSUI_COIN_TYPE =
   "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT";
-export const USDC_COIN_TYPE = 
+export const USDC_COIN_TYPE =
   "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC";
 
 export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
@@ -166,7 +166,7 @@ export const DOGHOUSE = "";
 export const GACHAPON_CORE_PACKAGE_ID =
   "0x385f7a0aef8e472e657f2795a70ca9ae5752085c03c67b7807c6cc2b1cce448f";
 export const GACHAPON_PACKAGE_ID =
-  "0x456e80f58386ae6de3340491fd5ecfa9138982aae7e0970047e3b2bf1488bc85";
+  "0x7b89f0374b68eb083fe80326b24fff00f4725e59da36ef1b675f0aee20047660";
 export const GACHAPON_CONFIG = "";
 export const GACHAPON_MODULE_NAME = "gachapon";
 export const GACHAPON_RULE_MODULE_NAME = "gachapon_rule";
@@ -214,7 +214,7 @@ export const PERSONAL_KIOSK_PACKAGE =
 
 // lottery
 // ===============================================================================
-export const LOTTERY_CORE_PACKAGE_ID = 
+export const LOTTERY_CORE_PACKAGE_ID =
   "0xf90de56d52b43ddf4a00dfe9176994fb4d1e6ed6058774cde38cd8c4124c7307";
 export const LOTTERY_PACKAGE_ID =
   "0xf90de56d52b43ddf4a00dfe9176994fb4d1e6ed6058774cde38cd8c4124c7307";
