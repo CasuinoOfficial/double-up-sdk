@@ -1209,9 +1209,13 @@ export const removeMultipleEggs = async ({
         ],
       });
 
+      const coinTypeInsideUnlocked = objTypes[i].includes("Coin<")
+        ? objTypes[i].split("<")[1].split(">")[0]
+        : SUI_COIN_TYPE;
+
       const claimedEgg = transaction.moveCall({
-        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
-        typeArguments: [coinType, objTypes[i]],
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked_v2`,
+        typeArguments: [coinType, objTypes[i], coinTypeInsideUnlocked],
         arguments: [
           transaction.object(gachaponId),
           transaction.object(kioskId),
@@ -1292,9 +1296,13 @@ export const claimEgg = async ({
   const objType = objResponse.data.type;
 
   if (!is_locked) {
+    const coinTypeInsideUnlocked = objType.includes("Coin<")
+      ? objType.split("<")[1].split(">")[0]
+      : SUI_COIN_TYPE;
+
     const claimedEgg = transaction.moveCall({
-      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
-      typeArguments: [coinType, objType],
+      target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked_v2`,
+      typeArguments: [coinType, objType, coinTypeInsideUnlocked],
       arguments: [
         transaction.object(gachaponId),
         transaction.object(kioskId),
