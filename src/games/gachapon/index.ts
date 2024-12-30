@@ -1016,10 +1016,14 @@ export const removeEgg = async ({
     const objData = objResponse.data;
     const objType = objData?.type;
 
+    const coinType = objData?.type.includes("Coin<")
+      ? objData?.type.split("<")[1].split(">")[0]
+      : SUI_COIN_TYPE;
+
     if (!isLocked) {
       const claimedEgg = transaction.moveCall({
-        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked`,
-        typeArguments: [coinType, objType],
+        target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::redeem_unlocked_v2`,
+        typeArguments: [coinType, objType, coinType],
         arguments: [
           transaction.object(gachaponId),
           transaction.object(kioskId),
