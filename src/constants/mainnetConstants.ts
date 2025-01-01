@@ -215,13 +215,13 @@ export const PERSONAL_KIOSK_PACKAGE =
 // lottery
 // ===============================================================================
 export const LOTTERY_CORE_PACKAGE_ID =
-  "0xf90de56d52b43ddf4a00dfe9176994fb4d1e6ed6058774cde38cd8c4124c7307";
+  "0xff7fed37f3d61ca2cb7f2628f527e5c0a26294f1589c8565333aeb1a66b02c60";
 export const LOTTERY_PACKAGE_ID =
-  "0xf90de56d52b43ddf4a00dfe9176994fb4d1e6ed6058774cde38cd8c4124c7307";
+  "0xbf0e36f8ba310c61d99f61b256b22e54e6f523823be8922daa17dbed97416209";
 export const LOTTERY_MODULE_NAME = "lottery";
 export const LOTTERY_STRUCT_NAME = "Lottery";
 export const LOTTERY_ID =
-  "0x628241b86fa0dbc29919f7b796869e59950f51894f5532fc90fd36f65a7f1ca0";
+  "0x25590d89ded97b12e50a069e0aebd215677eae7631a37c530a5396ed6801c100";
 export const LOTTERY_STORE =
-  "0x69041a34aa2ea846e314b4ed94ce9a897d8f6713072ed06ea02ffe5e67b112aa";
+  "0xde89e9f915a8b88bf5807e50aa621103c0adfb978ae4892590d5c0f0bf73848d";
 // ===============================================================================
