@@ -3,13 +3,14 @@ import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ticket } from "../../games/lottery";
-import { LOTTERY_ID, USDC_COIN_TYPE } from "../../constants/mainnetConstants";
+import { LOTTERY_ID, SUI_COIN_TYPE, USDC_COIN_TYPE } from "../../constants/mainnetConstants";
 
 export const testLotteryBuy = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
+  const address = keypair.toSuiAddress();
   const amount = 100000;
   const lotteryId = LOTTERY_ID;
   const coinType = USDC_COIN_TYPE;
@@ -28,6 +29,7 @@ export const testLotteryBuy = async (
     ];
 
     const { ok, err } = dbClient.buyLotteryTickets({
+      recipient: address,
       coin,
       tickets,
       lotteryId,
@@ -64,21 +66,21 @@ export const testLotteryBuy = async (
   }
 };
 
-export const testLotteryBuyOnBehalf = async (
-  address: string,
+export const testLotteryBuyAlternativePrice = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
   keypair: Secp256k1Keypair
 ) => {
-  const amount = 100000;
+  const amount = 100000; // adjust based on prices config
 
   try {
+    const address = keypair.toSuiAddress();
     const txb = new Transaction();
     const lotteryId = LOTTERY_ID;
-    const coinType = USDC_COIN_TYPE;
-    const inputCoinUSDC = "0x3321979541ddd816a3ce0f49bdc1ae3ca4ddb8468b61e7d29ee8d9bddf54f867";
+    const lotteryType = USDC_COIN_TYPE;
+    const coinType = SUI_COIN_TYPE;
 
-    const [coin] = txb.splitCoins(inputCoinUSDC, [txb.pure.u64(amount)]);
+    const [coin] = txb.splitCoins(txb.gas, [txb.pure.u64(amount)]);
 
     const tickets = [
       {
@@ -87,11 +89,12 @@ export const testLotteryBuyOnBehalf = async (
       } as Ticket,
     ];
 
-    const { ok, err } = dbClient.buyLotteryTicketsOnBehalf({
+    const { ok, err } = dbClient.buyLotteryTicketsAlternativePrice({
       coin,
+      coinType,
       tickets,
       lotteryId,
-      coinType,
+      lotteryType,
       transaction: txb,
       origin: "TEST",
       recipient: address,
