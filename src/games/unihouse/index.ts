@@ -96,16 +96,13 @@ export const getUnihouseData = async (
   if (!unihouseList) return {};
   const unihouseIdList = unihouseList.map((house) => house.objectId);
 
-  const PromiseList: Promise<any>[] = unihouseIdList.map((id) => {
-    return suiClient.getObject({
-      id,
-      options: {
-        showContent: true,
-        showType: true,
-      },
-    });
+  const houseData: any[] = await suiClient.multiGetObjects({
+    ids: unihouseIdList,
+    options: {
+      showContent: true,
+      showType: true,
+    },
   });
-  const houseData = await Promise.all(PromiseList);
 
   const houseFields = houseData.map((house) => house.data?.content?.fields);
 
@@ -178,17 +175,13 @@ export const getRedeemRequests = async (
     (request) => request.objectId
   );
 
-  const PromiseList: Promise<any>[] = redeemRequestsIdList.map((id) => {
-    return suiClient.getObject({
-      id,
-      options: {
-        showContent: true,
-        showType: true,
-      },
-    });
+  const allRequestData: any[] = await suiClient.multiGetObjects({
+    ids: redeemRequestsIdList,
+    options: {
+      showContent: true,
+      showType: true,
+    },
   });
-
-  const allRequestData = await Promise.all(PromiseList);
 
   const allRequestFields = allRequestData.map(
     (request) => request.data?.content?.fields
