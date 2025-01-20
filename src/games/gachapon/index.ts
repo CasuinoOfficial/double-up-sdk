@@ -713,6 +713,7 @@ export const adminGetEggs = async (
         description: objectDisplay?.description,
         image_url: coins[objectType].iconUrl,
         name: objectDisplay?.name,
+        type: objectType,
         ...objectDisplay,
         ...objectContent,
         ...coins[objectType],
@@ -729,6 +730,7 @@ export const adminGetEggs = async (
         description: objectDisplay?.description,
         image_url: objectDisplay?.image_url ?? objectContent?.image_url,
         name: objectDisplay?.name,
+        type: objectType,
         ...objectDisplay,
         ...objectContent,
       };
