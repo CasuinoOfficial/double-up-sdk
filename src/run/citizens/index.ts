@@ -4,6 +4,7 @@ import { shortenAddress } from "../../utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testGetCitizens = async (
   dbClient: DoubleUpClient,
@@ -57,7 +58,7 @@ export const testGetCitizenInventories = async (
 };
 
 export const testLockCitizen = async (
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair,
   client: SuiClient,
   kioskClient: KioskClient,
   citizenId: string
