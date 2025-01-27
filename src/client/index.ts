@@ -222,6 +222,14 @@ import {
   RemoveMultipleEggs,
   DrawFreeSpinMultiple,
   drawFreeSpinMultiple,
+  RemoveSecondaryCurrency,
+  removeSecondaryCurrency,
+  WithdrawSecondaryCurrency,
+  withdrawSecondaryCurrency,
+  addSecondaryCurrency,
+  AddSecondaryCurrency,
+  DrawEggWithSecondaryCurrency,
+  drawEggWithSecondaryCurrency,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -691,11 +699,29 @@ export class DoubleUpClient {
       gachaponPackageId: this.gachaponPackageId,
     });
 
+  addSecondaryCurrency = (input: AddSecondaryCurrency) =>
+    addSecondaryCurrency({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
   removeEgg = (input: RemoveEgg) =>
     removeEgg({
       ...input,
       suiClient: this.suiClient,
       kioskClient: this.kioskClient,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  removeSecondaryCurrency = (input: RemoveSecondaryCurrency) =>
+    removeSecondaryCurrency({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
+
+  withdrawSecondaryCurrency = (input: WithdrawSecondaryCurrency) =>
+    withdrawSecondaryCurrency({
+      ...input,
       gachaponPackageId: this.gachaponPackageId,
     });
 
@@ -738,6 +764,12 @@ export class DoubleUpClient {
 
   drawEgg = (input: DrawEgg) =>
     drawEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
+
+  drawEggWithSecondaryCurrency = (input: DrawEggWithSecondaryCurrency) =>
+    drawEggWithSecondaryCurrency({
+      ...input,
+      gachaponPackageId: this.gachaponPackageId,
+    });
 
   destroyEgg = (input: DestroyEgg) =>
     destroyEgg({ ...input, gachaponPackageId: this.gachaponPackageId });
