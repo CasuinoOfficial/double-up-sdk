@@ -191,6 +191,21 @@ interface InternalDrawEgg extends DrawEgg {
   gachaponPackageId: string;
 }
 
+export interface DrawEggWithSecondaryCurrency {
+  coinType: string;
+  gachaponId: string;
+  count: number;
+  recipient: string;
+  secondaryCoinType: string;
+  secondaryCoin: TransactionObjectArgument;
+  transaction: Transaction;
+}
+
+interface InternalDrawEggWithSecondaryCurrency
+  extends DrawEggWithSecondaryCurrency {
+  gachaponPackageId: string;
+}
+
 export interface ClaimEgg {
   address: string;
   coinType: string;
@@ -235,6 +250,44 @@ export interface NftType {
 }
 
 interface InternalNftType extends NftType {
+  gachaponPackageId: string;
+}
+
+export interface AddSecondaryCurrency {
+  coinType: string;
+  gachaponId: string;
+  keeperCapId: string;
+  secondaryCoinType: string;
+  transaction: Transaction;
+}
+
+interface InternalAddSecondaryCurrency extends AddSecondaryCurrency {
+  gachaponPackageId: string;
+}
+
+export interface RemoveSecondaryCurrency {
+  coinType: string;
+  gachaponId: string;
+  keeperCapId: string;
+  secondaryCoinType: string;
+  transaction: Transaction;
+  recipient: string;
+}
+
+interface InternalRemoveSecondaryCurrency extends RemoveSecondaryCurrency {
+  gachaponPackageId: string;
+}
+
+export interface WithdrawSecondaryCurrency {
+  coinType: string;
+  gachaponId: string;
+  keeperCapId: string;
+  secondaryCoinType: string;
+  transaction: Transaction;
+  recipient: string;
+}
+
+interface InternalWithdrawSecondaryCurrency extends WithdrawSecondaryCurrency {
   gachaponPackageId: string;
 }
 
@@ -1538,6 +1591,31 @@ export const drawEgg = ({
   });
 };
 
+export const drawEggWithSecondaryCurrency = ({
+  coinType,
+  secondaryCoinType,
+  secondaryCoin,
+  gachaponId,
+  count,
+  recipient,
+  transaction,
+  gachaponPackageId,
+}: InternalDrawEggWithSecondaryCurrency) => {
+  transaction.setGasBudget(100_000_000);
+
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::draw_via_secondary_currency`,
+    typeArguments: [coinType, secondaryCoinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(RAND_OBJ_ID),
+      transaction.pure.u64(count),
+      secondaryCoin,
+      transaction.pure.address(recipient),
+    ],
+  });
+};
+
 export const destroyEgg = ({
   eggId,
   transaction,
@@ -1588,6 +1666,72 @@ export const addNftType = async ({
       transaction.object(keeperCapId),
     ],
   });
+};
+
+export const addSecondaryCurrency = async ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  secondaryCoinType,
+  transaction,
+  gachaponPackageId,
+}: InternalAddSecondaryCurrency) => {
+  transaction.setGasBudget(100_000_000);
+
+  transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::add_secondary_currency_fixed`,
+    typeArguments: [coinType, secondaryCoinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+    ],
+  });
+};
+
+export const removeSecondaryCurrency = async ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  secondaryCoinType,
+  recipient,
+  transaction,
+  gachaponPackageId,
+}: InternalRemoveSecondaryCurrency) => {
+  transaction.setGasBudget(100_000_000);
+
+  const coin = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::remove_secondary_currency_fixed`,
+    typeArguments: [coinType, secondaryCoinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+    ],
+  });
+
+  transaction.transferObjects([coin], recipient);
+};
+
+export const withdrawSecondaryCurrency = async ({
+  coinType,
+  gachaponId,
+  keeperCapId,
+  secondaryCoinType,
+  recipient,
+  transaction,
+  gachaponPackageId,
+}: InternalWithdrawSecondaryCurrency) => {
+  transaction.setGasBudget(100_000_000);
+
+  const coin = transaction.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::withdraw_secondary_currency_fixed`,
+    typeArguments: [coinType, secondaryCoinType],
+    arguments: [
+      transaction.object(gachaponId),
+      transaction.object(keeperCapId),
+    ],
+  });
+
+  transaction.transferObjects([coin], recipient);
 };
 
 export const removeNftType = async ({
