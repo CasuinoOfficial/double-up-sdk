@@ -198,6 +198,8 @@ const blackListType = [
   "0x5ecab051d930ba58710e25499cf6195435c1516ba259415cbbf59f14a31b1f89::deep::DEEP",
 ];
 
+const nftBlackList = ["frosty::Hero"];
+
 export const getCitizenInventories = async (
   suiClient: SuiClient,
   citizenId: string,
@@ -229,6 +231,7 @@ export const getCitizenInventories = async (
       const content = item.data.content;
       // put in coins
       if (
+        !content.type.includes("0x2::coin::Coin<") ||
         !blackListType.includes(
           content.type.split("0x2::coin::Coin<")[1].split(">")[0]
         )
@@ -263,12 +266,22 @@ export const getCitizenInventories = async (
             display: item.data.display.data?.image_url,
           });
         } else {
+          if (content.type.includes("hero")) {
+            console.log(`hero`, item.data);
+          }
+
           // then it is a random NFT -- not showing display for these
-          nfts.push({
-            id: item.data.objectId,
-            type: content.type,
-            display: item.data.display.data?.image_url,
-          });
+          if (
+            !nftBlackList.includes(
+              `${content.type.split("::")[1]}::${content.type.split("::")[2]}`
+            )
+          ) {
+            nfts.push({
+              id: item.data.objectId,
+              type: content.type,
+              display: item.data.display.data?.image_url,
+            });
+          }
         }
       }
     });
@@ -293,6 +306,8 @@ export const getCitizenInventories = async (
   if (coins.length > 0) {
     console.log(`${citizenId} res`, `${totalItems} coin: ${coins.length}`);
   }
+
+  console.log("nfts", nfts);
 
   return {
     id: citizenId,

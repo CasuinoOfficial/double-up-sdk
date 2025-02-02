@@ -451,7 +451,7 @@ const dbClient = new DoubleUpClient({
       case "citizens:getcitizeninventories":
         testGetCitizenInventories(
           dbClient,
-          "0xec7c8c6b20ae7670975482992c2648ba3af383179b710d28962e9298e9c87557"
+          "0x1287280ae3ec05a4ba76a450a51c002b336ffe84926f3213e85468add27d6e5e"
         );
         break;
 
