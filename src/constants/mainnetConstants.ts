@@ -103,7 +103,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 export const UFORANGE_CORE_PACKAGE_ID =
   "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
 export const UFORANGE_PACKAGE_ID =
-  "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
+  "0x2b2368bb3f36a996e85a411cca1d404d463ca08c06a41a495fdf12727c6dc116";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
@@ -112,7 +112,7 @@ export const UFORANGE_STRUCT_NAME = "UFORange";
 export const RPS_CORE_PACKAGE_ID =
   "0x15aacb18b7139dd8a11bd53eb87b5c6bb7163c2d20b8df5097a231ea96daee1a";
 export const RPS_PACKAGE_ID =
-  "0x15aacb18b7139dd8a11bd53eb87b5c6bb7163c2d20b8df5097a231ea96daee1a";
+  "0xbee96be842bad6f8ae0617ae98c8185b5602b63b7ad302b3c2ce7ea82366d71c";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 
