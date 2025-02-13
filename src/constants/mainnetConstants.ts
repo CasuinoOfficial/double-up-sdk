@@ -72,7 +72,7 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 export const COIN_CORE_PACKAGE_ID =
   "0x2e7e7e71cd8cb283c4e4dbb652b9155b85dd5afce6bdd7881ae228eb26fc4082";
 export const COIN_PACKAGE_ID =
-  "0xc7a14e8e58abc21100a5c218d4e4f89cf8f1ac1af7066b451dfb05f976002f15";
+  "0x8214ce7fd4ef1f262c10da6f947d9ade00f01220e3ac911cac5df7d85fd400f9";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 
@@ -81,7 +81,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 export const LIMBO_CORE_PACKAGE_ID =
   "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
 export const LIMBO_PACKAGE_ID =
-  "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
+  "0xe1ebb5bd5e1371cac48d3a2f3b6f5526e47c3c8e46b77e061a90518707f2463a";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 export const LIMBO_MIN_MULTIPLIER = "101";
@@ -121,7 +121,7 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 export const PLINKO_CORE_PACKAGE_ID =
   "0x512a8cd71c5bd163ea34001778ff026049e2325856246fb787ceaada8b77b7d2";
 export const PLINKO_PACKAGE_ID =
-  "0x9f5b8e6f9985f9d1fe06458d1cf17dd49ec3ce2581797d5a820e522651e3475b";
+  "0x1fe09dde001fa92d5a60eb892615c7975556dbca2f4c29c137ff8fc003bce08f";
 export const PLINKO_CONFIG =
   "0x4f15b4d7165833f1bedbbf114393b9d723a81ce0c27552776e00af97760eab6f";
 export const PLINKO_MODULE_NAME = "multi_plinko";
