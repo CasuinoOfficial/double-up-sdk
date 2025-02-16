@@ -143,7 +143,7 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 export const CRAPS_CORE_PACKAGE_ID =
   "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0x9960751493250c4a2e942ff3ae394e784e82d84bce291df3e010139d91ff4371";
+  "0x711363cd374c5b02902e70bf6c9e6147d56469a59dd31b7c662cdc8e2ead2dba";
 export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
