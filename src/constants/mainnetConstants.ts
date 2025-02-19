@@ -93,6 +93,14 @@ export const ROULETTE_CORE_PACKAGE_ID =
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_PACKAGE_ID =
   "0x2db22f1c6b40ff4ba332899b4e79c2dd7caa1768887fb066dfed313c9a31519d";
+// All package ids to loop through and find the users table
+// Other table games have table creation all through the CORE package id
+// this is roulette specific lazy solution for core package bug fix
+// Please add any new package to this in the corresponding order
+export const ROULETTE_ALL_PACKAGES = [
+  "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053",
+  "0x2db22f1c6b40ff4ba332899b4e79c2dd7caa1768887fb066dfed313c9a31519d",
+];
 export const ROULETTE_CONFIG =
   "0x10b6c15345f843de1bfc2c0829b7d289214fd35407297f7a8d442363b48f30c1";
 export const ROULETTE_MODULE_NAME = "roulette";

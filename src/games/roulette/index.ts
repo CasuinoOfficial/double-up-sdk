@@ -11,6 +11,7 @@ import {
   UNI_HOUSE_OBJ_ID,
   ROULETTE_CONFIG,
   RAND_OBJ_ID,
+  ROULETTE_ALL_PACKAGES,
 } from "../../constants/mainnetConstants";
 
 // Bet Types
@@ -332,7 +333,7 @@ export interface RouletteTableInput {
 }
 
 interface InternalRouletteTableInput extends RouletteTableInput {
-  rouletteCorePackageId: string;
+  roulettePackageId: string;
 }
 
 export interface GetRouletteTableInput {
@@ -341,7 +342,6 @@ export interface GetRouletteTableInput {
 }
 
 interface InternalGetRouletteTableInput extends GetRouletteTableInput {
-  rouletteCorePackageId: string;
   suiClient: SuiClient;
 }
 
@@ -393,7 +393,7 @@ export const addRouletteBet = ({
     } else {
       if (!!betNumber) {
         throw new Error(
-          "Invalid combination, betType does not require betNumber",
+          "Invalid combination, betType does not require betNumber"
         );
       }
     }
@@ -410,7 +410,7 @@ export const addRouletteBet = ({
         transaction.pure(
           bcs
             .option(bcs.U64)
-            .serialize(typeof betNumber === "number" ? betNumber : null),
+            .serialize(typeof betNumber === "number" ? betNumber : null)
         ),
         transaction.pure.string(origin ?? "DoubleUp"),
       ],
@@ -428,12 +428,12 @@ export const addRouletteBet = ({
 
 export const createRouletteTable = ({
   coinType,
-  rouletteCorePackageId,
+  roulettePackageId,
   transaction,
 }: InternalRouletteTableInput) => {
   transaction.setGasBudget(100_000_000);
   transaction.moveCall({
-    target: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
+    target: `${roulettePackageId}::${ROULETTE_MODULE_NAME}::create_roulette_table`,
     typeArguments: [coinType],
     arguments: [transaction.object(ROULETTE_CONFIG)],
   });
@@ -442,25 +442,28 @@ export const createRouletteTable = ({
 export const getRouletteTable = async ({
   address,
   coinType,
-  rouletteCorePackageId,
   suiClient,
 }: InternalGetRouletteTableInput): Promise<RouletteContractData | null> => {
-  const { data } = await suiClient.getDynamicFieldObject({
-    parentId: ROULETTE_CONFIG,
-    name: {
-      type: `${rouletteCorePackageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
-      value: {
-        creator: address,
+  for (const packageId of ROULETTE_ALL_PACKAGES) {
+    const { data } = await suiClient.getDynamicFieldObject({
+      parentId: ROULETTE_CONFIG,
+      name: {
+        type: `${packageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
+        value: {
+          creator: address,
+        },
       },
-    },
-  });
+    });
 
-  if (data?.content?.dataType !== "moveObject") {
-    return null;
+    if (data?.content?.dataType !== "moveObject") {
+      return null;
+    }
+
+    const fields = data.content.fields as any;
+    return fields;
   }
 
-  const fields = data.content.fields as any;
-  return fields;
+  return null;
 };
 
 export const removeRouletteBet = ({

@@ -487,12 +487,11 @@ export class DoubleUpClient {
   createRouletteTable = (input: RouletteTableInput) =>
     createRouletteTable({
       ...input,
-      rouletteCorePackageId: this.rouletteCorePackageId,
+      roulettePackageId: this.roulettePackageId,
     });
   getRouletteTable = (input: GetRouletteTableInput) =>
     getRouletteTable({
       ...input,
-      rouletteCorePackageId: this.rouletteCorePackageId,
       suiClient: this.suiClient,
     });
   removeRouletteBet = (input: RouletteRemoveBetInput) =>
