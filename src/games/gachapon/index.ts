@@ -32,7 +32,6 @@ import {
   checkIsInKiosk,
   sliceArrayIntoChunks,
 } from "../../utils";
-import { Decimal } from "decimal.js";
 import { bcs } from "@mysten/sui/bcs";
 import { fromHEX, toHEX } from "@mysten/sui/utils";
 export interface CreateGachaponInput {
