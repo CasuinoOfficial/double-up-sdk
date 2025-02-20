@@ -81,7 +81,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 export const LIMBO_CORE_PACKAGE_ID =
   "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
 export const LIMBO_PACKAGE_ID =
-  "0xe1ebb5bd5e1371cac48d3a2f3b6f5526e47c3c8e46b77e061a90518707f2463a";
+  "0x82dc610eef3cb98a3ebe10967da1a35c62ee6ea3152af0b78d284560cc075508";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 export const LIMBO_MIN_MULTIPLIER = "101";
@@ -111,7 +111,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 export const UFORANGE_CORE_PACKAGE_ID =
   "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
 export const UFORANGE_PACKAGE_ID =
-  "0x2b2368bb3f36a996e85a411cca1d404d463ca08c06a41a495fdf12727c6dc116";
+  "0x9a85e8632c24b331ca34295dab91e81c3d6ba8393b3810c13109f2d382efd889";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
