@@ -8,6 +8,7 @@ import {
   UFORANGE_MODULE_NAME,
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
+  UFORANGE_SETTINGS,
 } from "../../constants/mainnetConstants";
 import {
   getAssetIndex,
@@ -76,6 +77,7 @@ export const createRange = ({
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(UFORANGE_SETTINGS),
       transaction.object(RAND_OBJ_ID),
       coin,
       transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),

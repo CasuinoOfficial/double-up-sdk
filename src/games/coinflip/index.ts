@@ -8,6 +8,7 @@ import { bcs } from "@mysten/sui/bcs";
 
 import {
   COIN_MODULE_NAME,
+  COIN_SETTINGS,
   RAND_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
@@ -107,6 +108,7 @@ export const createCoinflip = ({
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(COIN_SETTINGS),
       transaction.object(RAND_OBJ_ID),
       transaction.pure(bcs.vector(bcs.U64).serialize(betTypes)),
       coin,
