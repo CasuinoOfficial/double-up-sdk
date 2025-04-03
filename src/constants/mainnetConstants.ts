@@ -23,7 +23,7 @@ export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 // UNIHOUSE
 // ===============================================================================
 export const UNIHOUSE_PACKAGE =
-  "0x2f2226a22ebeb7a0e63ea39551829b238589d981d1c6dd454f01fcc513035593";
+  "0x0412e62cdf0bfa16ce15e583dc2495b1d7645ff03965033e9409971ef40eee47";
 // "0xcbea36448bc5739f17f15b7cad66d797273e86b8b0823f3f221a5c4032fdedfc";
 export const UNI_HOUSE_OBJ_ID =
   "0x75c63644536b1a7155d20d62d9f88bf794dc847ea296288ddaf306aa320168ab";
@@ -72,7 +72,7 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 export const COIN_CORE_PACKAGE_ID =
   "0x2e7e7e71cd8cb283c4e4dbb652b9155b85dd5afce6bdd7881ae228eb26fc4082";
 export const COIN_PACKAGE_ID =
-  "0x8214ce7fd4ef1f262c10da6f947d9ade00f01220e3ac911cac5df7d85fd400f9";
+  "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 
@@ -81,7 +81,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 export const LIMBO_CORE_PACKAGE_ID =
   "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
 export const LIMBO_PACKAGE_ID =
-  "0x82dc610eef3cb98a3ebe10967da1a35c62ee6ea3152af0b78d284560cc075508";
+  "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 export const LIMBO_MIN_MULTIPLIER = "101";
@@ -111,7 +111,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 export const UFORANGE_CORE_PACKAGE_ID =
   "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
 export const UFORANGE_PACKAGE_ID =
-  "0x9a85e8632c24b331ca34295dab91e81c3d6ba8393b3810c13109f2d382efd889";
+  "0x3d37357bac2e9644920b5c51d403938c32ea76e9ec848b1a526b208e76da1707";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
@@ -140,7 +140,7 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 export const BLACKJACK_CORE_PACKAGE_ID =
   "0x5e2f4359b5c0311954f502c4e1e12a845e85152b67e033ca6f8590b5781606ff";
 export const BLACKJACK_PACKAGE_ID =
-  "0x9a2bf41fdc9f72e862af9d0809b5466aefe581ea45848425456647a9658a9589";
+  "0xaa605a0d4b31554eeb407be258facc36d79ef0a40a2d24e0330c7fe3274557ed";
 export const BLACKJACK_CONFIG =
   "0xc5bc486dfb1f35147440ea457e42154c24ea123055c372b80980051384d241fa";
 export const BLACKJACK_MODULE_NAME = "blackjack";
@@ -151,11 +151,19 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 export const CRAPS_CORE_PACKAGE_ID =
   "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0x711363cd374c5b02902e70bf6c9e6147d56469a59dd31b7c662cdc8e2ead2dba";
+  "0x9d82f26e07193fa03e8568022a185932599e14c40bb04e678960d821df05de60";
 export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
 export const CRAPS_STRUCT_NAME = "Craps";
+
+// Sports
+export const SPORTS_CORE_PACKAGE_ID =
+  "0xb3fedcdf9251f215788c8e6e15806fa4d07449b4bf4614bba9930204b43198da";
+export const SPORTS_PACKAGE_ID =
+  "0xb3fedcdf9251f215788c8e6e15806fa4d07449b4bf4614bba9930204b43198da";
+export const SPORTS_MODULE_NAME = "sports";
+export const SPORTS_STRUCT_NAME = "Sports";
 
 // RAFFLES
 // ===============================================================================
