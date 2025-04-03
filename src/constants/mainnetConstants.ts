@@ -22,6 +22,8 @@ export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 
 // UNIHOUSE
 // ===============================================================================
+export const UNIHOUSE_CORE_PACKAGE_ID =
+  "0x2f2226a22ebeb7a0e63ea39551829b238589d981d1c6dd454f01fcc513035593";
 export const UNIHOUSE_PACKAGE =
   "0x0412e62cdf0bfa16ce15e583dc2495b1d7645ff03965033e9409971ef40eee47";
 // "0xcbea36448bc5739f17f15b7cad66d797273e86b8b0823f3f221a5c4032fdedfc";
