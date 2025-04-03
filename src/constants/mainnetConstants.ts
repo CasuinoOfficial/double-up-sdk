@@ -172,7 +172,7 @@ export const SPORTS_CORE_PACKAGE_ID =
 export const SPORTS_PACKAGE_ID =
   "0xb3fedcdf9251f215788c8e6e15806fa4d07449b4bf4614bba9930204b43198da";
 export const SPORTS_MODULE_NAME = "sports";
-export const SPORTS_STRUCT_NAME = "Sports";
+export const SPORTS_STRUCT_NAME = "Sportsbook";
 
 // RAFFLES
 // ===============================================================================
