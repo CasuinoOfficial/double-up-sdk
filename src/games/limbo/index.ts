@@ -10,6 +10,7 @@ import {
   LIMBO_MAX_MULTIPLIER,
   LIMBO_MIN_MULTIPLIER,
   LIMBO_MODULE_NAME,
+  LIMBO_SETTINGS,
   RAND_OBJ_ID,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
@@ -104,6 +105,7 @@ export const createLimbo = ({
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
+      transaction.object(LIMBO_SETTINGS),
       transaction.object(RAND_OBJ_ID),
       coin,
       transaction.pure(bcs.vector(bcs.U64).serialize(multipliers)),

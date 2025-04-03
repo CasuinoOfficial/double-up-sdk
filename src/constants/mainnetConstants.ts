@@ -75,6 +75,8 @@ export const COIN_CORE_PACKAGE_ID =
   "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
 export const COIN_PACKAGE_ID =
   "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
+export const COIN_SETTINGS =
+  "0x50160e37ded43313e88106192966a86c94846f07d9417bf3770ae801d22eb77c";
 export const COIN_MODULE_NAME = "coinflip";
 export const COIN_STRUCT_NAME = "Coinflip";
 
@@ -84,6 +86,8 @@ export const LIMBO_CORE_PACKAGE_ID =
   "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
 export const LIMBO_PACKAGE_ID =
   "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
+export const LIMBO_SETTINGS =
+  "0xf70e9dd52342897da20195e31f503077c61de3b2ddfde0d4235975bde3903f61";
 export const LIMBO_MODULE_NAME = "limbo";
 export const LIMBO_STRUCT_NAME = "Limbo";
 export const LIMBO_MIN_MULTIPLIER = "101";
@@ -115,6 +119,8 @@ export const UFORANGE_CORE_PACKAGE_ID =
   "0x3d37357bac2e9644920b5c51d403938c32ea76e9ec848b1a526b208e76da1707";
 export const UFORANGE_PACKAGE_ID =
   "0x3d37357bac2e9644920b5c51d403938c32ea76e9ec848b1a526b208e76da1707";
+export const UFORANGE_SETTINGS =
+  "0x46c62d4486d84e30f28db15346f7f05a0a3eafcf35e5edc4ce2e3f697ad450f9";
 export const UFORANGE_MODULE_NAME = "ufo_range";
 export const UFORANGE_STRUCT_NAME = "UFORange";
 
@@ -134,7 +140,7 @@ export const PLINKO_CORE_PACKAGE_ID =
 export const PLINKO_PACKAGE_ID =
   "0xcc2a73921f5c3f0fc11e910afaf836def3bab7cb1ecdbc4e2757034f0841e5d5";
 export const PLINKO_CONFIG =
-  "0x4f15b4d7165833f1bedbbf114393b9d723a81ce0c27552776e00af97760eab6f";
+  "0xbd487307d4b198fa409487418ae44b69148dff5361ab24d6e81378f50dead202";
 export const PLINKO_MODULE_NAME = "multi_plinko";
 export const PLINKO_STRUCT_NAME = "Plinko";
 
