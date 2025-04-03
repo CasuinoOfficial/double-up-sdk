@@ -72,7 +72,7 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 // COINFLIP
 // ===============================================================================
 export const COIN_CORE_PACKAGE_ID =
-  "0x2e7e7e71cd8cb283c4e4dbb652b9155b85dd5afce6bdd7881ae228eb26fc4082";
+  "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
 export const COIN_PACKAGE_ID =
   "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
 export const COIN_MODULE_NAME = "coinflip";
@@ -81,7 +81,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 // LIMBO
 // ===============================================================================
 export const LIMBO_CORE_PACKAGE_ID =
-  "0x3e7c4f8ec751f21782c193b6cb7cc7b8172d403f4a787b6ac3ef671d9155849e";
+  "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
 export const LIMBO_PACKAGE_ID =
   "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
 export const LIMBO_MODULE_NAME = "limbo";
@@ -94,7 +94,7 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 export const ROULETTE_CORE_PACKAGE_ID =
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_PACKAGE_ID =
-  "0x2db22f1c6b40ff4ba332899b4e79c2dd7caa1768887fb066dfed313c9a31519d";
+  "0x53158255db20c05d2bd67b96fed18a45a718e355455e9055d412e1d0fd540265";
 // All package ids to loop through and find the users table
 // Other table games have table creation all through the CORE package id
 // this is roulette specific lazy solution for core package bug fix
@@ -102,6 +102,7 @@ export const ROULETTE_PACKAGE_ID =
 export const ROULETTE_ALL_PACKAGES = [
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053",
   "0x2db22f1c6b40ff4ba332899b4e79c2dd7caa1768887fb066dfed313c9a31519d",
+  "0x53158255db20c05d2bd67b96fed18a45a718e355455e9055d412e1d0fd540265", //v6
 ];
 export const ROULETTE_CONFIG =
   "0x10b6c15345f843de1bfc2c0829b7d289214fd35407297f7a8d442363b48f30c1";
@@ -111,7 +112,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 // UFO RANGE
 // ===============================================================================
 export const UFORANGE_CORE_PACKAGE_ID =
-  "0x4e8fe4c1a63ca6e44255e64e84e90a9d58d55f12fcfabb938ba54715b6884be7";
+  "0x3d37357bac2e9644920b5c51d403938c32ea76e9ec848b1a526b208e76da1707";
 export const UFORANGE_PACKAGE_ID =
   "0x3d37357bac2e9644920b5c51d403938c32ea76e9ec848b1a526b208e76da1707";
 export const UFORANGE_MODULE_NAME = "ufo_range";
@@ -120,18 +121,18 @@ export const UFORANGE_STRUCT_NAME = "UFORange";
 // ROCK PAPER SCISSORS
 // ===============================================================================
 export const RPS_CORE_PACKAGE_ID =
-  "0x15aacb18b7139dd8a11bd53eb87b5c6bb7163c2d20b8df5097a231ea96daee1a";
+  "0xcaf0accdaf364de8cbc94b38b94f4d6188a9d6c682713ef98d4fa795a2614276";
 export const RPS_PACKAGE_ID =
-  "0xbee96be842bad6f8ae0617ae98c8185b5602b63b7ad302b3c2ce7ea82366d71c";
+  "0xcaf0accdaf364de8cbc94b38b94f4d6188a9d6c682713ef98d4fa795a2614276";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 
 // PLINKO
 // ===============================================================================
 export const PLINKO_CORE_PACKAGE_ID =
-  "0x512a8cd71c5bd163ea34001778ff026049e2325856246fb787ceaada8b77b7d2";
+  "0xcc2a73921f5c3f0fc11e910afaf836def3bab7cb1ecdbc4e2757034f0841e5d5";
 export const PLINKO_PACKAGE_ID =
-  "0x1fe09dde001fa92d5a60eb892615c7975556dbca2f4c29c137ff8fc003bce08f";
+  "0xcc2a73921f5c3f0fc11e910afaf836def3bab7cb1ecdbc4e2757034f0841e5d5";
 export const PLINKO_CONFIG =
   "0x4f15b4d7165833f1bedbbf114393b9d723a81ce0c27552776e00af97760eab6f";
 export const PLINKO_MODULE_NAME = "multi_plinko";
