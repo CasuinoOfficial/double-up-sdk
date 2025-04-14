@@ -242,11 +242,11 @@ export const PERSONAL_KIOSK_PACKAGE =
 export const LOTTERY_CORE_PACKAGE_ID =
   "0xff7fed37f3d61ca2cb7f2628f527e5c0a26294f1589c8565333aeb1a66b02c60";
 export const LOTTERY_PACKAGE_ID =
-  "0xbf0e36f8ba310c61d99f61b256b22e54e6f523823be8922daa17dbed97416209";
+  "0x1cead729972bc046f1517607136372997459bd0fcdb99c2be40752916117dd57";
 export const LOTTERY_MODULE_NAME = "lottery";
 export const LOTTERY_STRUCT_NAME = "Lottery";
 export const LOTTERY_ID =
-  "0x25590d89ded97b12e50a069e0aebd215677eae7631a37c530a5396ed6801c100";
+  "0xa174c58c216666320bf9c605e8b333518a28362f607a204d4194f03308ebf2e0";
 export const LOTTERY_STORE =
   "0xde89e9f915a8b88bf5807e50aa621103c0adfb978ae4892590d5c0f0bf73848d";
 // ===============================================================================
