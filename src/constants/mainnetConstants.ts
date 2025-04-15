@@ -242,7 +242,7 @@ export const PERSONAL_KIOSK_PACKAGE =
 export const LOTTERY_CORE_PACKAGE_ID =
   "0xff7fed37f3d61ca2cb7f2628f527e5c0a26294f1589c8565333aeb1a66b02c60";
 export const LOTTERY_PACKAGE_ID =
-  "0xcd689ac0fcee20963e50556e1366499f8baf83f2d50133f4c58f158e36dbbbf7";
+  "0xadf1c05dc6bf15ffda71a8e042f153e46c15446559ed8985e00178b57e8dee80";
 export const LOTTERY_MODULE_NAME = "lottery";
 export const LOTTERY_STRUCT_NAME = "Lottery";
 export const LOTTERY_ID =
