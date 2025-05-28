@@ -25,7 +25,7 @@ export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 export const UNIHOUSE_CORE_PACKAGE_ID =
   "0x2f2226a22ebeb7a0e63ea39551829b238589d981d1c6dd454f01fcc513035593";
 export const UNIHOUSE_PACKAGE =
-  "0x0412e62cdf0bfa16ce15e583dc2495b1d7645ff03965033e9409971ef40eee47";
+  "0xebef2239f36eb881d1ebef2235c55b8a4ae97705da3f78afa9fa8da64fb24b75";
 // "0xcbea36448bc5739f17f15b7cad66d797273e86b8b0823f3f221a5c4032fdedfc";
 export const UNI_HOUSE_OBJ_ID =
   "0x75c63644536b1a7155d20d62d9f88bf794dc847ea296288ddaf306aa320168ab";
@@ -74,7 +74,7 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 export const COIN_CORE_PACKAGE_ID =
   "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
 export const COIN_PACKAGE_ID =
-  "0x8604e4fa87bf36cd5b430608fefb7b54573e9fed29f8c05bd09c6d0486c2f8f9";
+  "0x6b27c830b32a14fd0a54d54ae5c3a5fa018673366636d836c86f5e48deffb020";
 export const COIN_SETTINGS =
   "0x50160e37ded43313e88106192966a86c94846f07d9417bf3770ae801d22eb77c";
 export const COIN_MODULE_NAME = "coinflip";
@@ -85,7 +85,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 export const LIMBO_CORE_PACKAGE_ID =
   "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
 export const LIMBO_PACKAGE_ID =
-  "0xfb8c5f93706625fd296f9e7b83fb09713fb3e0444fc014d10cf8e654015a5ce6";
+  "0x8075385706ea87f1e7b3f802e94d1308c76662d4ee7e7cec6addf38602219b56";
 export const LIMBO_SETTINGS =
   "0xf70e9dd52342897da20195e31f503077c61de3b2ddfde0d4235975bde3903f61";
 export const LIMBO_MODULE_NAME = "limbo";
@@ -130,7 +130,7 @@ export const UFORANGE_STRUCT_NAME = "UFORange";
 export const RPS_CORE_PACKAGE_ID =
   "0xcaf0accdaf364de8cbc94b38b94f4d6188a9d6c682713ef98d4fa795a2614276";
 export const RPS_PACKAGE_ID =
-  "0x88881ab79d63ab08893b072d553f5288844fee790be09ac254a2c7c2cdb1dd6c";
+  "0x3ff020438142eedab72ad5242063cda011d80aa3a2944be86634f370cf325048";
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 
@@ -161,7 +161,7 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 export const CRAPS_CORE_PACKAGE_ID =
   "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0xb3d8d0071fff2a629454f32cf05710239c4e3a24a086031d5abc2e89aa4b0b94";
+  "0x2f698d9cfa72b24afe997e6a52ab63b6d147eb2d66f3befc7ff13df483ac496d";
 export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
