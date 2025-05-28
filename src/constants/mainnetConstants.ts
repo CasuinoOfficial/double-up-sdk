@@ -98,7 +98,7 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 export const ROULETTE_CORE_PACKAGE_ID =
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_PACKAGE_ID =
-  "0x1da702049987013a0aad8cd4ed98950805156c359071f254bba81ecf37bfecfd";
+  "0x650fd6110a237d7d13a82a979ab40e3c604872373ef03976a7a1a0a91b2f47d3";
 // All package ids to loop through and find the users table
 // Other table games have table creation all through the CORE package id
 // this is roulette specific lazy solution for core package bug fix
@@ -107,7 +107,7 @@ export const ROULETTE_ALL_PACKAGES = [
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053",
   "0x2db22f1c6b40ff4ba332899b4e79c2dd7caa1768887fb066dfed313c9a31519d",
   "0x53158255db20c05d2bd67b96fed18a45a718e355455e9055d412e1d0fd540265", //v6
-  "0x1da702049987013a0aad8cd4ed98950805156c359071f254bba81ecf37bfecfd",
+  "0x650fd6110a237d7d13a82a979ab40e3c604872373ef03976a7a1a0a91b2f47d3",
 ];
 export const ROULETTE_CONFIG =
   "0x10b6c15345f843de1bfc2c0829b7d289214fd35407297f7a8d442363b48f30c1";
