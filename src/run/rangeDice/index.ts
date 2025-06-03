@@ -2,6 +2,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 import {
   RAND_OBJ_ID,
@@ -16,7 +17,7 @@ import { bcs } from "@mysten/sui/bcs";
 export const testRange = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   // inside / outside
   const betTypes: InsideOutsideBet[] = [0, 1];

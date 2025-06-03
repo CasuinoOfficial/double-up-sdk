@@ -3,6 +3,7 @@ import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../client";
 import { fromHEX } from "@mysten/sui/utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 
 import { testCoinflip } from "./coinflip";
@@ -54,10 +55,14 @@ import {
 } from "./unihouse";
 import { testGetCurves } from "./pump";
 
-const { FUNCTION = "", MNEMONICS = "" } = process.env;
+
+const { FUNCTION = "blackjack" , SK="suiprivkey1qptf9vz3kkhf80l6n23h6zvah75ylk46r2zvdyjxcdcx2r05dg6kzc0q45d" } = process.env;
+console.log(process.env, "YOOO")
 const client = new SuiClient({ url: getFullnodeUrl("mainnet") });
 console.log("got here");
-const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
+// const keypair = Secp256k1Keypair.deriveKeypair(MNEMONICS);
+const {schema, secretKey} = decodeSuiPrivateKey(SK!);
+const keypair = Ed25519Keypair.fromSecretKey(secretKey);
 
 const PARTNER_NFT_ID =
   "0x36fba171c07aa06135805a9a9d870d1565a842583f81cc386b65bd2f4335f3f3";
@@ -216,4 +221,4 @@ const dbClient = new DoubleUpClient({
       "You must supply your wallet secret key in the .env file to test.\n"
     );
   }
-})(FUNCTION, MNEMONICS);
+})(FUNCTION, SK);

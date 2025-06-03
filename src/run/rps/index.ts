@@ -2,14 +2,14 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
-
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 import { BetType } from "../../games/rps";
 
 export const testRPS = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   //Please set these in .env file before running the test script
   //If you don't have a partner NFT, leave the PARTNER_NFT_ID empty

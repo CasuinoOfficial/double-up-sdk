@@ -2,13 +2,14 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 import { CrapsRemoveBetResponse, PassLineBet, PlaceBet } from "../../games/craps";
 
 export const testCrapsCreate = async (
     dbClient: DoubleUpClient,
     client: SuiClient,
-    keypair: Secp256k1Keypair
+    keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
     const txb = new Transaction();
 
@@ -50,7 +51,7 @@ export const testCrapsCreate = async (
 
 export const testGetCrapsTable = async (
     dbClient: DoubleUpClient,
-    keypair: Secp256k1Keypair
+    keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
     try {
           const resp = await dbClient.getCrapsTable({
@@ -67,7 +68,7 @@ export const testGetCrapsTable = async (
 export const testCrapsAdd = async (
     dbClient: DoubleUpClient,
     client: SuiClient,
-    keypair: Secp256k1Keypair
+    keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
     const txb = new Transaction();
     const betAmount = 500000000;
@@ -146,7 +147,7 @@ export const testCrapsAdd = async (
 export const testCrapsAddAndRemove = async (
     dbClient: DoubleUpClient,
     client: SuiClient,
-    keypair: Secp256k1Keypair
+    keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
 
 
@@ -179,7 +180,7 @@ export const testCrapsAddAndRemove = async (
 export const testCrapsRoll = async (
     dbClient: DoubleUpClient,
     client: SuiClient,
-    keypair: Secp256k1Keypair
+    keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
     const txb = new Transaction();
 
@@ -204,7 +205,7 @@ export const testCrapsRoll = async (
 export const testCrapsSettle = async (
     dbClient: DoubleUpClient,
     client: SuiClient,
-    keypair: Secp256k1Keypair
+    keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
     const txb2 = new Transaction();
 

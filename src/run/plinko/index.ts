@@ -2,6 +2,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from '@mysten/sui/keypairs/secp256k1';
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { PlinkoRemoveBetResponse } from "../../games/plinko";
 
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
@@ -9,7 +10,7 @@ import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
 export const testPlinko = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betAmount = 50000000;
   const numberOfDiscs = 100;
@@ -58,7 +59,7 @@ export const testPlinko = async (
 export const testMultiPlinkoCreate = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const txb = new Transaction();
@@ -111,7 +112,7 @@ export const testMultiPlinkoCreate = async (
 
 export const testMultiPlinkoGet = async (
   dbClient: DoubleUpClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const {
@@ -136,7 +137,7 @@ export const testMultiPlinkoGet = async (
 export const testMultiPlinkoAdd = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair,
 ) => {
   const betSize = 500000000;
 
@@ -186,7 +187,7 @@ export const testMultiPlinkoAdd = async (
 export const testMultiPlinkoRemove = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair
+  keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
     const address = keypair.getPublicKey().toSuiAddress();
@@ -225,7 +226,7 @@ export const testMultiPlinkoRemove = async (
 export const testMultiPlinkoStart = async(
   dbClient: DoubleUpClient,
   client: SuiClient,
-  keypair: Secp256k1Keypair,
+  keypair: Secp256k1Keypair | Ed25519Keypair,
 ) => {
   try {
     const txb2 = new Transaction();

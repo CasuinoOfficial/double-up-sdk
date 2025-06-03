@@ -354,7 +354,7 @@ import {getSigner} from "path/to/utility_functions";
  const playerDOUBLEDOWN = async () => {
     const tx = new Transaction();
     const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(betAmount)]);
-
+    
     DBClient.blackjackPlayerMove({
         coinType: coinType,
         playerAction: 103,
