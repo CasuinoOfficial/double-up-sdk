@@ -16,26 +16,9 @@ import { DoubleUpClient } from 'doubleup';
 const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
 
 ...
-
-const dbClient = new DoubleUpClient({
-    coinflipPackageId: "",
-    coinflipCorePackageId: "",
-    dicePackageId: "",
-    diceCorePackageId: "",
-    limboPackageId: "",
-    limboCorePackageId: "",
-    origin=""
-    partnerNftListId: "",
-    plinkoPackageId: "",
-    plinkoCorePackageId: "",
-    plinkoVerifierId: "",
-    rangeDicePackageId: "",
-    rangeDiceCorePackageId: "",
-    rpsPackageId: "",
-    rpsCorePackageId: "",
-    roulettePackageId="",
-    rouletteCorePackageId=""
-    suiClient
+export const dbClient = new DoubleUpClient({
+    partnerNftListId: "0x0",
+    suiClient: provider,
 });
 ```
 
@@ -47,51 +30,30 @@ import { DoubleUpProvider } from 'doubleup';
 // or use suiClient from @mysten provider
 const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
 
-...
-
-<DoubleUpProvider
-    coinflipPackageId=""
-    coinflipCorePackageId=""
-    dicePackageId=""
-    diceCorePackageId=""
-    limboPackageId=""
-    limboCorePackageId=""
-    origin=""
-    partnerNftListId=""
-    plinkoPackageId=""
-    plinkoCorePackageId=""
-    plinkoVerifierId=""
-    rangeDicePackageId=""
-    rangeDiceCorePackageId=""
-    rpsPackageId=""
-    rpsCorePackageId=""
-    roulettePackageId=""
-    rouletteCorePackageId=""
-    suiClient={suiClient}
->
-    <App />
-</DoubleUpProvider>
-```
-
 ## Basic Usage
 
 JS
 
 ```js
-const { ok: gameOk, err: gameErr, gameSeed, receipt } = dbClient.createCoinflip({
-    ...
-});
+import { Transaction } from "@mysten/sui/transactions";
 
-...
+const txb = new Transaction();
+const coinType = "0x2::sui::SUI";
+txb.setSender(address);
 
-const tranactionResult = await signAndExecuteTransactionBlock({ ... });
+const betTypes = [0]; // 0 for heads, 1 for tails
+const coin = txb.splitCoins(txb.gas, [1_000_000])
 
-...
-
-const { ok: resultOk, err: resultErr, results } = await dbClient.getCoinflipResult({
+dbClient.createCoinflip({
+    betTypes,
+    coin,
     coinType,
-    transactionResult
+    transaction: txb,
 });
+
+
+// Then just call sign and execute on the txb that is generated
+
 ```
 
 
@@ -142,30 +104,23 @@ milliseconds
 
 
 ```js
-const betType = 0;
+import { Transaction } from "@mysten/sui/transactions";
 
-const [coin] = txb.splitCoins(
-    txb.gas,
-    txb.pure.u64(betAmount)
-);
-
+const txb = new Transaction();
 const coinType = "0x2::sui::SUI";
 
-const { ok: gameOk, err: gameErr, gameSeed } = createCoinflip({
-    betType,
+const betTypes = [0]; // 0 for heads, 1 for tails
+const coin = txb.splitCoins(txb.gas, [1_000_000])
+
+dbClient.createCoinflip({
+    betTypes,
     coin,
     coinType,
-    transaction: txb
+    transaction: txb,
 });
 
-const transactionResult = await signAndExecuteTransactionBlock({ ... });
 
-const { ok: resultOk, err: resultErr, results } = await getCoinflipResult({
-    betType,
-    coinType,
-    gameSeed,
-    transactionResult
-});
+// Then just call sign and execute on the txb that is generated
 ```
 
 ### Dice
