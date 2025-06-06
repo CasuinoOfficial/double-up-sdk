@@ -25,8 +25,7 @@ export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 export const UNIHOUSE_CORE_PACKAGE_ID =
   "0x2f2226a22ebeb7a0e63ea39551829b238589d981d1c6dd454f01fcc513035593";
 export const UNIHOUSE_PACKAGE =
-  "0xebef2239f36eb881d1ebef2235c55b8a4ae97705da3f78afa9fa8da64fb24b75";
-// "0xcbea36448bc5739f17f15b7cad66d797273e86b8b0823f3f221a5c4032fdedfc";
+  "0xcb5499d9e3bd305e0758e332a6002aa9c0754803fe1639cc4da1a92f541bccb6";
 export const UNI_HOUSE_OBJ_ID =
   "0x75c63644536b1a7155d20d62d9f88bf794dc847ea296288ddaf306aa320168ab";
 
@@ -74,7 +73,7 @@ export const PARTNER_NFT_LIST_ID = "0x0";
 export const COIN_CORE_PACKAGE_ID =
   "0x50a221154d407dfe267372b60e3314fc0ba9f1e8b14ea0d95d32a7d1e552f3ba";
 export const COIN_PACKAGE_ID =
-  "0x6b27c830b32a14fd0a54d54ae5c3a5fa018673366636d836c86f5e48deffb020";
+  "0x29473601188474a91ba6d9e3226f584c8d100204d15067dbadd6ba5fe2eb08bb";
 export const COIN_SETTINGS =
   "0x50160e37ded43313e88106192966a86c94846f07d9417bf3770ae801d22eb77c";
 export const COIN_MODULE_NAME = "coinflip";
@@ -85,7 +84,7 @@ export const COIN_STRUCT_NAME = "Coinflip";
 export const LIMBO_CORE_PACKAGE_ID =
   "0xf4149f5a45d6bceab6d741214ffa5c654041421592427041729f0a5b02faa0ef";
 export const LIMBO_PACKAGE_ID =
-  "0x8075385706ea87f1e7b3f802e94d1308c76662d4ee7e7cec6addf38602219b56";
+  "0x9509de5f4fa195d0323905829a07156e823375f3e086bf31d0edc99e19a603a0";
 export const LIMBO_SETTINGS =
   "0xf70e9dd52342897da20195e31f503077c61de3b2ddfde0d4235975bde3903f61";
 export const LIMBO_MODULE_NAME = "limbo";
@@ -98,7 +97,7 @@ export const LIMBO_MAX_MULTIPLIER = "10000";
 export const ROULETTE_CORE_PACKAGE_ID =
   "0x9fa42aa6f73652e3123701705731873bee2fc407b05777b96583bfa389277053";
 export const ROULETTE_PACKAGE_ID =
-  "0x650fd6110a237d7d13a82a979ab40e3c604872373ef03976a7a1a0a91b2f47d3";
+  "0xfadefb4aef2a8aefcf56c4164a41153981af50ff7db3209f70779c09ee3bd79c";
 // All package ids to loop through and find the users table
 // Other table games have table creation all through the CORE package id
 // this is roulette specific lazy solution for core package bug fix
@@ -108,6 +107,7 @@ export const ROULETTE_ALL_PACKAGES = [
   "0x2db22f1c6b40ff4ba332899b4e79c2dd7caa1768887fb066dfed313c9a31519d",
   "0x53158255db20c05d2bd67b96fed18a45a718e355455e9055d412e1d0fd540265", //v6
   "0x650fd6110a237d7d13a82a979ab40e3c604872373ef03976a7a1a0a91b2f47d3",
+  "0xfadefb4aef2a8aefcf56c4164a41153981af50ff7db3209f70779c09ee3bd79c",
 ];
 export const ROULETTE_CONFIG =
   "0x10b6c15345f843de1bfc2c0829b7d289214fd35407297f7a8d442363b48f30c1";
@@ -119,7 +119,7 @@ export const ROULETTE_STRUCT_NAME = "Roulette";
 export const UFORANGE_CORE_PACKAGE_ID =
   "0x3d37357bac2e9644920b5c51d403938c32ea76e9ec848b1a526b208e76da1707";
 export const UFORANGE_PACKAGE_ID =
-  "0x30d4b5d702b6c9afff7ea9b0bf009339c5b55a8db671df7a11f4c5123b733091";
+  "0x3711d98dca7f85b013456206dd04c8966a36be7300e087c20bb4c8e3507a5490";
 export const UFORANGE_SETTINGS =
   "0x46c62d4486d84e30f28db15346f7f05a0a3eafcf35e5edc4ce2e3f697ad450f9";
 export const UFORANGE_MODULE_NAME = "ufo_range";
@@ -130,7 +130,8 @@ export const UFORANGE_STRUCT_NAME = "UFORange";
 export const RPS_CORE_PACKAGE_ID =
   "0xcaf0accdaf364de8cbc94b38b94f4d6188a9d6c682713ef98d4fa795a2614276";
 export const RPS_PACKAGE_ID =
-  "0x3ff020438142eedab72ad5242063cda011d80aa3a2944be86634f370cf325048";
+  "0x0c2e996d4a6296ce8926afb34afdf6045aa4c13d8b9d9e4f32ed21c7f9f1bf56";
+("0x3ff020438142eedab72ad5242063cda011d80aa3a2944be86634f370cf325048");
 export const RPS_MODULE_NAME = "rock_paper_scissors";
 export const RPS_STRUCT_NAME = "RockPaperScissors";
 
@@ -139,7 +140,7 @@ export const RPS_STRUCT_NAME = "RockPaperScissors";
 export const PLINKO_CORE_PACKAGE_ID =
   "0xcc2a73921f5c3f0fc11e910afaf836def3bab7cb1ecdbc4e2757034f0841e5d5";
 export const PLINKO_PACKAGE_ID =
-  "0x5cf9a2284d56565cc1ef50f08ae467d311692744b1435f4db0647a3102c26fc3";
+  "0xd8fcb98b747e1203d19622e81b13982e8a6afc4bba5cf624ca9da690c6268673";
 export const PLINKO_CONFIG =
   "0xbd487307d4b198fa409487418ae44b69148dff5361ab24d6e81378f50dead202";
 export const PLINKO_MODULE_NAME = "multi_plinko";
@@ -150,7 +151,7 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 export const BLACKJACK_CORE_PACKAGE_ID =
   "0x5e2f4359b5c0311954f502c4e1e12a845e85152b67e033ca6f8590b5781606ff";
 export const BLACKJACK_PACKAGE_ID =
-  "0x6a25523ce1ecffa4901da0df043a4d83506ff2e137323bf7c73a06d255145026";
+  "0xb68f500d574e5cbd1072f13be9ce9bc5853f80e49bd5f47ca2e605d06a4dd9fb";
 export const BLACKJACK_CONFIG =
   "0xc5bc486dfb1f35147440ea457e42154c24ea123055c372b80980051384d241fa";
 export const BLACKJACK_MODULE_NAME = "blackjack";
@@ -161,7 +162,7 @@ export const BLACKJACK_STRUCT_NAME = "Blackjack";
 export const CRAPS_CORE_PACKAGE_ID =
   "0x2c6b186d1bb437e09132af796714340d431c7dfaa83cddfd4b9bd785204be743";
 export const CRAPS_PACKAGE_ID =
-  "0x2f698d9cfa72b24afe997e6a52ab63b6d147eb2d66f3befc7ff13df483ac496d";
+  "0xe380982639acded5b186198e1c3c24437aeae63b92c4ed37ea3779def2331d8c";
 export const CRAPS_CONFIG =
   "0xbec3aa034334a8b8aa01d42ed1eddd14eda93ec3187cfc10577431c541a18261";
 export const CRAPS_MODULE_NAME = "craps";
