@@ -1934,15 +1934,18 @@ export const getGachaponUsedIdsForFreeSpins = async ({
 }) => {
   const tx = new Transaction();
 
+  const ID = bcs.fixedArray(32, bcs.u8()).transform({
+    input: (id: string) => fromHEX(id),
+    output: (id) => toHEX(Uint8Array.from(id)),
+  });
+
   tx.moveCall({
     target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::get_ids_of_current_epoch`,
     typeArguments: [coinType],
     arguments: [tx.object(gachaponId)],
   });
 
-  let result = devInspectAndGetReturnValues(suiClient, tx, [
-    [bcs.vector(bcs.u8())],
-  ]);
+  let result = devInspectAndGetReturnValues(suiClient, tx, [[bcs.vector(ID)]]);
 
   return result[0][0];
 };
