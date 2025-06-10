@@ -2,12 +2,14 @@ import { SuiClient, DynamicFieldInfo } from "@mysten/sui/client";
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
+  Transaction,
 } from "@mysten/sui/transactions";
 import {
   CLOCK_OBJ_ID,
   UNIHOUSE_PACKAGE,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
+import { U64FromBytes } from "../../utils";
 
 export interface DepositUnihouseInput {
   coin: TransactionObjectArgument;
@@ -34,6 +36,9 @@ export type UnihouseInfo = {
     totalSupply?: string;
     maxSupply?: string;
     gTokenPrice: string;
+    houseFeeRate?: string;
+    riskLimit?: string;
+    depositFee?: string;
   };
 };
 
@@ -72,6 +77,84 @@ export const requestWithdrawUnihouse = ({
   });
 };
 
+// Now only have SUI and USDC
+const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
+  //Mock default config
+  const houseConfig = {
+    houseFeeRate: "800000",
+    riskLimit: "40000000000",
+    depositFee: "200",
+  };
+
+  const devTx = new Transaction();
+
+  //TODO: remove mockCoinTypes when all the houses have thier config
+  const mockCoinTypes = [
+    "0x2::sui::SUI",
+    "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+  ];
+
+  for (const coinType of mockCoinTypes) {
+    devTx.moveCall({
+      target: `${UNIHOUSE_PACKAGE}::unihouse::get_house_config`,
+      typeArguments: [coinType],
+      arguments: [devTx.object(UNI_HOUSE_OBJ_ID)],
+    });
+  }
+
+  const res = await suiClient.devInspectTransactionBlock({
+    transactionBlock: devTx,
+    sender:
+      "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866",
+  });
+
+  if (res?.results === undefined || res?.results?.length === 0) {
+    console.error("no results found");
+    return houseConfig;
+  }
+
+  const realHouseConfigList = {} as Record<string, typeof houseConfig>;
+
+  for (const [index, result] of res?.results.entries()) {
+    const values = result.returnValues;
+
+    if (values === undefined || values?.length === 0) {
+      console.error("no values found");
+      return houseConfig;
+    }
+
+    const bytesArray = values?.map((value) => {
+      return value[0];
+    });
+
+    if (!bytesArray) return houseConfig;
+
+    const houseConfigKeys = Object.keys(houseConfig);
+
+    let tempHouseConfig = { ...houseConfig };
+
+    bytesArray.forEach((bytes, index) => {
+      const u64 = U64FromBytes(bytes);
+      const key = houseConfigKeys[index];
+
+      tempHouseConfig[key as keyof typeof houseConfig] = u64.toString();
+    });
+
+    realHouseConfigList[mockCoinTypes[index]] = tempHouseConfig;
+  }
+
+  const houseConfigList = coinTypes.reduce((acc, coinType) => {
+    if (realHouseConfigList.hasOwnProperty(coinType)) {
+      acc[coinType] = realHouseConfigList[coinType];
+    } else {
+      acc[coinType] = houseConfig;
+    }
+    return acc;
+  }, {} as Record<string, typeof houseConfig>);
+
+  return houseConfigList;
+};
+
 export const getUnihouseData = async (
   suiClient: SuiClient
 ): Promise<UnihouseInfo> => {
@@ -96,18 +179,41 @@ export const getUnihouseData = async (
   if (!unihouseList) return {};
   const unihouseIdList = unihouseList.map((house) => house.objectId);
 
-  const houseData: any[] = await suiClient.multiGetObjects({
-    ids: unihouseIdList,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  const batchSize = 50;
+
+  const batchedIds = unihouseIdList.reduce((acc, id, index) => {
+    const batchIndex = Math.floor(index / batchSize);
+    if (!acc[batchIndex]) {
+      acc[batchIndex] = [];
+    }
+    acc[batchIndex].push(id);
+    return acc;
+  }, [] as string[][]);
+
+  const houseDataPromises = batchedIds.map((batch) => {
+    return suiClient.multiGetObjects({
+      ids: batch,
+      options: {
+        showContent: true,
+        showType: true,
+      },
+    });
   });
+
+  const houseDataList = await Promise.all(houseDataPromises);
+
+  const houseData: any[] = houseDataList.flat();
 
   const houseFields = houseData.map((house) => house.data?.content?.fields);
 
   let houseInfo: UnihouseInfo = {};
   if (!houseFields) return houseInfo;
+
+  const coinTypeList = houseFields.map((field) => {
+    return field?.supply?.type.split("<")[2].split(">")[0];
+  });
+
+  const houseConfig = await getUnihouseConfig(suiClient, coinTypeList);
 
   houseFields.forEach((field, index) => {
     const tokenSymbol = unihouseList[index].objectType
@@ -115,9 +221,7 @@ export const getUnihouseData = async (
       .pop()
       ?.split(">")[0];
 
-    const coinType = `${
-      field?.supply?.type.split("<")[2].split(">")[0]
-    }`;
+    const coinType = `${field?.supply?.type.split("<")[2].split(">")[0]}`;
 
     if (!tokenSymbol) return;
 
@@ -131,6 +235,14 @@ export const getUnihouseData = async (
     const totalSupply = Number(field?.supply?.fields?.value);
     const maxSupply = Number(field?.max_supply);
 
+    const config = houseConfig.hasOwnProperty(coinType)
+      ? houseConfig[coinType]
+      : {
+          houseFeeRate: undefined,
+          riskLimit: undefined,
+          depositFee: undefined,
+        };
+
     houseInfo[coinType] = {
       id: unihouseList[index].objectId,
       coinType: coinType,
@@ -141,6 +253,9 @@ export const getUnihouseData = async (
       maxSupply: maxSupply.toString(),
       tvl: totalSui.toString(),
       gTokenPrice: (totalSui / totalSupply).toFixed(4),
+      houseFeeRate: config.houseFeeRate,
+      riskLimit: config.riskLimit,
+      depositFee: config.depositFee,
     };
   });
 
@@ -276,15 +391,12 @@ export const getGTokenBalance = async (
   return balances;
 };
 
-export const getMaxBet = async (
-  suiClient,
-  coinType
-): Promise<number> => {
+export const getMaxBet = async (suiClient, coinType): Promise<number> => {
   let houseInfo = await getUnihouseData(suiClient);
 
-  if (!houseInfo[coinType]) { 
-    throw new Error("House not found for cointype")
+  if (!houseInfo[coinType]) {
+    throw new Error("House not found for cointype");
   }
 
-  return Math.floor(Number(houseInfo[coinType].tvl) / 20)
-}
+  return Math.floor(Number(houseInfo[coinType].tvl) / 20);
+};

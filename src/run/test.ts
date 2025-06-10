@@ -216,7 +216,6 @@ const dbClient = new DoubleUpClient({
         testRaffleGetTickets(dbClient, client, keypair);
         break;
       case "unihouse:data":
-        console.log("hit");
         testGetUnihouseData(dbClient).then((res) => console.log(res));
         break;
       case "unihouse:redeemrequests":
