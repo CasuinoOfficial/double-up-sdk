@@ -34,6 +34,7 @@ import {
 } from "../../utils";
 import { bcs } from "@mysten/sui/bcs";
 import { fromHEX, toHEX } from "@mysten/sui/utils";
+import { devInspectAndGetReturnValues } from "@polymedia/suitcase-core";
 export interface CreateGachaponInput {
   cost: number;
   coinType: string;
@@ -304,6 +305,13 @@ export interface DrawFreeSpinMultiple {
   objectIds: string[];
   recipient: string;
   transaction: Transaction;
+}
+
+export interface GetGachaponUsedIdsForFreeSpins {
+  gachaponId: string;
+  gachaponPackageId: string;
+  coinType: string;
+  suiClient: SuiClient;
 }
 
 interface InternalDrawFreeSpin extends DrawFreeSpin {
@@ -1911,4 +1919,30 @@ export const drawFreeSpinMultiple = async ({
       ],
     });
   }
+};
+
+export const getGachaponUsedIdsForFreeSpins = async ({
+  gachaponId,
+  gachaponPackageId,
+  coinType,
+  suiClient,
+}: {
+  gachaponId: string;
+  gachaponPackageId: string;
+  coinType: string;
+  suiClient: SuiClient;
+}) => {
+  const tx = new Transaction();
+
+  tx.moveCall({
+    target: `${gachaponPackageId}::${GACHAPON_MODULE_NAME}::get_ids_of_current_epoch`,
+    typeArguments: [coinType],
+    arguments: [tx.object(gachaponId)],
+  });
+
+  let result = devInspectAndGetReturnValues(suiClient, tx, [
+    [bcs.vector(bcs.u8())],
+  ]);
+
+  return result[0][0];
 };
