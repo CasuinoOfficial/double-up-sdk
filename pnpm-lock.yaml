@@ -14,9 +14,6 @@ importers:
       '@mysten/sui':
         specifier: 1.2.1
         version: 1.2.1(typescript@5.7.3)
-      '@polymedia/suitcase-core':
-        specifier: ^0.0.54
-        version: 0.0.54(@mysten/sui@1.2.1(typescript@5.7.3))
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -110,11 +107,6 @@ packages:
   '@noble/hashes@1.5.0':
     resolution: {integrity: sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==}
     engines: {node: ^14.21.3 || >=16}
-
-  '@polymedia/suitcase-core@0.0.54':
-    resolution: {integrity: sha512-94wRc/dvtwHNBiWtZ/kUF4lJtBKOX4ppoVXnIYAs4bMr6JmIU0yGPYDgF2zWz2wfAUpAtZnytIY/ZVk8L/kmwQ==}
-    peerDependencies:
-      '@mysten/sui': ^1.28.2
 
   '@scure/base@1.1.8':
     resolution: {integrity: sha512-6CyAclxj3Nb0XT7GHK6K4zK6k2xJm6E4Ft0Ohjt4WgegiFUHEtFb2CGzmPmGBwoIhrLsqNLYfLr04Y1GePrzZg==}
@@ -343,10 +335,6 @@ snapshots:
       '@noble/hashes': 1.5.0
 
   '@noble/hashes@1.5.0': {}
-
-  '@polymedia/suitcase-core@0.0.54(@mysten/sui@1.2.1(typescript@5.7.3))':
-    dependencies:
-      '@mysten/sui': 1.2.1(typescript@5.7.3)
 
   '@scure/base@1.1.8': {}
 

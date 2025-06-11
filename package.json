@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "5.0.10",
+  "version": "5.0.9",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -77,7 +77,6 @@
   "dependencies": {
     "@mysten/kiosk": "0.9.10",
     "@mysten/sui": "1.2.1",
-    "@polymedia/suitcase-core": "^0.0.54",
     "axios": "^1.7.7",
     "decimal.js": "^10.4.3",
     "nanoid": "^5.0.7"

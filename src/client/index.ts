@@ -230,8 +230,6 @@ import {
   AddSecondaryCurrency,
   DrawEggWithSecondaryCurrency,
   drawEggWithSecondaryCurrency,
-  getGachaponUsedIdsForFreeSpins,
-  GetGachaponUsedIdsForFreeSpins,
 } from "../games/gachapon";
 
 interface DoubleUpClientInput {
@@ -814,13 +812,6 @@ export class DoubleUpClient {
       ...input,
       suiClient: this.suiClient,
       kioskClient: this.kioskClient,
-      gachaponPackageId: this.gachaponPackageId,
-    });
-
-  getGachaponUsedIdsForFreeSpins = (input: GetGachaponUsedIdsForFreeSpins) =>
-    getGachaponUsedIdsForFreeSpins({
-      ...input,
-      suiClient: this.suiClient,
       gachaponPackageId: this.gachaponPackageId,
     });
 
