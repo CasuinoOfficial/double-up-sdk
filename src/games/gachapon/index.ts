@@ -12,7 +12,7 @@ import {
   TransactionArgument,
   TransactionObjectArgument,
   TransactionResult,
-} from "@mysten/sui/dist/cjs/transactions";
+} from "@mysten/sui/transactions";
 import {
   GACHAPON_CORE_PACKAGE_ID,
   GACHAPON_MODULE_NAME,
