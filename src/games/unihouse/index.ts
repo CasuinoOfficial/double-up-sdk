@@ -86,37 +86,42 @@ const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
     depositFee: "200",
   };
 
-  const devTx = new Transaction();
+  //TODO: change to use PTB when all the houses have their config
+  const dryRunPromises = coinTypes.map((coinType) => {
+    const devTx = new Transaction();
 
-  //TODO: remove mockCoinTypes when all the houses have thier config
-  const mockCoinTypes = [
-    "0x2::sui::SUI",
-    "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
-  ];
-
-  for (const coinType of mockCoinTypes) {
     devTx.moveCall({
       target: `${UNIHOUSE_PACKAGE}::unihouse::get_house_config`,
       typeArguments: [coinType],
       arguments: [devTx.object(UNI_HOUSE_OBJ_ID)],
     });
-  }
 
-  const res = await suiClient.devInspectTransactionBlock({
-    transactionBlock: devTx,
-    sender:
-      "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866",
+    return suiClient.devInspectTransactionBlock({
+      transactionBlock: devTx,
+      sender:
+        "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866",
+    });
   });
 
-  if (res?.results === undefined || res?.results?.length === 0) {
+  const dryRunResponses = await Promise.all(dryRunPromises);
+
+  if (!dryRunResponses || dryRunResponses.length === 0) {
     console.error("no results found");
     return houseConfig;
   }
 
   const realHouseConfigList = {} as Record<string, typeof houseConfig>;
 
-  for (const [index, result] of res?.results.entries()) {
-    const values = result.returnValues;
+  for (const [index, response] of dryRunResponses.entries()) {
+    if (response?.results === undefined || response?.results?.length === 0) {
+      console.info(
+        `${coinTypes[index]} has no config, will use default config`
+      );
+      realHouseConfigList[coinTypes[index]] = houseConfig;
+      continue;
+    }
+
+    const values = response.results[0].returnValues;
 
     if (values === undefined || values?.length === 0) {
       console.error("no values found");
@@ -140,19 +145,10 @@ const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
       tempHouseConfig[key as keyof typeof houseConfig] = u64.toString();
     });
 
-    realHouseConfigList[mockCoinTypes[index]] = tempHouseConfig;
+    realHouseConfigList[coinTypes[index]] = tempHouseConfig;
   }
 
-  const houseConfigList = coinTypes.reduce((acc, coinType) => {
-    if (realHouseConfigList.hasOwnProperty(coinType)) {
-      acc[coinType] = realHouseConfigList[coinType];
-    } else {
-      acc[coinType] = houseConfig;
-    }
-    return acc;
-  }, {} as Record<string, typeof houseConfig>);
-
-  return houseConfigList;
+  return realHouseConfigList;
 };
 
 export const getUnihouseData = async (
