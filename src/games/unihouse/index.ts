@@ -10,6 +10,7 @@ import {
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
 import { U64FromBytes } from "../../utils";
+import Decimal from "decimal.js";
 
 export interface DepositUnihouseInput {
   coin: TransactionObjectArgument;
@@ -79,10 +80,10 @@ export const requestWithdrawUnihouse = ({
 
 // Now only have SUI and USDC
 const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
-  //Mock default config
+  //Default config based on the house contract
   const houseConfig = {
-    houseFeeRate: "800000",
-    riskLimit: "40000000000",
+    houseFeeRate: "300000",
+    riskLimit: "default",
     depositFee: "200",
   };
 
@@ -250,7 +251,10 @@ export const getUnihouseData = async (
       tvl: totalSui.toString(),
       gTokenPrice: (totalSui / totalSupply).toFixed(4),
       houseFeeRate: config.houseFeeRate,
-      riskLimit: config.riskLimit,
+      riskLimit:
+        config.riskLimit === "default"
+          ? new Decimal(totalSui).div(20).toFixed(0)
+          : config.riskLimit,
       depositFee: config.depositFee,
     };
   });
