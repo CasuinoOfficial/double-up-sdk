@@ -5,12 +5,12 @@ import {
 } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 
-import {
-  CLOCK_OBJ,
-  SUI_COIN_TYPE,
-} from "../../constants/testnetConstants";
+import { CLOCK_OBJ, SUI_COIN_TYPE } from "../../constants/testnetConstants";
 import { sleep } from "../../utils";
-import { LOTTERY_MODULE_NAME, LOTTERY_STORE } from "../../constants/mainnetConstants";
+import {
+  LOTTERY_MODULE_NAME,
+  LOTTERY_STORE,
+} from "../../constants/mainnetConstants";
 
 export interface BuyTicketsAlternativeCoinInput {
   recipient: string;
@@ -24,7 +24,8 @@ export interface BuyTicketsAlternativeCoinInput {
   referrer?: string;
 }
 
-interface InternalBuyTicketsAlternativeCoinInput extends BuyTicketsAlternativeCoinInput {
+interface InternalBuyTicketsAlternativeCoinInput
+  extends BuyTicketsAlternativeCoinInput {
   lotteryPackageId: string;
 }
 
@@ -72,7 +73,7 @@ interface LotteryData {
     fields: {
       id: {
         id: string;
-      },
+      };
       size: string;
     };
   };
@@ -92,7 +93,7 @@ interface LotteryData {
     fields: {
       id: {
         id: string;
-      },
+      };
       size: string;
     };
   };
@@ -101,7 +102,7 @@ interface LotteryData {
     fields: {
       id: {
         id: string;
-      },
+      };
       size: string;
     };
   };
@@ -111,7 +112,7 @@ interface LotteryData {
     fields: {
       id: {
         id: string;
-      },
+      };
       size: string;
     };
   };
@@ -122,7 +123,7 @@ interface LotteryData {
     fields: {
       id: {
         id: string;
-      },
+      };
       size: string;
     };
   };
@@ -142,11 +143,11 @@ interface LotteryData {
     fields: {
       id: {
         id: string;
-      },
+      };
       size: string;
     };
   };
-};
+}
 
 export interface LotteryInput {
   lotteryId: string;
@@ -185,8 +186,8 @@ interface LotteryTicket {
   owner: string;
   lottery_id: string;
   picks: {
-    numbers: { contents: number[] },
-    special_number: number,
+    numbers: { contents: number[] };
+    special_number: number;
   };
   epoch: number;
   timestamp_issued: number;
@@ -276,7 +277,6 @@ export const buyLotteryTicketsAlternativePrice = ({
         ],
       });
     }
-
   } catch (err) {
     res.ok = false;
     res.err = err;
@@ -299,7 +299,7 @@ export const buyLotteryTickets = ({
   let res: BuyTicketsResponse = { ok: true };
 
   try {
-    for (const { numbers, specialNumber} of ticketsInput) {
+    for (const { numbers, specialNumber } of ticketsInput) {
       transaction.moveCall({
         target: `${lotteryPackageId}::${LOTTERY_MODULE_NAME}::buy_ticket`,
         typeArguments: [coinType],
@@ -310,13 +310,12 @@ export const buyLotteryTickets = ({
           transaction.pure.address(recipient),
           transaction.pure(bcs.vector(bcs.U8).serialize(numbers)),
           transaction.pure.u8(specialNumber),
-          transaction.pure.string(origin?? "DoubleUp"),
+          transaction.pure.string(origin ?? "DoubleUp"),
           transaction.pure(bcs.option(bcs.Address).serialize(referrer ?? null)),
           transaction.object(CLOCK_OBJ),
         ],
       });
     }
-
   } catch (err) {
     res.ok = false;
     res.err = err;
@@ -400,7 +399,7 @@ export const getLotteryDrawingResult = async ({
   pollInterval = 3000,
   epoch,
   suiClient,
-  lotteryCorePackageId
+  lotteryCorePackageId,
 }: InternalDrawingResultInput): Promise<DrawingResultResponse> => {
   const res: DrawingResultResponse = { ok: true };
 
@@ -430,11 +429,11 @@ export const getLotteryDrawingResult = async ({
         }));
 
       if (results.length === 0) {
-        console.log(
-          `DOUBLEUP - Game in processing. Query again in ${
-            pollInterval / 1000
-          } seconds.`
-        );
+        // console.log(
+        //   `DOUBLEUP - Game in processing. Query again in ${
+        //     pollInterval / 1000
+        //   } seconds.`
+        // );
         await sleep(pollInterval);
       }
     }
@@ -463,7 +462,7 @@ export const getLotteryTickets = async ({
     while (shouldFetchMore) {
       const queryParams: LotteryTicketsConfig = {
         query: {
-            MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased`
+          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased`,
         },
         order: "descending",
       };
@@ -472,20 +471,18 @@ export const getLotteryTickets = async ({
         queryParams.cursor = cursor;
       }
 
-      const resp = await suiClient.queryEvents(
-        queryParams
-      );
+      const resp = await suiClient.queryEvents(queryParams);
 
       resp.data.forEach((event) => {
         const ticket = event.parsedJson as LotteryTicket;
         if (ticket.owner === address) {
           tickets.push(ticket);
-        };
+        }
       });
 
       cursor = resp.nextCursor;
       shouldFetchMore = resp.hasNextPage;
-    };
+    }
 
     res.results = tickets;
   } catch (err) {
@@ -501,7 +498,7 @@ export const redeemLotteryTickets = ({
   lotteryId,
   coinType,
   transaction,
-  lotteryPackageId
+  lotteryPackageId,
 }: InternalRedeemTicketsInput): RedeemTicketsResponse => {
   const res: RedeemTicketsResponse = { ok: true };
 

@@ -128,7 +128,7 @@ const main = async (target: number) => {
   while (winTimes < target) {
     // This is already checked but it doesn't hurt to be safe.
     if (round > LOSS_GUARD) {
-      console.log(`Reached round ${LOSS_GUARD + 1} without a win gg`);
+      //   console.log(`Reached round ${LOSS_GUARD + 1} without a win gg`);
       break;
     }
     // Get our result

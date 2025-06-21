@@ -115,9 +115,6 @@ const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
 
   for (const [index, response] of dryRunResponses.entries()) {
     if (response?.results === undefined || response?.results?.length === 0) {
-      console.info(
-        `${coinTypes[index]} has no config, will use default config`
-      );
       realHouseConfigList[coinTypes[index]] = houseConfig;
       continue;
     }
