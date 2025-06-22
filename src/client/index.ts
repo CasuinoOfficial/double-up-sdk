@@ -565,18 +565,17 @@ export class DoubleUpClient {
   createBlackjackTable = (input: BlackjackTableInput) =>
     createBlackjackTable({
       ...input,
-      blackjackCorePackageId: this.blackjackCorePackageId,
+      blackjackPackageId: this.blackjackPackageId,
     });
   createBlackjackGame = (input: BlackjackInput) =>
     createBlackjackGame({
       ...input,
-      blackjackCorePackageId: this.blackjackCorePackageId,
+      blackjackPackageId: this.blackjackPackageId,
       origin: this.origin,
     });
   getBlackjackTable = (input: GetBlackjackTableInput) =>
     getBlackjackTable({
       ...input,
-      blackjackCorePackageId: this.blackjackCorePackageId,
       suiClient: this.suiClient,
     });
   blackjackPlayerMove = (input: BlackjackPlayerMoveInput) =>
