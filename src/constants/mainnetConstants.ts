@@ -199,9 +199,9 @@ export const DOGHOUSE = "";
 // GACHAPON
 // ===============================================================================
 export const GACHAPON_CORE_PACKAGE_ID =
-  "0x385f7a0aef8e472e657f2795a70ca9ae5752085c03c67b7807c6cc2b1cce448f";
+  "0x3a82b560114b8b165e427b6758c13d29fc8ddd5ed8769ddeb8fbfd165d5bda63";
 export const GACHAPON_PACKAGE_ID =
-  "0x0b37112d665e1e8831e6f00247ab988f5f1a0b56c1573b883a9c29aa3d796612";
+  "0x3a82b560114b8b165e427b6758c13d29fc8ddd5ed8769ddeb8fbfd165d5bda63";
 export const GACHAPON_CONFIG = "";
 export const GACHAPON_MODULE_NAME = "gachapon";
 export const GACHAPON_RULE_MODULE_NAME = "gachapon_rule";
