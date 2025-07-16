@@ -151,9 +151,17 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 export const BLACKJACK_CORE_PACKAGE_ID =
   "0x5e2f4359b5c0311954f502c4e1e12a845e85152b67e033ca6f8590b5781606ff";
 export const BLACKJACK_PACKAGE_ID =
-  "0xb8b4a0e4f9208f7083bdf4ad05a98a26b8034210aa49fa578171256a84f35d27";
+  "0x94707e3f958ba37daf6853d604ba7679bfb291a29753206abf7c0d4d3ec1b300";
 export const BLACKJACK_CONFIG =
   "0xc5bc486dfb1f35147440ea457e42154c24ea123055c372b80980051384d241fa";
+// All package ids to loop through and find the users table
+// Other table games have table creation all through the CORE package id
+// this is roulette specific lazy solution for core package bug fix
+// Please add any new package to this in the corresponding order
+export const BLACKJACK_ALL_PACKAGES = [
+  "0x5e2f4359b5c0311954f502c4e1e12a845e85152b67e033ca6f8590b5781606ff",
+  "0x94707e3f958ba37daf6853d604ba7679bfb291a29753206abf7c0d4d3ec1b300",
+];
 export const BLACKJACK_MODULE_NAME = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
 

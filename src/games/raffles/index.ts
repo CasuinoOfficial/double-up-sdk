@@ -3,12 +3,12 @@ import {
   TransactionObjectArgument,
   Transaction as TransactionType,
 } from "@mysten/sui/transactions";
-import { 
-  CLOCK_OBJ_ID, 
-  DOGHOUSE, 
-  RAFFLES_MODULE_NAME, 
-  RAFFLES_TREASURY, 
-  SUI_COIN_TYPE 
+import {
+  CLOCK_OBJ_ID,
+  DOGHOUSE,
+  RAFFLES_MODULE_NAME,
+  RAFFLES_TREASURY,
+  SUI_COIN_TYPE,
 } from "../../constants/mainnetConstants";
 import { bcs } from "@mysten/sui/bcs";
 
@@ -24,7 +24,7 @@ interface InternalBuyRaffleTicketsInput extends BuyRaffleTicketsInput {
   rafflesPackageId: string;
   origin: string;
 }
-  
+
 export interface BuyRaffleTicketsResponse {
   ok: boolean;
   err?: Error;
@@ -39,11 +39,12 @@ export interface BuyRaffleTicketsWithDealInput {
   recipient?: string;
 }
 
-interface InternalBuyRaffleTicketsWithDealInput extends BuyRaffleTicketsWithDealInput {
+interface InternalBuyRaffleTicketsWithDealInput
+  extends BuyRaffleTicketsWithDealInput {
   rafflesPackageId: string;
   origin: string;
 }
-  
+
 export interface BuyRaffleTicketsWithDealResponse {
   ok: boolean;
   err?: Error;
@@ -56,11 +57,12 @@ export interface BuyRaffleTicketsWithTreatsInput {
   transaction: TransactionType;
 }
 
-interface InternalBuyRaffleTicketsWithTreatsInput extends BuyRaffleTicketsWithTreatsInput {
+interface InternalBuyRaffleTicketsWithTreatsInput
+  extends BuyRaffleTicketsWithTreatsInput {
   rafflesPackageId: string;
   origin: string;
 }
-  
+
 export interface BuyRaffleTicketsWithTreatsResponse {
   ok: boolean;
   err?: Error;
@@ -75,7 +77,7 @@ export interface RaffleParticipant {
   lastBought: number;
   participant: string;
   totalTickets: number;
-};
+}
 
 export interface RaffleTicketsInfo {
   id: string;
@@ -84,7 +86,7 @@ export interface RaffleTicketsInfo {
     ticketsAmount: string;
     freeTickets: string;
   }[];
-};
+}
 
 export interface GetRaffleInput {
   raffleId: string;
@@ -106,7 +108,7 @@ interface RaffleData {
   end_date: number;
   id: { id: string };
   participants: {
-    fields: { 
+    fields: {
       id: { id: string };
       size: number;
     };
@@ -131,7 +133,8 @@ export interface GetTotalTicketsForUserInput {
   transaction: TransactionType;
 }
 
-interface InternalGetTotalTicketsForUserInput extends GetTotalTicketsForUserInput {
+interface InternalGetTotalTicketsForUserInput
+  extends GetTotalTicketsForUserInput {
   rafflesPackageId: string;
 }
 
@@ -157,9 +160,9 @@ export interface GetCoinTypesResponse {
 
 export const getRaffle = async ({
   raffleId,
-  client
+  client,
 }: InternalGetRaffleInput): Promise<RaffleResponse> => {
-  const res: RaffleResponse = { ok: true};
+  const res: RaffleResponse = { ok: true };
 
   try {
     const raffle = await client.getObject({
@@ -175,8 +178,6 @@ export const getRaffle = async ({
 
     const raffleData = raffle.data.content.fields as unknown;
 
-    console.dir(raffleData, {depth: 5});
-
     res.result = raffleData as RaffleData;
   } catch (err) {
     res.ok = false;
@@ -184,7 +185,7 @@ export const getRaffle = async ({
   }
 
   return res;
-}
+};
 
 export const buyRaffleTickets = ({
   coin,
@@ -193,7 +194,7 @@ export const buyRaffleTickets = ({
   transaction,
   rafflesPackageId,
   origin,
-  recipient
+  recipient,
 }: InternalBuyRaffleTicketsInput): BuyRaffleTicketsResponse => {
   const res: BuyRaffleTicketsResponse = { ok: true };
 
@@ -207,7 +208,7 @@ export const buyRaffleTickets = ({
         transaction.pure.id(raffleId),
         coin,
         transaction.pure(
-          bcs.option(bcs.Address).serialize(recipient ? recipient : null),
+          bcs.option(bcs.Address).serialize(recipient ? recipient : null)
         ),
         transaction.pure.string(origin),
       ],
@@ -215,10 +216,10 @@ export const buyRaffleTickets = ({
   } catch (err) {
     res.ok = false;
     res.err = err;
-  };
+  }
 
   return res;
-}
+};
 
 export const buyRaffleTicketsWithDeal = ({
   coin,
@@ -228,7 +229,7 @@ export const buyRaffleTicketsWithDeal = ({
   transaction,
   rafflesPackageId,
   origin,
-  recipient
+  recipient,
 }: InternalBuyRaffleTicketsWithDealInput): BuyRaffleTicketsWithDealResponse => {
   const res: BuyRaffleTicketsWithDealResponse = { ok: true };
 
@@ -243,7 +244,7 @@ export const buyRaffleTicketsWithDeal = ({
         coin,
         transaction.pure.u64(Number(ticketDeal)),
         transaction.pure(
-          bcs.option(bcs.Address).serialize(recipient ? recipient : null),
+          bcs.option(bcs.Address).serialize(recipient ? recipient : null)
         ),
         transaction.pure.string(origin),
       ],
@@ -251,10 +252,10 @@ export const buyRaffleTicketsWithDeal = ({
   } catch (err) {
     res.ok = false;
     res.err = err;
-  };
+  }
 
   return res;
-}
+};
 
 export const buyRaffleTicketsWithTreats = ({
   amount,
@@ -262,7 +263,7 @@ export const buyRaffleTicketsWithTreats = ({
   doghouse,
   transaction,
   rafflesPackageId,
-  origin
+  origin,
 }: InternalBuyRaffleTicketsWithTreatsInput): BuyRaffleTicketsWithTreatsResponse => {
   const res: BuyRaffleTicketsWithTreatsResponse = { ok: true };
 
@@ -281,10 +282,10 @@ export const buyRaffleTicketsWithTreats = ({
   } catch (err) {
     res.ok = false;
     res.err = err;
-  };
+  }
 
   return res;
-}
+};
 
 export const getTotalTicketsForUser = ({
   address,
@@ -305,18 +306,15 @@ export const getTotalTicketsForUser = ({
 
     transaction.moveCall({
       target: `${rafflesPackageId}::${RAFFLES_MODULE_NAME}::tickets_bought`,
-      arguments: [
-        raffle,
-        transaction.pure.address(address),
-      ],
+      arguments: [raffle, transaction.pure.address(address)],
     });
   } catch (err) {
     res.ok = false;
     res.err = err;
-  };
+  }
 
   return res;
-}
+};
 
 // export const getRaffleSupportedCoinTypes = ({
 //   transaction,

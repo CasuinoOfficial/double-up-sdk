@@ -41,5 +41,4 @@ export const testRPS = async (
       showObjectChanges: true,
     },
   });
-  console.log("result", transactionResult);
 };

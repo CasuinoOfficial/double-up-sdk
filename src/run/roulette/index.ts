@@ -149,7 +149,6 @@ export const testRouletteStart = async (
     },
   });
 
-  console.log("rolled a number", transactionResult);
   const txb2 = new Transaction();
 
   // dbClient
@@ -169,5 +168,4 @@ export const testRouletteStart = async (
       showObjectChanges: true,
     },
   });
-  console.log("settled", transactionResult2);
 };

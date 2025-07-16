@@ -8,6 +8,7 @@ import {
   UNI_HOUSE_OBJ_ID,
   RAND_OBJ_ID,
   BLACKJACK_CONFIG,
+  BLACKJACK_ALL_PACKAGES,
 } from "../../constants/mainnetConstants";
 import { SuiClient } from "@mysten/sui/client";
 
@@ -26,7 +27,7 @@ export interface BlackjackInput {
 }
 
 interface InternalBlackjackInput extends BlackjackInput {
-  blackjackCorePackageId: string;
+  blackjackPackageId: string;
   origin: string;
 }
 
@@ -48,7 +49,7 @@ export interface BlackjackTableInput {
 }
 
 interface InternalBlackjackTableInput extends BlackjackTableInput {
-  blackjackCorePackageId: string;
+  blackjackPackageId: string;
 }
 export interface GetBlackjackTableInput {
   address: string;
@@ -56,7 +57,6 @@ export interface GetBlackjackTableInput {
 }
 
 interface InternalGetBlackjackTableInput extends GetBlackjackTableInput {
-  blackjackCorePackageId: string;
   suiClient: SuiClient;
 }
 
@@ -130,12 +130,12 @@ export const createBlackjackGame = ({
   coinType,
   coin,
   transaction,
-  blackjackCorePackageId,
+  blackjackPackageId,
   origin,
 }: InternalBlackjackInput) => {
   transaction.setGasBudget(100_000_000);
   transaction.moveCall({
-    target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::init_game`,
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::init_game`,
     typeArguments: [coinType],
     arguments: [
       transaction.object(UNI_HOUSE_OBJ_ID),
@@ -149,12 +149,12 @@ export const createBlackjackGame = ({
 
 export const createBlackjackTable = ({
   coinType,
-  blackjackCorePackageId,
+  blackjackPackageId,
   transaction,
 }: InternalBlackjackTableInput) => {
   transaction.setGasBudget(100_000_000);
   transaction.moveCall({
-    target: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::create_blackjack_table`,
+    target: `${blackjackPackageId}::${BLACKJACK_MODULE_NAME}::create_blackjack_table`,
     typeArguments: [coinType],
     arguments: [transaction.object(BLACKJACK_CONFIG)],
   });
@@ -163,26 +163,29 @@ export const createBlackjackTable = ({
 export const getBlackjackTable = async ({
   address,
   coinType,
-  blackjackCorePackageId,
   suiClient,
 }: InternalGetBlackjackTableInput): Promise<BlackjackContractData | null> => {
-  const { data } = await suiClient.getDynamicFieldObject({
-    parentId: BLACKJACK_CONFIG,
-    name: {
-      type: `${blackjackCorePackageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
-      value: {
-        creator: address,
+  for (const packageId of BLACKJACK_ALL_PACKAGES) {
+    const { data } = await suiClient.getDynamicFieldObject({
+      parentId: BLACKJACK_CONFIG,
+      name: {
+        type: `${packageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
+        value: {
+          creator: address,
+        },
       },
-    },
-  });
+    });
 
-  if (data?.content?.dataType !== "moveObject") {
-    return null;
+    if (data?.content?.dataType !== "moveObject") {
+      return null;
+    }
+
+    const fields = data.content.fields as any;
+
+    return fields;
   }
 
-  const fields = data.content.fields as any;
-
-  return fields;
+  return null;
 };
 
 const isDoubleOrSplit = (
