@@ -149,9 +149,9 @@ export const PLINKO_STRUCT_NAME = "Plinko";
 // BLACKJACK
 // ===============================================================================
 export const BLACKJACK_CORE_PACKAGE_ID =
-  "0x33ae287c573c088d5c1155f6ff3d2633288e45b08d91749afe13cf5d02221672";
+  "0xf63d4079ad17ad30d48a95e66f22b295fe47e85970e2291d8d0f7405fdac24c8";
 export const BLACKJACK_PACKAGE_ID =
-  "0x33ae287c573c088d5c1155f6ff3d2633288e45b08d91749afe13cf5d02221672";
+  "0xf63d4079ad17ad30d48a95e66f22b295fe47e85970e2291d8d0f7405fdac24c8";
 export const BLACKJACK_CONFIG =
   "0x56dc22e743b3d348519f17593de10fbb21327bd561b55aaaa54e18dd6194f901";
 // All package ids to loop through and find the users table
@@ -159,7 +159,7 @@ export const BLACKJACK_CONFIG =
 // this is roulette specific lazy solution for core package bug fix
 // Please add any new package to this in the corresponding order
 export const BLACKJACK_ALL_PACKAGES = [
-  "0x33ae287c573c088d5c1155f6ff3d2633288e45b08d91749afe13cf5d02221672",
+  "0xf63d4079ad17ad30d48a95e66f22b295fe47e85970e2291d8d0f7405fdac24c8",
 ];
 export const BLACKJACK_MODULE_NAME = "blackjack";
 export const BLACKJACK_STRUCT_NAME = "Blackjack";
