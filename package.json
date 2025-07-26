@@ -70,7 +70,10 @@
     "test:gachapon:testCreateFreeSpinner": "FUNCTION=gachapon:testCreateFreeSpinner pnpm test",
     "test:gachapon:testAddNftType": "FUNCTION=gachapon:testAddNftType pnpm test",
     "test:gachapon:testRemoveNftType": "FUNCTION=gachapon:testRemoveNftType pnpm test",
-    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test"
+    "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test",
+    "test:marble_racing:testAddBet": "FUNCTION=marble_racing:testAddBet pnpm test",
+    "test:marble_racing:testAddRiskLimit": "FUNCTION=marble_racing:testAddRiskLimit pnpm test",
+    "test:marble_racing:testAddManager": "FUNCTION=marble_racing:testAddManager pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

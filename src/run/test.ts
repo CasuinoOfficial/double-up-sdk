@@ -84,6 +84,7 @@ import {
   testClaimEgg,
   testGetGachapons,
 } from "./gachapon";
+import { testAddBet, testAddManager, testAddRiskLimit } from "./marble_racing";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
@@ -428,6 +429,31 @@ const dbClient = new DoubleUpClient({
           "0x6e68a31df75ffd03f41692507d60f89ede0edcd38fffd7110a0faca3c9117e83", //ObjectId
           "0x350423e5588ea5cb9c367ff9d5ef6285e4cffa8a45c3f148a2e70605f24a47dd" //recipient
         );
+        break;
+      case "marble_racing:testAddBet":
+        testAddBet(
+          dbClient,
+          client,
+          keypair,
+          "0x2::sui::SUI",
+          "0xf671c3aab7ffe134560afe833c31352215a37f83936257741554aba92b6d1ae4",
+          0.0001,
+          {
+            "343": 0,
+          }
+        );
+        break;
+      case "marble_racing:testAddRiskLimit":
+        testAddRiskLimit(
+          dbClient,
+          client,
+          keypair,
+          20_000 * 10 ** 9,
+          "0x2::sui::SUI"
+        );
+        break;
+      case "marble_racing:testAddManager":
+        testAddManager(dbClient, client, keypair, "address");
         break;
 
       default:
