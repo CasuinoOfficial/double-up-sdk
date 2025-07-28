@@ -436,10 +436,11 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI",
-          "0xf671c3aab7ffe134560afe833c31352215a37f83936257741554aba92b6d1ae4",
+          "0x63fabccc6bcf2238feb60544a24a10c1dd875c66982d438bdcd60f9b2db7e640",
           0.0001,
           {
             "343": 0,
+            "342": 1,
           }
         );
         break;

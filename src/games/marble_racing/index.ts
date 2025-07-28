@@ -49,6 +49,7 @@ export const addBet = async ({
       betCoin,
       transaction.pure(bcs.vector(bcs.U64).serialize(marbleIds)),
       transaction.pure(bcs.vector(bcs.U8).serialize(rankIndexes)),
+      transaction.object("0x6"),
     ],
   });
 };
