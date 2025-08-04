@@ -73,7 +73,10 @@
     "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test",
     "test:marble_racing:testAddBet": "FUNCTION=marble_racing:testAddBet pnpm test",
     "test:marble_racing:testAddRiskLimit": "FUNCTION=marble_racing:testAddRiskLimit pnpm test",
-    "test:marble_racing:testAddManager": "FUNCTION=marble_racing:testAddManager pnpm test"
+    "test:marble_racing:testAddManager": "FUNCTION=marble_racing:testAddManager pnpm test",
+    "test:marble_racing:testUpdateStatus": "FUNCTION=marble_racing:testUpdateStatus pnpm test",
+    "test:marble_racing:testPutToBank": "FUNCTION=marble_racing:testPutToBank pnpm test",
+    "test:marble_racing:testWithdrawFromBank": "FUNCTION=marble_racing:testWithdrawFromBank pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

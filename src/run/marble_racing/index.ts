@@ -1,4 +1,7 @@
-import { Transaction } from "@mysten/sui/transactions";
+import {
+  Transaction,
+  TransactionObjectArgument,
+} from "@mysten/sui/transactions";
 import { DoubleUpClient } from "../../client";
 import { SuiClient } from "@mysten/sui/client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
@@ -98,6 +101,98 @@ export const testAddManager = async (
 
   dbClient.addManager({
     manager,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testUpdateStatus = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  raceId: string,
+  status: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.updateStatus({
+    raceId,
+    status,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testPutToBank = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  coinType: string,
+  amount: number
+) => {
+  const tx = new Transaction();
+
+  const [inputCoin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount)]);
+
+  dbClient.putToBank({
+    coinType,
+    inputCoin,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testWithdrawFromBank = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  receiver: string,
+  coinType: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.withdrawFromBank({
+    receiver,
+    coinType,
     transaction: tx,
   });
 

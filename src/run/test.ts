@@ -84,7 +84,14 @@ import {
   testClaimEgg,
   testGetGachapons,
 } from "./gachapon";
-import { testAddBet, testAddManager, testAddRiskLimit } from "./marble_racing";
+import {
+  testAddBet,
+  testAddManager,
+  testAddRiskLimit,
+  testPutToBank,
+  testUpdateStatus,
+  testWithdrawFromBank,
+} from "./marble_racing";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
 const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
@@ -436,11 +443,11 @@ const dbClient = new DoubleUpClient({
           client,
           keypair,
           "0x2::sui::SUI",
-          "0x63fabccc6bcf2238feb60544a24a10c1dd875c66982d438bdcd60f9b2db7e640",
+          "0x36008a9b2983f3bfbf98172c515222dc2e1e67378f85ccb51bf6008eef09601c",
           0.0001,
           {
-            "343": 0,
-            "342": 1,
+            "342": 0,
+            "344": 1,
           }
         );
         break;
@@ -455,6 +462,27 @@ const dbClient = new DoubleUpClient({
         break;
       case "marble_racing:testAddManager":
         testAddManager(dbClient, client, keypair, "address");
+        break;
+      case "marble_racing:testUpdateStatus":
+        testUpdateStatus(
+          dbClient,
+          client,
+          keypair,
+          "0x36008a9b2983f3bfbf98172c515222dc2e1e67378f85ccb51bf6008eef09601c",
+          2
+        );
+        break;
+      case "marble_racing:testPutToBank":
+        testPutToBank(dbClient, client, keypair, "0x2::sui::SUI", 10 * 10 ** 9);
+        break;
+      case "marble_racing:testWithdrawFromBank":
+        testWithdrawFromBank(
+          dbClient,
+          client,
+          keypair,
+          "0x06b067c52ad3d3e89ed8c7de1328bb07ab7d21c2f9c6eb6e634d2b424344aec8",
+          "0x2::sui::SUI"
+        );
         break;
 
       default:
