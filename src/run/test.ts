@@ -468,7 +468,7 @@ const dbClient = new DoubleUpClient({
           dbClient,
           client,
           keypair,
-          "0x36008a9b2983f3bfbf98172c515222dc2e1e67378f85ccb51bf6008eef09601c",
+          "0xe247b78c490cb87649c5a3cc2ee865395804dbe42f3587baa9c2a6c1957bf48b",
           2
         );
         break;
