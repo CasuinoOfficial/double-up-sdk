@@ -468,8 +468,8 @@ const dbClient = new DoubleUpClient({
           dbClient,
           client,
           keypair,
-          "0xe247b78c490cb87649c5a3cc2ee865395804dbe42f3587baa9c2a6c1957bf48b",
-          2
+          "0x808d6b3a4d28cff65b68fd30840839159d6406a32a87554c220ba9e16bc41f2e",
+          1
         );
         break;
       case "marble_racing:testPutToBank":
