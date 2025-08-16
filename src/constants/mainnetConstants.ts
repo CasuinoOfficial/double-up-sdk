@@ -25,7 +25,7 @@ export const SUILEND_ASSET_LIST: string[] = [SUI_COIN_TYPE];
 export const UNIHOUSE_CORE_PACKAGE_ID =
   "0x2f2226a22ebeb7a0e63ea39551829b238589d981d1c6dd454f01fcc513035593";
 export const UNIHOUSE_PACKAGE =
-  "0x775aa4de8cf0a5a31127bb3eba07671ddf5217306b2f059a2ff4de2176c62203";
+  "0x3de5d09944b30c9bca39de19b219e78cb60a719a8b3830a89b500b7f30fb3cc2";
 export const UNI_HOUSE_OBJ_ID =
   "0x75c63644536b1a7155d20d62d9f88bf794dc847ea296288ddaf306aa320168ab";
 
@@ -198,9 +198,9 @@ export const DOGHOUSE = "";
 // GACHAPON
 // ===============================================================================
 export const GACHAPON_CORE_PACKAGE_ID =
-  "0x3a82b560114b8b165e427b6758c13d29fc8ddd5ed8769ddeb8fbfd165d5bda63";
+  "0x385f7a0aef8e472e657f2795a70ca9ae5752085c03c67b7807c6cc2b1cce448f";
 export const GACHAPON_PACKAGE_ID =
-  "0x3a82b560114b8b165e427b6758c13d29fc8ddd5ed8769ddeb8fbfd165d5bda63";
+  "0x0b37112d665e1e8831e6f00247ab988f5f1a0b56c1573b883a9c29aa3d796612";
 export const GACHAPON_CONFIG = "";
 export const GACHAPON_MODULE_NAME = "gachapon";
 export const GACHAPON_RULE_MODULE_NAME = "gachapon_rule";
@@ -259,3 +259,13 @@ export const LOTTERY_ID =
 export const LOTTERY_STORE =
   "0xde89e9f915a8b88bf5807e50aa621103c0adfb978ae4892590d5c0f0bf73848d";
 // ===============================================================================
+
+// marble racing
+export const MARBLE_RACING_CORE_PACKAGE_ID =
+  "0x39a6a6f7cd8302574f1e24953afb1faea1d259adb1ef926ce982f84966708300";
+export const MARBLE_RACING_PACKAGE_ID =
+  "0x39a6a6f7cd8302574f1e24953afb1faea1d259adb1ef926ce982f84966708300";
+export const MARBLE_RACING_CONFIG =
+  "0xbd2305bbbe96f3a39d977c17eb86fffb88078a1bc0425ca855a7d5f92556c193";
+export const MARBLE_RACING_ADMIN_CAP =
+  "0x4b61665cd4704d742328829880c9ad5d446289d16b96f7db80ea38099b20e695";

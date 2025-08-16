@@ -24,6 +24,8 @@ import {
   GACHAPON_PACKAGE_ID,
   LOTTERY_CORE_PACKAGE_ID,
   LOTTERY_PACKAGE_ID,
+  MARBLE_RACING_CORE_PACKAGE_ID,
+  MARBLE_RACING_PACKAGE_ID,
 } from "../constants/mainnetConstants";
 
 import {
@@ -232,6 +234,17 @@ import {
   drawEggWithSecondaryCurrency,
 } from "../games/gachapon";
 
+import {
+  addBet,
+  AddBetInput,
+  AddRiskLimitInput,
+  addRiskLimit,
+  AddManagerInput,
+  addManager,
+  UpdateStatusInput,
+  updateStatus,
+} from "../games/marble_racing";
+
 interface DoubleUpClientInput {
   coinflipCorePackageId?: string;
   coinflipPackageId?: string;
@@ -260,6 +273,8 @@ interface DoubleUpClientInput {
   gachaponPackageId?: string;
   lotteryPackageId?: string;
   lotteryCorePackageId?: string;
+  marbleRacingCorePackageId?: string;
+  marbleRacingPackageId?: string;
   suiClient?: SuiClient;
   kioskClient?: KioskClient;
 }
@@ -291,6 +306,8 @@ export class DoubleUpClient {
     gachaponPackageId = GACHAPON_PACKAGE_ID,
     lotteryPackageId = LOTTERY_PACKAGE_ID,
     lotteryCorePackageId = LOTTERY_CORE_PACKAGE_ID,
+    marbleRacingCorePackageId = MARBLE_RACING_CORE_PACKAGE_ID,
+    marbleRacingPackageId = MARBLE_RACING_PACKAGE_ID,
     suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
@@ -318,6 +335,8 @@ export class DoubleUpClient {
     this.gachaponPackageId = gachaponPackageId;
     this.lotteryPackageId = lotteryPackageId;
     this.lotteryCorePackageId = lotteryCorePackageId;
+    this.marbleRacingCorePackageId = marbleRacingCorePackageId;
+    this.marbleRacingPackageId = marbleRacingPackageId;
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
@@ -354,6 +373,8 @@ export class DoubleUpClient {
   gachaponPackageId: string;
   lotteryPackageId: string;
   lotteryCorePackageId: string;
+  marbleRacingCorePackageId: string;
+  marbleRacingPackageId: string;
 
   suiClient: SuiClient;
   kioskClient: KioskClient;
@@ -812,6 +833,27 @@ export class DoubleUpClient {
       suiClient: this.suiClient,
       kioskClient: this.kioskClient,
       gachaponPackageId: this.gachaponPackageId,
+    });
+
+  // Marble Racing
+  addBet = (input: AddBetInput) =>
+    addBet({
+      ...input,
+    });
+
+  addRiskLimit = (input: AddRiskLimitInput) =>
+    addRiskLimit({
+      ...input,
+    });
+
+  addManager = (input: AddManagerInput) =>
+    addManager({
+      ...input,
+    });
+
+  updateStatus = (input: UpdateStatusInput) =>
+    updateStatus({
+      ...input,
     });
 
   // Unihouse
