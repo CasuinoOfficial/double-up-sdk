@@ -88,6 +88,7 @@ import {
   testAddBet,
   testAddManager,
   testAddRiskLimit,
+  testRemoveRiskLimit,
   testUpdateStatus,
 } from "./marble_racing";
 
@@ -457,6 +458,9 @@ const dbClient = new DoubleUpClient({
           20_000 * 10 ** 9,
           "0x2::sui::SUI"
         );
+        break;
+      case "marble_racing:testRemoveRiskLimit":
+        testRemoveRiskLimit(dbClient, client, keypair, "0x2::sui::SUI");
         break;
       case "marble_racing:testAddManager":
         testAddManager(dbClient, client, keypair, "address");

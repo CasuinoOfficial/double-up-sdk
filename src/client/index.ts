@@ -243,6 +243,8 @@ import {
   addManager,
   UpdateStatusInput,
   updateStatus,
+  RemoveRiskLimitInput,
+  removeRiskLimit,
 } from "../games/marble_racing";
 
 interface DoubleUpClientInput {
@@ -853,6 +855,11 @@ export class DoubleUpClient {
 
   updateStatus = (input: UpdateStatusInput) =>
     updateStatus({
+      ...input,
+    });
+
+  removeRiskLimit = (input: RemoveRiskLimitInput) =>
+    removeRiskLimit({
       ...input,
     });
 

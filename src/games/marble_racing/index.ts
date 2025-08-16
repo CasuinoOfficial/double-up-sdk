@@ -26,6 +26,11 @@ export interface AddRiskLimitInput {
   transaction: TransactionType;
 }
 
+export interface RemoveRiskLimitInput {
+  coinType: string;
+  transaction: TransactionType;
+}
+
 export interface AddManagerInput {
   manager: string;
   transaction: TransactionType;
@@ -72,6 +77,20 @@ export const addRiskLimit = async ({
       transaction.object(MARBLE_RACING_CONFIG),
       transaction.object(MARBLE_RACING_ADMIN_CAP),
       transaction.pure.u64(riskLimit),
+    ],
+  });
+};
+
+export const removeRiskLimit = async ({
+  coinType,
+  transaction,
+}: RemoveRiskLimitInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::remove_risk_limit`,
+    typeArguments: [coinType],
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
     ],
   });
 };

@@ -91,6 +91,40 @@ export const testAddRiskLimit = async (
   console.log("Signed and sent transaction.", transactionResult);
 };
 
+export const testRemoveRiskLimit = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  coinType: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.removeRiskLimit({
+    coinType,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
 export const testAddManager = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
