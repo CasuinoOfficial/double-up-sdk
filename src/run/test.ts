@@ -88,9 +88,7 @@ import {
   testAddBet,
   testAddManager,
   testAddRiskLimit,
-  testPutToBank,
   testUpdateStatus,
-  testWithdrawFromBank,
 } from "./marble_racing";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
@@ -468,23 +466,10 @@ const dbClient = new DoubleUpClient({
           dbClient,
           client,
           keypair,
-          "0x808d6b3a4d28cff65b68fd30840839159d6406a32a87554c220ba9e16bc41f2e",
-          1
+          "0x12fdac182d511f7e1e3aaac981205ce32b91d2e189bc2ac71c0e98fa01796e65",
+          2
         );
         break;
-      case "marble_racing:testPutToBank":
-        testPutToBank(dbClient, client, keypair, "0x2::sui::SUI", 10 * 10 ** 9);
-        break;
-      case "marble_racing:testWithdrawFromBank":
-        testWithdrawFromBank(
-          dbClient,
-          client,
-          keypair,
-          "0x06b067c52ad3d3e89ed8c7de1328bb07ab7d21c2f9c6eb6e634d2b424344aec8",
-          "0x2::sui::SUI"
-        );
-        break;
-
       default:
       // Test all
       // testCoinflip(dbClient, client, keypair);

@@ -241,13 +241,8 @@ import {
   addRiskLimit,
   AddManagerInput,
   addManager,
-  PutToBankInput,
-  putToBank,
   UpdateStatusInput,
   updateStatus,
-  GetFromBankInput,
-  WithdrawFromBankInput,
-  withdrawFromBank,
 } from "../games/marble_racing";
 
 interface DoubleUpClientInput {
@@ -858,16 +853,6 @@ export class DoubleUpClient {
 
   updateStatus = (input: UpdateStatusInput) =>
     updateStatus({
-      ...input,
-    });
-
-  putToBank = (input: PutToBankInput) =>
-    putToBank({
-      ...input,
-    });
-
-  withdrawFromBank = (input: WithdrawFromBankInput) =>
-    withdrawFromBank({
       ...input,
     });
 

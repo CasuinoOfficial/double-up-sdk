@@ -8,7 +8,6 @@ import {
   MARBLE_RACING_CONFIG,
   UNI_HOUSE_OBJ_ID,
   MARBLE_RACING_ADMIN_CAP,
-  MARBLE_RACING_BANK_ID,
 } from "../../constants/mainnetConstants";
 import { bcs } from "@mysten/sui/bcs";
 
@@ -35,24 +34,6 @@ export interface AddManagerInput {
 export interface UpdateStatusInput {
   raceId: string;
   status: number;
-  transaction: TransactionType;
-}
-
-export interface PutToBankInput {
-  coinType: string;
-  inputCoin: TransactionObjectArgument;
-  transaction: TransactionType;
-}
-
-export interface GetFromBankInput {
-  coinType: string;
-  amount: number;
-  transaction: TransactionType;
-}
-
-export interface WithdrawFromBankInput {
-  receiver: string;
-  coinType: string;
   transaction: TransactionType;
 }
 
@@ -118,38 +99,6 @@ export const updateStatus = async ({
       transaction.pure.u64(status),
       transaction.object(MARBLE_RACING_CONFIG),
       transaction.object("0x6"),
-    ],
-  });
-};
-
-export const putToBank = async ({
-  coinType,
-  inputCoin,
-  transaction,
-}: PutToBankInput) => {
-  transaction.moveCall({
-    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::put_to_bank`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(MARBLE_RACING_ADMIN_CAP),
-      transaction.object(MARBLE_RACING_BANK_ID),
-      inputCoin,
-    ],
-  });
-};
-
-export const withdrawFromBank = async ({
-  receiver,
-  coinType,
-  transaction,
-}: WithdrawFromBankInput) => {
-  transaction.moveCall({
-    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::withdraw_from_bank`,
-    typeArguments: [coinType],
-    arguments: [
-      transaction.object(MARBLE_RACING_ADMIN_CAP),
-      transaction.pure.address(receiver),
-      transaction.object(MARBLE_RACING_BANK_ID),
     ],
   });
 };
