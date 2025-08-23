@@ -90,6 +90,12 @@ import {
   testAddRiskLimit,
   testRemoveRiskLimit,
   testUpdateStatus,
+  testSetHouseEdge,
+  testSetPaginationLimit,
+  testSetMaxCombo,
+  testAddVersion,
+  testRemoveVersion,
+  testRemoveManager,
 } from "./marble_racing";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
@@ -465,6 +471,9 @@ const dbClient = new DoubleUpClient({
       case "marble_racing:testAddManager":
         testAddManager(dbClient, client, keypair, "address");
         break;
+      case "marble_racing:testRemoveManager":
+        testRemoveManager(dbClient, client, keypair, "address");
+        break;
       case "marble_racing:testUpdateStatus":
         testUpdateStatus(
           dbClient,
@@ -473,6 +482,21 @@ const dbClient = new DoubleUpClient({
           "0x12fdac182d511f7e1e3aaac981205ce32b91d2e189bc2ac71c0e98fa01796e65",
           2
         );
+        break;
+      case "marble_racing:testSetHouseEdge":
+        testSetHouseEdge(dbClient, client, keypair, 0.0001);
+        break;
+      case "marble_racing:testSetPaginationLimit":
+        testSetPaginationLimit(dbClient, client, keypair, 10);
+        break;
+      case "marble_racing:testSetMaxCombo":
+        testSetMaxCombo(dbClient, client, keypair, 4);
+        break;
+      case "marble_racing:testAddVersion":
+        testAddVersion(dbClient, client, keypair, 1);
+        break;
+      case "marble_racing:testRemoveVersion":
+        testRemoveVersion(dbClient, client, keypair, 1);
         break;
       default:
       // Test all

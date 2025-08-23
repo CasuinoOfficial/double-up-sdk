@@ -31,8 +31,33 @@ export interface RemoveRiskLimitInput {
   transaction: TransactionType;
 }
 
+export interface VersionControlInput {
+  version: number;
+  transaction: TransactionType;
+}
+
 export interface AddManagerInput {
   manager: string;
+  transaction: TransactionType;
+}
+
+export interface RemoveManagerInput {
+  manager: string;
+  transaction: TransactionType;
+}
+
+export interface SetHouseEdgeInput {
+  houseEdge: number;
+  transaction: TransactionType;
+}
+
+export interface SetPaginationLimitInput {
+  limit: number;
+  transaction: TransactionType;
+}
+
+export interface SetMaxComboInput {
+  maxCombo: number;
   transaction: TransactionType;
 }
 
@@ -102,6 +127,90 @@ export const addManager = async ({ manager, transaction }: AddManagerInput) => {
       transaction.object(MARBLE_RACING_CONFIG),
       transaction.object(MARBLE_RACING_ADMIN_CAP),
       transaction.pure.address(manager),
+    ],
+  });
+};
+
+export const removeManager = async ({
+  manager,
+  transaction,
+}: RemoveManagerInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::remove_manager`,
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
+      transaction.pure.address(manager),
+    ],
+  });
+};
+
+export const addVersion = async ({
+  version,
+  transaction,
+}: VersionControlInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::add_version`,
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
+      transaction.pure.u64(version),
+    ],
+  });
+};
+
+export const removeVersion = async ({
+  version,
+  transaction,
+}: VersionControlInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::remove_version`,
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
+      transaction.pure.u64(version),
+    ],
+  });
+};
+
+export const setHouseEdge = async ({
+  houseEdge,
+  transaction,
+}: SetHouseEdgeInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::set_house_edge`,
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
+      transaction.pure.u64(houseEdge),
+    ],
+  });
+};
+
+export const setPaginationLimit = async ({
+  limit,
+  transaction,
+}: SetPaginationLimitInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::set_page_size`,
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
+      transaction.pure.u64(limit),
+    ],
+  });
+};
+
+export const setMaxCombo = async ({
+  maxCombo,
+  transaction,
+}: SetMaxComboInput) => {
+  transaction.moveCall({
+    target: `${MARBLE_RACING_PACKAGE_ID}::marble_racing::set_max_combo`,
+    arguments: [
+      transaction.object(MARBLE_RACING_CONFIG),
+      transaction.object(MARBLE_RACING_ADMIN_CAP),
+      transaction.pure.u64(maxCombo),
     ],
   });
 };
