@@ -1,6 +1,6 @@
 {
   "name": "doubleup",
-  "version": "5.4.0",
+  "version": "5.4.1",
   "description": "SDK to integrate with doubleup contracts",
   "main": "dist/index.js",
   "scripts": {
@@ -73,8 +73,15 @@
     "test:gachapon:testDrawFreeSpin": "FUNCTION=gachapon:testDrawFreeSpin pnpm test",
     "test:marble_racing:testAddBet": "FUNCTION=marble_racing:testAddBet pnpm test",
     "test:marble_racing:testAddRiskLimit": "FUNCTION=marble_racing:testAddRiskLimit pnpm test",
+    "test:marble_racing:testRemoveRiskLimit": "FUNCTION=marble_racing:testRemoveRiskLimit pnpm test",
     "test:marble_racing:testAddManager": "FUNCTION=marble_racing:testAddManager pnpm test",
-    "test:marble_racing:testUpdateStatus": "FUNCTION=marble_racing:testUpdateStatus pnpm test"
+    "test:marble_racing:testRemoveManager": "FUNCTION=marble_racing:testRemoveManager pnpm test",
+    "test:marble_racing:testUpdateStatus": "FUNCTION=marble_racing:testUpdateStatus pnpm test",
+    "test:marble_racing:testSetHouseEdge": "FUNCTION=marble_racing:testSetHouseEdge pnpm test",
+    "test:marble_racing:testSetPaginationLimit": "FUNCTION=marble_racing:testSetPaginationLimit pnpm test",
+    "test:marble_racing:testSetMaxCombo": "FUNCTION=marble_racing:testSetMaxCombo pnpm test",
+    "test:marble_racing:testAddVersion": "FUNCTION=marble_racing:testAddVersion pnpm test",
+    "test:marble_racing:testRemoveVersion": "FUNCTION=marble_racing:testRemoveVersion pnpm test"
   },
   "author": "degenxdev",
   "license": "ISC",

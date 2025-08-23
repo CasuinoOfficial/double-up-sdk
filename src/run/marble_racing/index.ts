@@ -91,6 +91,40 @@ export const testAddRiskLimit = async (
   console.log("Signed and sent transaction.", transactionResult);
 };
 
+export const testRemoveRiskLimit = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  coinType: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.removeRiskLimit({
+    coinType,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+    options: {
+      showRawEffects: true,
+      showEffects: true,
+      showEvents: true,
+      showObjectChanges: true,
+    },
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
 export const testAddManager = async (
   dbClient: DoubleUpClient,
   client: SuiClient,
@@ -101,6 +135,174 @@ export const testAddManager = async (
 
   dbClient.addManager({
     manager,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testRemoveManager = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  manager: string
+) => {
+  const tx = new Transaction();
+
+  dbClient.removeManager({
+    manager,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testAddVersion = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  version: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.addVersion({
+    version,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testRemoveVersion = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  version: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.removeVersion({
+    version,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testSetHouseEdge = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  houseEdge: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.setHouseEdge({
+    houseEdge,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testSetPaginationLimit = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  limit: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.setPaginationLimit({
+    limit,
+    transaction: tx,
+  });
+
+  const transactionResult = await client.signAndExecuteTransaction({
+    signer: keypair,
+    transaction: tx as any,
+  });
+
+  if (
+    transactionResult?.effects &&
+    transactionResult?.effects.status.status === "failure"
+  ) {
+    throw new Error(transactionResult.effects.status.error);
+  }
+
+  console.log("Signed and sent transaction.", transactionResult);
+};
+
+export const testSetMaxCombo = async (
+  dbClient: DoubleUpClient,
+  client: SuiClient,
+  keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
+  maxCombo: number
+) => {
+  const tx = new Transaction();
+
+  dbClient.setMaxCombo({
+    maxCombo,
     transaction: tx,
   });
 

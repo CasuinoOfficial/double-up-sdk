@@ -243,6 +243,19 @@ import {
   addManager,
   UpdateStatusInput,
   updateStatus,
+  RemoveRiskLimitInput,
+  removeRiskLimit,
+  RemoveManagerInput,
+  SetMaxComboInput,
+  SetPaginationLimitInput,
+  SetHouseEdgeInput,
+  setPaginationLimit,
+  VersionControlInput,
+  addVersion,
+  removeVersion,
+  setHouseEdge,
+  setMaxCombo,
+  removeManager,
 } from "../games/marble_racing";
 
 interface DoubleUpClientInput {
@@ -846,8 +859,43 @@ export class DoubleUpClient {
       ...input,
     });
 
+  removeRiskLimit = (input: RemoveRiskLimitInput) =>
+    removeRiskLimit({
+      ...input,
+    });
+
+  addVersion = (input: VersionControlInput) =>
+    addVersion({
+      ...input,
+    });
+
+  removeVersion = (input: VersionControlInput) =>
+    removeVersion({
+      ...input,
+    });
+
+  setPaginationLimit = (input: SetPaginationLimitInput) =>
+    setPaginationLimit({
+      ...input,
+    });
+
+  setMaxCombo = (input: SetMaxComboInput) =>
+    setMaxCombo({
+      ...input,
+    });
+
+  setHouseEdge = (input: SetHouseEdgeInput) =>
+    setHouseEdge({
+      ...input,
+    });
+
   addManager = (input: AddManagerInput) =>
     addManager({
+      ...input,
+    });
+
+  removeManager = (input: RemoveManagerInput) =>
+    removeManager({
       ...input,
     });
 
