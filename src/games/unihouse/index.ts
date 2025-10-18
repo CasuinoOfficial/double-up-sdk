@@ -34,6 +34,7 @@ export type UnihouseInfo = {
     name: string;
     apy?: string;
     tvl: string;
+    maxRisk: string;
     totalSupply?: string;
     maxSupply?: string;
     gTokenPrice: string;
@@ -225,9 +226,13 @@ export const getUnihouseData = async (
     }>>`;
 
     const pipeDebt = field?.pipe_debt?.fields?.value;
-    const totalSui = Number(pipeDebt) + Number(field?.pool);
+    //House Pool
+    const housePool = Number(field?.house_pool);
+    //Stake Pool TVL
+    const stakePoolTvl = Number(pipeDebt) + Number(field?.pool);
     const totalSupply = Number(field?.supply?.fields?.value);
     const maxSupply = Number(field?.max_supply);
+    const maxRisk = stakePoolTvl + housePool;
 
     const config = houseConfig.hasOwnProperty(coinType)
       ? houseConfig[coinType]
@@ -245,12 +250,13 @@ export const getUnihouseData = async (
       name: houseName,
       totalSupply: totalSupply.toString(),
       maxSupply: maxSupply.toString(),
-      tvl: totalSui.toString(),
-      gTokenPrice: (totalSui / totalSupply).toFixed(4),
+      tvl: stakePoolTvl.toString(),
+      maxRisk: maxRisk.toString(),
+      gTokenPrice: (stakePoolTvl / totalSupply).toFixed(4),
       houseFeeRate: config.houseFeeRate,
       riskLimit:
         config.riskLimit === "default"
-          ? new Decimal(totalSui).div(20).toFixed(0)
+          ? new Decimal(stakePoolTvl).div(20).toFixed(0)
           : config.riskLimit,
       depositFee: config.depositFee,
     };
