@@ -14,23 +14,27 @@ export const testAddBet = async (
   coinType: string,
   raceId: string,
   betSize: number,
-  options: Record<string, number>
+  betType: number,
+  options: Record<string, string[]>
 ) => {
   const tx = new Transaction();
 
   const [betCoin] = tx.splitCoins(tx.gas, [tx.pure.u64(betSize * 10 ** 9)]);
 
-  const marbleIds = Object.keys(options).map((key) => {
+  const targets = Object.keys(options).map((key) => {
     return Number(key);
   });
-  const rankIndexes = Object.values(options);
+  const ranges = Object.values(options).map((value) => {
+    return value.map((v) => Number(v));
+  });
 
   dbClient.addBet({
     raceId,
     betCoin,
     betCoinType: coinType,
-    marbleIds,
-    rankIndexes,
+    betType,
+    targets,
+    ranges,
     transaction: tx,
   });
 

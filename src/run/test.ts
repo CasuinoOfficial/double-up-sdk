@@ -450,9 +450,10 @@ const dbClient = new DoubleUpClient({
           "0x2::sui::SUI",
           "0x36008a9b2983f3bfbf98172c515222dc2e1e67378f85ccb51bf6008eef09601c",
           0.0001,
+          0, // 0 - place, 1 - even_odd, 2 - match, 3 - range, 4 - group
           {
-            "342": 0,
-            "344": 1,
+            "342": ["0"],
+            "344": ["1"],
           }
         );
         break;
@@ -461,7 +462,7 @@ const dbClient = new DoubleUpClient({
           dbClient,
           client,
           keypair,
-          20_000 * 10 ** 9,
+          1_000 * 10 ** 9,
           "0x2::sui::SUI"
         );
         break;
