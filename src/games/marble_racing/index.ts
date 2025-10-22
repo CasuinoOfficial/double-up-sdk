@@ -15,8 +15,9 @@ export interface AddBetInput {
   raceId: string;
   betCoin: TransactionObjectArgument;
   betCoinType: string;
-  marbleIds: number[];
-  rankIndexes: number[];
+  betType: number;
+  targets: number[];
+  ranges: number[][];
   transaction: TransactionType;
 }
 
@@ -71,8 +72,9 @@ export const addBet = async ({
   raceId,
   betCoin,
   betCoinType,
-  marbleIds,
-  rankIndexes,
+  betType,
+  targets,
+  ranges,
   transaction,
 }: AddBetInput) => {
   transaction.moveCall({
@@ -83,8 +85,9 @@ export const addBet = async ({
       transaction.object(MARBLE_RACING_CONFIG),
       transaction.pure.id(raceId),
       betCoin,
-      transaction.pure(bcs.vector(bcs.U64).serialize(marbleIds)),
-      transaction.pure(bcs.vector(bcs.U8).serialize(rankIndexes)),
+      transaction.pure.u8(betType),
+      transaction.pure(bcs.vector(bcs.U64).serialize(targets)),
+      transaction.pure(bcs.vector(bcs.vector(bcs.U64)).serialize(ranges)),
       transaction.object("0x6"),
     ],
   });
