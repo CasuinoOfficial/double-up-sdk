@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -46,7 +46,7 @@ export interface LimboVoucherInput {
 
 interface InternalLimboVoucherInput extends LimboVoucherInput {
   limboPackageId: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 interface LimboParsedJson {
   game_id: string;

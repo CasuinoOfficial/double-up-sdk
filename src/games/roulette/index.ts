@@ -1,5 +1,5 @@
 import { bcs } from "@mysten/sui/bcs";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -342,7 +342,7 @@ export interface GetRouletteTableInput {
 }
 
 interface InternalGetRouletteTableInput extends GetRouletteTableInput {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 export interface RouletteContractData {

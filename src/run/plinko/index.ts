@@ -1,5 +1,5 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { PlinkoRemoveBetResponse } from "../../games/plinko";
@@ -9,7 +9,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testPlinko = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betAmount = 50000000;
@@ -57,7 +57,7 @@ export const testPlinko = async (
 
 export const testMultiPlinkoCreate = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -135,7 +135,7 @@ export const testMultiPlinkoGet = async (
 
 export const testMultiPlinkoAdd = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betSize = 500000000;
@@ -185,7 +185,7 @@ export const testMultiPlinkoAdd = async (
 
 export const testMultiPlinkoRemove = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -225,7 +225,7 @@ export const testMultiPlinkoRemove = async (
 
 export const testMultiPlinkoStart = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {

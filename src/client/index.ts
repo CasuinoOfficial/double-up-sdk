@@ -1,5 +1,5 @@
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
-import { KioskClient, Network } from "@mysten/kiosk";
+import { getJsonRpcFullnodeUrl, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { KioskClient } from "@mysten/kiosk";
 import {
   COIN_CORE_PACKAGE_ID,
   COIN_PACKAGE_ID,
@@ -288,7 +288,7 @@ interface DoubleUpClientInput {
   lotteryCorePackageId?: string;
   marbleRacingCorePackageId?: string;
   marbleRacingPackageId?: string;
-  suiClient?: SuiClient;
+  suiClient?: SuiJsonRpcClient;
   kioskClient?: KioskClient;
 }
 
@@ -321,7 +321,10 @@ export class DoubleUpClient {
     lotteryCorePackageId = LOTTERY_CORE_PACKAGE_ID,
     marbleRacingCorePackageId = MARBLE_RACING_CORE_PACKAGE_ID,
     marbleRacingPackageId = MARBLE_RACING_PACKAGE_ID,
-    suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") }),
+    suiClient = new SuiJsonRpcClient({
+      network: "mainnet",
+      url: getJsonRpcFullnodeUrl("mainnet"),
+    }),
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
     this.coinflipPackageId = coinflipPackageId;
@@ -353,7 +356,7 @@ export class DoubleUpClient {
     this.suiClient = suiClient;
     this.kioskClient = new KioskClient({
       client: suiClient,
-      network: Network.MAINNET,
+      network: "mainnet",
     });
   }
 
@@ -389,7 +392,7 @@ export class DoubleUpClient {
   marbleRacingCorePackageId: string;
   marbleRacingPackageId: string;
 
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   kioskClient: KioskClient;
 
   // coinflip

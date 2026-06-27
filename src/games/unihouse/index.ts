@@ -1,4 +1,4 @@
-import { SuiClient, DynamicFieldInfo } from "@mysten/sui/client";
+import { SuiJsonRpcClient, DynamicFieldInfo } from "@mysten/sui/jsonRpc";
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
@@ -80,7 +80,7 @@ export const requestWithdrawUnihouse = ({
 };
 
 // Now only have SUI and USDC
-const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
+const getUnihouseConfig = async (suiClient: SuiJsonRpcClient, coinTypes: string[]) => {
   //Default config based on the house contract
   const houseConfig = {
     houseFeeRate: "300000",
@@ -151,7 +151,7 @@ const getUnihouseConfig = async (suiClient: SuiClient, coinTypes: string[]) => {
 };
 
 export const getUnihouseData = async (
-  suiClient: SuiClient
+  suiClient: SuiJsonRpcClient
 ): Promise<UnihouseInfo> => {
   let cursor = null;
   let hasNextPage = true;
@@ -266,7 +266,7 @@ export const getUnihouseData = async (
 };
 
 export const getRedeemRequests = async (
-  suiClient: SuiClient,
+  suiClient: SuiJsonRpcClient,
   address?: string
 ) => {
   let cursor = null;
@@ -327,7 +327,7 @@ export const getRedeemRequests = async (
 };
 
 export const getGTokenBalance = async (
-  suiClient: SuiClient,
+  suiClient: SuiJsonRpcClient,
   address: string
 ): Promise<BalanceList> => {
   if (!address) {

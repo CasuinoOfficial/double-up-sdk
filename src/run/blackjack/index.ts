@@ -1,5 +1,5 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
@@ -7,7 +7,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testBlackjackCreateTable = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const txb = new Transaction();
@@ -49,7 +49,7 @@ export const testBlackjackCreateTable = async (
 
 export const testBlackjackCreateGame = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -109,7 +109,7 @@ export const testGetBlackjackTable = async (
 
 export const testBlackjackPlayerHit = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -151,7 +151,7 @@ export const testBlackjackPlayerHit = async (
 
 export const testBlackjackPlayerStand = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -193,7 +193,7 @@ export const testBlackjackPlayerStand = async (
 
 export const testBlackjackPlayerDouble = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -238,7 +238,7 @@ export const testBlackjackPlayerDouble = async (
 
 export const testBlackjackPlayerSplit = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -283,7 +283,7 @@ export const testBlackjackPlayerSplit = async (
 
 export const testBlackjackPlayerSurrender = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {

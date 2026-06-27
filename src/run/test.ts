@@ -1,7 +1,7 @@
 // import { client, SuiTxBlock } from '@scallop-io/sui-kit';
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
+import { getJsonRpcFullnodeUrl, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { DoubleUpClient } from "../client";
-import { fromHEX } from "@mysten/sui/utils";
+import { fromHex } from "@mysten/sui/utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
@@ -99,7 +99,10 @@ import {
 } from "./marble_racing";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
-const client = new SuiClient({ url: "https://fullnode-doubleup.com" });
+const client = new SuiJsonRpcClient({
+  network: "mainnet",
+  url: "https://fullnode-doubleup.com",
+});
 const secpKeypair = Secp256k1Keypair.deriveKeypair(SECP_MNEMONICS);
 const keypair = Ed25519Keypair.fromSecretKey(
   decodeSuiPrivateKey(MNEMONICS).secretKey

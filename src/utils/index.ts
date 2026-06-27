@@ -1,8 +1,8 @@
 import {
-  SuiClient,
+  SuiJsonRpcClient,
   SuiTransactionBlockResponse,
   DynamicFieldInfo,
-} from "@mysten/sui/client";
+} from "@mysten/sui/jsonRpc";
 
 import {
   BUCK_COIN_TYPE,
@@ -193,7 +193,7 @@ export const getVoucherBank = (coinType: string): string => {
 
 export const getTypesFromVoucher = async (
   voucherId: string,
-  suiClient: SuiClient
+  suiClient: SuiJsonRpcClient
 ): Promise<string[]> => {
   const { data: voucherIdObject } = await suiClient.getObject({
     id: voucherId,
@@ -217,7 +217,7 @@ const getVoucherTypeFromVoucher = (voucherType: string): string => {
 };
 
 export const getGameSupportedCoinTypes = async (
-  suiClient: SuiClient
+  suiClient: SuiJsonRpcClient
 ): Promise<string[]> => {
   let unihouseFields: DynamicFieldInfo[] = [];
   let cursor;
@@ -257,7 +257,7 @@ export function U64FromBytes(x: number[]) {
 // Function to check if an object is in a kiosk, so shouldn't give kiosk Id
 export const checkIsInKiosk = async (
   objectId: string,
-  suiClient: SuiClient,
+  suiClient: SuiJsonRpcClient,
   kioskClient: KioskClient
 ): Promise<{
   isInKiosk: boolean;

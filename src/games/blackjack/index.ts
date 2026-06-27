@@ -10,7 +10,7 @@ import {
   BLACKJACK_CONFIG,
   BLACKJACK_ALL_PACKAGES,
 } from "../../constants/mainnetConstants";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 
 type Hit = 101;
 type Stand = 102;
@@ -40,7 +40,7 @@ export interface BlackjackVoucherInput {
 interface InternalBlackjackVoucherInput extends BlackjackVoucherInput {
   blackjackPackageId: string;
   origin: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 export interface BlackjackTableInput {
@@ -57,7 +57,7 @@ export interface GetBlackjackTableInput {
 }
 
 interface InternalGetBlackjackTableInput extends GetBlackjackTableInput {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 export interface BlackjackContractData {
@@ -116,7 +116,7 @@ export interface BlackjackPlayerMoveVoucherInput {
 interface InternalBlackjackPlayerMoveVoucherInput
   extends BlackjackPlayerMoveVoucherInput {
   blackjackPackageId: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 export interface BlackjackPlayerProcessMove {
