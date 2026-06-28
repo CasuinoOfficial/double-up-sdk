@@ -10,7 +10,7 @@ import {
   Transaction as TransactionType,
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { getAssetIndex } from "../../utils";
 
 export interface CrapsRemoveBetInput {
@@ -143,7 +143,7 @@ export interface GetCrapsTableInput {
 
 interface InternalGetCrapsTableInput extends GetCrapsTableInput {
   crapsCorePackageId: string;
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 export interface CrapsContractData {

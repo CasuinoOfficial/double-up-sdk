@@ -3,13 +3,13 @@ import {
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 import { DoubleUpClient } from "../../client";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testAddBet = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string,
   raceId: string,
@@ -61,7 +61,7 @@ export const testAddBet = async (
 
 export const testAddRiskLimit = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   riskLimit: number,
   coinType: string
@@ -97,7 +97,7 @@ export const testAddRiskLimit = async (
 
 export const testRemoveRiskLimit = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string
 ) => {
@@ -131,7 +131,7 @@ export const testRemoveRiskLimit = async (
 
 export const testAddManager = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   manager: string
 ) => {
@@ -159,7 +159,7 @@ export const testAddManager = async (
 
 export const testRemoveManager = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   manager: string
 ) => {
@@ -187,7 +187,7 @@ export const testRemoveManager = async (
 
 export const testAddVersion = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   version: number
 ) => {
@@ -215,7 +215,7 @@ export const testAddVersion = async (
 
 export const testRemoveVersion = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   version: number
 ) => {
@@ -243,7 +243,7 @@ export const testRemoveVersion = async (
 
 export const testSetHouseEdge = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   houseEdge: number
 ) => {
@@ -271,7 +271,7 @@ export const testSetHouseEdge = async (
 
 export const testSetPaginationLimit = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   limit: number
 ) => {
@@ -299,7 +299,7 @@ export const testSetPaginationLimit = async (
 
 export const testSetMaxCombo = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   maxCombo: number
 ) => {
@@ -327,7 +327,7 @@ export const testSetMaxCombo = async (
 
 export const testUpdateStatus = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   raceId: string,
   status: number

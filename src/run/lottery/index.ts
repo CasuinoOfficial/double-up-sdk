@@ -1,5 +1,5 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ticket } from "../../games/lottery";
@@ -7,7 +7,7 @@ import { LOTTERY_ID, SUI_COIN_TYPE, USDC_COIN_TYPE } from "../../constants/mainn
 
 export const testLotteryBuy = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const address = keypair.toSuiAddress();
@@ -68,7 +68,7 @@ export const testLotteryBuy = async (
 
 export const testLotteryBuyAlternativePrice = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const amount = 100000; // adjust based on prices config
@@ -130,7 +130,7 @@ export const testLotteryBuyAlternativePrice = async (
 
 export const testLotteryGet = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
   try {
@@ -145,7 +145,7 @@ export const testLotteryGet = async (
 
 export const testLotteryRedeem = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const epochs = [
@@ -194,7 +194,7 @@ export const testLotteryRedeem = async (
 
 export const testLotteryResults = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const epoch = 610;
@@ -216,7 +216,7 @@ export const testLotteryResults = async (
 
 export const testLotteryHistory = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
 
@@ -235,7 +235,7 @@ export const testLotteryHistory = async (
 
 export const testLotteryTickets = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair
 ) => {
   try {

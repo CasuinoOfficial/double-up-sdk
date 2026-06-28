@@ -1,4 +1,4 @@
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
@@ -55,7 +55,7 @@ export interface DrawingResultInput {
 }
 
 interface InternalDrawingResultInput extends DrawingResultInput {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   lotteryCorePackageId: string;
 }
 
@@ -154,12 +154,12 @@ export interface LotteryInput {
 }
 
 interface InternalLotteryInput extends LotteryInput {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 interface InternalLotteryHistoryInput {
   lotteryCorePackageId: string;
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 export interface LotteryResponse {
@@ -214,7 +214,7 @@ export interface LotteryTicketsInput {
 }
 
 interface InternalLotteryTicketsInput extends LotteryTicketsInput {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   lotteryCorePackageId: string;
 }
 

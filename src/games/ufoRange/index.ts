@@ -15,7 +15,7 @@ import {
   getTypesFromVoucher,
   getVoucherBank,
 } from "../../utils";
-import { SuiClient } from "@mysten/sui/dist/cjs/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 
 // Note: 0 = Inside, 1 = Outside
 export type InsideOutsideBet = 0 | 1;
@@ -46,7 +46,7 @@ export interface RangeVoucherInput {
 
 interface InternalRangeVoucherInput extends RangeVoucherInput {
   ufoRangePackageId: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 const isRangeNumber = (range: number | number[]): range is number =>

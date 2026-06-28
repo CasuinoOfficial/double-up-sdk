@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -43,7 +43,7 @@ export interface CoinflipVoucherInput {
 
 interface InternalCoinflipVoucherInput extends CoinflipVoucherInput {
   coinflipPackageId: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 interface CoinflipSettlement {

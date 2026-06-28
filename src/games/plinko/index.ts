@@ -1,4 +1,4 @@
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -44,7 +44,7 @@ export interface PlinkoVoucherInput {
 
 interface InternalPlinkoVoucherInput extends PlinkoVoucherInput {
   plinkoPackageId: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 export interface GetPlinkoTableInput {
@@ -54,7 +54,7 @@ export interface GetPlinkoTableInput {
 
 interface InternalGetPlinkoTableInput extends GetPlinkoTableInput {
   plinkoCorePackageId: string;
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 export interface GetPlinkoTableResponse {

@@ -1,5 +1,5 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { U64FromBytes } from "../../utils";
@@ -12,7 +12,7 @@ const raffleId =
 
 export const testRaffleGet = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -28,7 +28,7 @@ export const testRaffleGet = async (
 
 export const testRaffleGetTickets = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const address =
@@ -65,7 +65,7 @@ export const testRaffleGetTickets = async (
 
 export const testRaffleBuy = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const ticketsAmount = 2;
@@ -115,7 +115,7 @@ export const testRaffleBuy = async (
 
 export const testRaffleBuyWithDeal = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const ticketsAmount = 2;

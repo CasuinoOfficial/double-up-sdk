@@ -1,4 +1,4 @@
-import { SuiClient, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -46,7 +46,7 @@ export interface RPSVoucherInput {
 
 interface InternalRPSVoucherInput extends RPSVoucherInput {
   rpsPackageId: string;
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 interface RPSSettlement {
@@ -73,7 +73,7 @@ export interface RPSResultInput {
 
 interface InternalRPSResultInput extends RPSResultInput {
   rpsCorePackageId: string;
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
 }
 
 export interface RPSResponse {

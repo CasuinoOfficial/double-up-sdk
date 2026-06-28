@@ -1,12 +1,12 @@
 import {
   PaginatedEvents,
-  SuiClient,
+  SuiJsonRpcClient,
   SuiEvent,
   SuiObjectData,
   SuiObjectResponse,
   SuiParsedData,
   SuiTransactionBlockResponse,
-} from "@mysten/sui/client";
+} from "@mysten/sui/jsonRpc";
 import {
   Transaction,
   TransactionArgument,
@@ -33,7 +33,7 @@ import {
   sliceArrayIntoChunks,
 } from "../../utils";
 import { bcs } from "@mysten/sui/bcs";
-import { fromHEX, toHEX } from "@mysten/sui/utils";
+import { fromHex, toHex } from "@mysten/sui/utils";
 export interface CreateGachaponInput {
   cost: number;
   coinType: string;
@@ -64,7 +64,7 @@ export interface AddEgg {
 }
 
 interface InternalAddEgg extends AddEgg {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -96,7 +96,7 @@ export interface RemoveEgg {
 }
 
 interface InternalRemoveEgg extends RemoveEgg {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -114,7 +114,7 @@ export interface RemoveMultipleEggs {
 }
 
 interface InternalRemoveMultipleEggs extends RemoveMultipleEggs {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   gachaponPackageId: string;
 }
 
@@ -215,7 +215,7 @@ export interface ClaimEgg {
 }
 
 interface InternalClaimEgg extends ClaimEgg {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -307,13 +307,13 @@ export interface DrawFreeSpinMultiple {
 }
 
 interface InternalDrawFreeSpin extends DrawFreeSpin {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
 
 interface InternalDrawFreeSpinMultiple extends DrawFreeSpinMultiple {
-  suiClient: SuiClient;
+  suiClient: SuiJsonRpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -431,7 +431,7 @@ const getKeeperData = (data: SuiObjectData): any | null => {
   }
 };
 
-export const getGachapons = async (suiClient: SuiClient, address: string) => {
+export const getGachapons = async (suiClient: SuiJsonRpcClient, address: string) => {
   const createdTimes: Record<string, string> = {};
   let gachapons: Gachapons = {};
   let keeperCaps: KeeperCap[] = [];
@@ -519,7 +519,7 @@ export const getGachapons = async (suiClient: SuiClient, address: string) => {
 };
 
 export const adminGetGachapons = async (
-  suiClient: SuiClient,
+  suiClient: SuiJsonRpcClient,
   address: string
 ) => {
   const createdTimes: Record<string, string> = {};
@@ -631,7 +631,7 @@ const getEggData = (eggsContent: SuiParsedData) => {
 };
 
 export const adminGetEggs = async (
-  suiClient: SuiClient,
+  suiClient: SuiJsonRpcClient,
   lootboxId: string,
   slice_count: string
 ) => {
@@ -1799,8 +1799,8 @@ export const drawFreeSpin = async ({
   } else {
     if (kioskInfo.isPersonal) {
       const ID = bcs.fixedArray(32, bcs.u8()).transform({
-        input: (id: string) => fromHEX(id),
-        output: (id) => toHEX(Uint8Array.from(id)),
+        input: (id: string) => fromHex(id),
+        output: (id) => toHex(Uint8Array.from(id)),
       });
 
       transaction.moveCall({
@@ -1816,8 +1816,8 @@ export const drawFreeSpin = async ({
       });
     } else {
       const ID = bcs.fixedArray(32, bcs.u8()).transform({
-        input: (id: string) => fromHEX(id),
-        output: (id) => toHEX(Uint8Array.from(id)),
+        input: (id: string) => fromHex(id),
+        output: (id) => toHex(Uint8Array.from(id)),
       });
 
       transaction.moveCall({

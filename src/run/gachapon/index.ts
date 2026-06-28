@@ -1,12 +1,12 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { DoubleUpClient } from "../../client";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testCreateGachapon = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   cost: number,
   coinType: string,
@@ -46,7 +46,7 @@ export const testCreateGachapon = async (
 
 export const testCloseGachapon = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -122,7 +122,7 @@ export const testAdminGetEggs = async (
 
 export const testAddEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   gachaponId: string,
   objectId: string | string[]
@@ -168,7 +168,7 @@ export const testAddEgg = async (
 
 export const testRemoveEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -219,7 +219,7 @@ export const testRemoveEgg = async (
 
 export const testAddEmptyEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -259,7 +259,7 @@ export const testAddEmptyEgg = async (
 
 export const testClaimEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -300,7 +300,7 @@ export const testClaimEgg = async (
 
 export const testClaimGachaponTreasury = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -340,7 +340,7 @@ export const testClaimGachaponTreasury = async (
 
 export const testUpdateCost = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -380,7 +380,7 @@ export const testUpdateCost = async (
 
 export const testAddSupplier = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -424,7 +424,7 @@ export const testAddSupplier = async (
 
 export const testRemoveSupplier = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -468,7 +468,7 @@ export const testRemoveSupplier = async (
 
 export const testDrawEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -528,7 +528,7 @@ export const testDrawEgg = async (
 
 export const testDestroyEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   eggId: string
 ) => {
@@ -566,7 +566,7 @@ export const testDestroyEgg = async (
 
 export const testCreateFreeSpinner = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -604,7 +604,7 @@ export const testCreateFreeSpinner = async (
 
 export const testAddNftType = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   objectType: string,
@@ -644,7 +644,7 @@ export const testAddNftType = async (
 
 export const testRemoveNftType = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   objectType: string,
@@ -684,7 +684,7 @@ export const testRemoveNftType = async (
 
 export const testDrawFreeSpin = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,

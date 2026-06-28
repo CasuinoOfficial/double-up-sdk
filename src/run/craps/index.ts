@@ -1,5 +1,5 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
@@ -12,7 +12,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testCrapsCreate = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const txb = new Transaction();
@@ -70,7 +70,7 @@ export const testGetCrapsTable = async (
 
 export const testCrapsAdd = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const txb = new Transaction();
@@ -149,7 +149,7 @@ export const testCrapsAdd = async (
 
 export const testCrapsAddAndRemove = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const address = keypair.getPublicKey().toSuiAddress();
@@ -180,7 +180,7 @@ export const testCrapsAddAndRemove = async (
 
 export const testCrapsRoll = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const txb = new Transaction();
@@ -205,7 +205,7 @@ export const testCrapsRoll = async (
 
 export const testCrapsSettle = async (
   dbClient: DoubleUpClient,
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const txb2 = new Transaction();

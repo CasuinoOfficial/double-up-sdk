@@ -1,4 +1,4 @@
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import {
   TransactionObjectArgument,
   Transaction as TransactionType,
@@ -93,7 +93,7 @@ export interface GetRaffleInput {
 }
 
 interface InternalGetRaffleInput extends GetRaffleInput {
-  client: SuiClient;
+  client: SuiJsonRpcClient;
 }
 
 interface RaffleData {
