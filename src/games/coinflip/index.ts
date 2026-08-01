@@ -1,4 +1,5 @@
-import { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -43,7 +44,7 @@ export interface CoinflipVoucherInput {
 
 interface InternalCoinflipVoucherInput extends CoinflipVoucherInput {
   coinflipPackageId: string;
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 
 interface CoinflipSettlement {
@@ -65,7 +66,7 @@ export interface CoinflipResultInput {
   coinType: string;
   gameSeed: string;
   pollInterval?: number;
-  transactionResult: SuiTransactionBlockResponse;
+  transactionResult: SuiClientTypes.Transaction<{ effects: true; objectTypes: true }>;
 }
 
 export interface CoinflipResponse {

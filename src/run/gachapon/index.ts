@@ -1,12 +1,13 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { DoubleUpClient } from "../../client";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testCreateGachapon = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   cost: number,
   coinType: string,
@@ -23,30 +24,15 @@ export const testCreateGachapon = async (
 
   tx.transferObjects([gachapon], keypair.toSuiAddress());
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testCloseGachapon = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -66,23 +52,8 @@ export const testCloseGachapon = async (
 
   tx.transferObjects([tCoin, suiCoin], keypair.toSuiAddress());
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
@@ -122,7 +93,7 @@ export const testAdminGetEggs = async (
 
 export const testAddEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   gachaponId: string,
   objectId: string | string[]
@@ -145,30 +116,15 @@ export const testAddEgg = async (
     });
   }
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -196,30 +152,15 @@ export const testRemoveEgg = async (
 
   // tx.transferObjects([removedEgg], keypair.toSuiAddress());
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testAddEmptyEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -236,30 +177,15 @@ export const testAddEmptyEgg = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testClaimEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -284,23 +210,14 @@ export const testClaimEgg = async (
     });
   }
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testClaimGachaponTreasury = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -317,30 +234,15 @@ export const testClaimGachaponTreasury = async (
 
   tx.transferObjects([treasury], keypair.toSuiAddress());
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testUpdateCost = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -357,30 +259,15 @@ export const testUpdateCost = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testAddSupplier = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -401,30 +288,15 @@ export const testAddSupplier = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveSupplier = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -445,52 +317,31 @@ export const testRemoveSupplier = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testDrawEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
   count: number,
   recipient: string
 ) => {
-  const gachaponInfo = await client.getObject({
-    id: gachaponId,
-    options: {
-      showContent: true,
-    },
+  const { object: gachaponInfo } = await client.getObject({
+    objectId: gachaponId,
+    include: { json: true },
   });
 
-  const gachaponContent = gachaponInfo?.data?.content;
+  const fields = gachaponInfo?.json as any;
 
-  if (!gachaponContent) {
+  if (!fields) {
     throw new Error("Gachapon not found");
-  } else if (gachaponContent?.dataType !== "moveObject") {
-    throw new Error("Wrong dataType");
   }
-
-  const fields = gachaponContent?.fields as any;
 
   const tx = new Transaction();
 
@@ -505,30 +356,15 @@ export const testDrawEgg = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testDestroyEgg = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   eggId: string
 ) => {
@@ -543,30 +379,15 @@ export const testDestroyEgg = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testCreateFreeSpinner = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -581,30 +402,15 @@ export const testCreateFreeSpinner = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testAddNftType = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   objectType: string,
@@ -621,30 +427,15 @@ export const testAddNftType = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveNftType = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair,
   coinType: string,
   objectType: string,
@@ -661,30 +452,15 @@ export const testRemoveNftType = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testDrawFreeSpin = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string,
   gachaponId: string,
@@ -701,23 +477,8 @@ export const testDrawFreeSpin = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };

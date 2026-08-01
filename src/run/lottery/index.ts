@@ -1,5 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ticket } from "../../games/lottery";
@@ -7,7 +8,7 @@ import { LOTTERY_ID, SUI_COIN_TYPE, USDC_COIN_TYPE } from "../../constants/mainn
 
 export const testLotteryBuy = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const address = keypair.toSuiAddress();
@@ -42,23 +43,8 @@ export const testLotteryBuy = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction. TxDigest: ", transactionResult.digest);
   } catch (err) {
@@ -68,7 +54,7 @@ export const testLotteryBuy = async (
 
 export const testLotteryBuyAlternativePrice = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const amount = 100000; // adjust based on prices config
@@ -104,23 +90,8 @@ export const testLotteryBuyAlternativePrice = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction. TxDigest: ", transactionResult.digest);
   } catch (err) {
@@ -130,7 +101,7 @@ export const testLotteryBuyAlternativePrice = async (
 
 export const testLotteryGet = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
   try {
@@ -145,7 +116,7 @@ export const testLotteryGet = async (
 
 export const testLotteryRedeem = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const epochs = [
@@ -168,23 +139,8 @@ export const testLotteryRedeem = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction. TxDigest: ", transactionResult.digest);
   } catch (err) {
@@ -194,7 +150,7 @@ export const testLotteryRedeem = async (
 
 export const testLotteryResults = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
   const epoch = 610;
@@ -216,7 +172,7 @@ export const testLotteryResults = async (
 
 export const testLotteryHistory = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
 
@@ -235,7 +191,7 @@ export const testLotteryHistory = async (
 
 export const testLotteryTickets = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair
 ) => {
   try {

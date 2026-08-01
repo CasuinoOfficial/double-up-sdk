@@ -1,12 +1,6 @@
-import {
-  PaginatedEvents,
-  SuiJsonRpcClient,
-  SuiEvent,
-  SuiObjectData,
-  SuiObjectResponse,
-  SuiParsedData,
-  SuiTransactionBlockResponse,
-} from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import type { SuiClientTypes } from "@mysten/sui/client";
+import { bcs } from "@mysten/sui/bcs";
 import {
   Transaction,
   TransactionArgument,
@@ -30,9 +24,9 @@ import {
 import {
   checkHasKiosk,
   checkIsInKiosk,
+  shortenAddressesInType,
   sliceArrayIntoChunks,
 } from "../../utils";
-import { bcs } from "@mysten/sui/bcs";
 import { fromHex, toHex } from "@mysten/sui/utils";
 export interface CreateGachaponInput {
   cost: number;
@@ -64,7 +58,7 @@ export interface AddEgg {
 }
 
 interface InternalAddEgg extends AddEgg {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -96,7 +90,7 @@ export interface RemoveEgg {
 }
 
 interface InternalRemoveEgg extends RemoveEgg {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -114,7 +108,7 @@ export interface RemoveMultipleEggs {
 }
 
 interface InternalRemoveMultipleEggs extends RemoveMultipleEggs {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   gachaponPackageId: string;
 }
 
@@ -215,7 +209,7 @@ export interface ClaimEgg {
 }
 
 interface InternalClaimEgg extends ClaimEgg {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -307,13 +301,13 @@ export interface DrawFreeSpinMultiple {
 }
 
 interface InternalDrawFreeSpin extends DrawFreeSpin {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
 
 interface InternalDrawFreeSpinMultiple extends DrawFreeSpinMultiple {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   kioskClient: KioskClient;
   gachaponPackageId: string;
 }
@@ -416,87 +410,122 @@ export const closeGachapon = ({
   return rest;
 };
 
-const getKeeperData = (data: SuiObjectData): any | null => {
-  if (data.content?.dataType !== "moveObject") {
+const getKeeperData = (
+  data: SuiClientTypes.Object<{ json: true }>
+): any | null => {
+  const fields = data.json as any;
+
+  if (!fields) {
     return null;
   }
 
-  const fields = data.content.fields as unknown as any;
-
-  const keeperCap = { id: fields.id.id, gachaponId: fields.gachapon_id };
-  if (keeperCap) {
-    return keeperCap;
-  } else {
-    return null;
-  }
+  return { id: fields.id, gachaponId: fields.gachapon_id };
 };
 
-export const getGachapons = async (suiClient: SuiJsonRpcClient, address: string) => {
+// gRPC event entries carry no timestamp — resolve creation times through the
+// emitting transactions instead
+const getGachaponCreatedTimes = async (
+  suiClient: SuiGrpcClient
+): Promise<Record<string, string>> => {
   const createdTimes: Record<string, string> = {};
+  const entries: { gachaponId: string; digest: string }[] = [];
+  let cursor: string | null = null;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const eventResponse = await suiClient.listEvents({
+      filter: {
+        eventType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::NewGachapon`,
+      },
+      order: "ascending",
+      ...(cursor ? { after: cursor } : {}),
+    });
+
+    for (const item of eventResponse.events) {
+      const json = item.json as any;
+      if (json?.gachapon_id) {
+        entries.push({
+          gachaponId: json.gachapon_id,
+          digest: item.transactionDigest,
+        });
+      }
+    }
+
+    cursor = eventResponse.endCursor;
+    hasNextPage = eventResponse.hasNextPage;
+  }
+
+  const digests = [...new Set(entries.map((entry) => entry.digest))];
+  const timestampByDigest: Record<string, string> = {};
+
+  for (const batch of sliceArrayIntoChunks(digests, 50)) {
+    const { response } = await suiClient.ledgerService.batchGetTransactions({
+      digests: batch,
+      readMask: { paths: ["digest", "timestamp"] },
+    });
+
+    for (const result of response.transactions ?? []) {
+      const oneof = result.result as any;
+      if (oneof.oneofKind !== "transaction") continue;
+      const tx = oneof.transaction;
+      if (tx.digest && tx.timestamp) {
+        timestampByDigest[tx.digest] = String(
+          Number(tx.timestamp.seconds) * 1000 +
+            Math.floor(tx.timestamp.nanos / 1e6)
+        );
+      }
+    }
+  }
+
+  for (const entry of entries) {
+    createdTimes[entry.gachaponId] = timestampByDigest[entry.digest];
+  }
+
+  return createdTimes;
+};
+
+export const getGachapons = async (suiClient: SuiGrpcClient, address: string) => {
   let gachapons: Gachapons = {};
   let keeperCaps: KeeperCap[] = [];
-  let cursor;
+  let cursor: string | null = null;
   let hasNextPage = true;
 
   //Get gachapon keeper cap
   while (hasNextPage) {
-    const response = await suiClient.getOwnedObjects({
+    const response = await suiClient.listOwnedObjects({
       owner: address,
-      filter: {
-        StructType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::KeeperCap`,
-      },
-      options: { showContent: true },
-      cursor: cursor || null,
+      type: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::KeeperCap`,
+      include: { json: true },
+      cursor,
     });
 
-    response.data.forEach((item: any) => {
-      const keeperCap = getKeeperData(item.data);
+    response.objects.forEach((item: any) => {
+      const keeperCap = getKeeperData(item);
 
       keeperCaps.push(keeperCap);
     });
-    cursor = response.nextCursor;
+    cursor = response.cursor;
     hasNextPage = response.hasNextPage;
   }
 
   //Get create gachapon event
-  cursor = null;
-  hasNextPage = true;
-
-  while (hasNextPage) {
-    const eventResponse = await suiClient.queryEvents({
-      query: {
-        MoveEventType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::NewGachapon`,
-      },
-      cursor: cursor || null,
-    });
-
-    for (let item of eventResponse.data) {
-      const parsedJson = item.parsedJson as any;
-
-      createdTimes[parsedJson?.gachapon_id] = item.timestampMs;
-    }
-
-    cursor = eventResponse.nextCursor;
-    hasNextPage = eventResponse.hasNextPage;
-  }
+  const createdTimes = await getGachaponCreatedTimes(suiClient);
 
   const promiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
     suiClient.getObject({
-      id: keeperCap.gachaponId,
-      options: {
-        showContent: true,
-        showPreviousTransaction: true,
-        showType: true,
-      },
+      objectId: keeperCap.gachaponId,
+      include: { json: true, previousTransaction: true },
     })
   );
 
   const responseList = await Promise.all(promiseList);
 
   responseList.forEach((response, index) => {
-    const data = response.data;
-    const coinType = data?.type?.split("<")[1].split(">")[0];
-    const fields = data?.content?.fields as any;
+    const data = response.object;
+    const coinType = shortenAddressesInType(data?.type ?? "")
+      .split("<")[1]
+      .split(">")[0];
+    const fields = data?.json as any;
 
     const gachapon = {
       id: keeperCaps[index].gachaponId,
@@ -505,9 +534,9 @@ export const getGachapons = async (suiClient: SuiJsonRpcClient, address: string)
       coinType: coinType,
       cost: fields.cost,
       lootbox: {
-        id: fields?.lootbox?.fields?.id?.id,
-        eggCounts: fields?.lootbox?.fields?.length,
-        sliceCount: fields?.lootbox?.fields?.slice_count,
+        id: fields?.lootbox?.id,
+        eggCounts: fields?.lootbox?.length,
+        sliceCount: fields?.lootbox?.slice_count,
       },
       createdAt: createdTimes[keeperCaps[index].gachaponId],
     };
@@ -519,75 +548,51 @@ export const getGachapons = async (suiClient: SuiJsonRpcClient, address: string)
 };
 
 export const adminGetGachapons = async (
-  suiClient: SuiJsonRpcClient,
+  suiClient: SuiGrpcClient,
   address: string
 ) => {
-  const createdTimes: Record<string, string> = {};
   let gachapons: AdminGachapons = {};
   let keeperCaps: KeeperCap[] = [];
-  let cursor;
+  let cursor: string | null = null;
   let hasNextPage = true;
 
   //Get gachapon keeper cap
   while (hasNextPage) {
-    const response = await suiClient.getOwnedObjects({
+    const response = await suiClient.listOwnedObjects({
       owner: address,
-      filter: {
-        StructType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::KeeperCap`,
-      },
-      options: { showContent: true },
-      cursor: cursor || null,
+      type: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::KeeperCap`,
+      include: { json: true },
+      cursor,
     });
 
-    response.data.forEach((item: any) => {
-      const keeperCap = getKeeperData(item.data);
+    response.objects.forEach((item: any) => {
+      const keeperCap = getKeeperData(item);
 
       keeperCaps.push(keeperCap);
     });
-    cursor = response.nextCursor;
+    cursor = response.cursor;
     hasNextPage = response.hasNextPage;
   }
 
   //Get create gachapon event
-  cursor = null;
-  hasNextPage = true;
-
-  while (hasNextPage) {
-    const eventResponse = await suiClient.queryEvents({
-      query: {
-        MoveEventType: `${GACHAPON_CORE_PACKAGE_ID}::gachapon::NewGachapon`,
-      },
-      cursor: cursor || null,
-    });
-
-    for (let item of eventResponse.data) {
-      const parsedJson = item.parsedJson as any;
-
-      createdTimes[parsedJson?.gachapon_id] = item.timestampMs;
-    }
-
-    cursor = eventResponse.nextCursor;
-    hasNextPage = eventResponse.hasNextPage;
-  }
+  const createdTimes = await getGachaponCreatedTimes(suiClient);
 
   const promiseList: Promise<any>[] = keeperCaps.map((keeperCap) =>
     suiClient.getObject({
-      id: keeperCap.gachaponId,
-      options: {
-        showContent: true,
-        showPreviousTransaction: true,
-        showType: true,
-      },
+      objectId: keeperCap.gachaponId,
+      include: { json: true, previousTransaction: true },
     })
   );
 
   const responseList = await Promise.all(promiseList);
 
   responseList.forEach((response, index) => {
-    const data = response.data;
-    const coinType = data?.type?.split("<")[1].split(">")[0];
-    const fields = data?.content?.fields as any;
-    const suppliers = fields?.suppliers?.fields?.contents as any;
+    const data = response.object;
+    const coinType = shortenAddressesInType(data?.type ?? "")
+      .split("<")[1]
+      .split(">")[0];
+    const fields = data?.json as any;
+    const suppliers = fields?.suppliers?.contents as any;
 
     const gachapon = {
       id: keeperCaps[index].gachaponId,
@@ -597,9 +602,9 @@ export const adminGetGachapons = async (
       cost: fields.cost,
       suppliers: suppliers,
       lootbox: {
-        id: fields?.lootbox?.fields?.id?.id,
-        eggCounts: fields?.lootbox?.fields?.length,
-        sliceCount: fields?.lootbox?.fields?.slice_count,
+        id: fields?.lootbox?.id,
+        eggCounts: fields?.lootbox?.length,
+        sliceCount: fields?.lootbox?.slice_count,
       },
       treasury: fields.treasury,
       createdAt: createdTimes[keeperCaps[index].gachaponId],
@@ -611,19 +616,18 @@ export const adminGetGachapons = async (
   return gachapons;
 };
 
-const getEggData = (eggsContent: SuiParsedData) => {
-  if (eggsContent.dataType !== "moveObject") {
+const getEggData = (eggsFields: any) => {
+  if (!eggsFields) {
     throw new Error("Invalid object type of gachapon eggs");
   }
 
-  const eggsFields = eggsContent?.fields as any;
   const eggs = eggsFields.value;
 
   const eggsInfoList: EggInfo[] = eggs.map((egg: any) => {
     return {
-      eggId: egg?.fields?.id?.id,
-      isLocked: egg?.fields?.content?.fields?.is_locked,
-      objectId: egg?.fields?.content?.fields?.obj_id,
+      eggId: egg?.id,
+      isLocked: egg?.content?.is_locked,
+      objectId: egg?.content?.obj_id,
     };
   });
 
@@ -631,43 +635,37 @@ const getEggData = (eggsContent: SuiParsedData) => {
 };
 
 export const adminGetEggs = async (
-  suiClient: SuiJsonRpcClient,
+  suiClient: SuiGrpcClient,
   lootboxId: string,
   slice_count: string
 ) => {
   const lootboxVecotrPromises = [...Array(Number(slice_count))].map(
     (_, index) =>
-      suiClient.getDynamicFieldObject({
+      suiClient.getDynamicField({
         parentId: lootboxId,
         name: {
           type: "u64",
-          value: (index + 1).toString(),
+          bcs: bcs.U64.serialize(index + 1).toBytes(),
         },
       })
   );
 
   const lootboxVectorResponse = await Promise.all(lootboxVecotrPromises);
 
-  const lootboxVectorData = lootboxVectorResponse.map(
-    (response) => response.data
-  );
-
-  const eggsPromises = lootboxVectorData.map((lootbox) =>
+  const eggsPromises = lootboxVectorResponse.map(({ dynamicField }) =>
     suiClient.getObject({
-      id: lootbox.objectId,
-      options: {
-        showContent: true,
-        showType: true,
-      },
+      objectId:
+        dynamicField.$kind === "DynamicObject"
+          ? dynamicField.childId
+          : dynamicField.fieldId,
+      include: { json: true },
     })
   );
 
   const eggsResponses = await Promise.all(eggsPromises);
 
-  const eggsContentList = eggsResponses.map((egg) => egg.data.content);
-
-  const eggsDataList = eggsContentList.map((eggsContent) =>
-    getEggData(eggsContent)
+  const eggsDataList = eggsResponses.map((egg) =>
+    getEggData(egg.object.json as any)
   );
 
   const eggsInfoList = eggsDataList.flat();
@@ -677,38 +675,37 @@ export const adminGetEggs = async (
     50
   );
 
-  const chunkedEggObjectPromises: (Promise<SuiObjectResponse[]> | undefined)[] =
-    chunkedEggsInfoList.map((eggs: EggInfo[]) =>
-      suiClient.multiGetObjects({
-        ids: eggs.map((egg) => egg.objectId),
-        options: {
-          showContent: true,
-          showDisplay: true,
-          showType: true,
-        },
-      })
-    );
+  const chunkedEggObjectPromises = chunkedEggsInfoList.map((eggs: EggInfo[]) =>
+    suiClient.getObjects({
+      objectIds: eggs.map((egg) => egg.objectId),
+      include: { json: true, display: true },
+    })
+  );
 
   const chunkedEggObjects = await Promise.all(
     chunkedEggObjectPromises.filter((egg) => egg)
   );
 
-  const eggObjects = chunkedEggObjects.flat();
+  const eggObjects = chunkedEggObjects
+    .flatMap((response) => response.objects)
+    .filter(
+      (object): object is SuiClientTypes.Object<{ json: true; display: true }> =>
+        !(object instanceof Error)
+    );
 
   const coins = {};
 
   const coinObjectList = eggObjects.filter((eggObject) => {
-    return (
-      eggObject?.data?.type === SUI_COIN_TYPE ||
-      eggObject?.data?.type?.includes("0x2::coin::Coin")
-    );
+    const type = shortenAddressesInType(eggObject?.type ?? "");
+    return type === SUI_COIN_TYPE || type.includes("0x2::coin::Coin");
   });
 
   for (const coin of coinObjectList) {
-    if (coins.hasOwnProperty(coin?.data?.type)) {
+    const type = shortenAddressesInType(coin?.type ?? "");
+    if (coins.hasOwnProperty(type)) {
       continue;
     } else {
-      coins[coin?.data?.type] = null;
+      coins[type] = null;
     }
   }
 
@@ -726,7 +723,7 @@ export const adminGetEggs = async (
 
     const coinMetadataList = await Promise.all(coinMetadataPromises);
 
-    coinMetadataList.forEach((coinMetadata, index) => {
+    coinMetadataList.forEach(({ coinMetadata }, index) => {
       coins[coinTypeList[index]] = coinMetadata;
     });
   }
@@ -741,9 +738,10 @@ export const adminGetEggs = async (
       } as EggObjectInfo;
     }
 
-    const objectType = eggObjects.find(
-      (eggObject) => eggObject?.data?.objectId === egg.objectId
-    ).data?.type;
+    const objectType = shortenAddressesInType(
+      eggObjects.find((eggObject) => eggObject?.objectId === egg.objectId)
+        ?.type ?? ""
+    );
 
     if (
       objectType === SUI_COIN_TYPE ||
@@ -752,13 +750,12 @@ export const adminGetEggs = async (
     }
 
     const objectDisplay = eggObjects.find(
-      (eggObject) => eggObject?.data?.objectId === egg.objectId
-    ).data?.display?.data;
+      (eggObject) => eggObject?.objectId === egg.objectId
+    )?.display?.output as any;
 
-    const objectContent = (
-      eggObjects.find((eggObject) => eggObject?.data?.objectId === egg.objectId)
-        .data?.content as any
-    ).fields;
+    const objectContent = eggObjects.find(
+      (eggObject) => eggObject?.objectId === egg.objectId
+    )?.json as any;
 
     if (Object.keys(coins).length > 0 && coins.hasOwnProperty(objectType)) {
       const objectInfo = {
@@ -805,22 +802,21 @@ export const addEgg = async ({
   kioskClient,
   gachaponPackageId,
 }: InternalAddEgg) => {
-  const gachaponResponse = await suiClient.getObject({
-    id: gachaponId,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  const { object: gachaponData } = await suiClient.getObject({
+    objectId: gachaponId,
+    include: { json: true },
   });
 
-  const gachaponData = gachaponResponse.data;
-  const coinType = gachaponData?.type?.split("<")[1].split(">")[0];
+  const coinType = shortenAddressesInType(gachaponData?.type ?? "")
+    .split("<")[1]
+    .split(">")[0];
 
-  if (gachaponData.content?.dataType !== "moveObject") {
+  const gachaponFields = gachaponData.json as any;
+
+  if (!gachaponFields) {
     throw new Error("Invalid object type of Gachapon");
   }
 
-  const gachaponFields = gachaponData.content?.fields as any;
   const gachaponKioskId = gachaponFields.kiosk_id;
 
   const { isInKiosk, objectType, kioskInfo } = await checkIsInKiosk(
@@ -1060,14 +1056,10 @@ export const removeEgg = async ({
       arguments: [removedEgg],
     });
   } else {
-    const objResponse = await suiClient.getObject({
-      id: objId,
-      options: {
-        showType: true,
-      },
+    const { object: objData } = await suiClient.getObject({
+      objectId: objId,
     });
 
-    const objData = objResponse.data;
     const objType = objData?.type;
 
     const coinType = objData?.type.includes("Coin<")
@@ -1237,16 +1229,13 @@ export const removeMultipleEggs = async ({
   } else {
     const objPromises = objId.map((id) =>
       suiClient.getObject({
-        id,
-        options: {
-          showType: true,
-        },
+        objectId: id,
       })
     );
 
     const objResponses = await Promise.all(objPromises);
 
-    const objData = objResponses.map((response) => response.data);
+    const objData = objResponses.map((response) => response.object);
     const objTypes = objData.map((data) => data?.type);
 
     let claimedEggs: TransactionResult[] = [];
@@ -1318,36 +1307,28 @@ export const claimEgg = async ({
 }: InternalClaimEgg) => {
   transaction.setGasBudget(100_000_000);
 
-  const eggResponse = await suiClient.getObject({
-    id: eggId,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  const { object: eggObject } = await suiClient.getObject({
+    objectId: eggId,
+    include: { json: true },
   });
 
-  const eggContent = eggResponse?.data?.content;
+  const eggFields = eggObject.json as any;
 
-  if (eggContent?.dataType !== "moveObject") {
+  if (!eggFields) {
     throw new Error("Invalid object type of gachapon egg");
   }
 
-  const eggFields = eggContent?.fields as any;
-
-  if (eggFields.content === null) {
+  if (eggFields.content === null || eggFields.content === undefined) {
     return null;
   }
 
-  const { is_locked, obj_id } = eggFields.content.fields;
+  const { is_locked, obj_id } = eggFields.content;
 
   const objResponse = await suiClient.getObject({
-    id: obj_id,
-    options: {
-      showType: true,
-    },
+    objectId: obj_id,
   });
 
-  const objType = objResponse.data.type;
+  const objType = objResponse.object.type;
 
   if (!is_locked) {
     const coinTypeInsideUnlocked = objType.includes("Coin<")
@@ -1763,17 +1744,12 @@ export const drawFreeSpin = async ({
   kioskClient,
   gachaponPackageId,
 }: InternalDrawFreeSpin) => {
-  const objectResponse = await suiClient.getObject({
-    id: objectId,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  const { object: objectData } = await suiClient.getObject({
+    objectId: objectId,
+    include: { json: true },
   });
 
-  const objectData = objectResponse.data;
-
-  if (objectData.content?.dataType !== "moveObject") {
+  if (!objectData.json) {
     throw new Error("Invalid object type");
   }
 
@@ -1846,15 +1822,14 @@ export const drawFreeSpinMultiple = async ({
   kioskClient,
   gachaponPackageId,
 }: InternalDrawFreeSpinMultiple) => {
-  const objectResponse = await suiClient.multiGetObjects({
-    ids: objectIds,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  const { objects: objectResponse } = await suiClient.getObjects({
+    objectIds: objectIds,
+    include: { json: true },
   });
 
-  const objectDatas = objectResponse.map((response) => response.data);
+  const objectDatas = objectResponse.map((object) =>
+    object instanceof Error ? undefined : object
+  );
   const objectTypes = objectDatas.map((data) => data?.type);
 
   if (objectTypes.length === 0)

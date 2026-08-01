@@ -1,5 +1,5 @@
 // import { client, SuiTxBlock } from '@scallop-io/sui-kit';
-import { getJsonRpcFullnodeUrl, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { DoubleUpClient } from "../client";
 import { fromHex } from "@mysten/sui/utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
@@ -99,9 +99,9 @@ import {
 } from "./marble_racing";
 
 const { FUNCTION = "", MNEMONICS = "", SECP_MNEMONICS = "" } = process.env;
-const client = new SuiJsonRpcClient({
+const client = new SuiGrpcClient({
   network: "mainnet",
-  url: "https://fullnode-doubleup.com",
+  baseUrl: "https://fullnode.mainnet.sui.io:443",
 });
 const secpKeypair = Secp256k1Keypair.deriveKeypair(SECP_MNEMONICS);
 const keypair = Ed25519Keypair.fromSecretKey(
@@ -501,6 +501,11 @@ const dbClient = new DoubleUpClient({
         break;
       case "marble_racing:testRemoveVersion":
         testRemoveVersion(dbClient, client, keypair, 1);
+        break;
+      case "unihouse:getGTokenBalance":
+        testGetGTokenBalance(dbClient, keypair.toSuiAddress())
+          .then((res) => console.log(res))
+          .catch((err) => console.error(err));
         break;
       default:
       // Test all

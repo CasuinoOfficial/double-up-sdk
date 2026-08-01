@@ -1,5 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
@@ -8,7 +9,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testCoinflip = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   // heads
@@ -35,24 +36,9 @@ export const testCoinflip = async (
 
     console.log("Added coinflip to transaction block.");
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
     console.log("result", transactionResult);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Events", transactionResult?.events);
 

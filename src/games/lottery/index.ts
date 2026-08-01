@@ -1,4 +1,4 @@
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
@@ -55,7 +55,7 @@ export interface DrawingResultInput {
 }
 
 interface InternalDrawingResultInput extends DrawingResultInput {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   lotteryCorePackageId: string;
 }
 
@@ -154,12 +154,12 @@ export interface LotteryInput {
 }
 
 interface InternalLotteryInput extends LotteryInput {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 interface InternalLotteryHistoryInput {
   lotteryCorePackageId: string;
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 export interface LotteryResponse {
@@ -196,25 +196,12 @@ interface LotteryTicket {
   winning_balance?: any; // TODO: figure out how to store option<balance>
 }
 
-interface LotteryTicketsConfig {
-  cursor?: any; // TODO: declare type
-  // query: {
-  //   All: [
-  //     { MoveEventType: string },
-  //     { Sender: string }
-  //   ]
-  // };
-  query: any;
-  order: "descending" | "ascending";
-  limit?: number;
-}
-
 export interface LotteryTicketsInput {
   address: string;
 }
 
 interface InternalLotteryTicketsInput extends LotteryTicketsInput {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   lotteryCorePackageId: string;
 }
 
@@ -331,19 +318,16 @@ export const getLottery = async ({
   const res: LotteryResponse = { ok: true };
 
   try {
-    const fieldsResp = await suiClient.getDynamicFieldObject({
+    const { object } = await suiClient.core.getDynamicObjectField({
       name: {
         type: "0x2::object::ID",
-        value: lotteryId,
+        bcs: bcs.Address.serialize(lotteryId).toBytes(),
       },
       parentId: LOTTERY_STORE,
+      include: { json: true },
     });
 
-    if (fieldsResp?.data?.content?.dataType !== "moveObject") {
-      throw new Error("Invalid data type, expected moveObject");
-    }
-
-    const lotteryData = fieldsResp.data.content.fields as unknown;
+    const lotteryData = object.json as unknown;
 
     res.result = lotteryData as LotteryData;
   } catch (err) {
@@ -362,28 +346,35 @@ export const getLotteryHistory = async ({
 
   try {
     let results: LotteryHistoryItem[] = [];
+    let before: string | null = null;
+    let hasNextPage = true;
 
-    while (results.length === 0) {
-      const events = await suiClient.queryEvents({
-        query: {
-          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
+    // gRPC pages can be scan-limited (empty page + hasNextPage), so advance
+    // the cursor instead of re-issuing the same query
+    while (results.length === 0 && hasNextPage) {
+      const events = await suiClient.listEvents({
+        filter: {
+          eventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
         },
         order: "descending",
+        ...(before ? { before } : {}),
       });
 
-      const validData = events.data
-        .filter((item) => item.parsedJson && item.id)
-        .map(({ parsedJson, id }: any) => ({
-          epoch: Number(parsedJson.epoch),
-          lotteryId: parsedJson.lottery_id,
-          results: parsedJson.results,
-          timestampDrawn: Number(parsedJson.timestamp_drawn),
-          txDigest: id.txDigest,
+      const validData = events.events
+        .filter((item) => item.json && item.transactionDigest)
+        .map(({ json, transactionDigest }: any) => ({
+          epoch: Number(json.epoch),
+          lotteryId: json.lottery_id,
+          results: json.results,
+          timestampDrawn: Number(json.timestamp_drawn),
+          txDigest: transactionDigest,
         }));
 
       if (validData.length > 0) {
         results = validData;
       }
+      before = events.endCursor;
+      hasNextPage = events.hasNextPage;
     }
 
     res.results = results;
@@ -407,25 +398,22 @@ export const getLotteryDrawingResult = async ({
     let results = [];
 
     while (results.length === 0) {
-      const events = await suiClient.queryEvents({
-        query: {
-          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
+      const events = await suiClient.listEvents({
+        filter: {
+          eventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::RoundResult`,
         },
         order: "descending",
         limit: 2,
       });
 
-      results = events.data
-        .filter(
-          (item: any) =>
-            item.parsedJson && Number(item.parsedJson.epoch) === epoch
-        )
-        .map(({ parsedJson, id }: any) => ({
-          epoch: Number(parsedJson.epoch),
-          lotteryId: parsedJson.lottery_id,
-          results: parsedJson.results,
-          timestampDrawn: Number(parsedJson.timestamp_drawn),
-          txdigest: id.txDigest,
+      results = events.events
+        .filter((item: any) => item.json && Number(item.json.epoch) === epoch)
+        .map(({ json, transactionDigest }: any) => ({
+          epoch: Number(json.epoch),
+          lotteryId: json.lottery_id,
+          results: json.results,
+          timestampDrawn: Number(json.timestamp_drawn),
+          txdigest: transactionDigest,
         }));
 
       if (results.length === 0) {
@@ -457,30 +445,25 @@ export const getLotteryTickets = async ({
   try {
     const tickets: LotteryTicket[] = [];
     let shouldFetchMore = true;
-    let cursor = undefined;
+    let before: string | null = null;
 
     while (shouldFetchMore) {
-      const queryParams: LotteryTicketsConfig = {
-        query: {
-          MoveEventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased`,
+      const resp = await suiClient.listEvents({
+        filter: {
+          eventType: `${lotteryCorePackageId}::${LOTTERY_MODULE_NAME}::TicketPurchased`,
         },
         order: "descending",
-      };
+        ...(before ? { before } : {}),
+      });
 
-      if (!!cursor) {
-        queryParams.cursor = cursor;
-      }
-
-      const resp = await suiClient.queryEvents(queryParams);
-
-      resp.data.forEach((event) => {
-        const ticket = event.parsedJson as LotteryTicket;
+      resp.events.forEach((event) => {
+        const ticket = event.json as unknown as LotteryTicket;
         if (ticket.owner === address) {
           tickets.push(ticket);
         }
       });
 
-      cursor = resp.nextCursor;
+      before = resp.endCursor;
       shouldFetchMore = resp.hasNextPage;
     }
 

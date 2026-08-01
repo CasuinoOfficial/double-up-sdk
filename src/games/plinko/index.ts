@@ -1,4 +1,5 @@
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { bcs } from "@mysten/sui/bcs";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -44,7 +45,7 @@ export interface PlinkoVoucherInput {
 
 interface InternalPlinkoVoucherInput extends PlinkoVoucherInput {
   plinkoPackageId: string;
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 
 export interface GetPlinkoTableInput {
@@ -54,7 +55,7 @@ export interface GetPlinkoTableInput {
 
 interface InternalGetPlinkoTableInput extends GetPlinkoTableInput {
   plinkoCorePackageId: string;
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 export interface GetPlinkoTableResponse {
@@ -142,21 +143,19 @@ export const getPlinkoTable = async ({
   const res: GetPlinkoTableResponse = { ok: true };
 
   try {
-    const { data } = await suiClient.getDynamicFieldObject({
+    const { object } = await suiClient.core.getDynamicObjectField({
       parentId: PLINKO_CONFIG,
       name: {
         type: `${plinkoCorePackageId}::${PLINKO_MODULE_NAME}::GameTag<${coinType}>`,
-        value: {
-          creator: address,
-        },
+        bcs: bcs
+          .struct("GameTag", { creator: bcs.Address })
+          .serialize({ creator: address })
+          .toBytes(),
       },
+      include: { json: true },
     });
 
-    if (data?.content?.dataType !== "moveObject") {
-      return null;
-    }
-
-    const fields = data.content.fields as any;
+    const fields = object.json as any;
     res.ok = true;
     res.fields = fields;
   } catch (err) {

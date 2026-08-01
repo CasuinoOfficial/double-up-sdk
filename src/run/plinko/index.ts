@@ -1,5 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { PlinkoRemoveBetResponse } from "../../games/plinko";
@@ -9,7 +10,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testPlinko = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betAmount = 50000000;
@@ -33,31 +34,16 @@ export const testPlinko = async (
 
   console.log("Added plinko to transaction block.");
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: txb as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, txb);
   console.log("result", transactionResult);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.");
 };
 
 export const testMultiPlinkoCreate = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -70,23 +56,8 @@ export const testMultiPlinkoCreate = async (
 
     console.log("Added create plinko table to transaction block");
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction", transactionResult);
 
@@ -135,7 +106,7 @@ export const testMultiPlinkoGet = async (
 
 export const testMultiPlinkoAdd = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betSize = 500000000;
@@ -159,23 +130,8 @@ export const testMultiPlinkoAdd = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction.", transactionResult);
   } catch (err) {
@@ -185,7 +141,7 @@ export const testMultiPlinkoAdd = async (
 
 export const testMultiPlinkoRemove = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -206,16 +162,7 @@ export const testMultiPlinkoRemove = async (
 
     txb2.transferObjects([returnedCoin], keypair.toSuiAddress());
 
-    const transactionResult2 = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb2 as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult2 = await signAndExecute(client, keypair, txb2);
 
     console.log("Signed and sent transaction.", transactionResult2);
   } catch (err) {
@@ -225,7 +172,7 @@ export const testMultiPlinkoRemove = async (
 
 export const testMultiPlinkoStart = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -243,23 +190,8 @@ export const testMultiPlinkoStart = async (
 
     console.log("Added start multi plinko to transaction block");
 
-    const transactionResult2 = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb2 as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult2 = await signAndExecute(client, keypair, txb2);
 
-    if (
-      transactionResult2?.effects &&
-      transactionResult2?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult2.effects.status.error);
-    }
 
     console.log("Signed and sent transaction.", transactionResult2);
   } catch (err) {

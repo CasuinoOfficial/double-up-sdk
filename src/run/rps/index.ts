@@ -1,5 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 
@@ -9,7 +10,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testRPS = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   //Please set these in .env file before running the test script
@@ -31,14 +32,5 @@ export const testRPS = async (
 
   console.log("Added rps to transaction block.");
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: txb as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, txb);
 };

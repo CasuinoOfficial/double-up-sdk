@@ -10,7 +10,7 @@ import {
   Transaction as TransactionType,
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { getAssetIndex } from "../../utils";
 
 export interface CrapsRemoveBetInput {
@@ -143,7 +143,7 @@ export interface GetCrapsTableInput {
 
 interface InternalGetCrapsTableInput extends GetCrapsTableInput {
   crapsCorePackageId: string;
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 export interface CrapsContractData {
@@ -199,21 +199,23 @@ export const getCrapsTable = async ({
   crapsCorePackageId,
   suiClient,
 }: InternalGetCrapsTableInput): Promise<CrapsContractData | null> => {
-  const { data } = await suiClient.getDynamicFieldObject({
-    parentId: CRAPS_CONFIG,
-    name: {
-      type: `${crapsCorePackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
-      value: {
-        creator: address,
+  try {
+    const { object } = await suiClient.core.getDynamicObjectField({
+      parentId: CRAPS_CONFIG,
+      name: {
+        type: `${crapsCorePackageId}::${CRAPS_MODULE_NAME}::CrapsTag<${coinType}>`,
+        bcs: bcs
+          .struct("CrapsTag", { creator: bcs.Address })
+          .serialize({ creator: address })
+          .toBytes(),
       },
-    },
-  });
-  if (data?.content?.dataType !== "moveObject") {
+      include: { json: true },
+    });
+
+    return object.json as any;
+  } catch {
     return null;
   }
-
-  const fields = data.content.fields as any;
-  return fields;
 };
 
 export const addCrapsBet = ({

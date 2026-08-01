@@ -3,13 +3,14 @@ import {
   TransactionObjectArgument,
 } from "@mysten/sui/transactions";
 import { DoubleUpClient } from "../../client";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testAddBet = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string,
   raceId: string,
@@ -38,30 +39,15 @@ export const testAddBet = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testAddRiskLimit = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   riskLimit: number,
   coinType: string
@@ -74,30 +60,15 @@ export const testAddRiskLimit = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveRiskLimit = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   coinType: string
 ) => {
@@ -108,30 +79,15 @@ export const testRemoveRiskLimit = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testAddManager = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   manager: string
 ) => {
@@ -142,24 +98,15 @@ export const testAddManager = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveManager = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   manager: string
 ) => {
@@ -170,24 +117,15 @@ export const testRemoveManager = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testAddVersion = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   version: number
 ) => {
@@ -198,24 +136,15 @@ export const testAddVersion = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testRemoveVersion = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   version: number
 ) => {
@@ -226,24 +155,15 @@ export const testRemoveVersion = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testSetHouseEdge = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   houseEdge: number
 ) => {
@@ -254,24 +174,15 @@ export const testSetHouseEdge = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testSetPaginationLimit = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   limit: number
 ) => {
@@ -282,24 +193,15 @@ export const testSetPaginationLimit = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testSetMaxCombo = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   maxCombo: number
 ) => {
@@ -310,24 +212,15 @@ export const testSetMaxCombo = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };
 
 export const testUpdateStatus = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair | Ed25519Keypair,
   raceId: string,
   status: number
@@ -340,17 +233,8 @@ export const testUpdateStatus = async (
     transaction: tx,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: tx as any,
-  });
+  const transactionResult = await signAndExecute(client, keypair, tx);
 
-  if (
-    transactionResult?.effects &&
-    transactionResult?.effects.status.status === "failure"
-  ) {
-    throw new Error(transactionResult.effects.status.error);
-  }
 
   console.log("Signed and sent transaction.", transactionResult);
 };

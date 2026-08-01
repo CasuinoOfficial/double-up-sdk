@@ -10,7 +10,8 @@ import {
   BLACKJACK_CONFIG,
   BLACKJACK_ALL_PACKAGES,
 } from "../../constants/mainnetConstants";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { bcs } from "@mysten/sui/bcs";
 
 type Hit = 101;
 type Stand = 102;
@@ -40,7 +41,7 @@ export interface BlackjackVoucherInput {
 interface InternalBlackjackVoucherInput extends BlackjackVoucherInput {
   blackjackPackageId: string;
   origin: string;
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 
 export interface BlackjackTableInput {
@@ -57,7 +58,7 @@ export interface GetBlackjackTableInput {
 }
 
 interface InternalGetBlackjackTableInput extends GetBlackjackTableInput {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 export interface BlackjackContractData {
@@ -116,7 +117,7 @@ export interface BlackjackPlayerMoveVoucherInput {
 interface InternalBlackjackPlayerMoveVoucherInput
   extends BlackjackPlayerMoveVoucherInput {
   blackjackPackageId: string;
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 
 export interface BlackjackPlayerProcessMove {
@@ -166,23 +167,23 @@ export const getBlackjackTable = async ({
   suiClient,
 }: InternalGetBlackjackTableInput): Promise<BlackjackContractData | null> => {
   for (const packageId of BLACKJACK_ALL_PACKAGES) {
-    const { data } = await suiClient.getDynamicFieldObject({
-      parentId: BLACKJACK_CONFIG,
-      name: {
-        type: `${packageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
-        value: {
-          creator: address,
+    try {
+      const { object } = await suiClient.core.getDynamicObjectField({
+        parentId: BLACKJACK_CONFIG,
+        name: {
+          type: `${packageId}::${BLACKJACK_MODULE_NAME}::BlackjackTag<${coinType}>`,
+          bcs: bcs
+            .struct("BlackjackTag", { creator: bcs.Address })
+            .serialize({ creator: address })
+            .toBytes(),
         },
-      },
-    });
+        include: { json: true },
+      });
 
-    if (data?.content?.dataType !== "moveObject") {
+      return object.json as any;
+    } catch {
       return null;
     }
-
-    const fields = data.content.fields as any;
-
-    return fields;
   }
 
   return null;
