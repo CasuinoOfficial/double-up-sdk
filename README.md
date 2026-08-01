@@ -12,13 +12,19 @@ JS
 
 ```js
 import { DoubleUpClient } from 'doubleup';
+import { SuiGrpcClient } from '@mysten/sui/grpc';
 
-const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
+// JSON-RPC is deprecated on Sui — the SDK now uses the gRPC client.
+// A custom baseUrl must serve the Sui fullnode gRPC(-web) API.
+const suiClient = new SuiGrpcClient({
+    network: "mainnet",
+    baseUrl: "https://fullnode.mainnet.sui.io:443",
+});
 
 ...
 export const dbClient = new DoubleUpClient({
     partnerNftListId: "0x0",
-    suiClient: provider,
+    suiClient,
 });
 ```
 
@@ -27,8 +33,11 @@ React
 ```js
 import { DoubleUpProvider } from 'doubleup';
 
-// or use suiClient from @mysten provider
-const suiClient = new SuiClient({ url: getFullnodeUrl("mainnet") });
+// or use a SuiGrpcClient you already have in your app
+const suiClient = new SuiGrpcClient({
+    network: "mainnet",
+    baseUrl: "https://fullnode.mainnet.sui.io:443",
+});
 
 ## Basic Usage
 

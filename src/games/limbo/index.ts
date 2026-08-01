@@ -1,4 +1,5 @@
-import { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -46,7 +47,7 @@ export interface LimboVoucherInput {
 
 interface InternalLimboVoucherInput extends LimboVoucherInput {
   limboPackageId: string;
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 interface LimboParsedJson {
   game_id: string;
@@ -62,7 +63,7 @@ export interface LimboResultInput {
   coinType: string;
   gameSeed: string;
   pollInterval?: number;
-  transactionResult: SuiTransactionBlockResponse;
+  transactionResult: SuiClientTypes.Transaction<{ effects: true; objectTypes: true }>;
 }
 
 export interface LimboResponse {

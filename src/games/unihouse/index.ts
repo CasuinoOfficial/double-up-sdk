@@ -1,4 +1,5 @@
-import { SuiJsonRpcClient, DynamicFieldInfo } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import {
   Transaction as TransactionType,
   TransactionObjectArgument,
@@ -9,7 +10,7 @@ import {
   UNIHOUSE_PACKAGE,
   UNI_HOUSE_OBJ_ID,
 } from "../../constants/mainnetConstants";
-import { U64FromBytes } from "../../utils";
+import { U64FromBytes, shortenAddressesInType } from "../../utils";
 import Decimal from "decimal.js";
 
 export interface DepositUnihouseInput {
@@ -80,7 +81,7 @@ export const requestWithdrawUnihouse = ({
 };
 
 // Now only have SUI and USDC
-const getUnihouseConfig = async (suiClient: SuiJsonRpcClient, coinTypes: string[]) => {
+const getUnihouseConfig = async (suiClient: SuiGrpcClient, coinTypes: string[]) => {
   //Default config based on the house contract
   const houseConfig = {
     houseFeeRate: "300000",
@@ -98,10 +99,14 @@ const getUnihouseConfig = async (suiClient: SuiJsonRpcClient, coinTypes: string[
       arguments: [devTx.object(UNI_HOUSE_OBJ_ID)],
     });
 
-    return suiClient.devInspectTransactionBlock({
-      transactionBlock: devTx,
-      sender:
-        "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866",
+    devTx.setSender(
+      "0xc5f9b77a07c38acc5418008dfe69255872d45e3d2334e1f52a530d1e4ad52866"
+    );
+
+    return suiClient.simulateTransaction({
+      transaction: devTx,
+      checksEnabled: false,
+      include: { commandResults: true },
     });
   });
 
@@ -109,29 +114,37 @@ const getUnihouseConfig = async (suiClient: SuiJsonRpcClient, coinTypes: string[
 
   if (!dryRunResponses || dryRunResponses.length === 0) {
     console.error("no results found");
-    return houseConfig;
+    return Object.fromEntries(coinTypes.map((ct) => [ct, houseConfig]));
   }
 
   const realHouseConfigList = {} as Record<string, typeof houseConfig>;
 
   for (const [index, response] of dryRunResponses.entries()) {
-    if (response?.results === undefined || response?.results?.length === 0) {
+    if (
+      response.$kind === "FailedTransaction" ||
+      !response.commandResults ||
+      response.commandResults.length === 0
+    ) {
       realHouseConfigList[coinTypes[index]] = houseConfig;
       continue;
     }
 
-    const values = response.results[0].returnValues;
+    const values = response.commandResults[0].returnValues;
 
     if (values === undefined || values?.length === 0) {
       console.error("no values found");
-      return houseConfig;
+      realHouseConfigList[coinTypes[index]] = houseConfig;
+      continue;
     }
 
     const bytesArray = values?.map((value) => {
-      return value[0];
+      return value.bcs;
     });
 
-    if (!bytesArray) return houseConfig;
+    if (!bytesArray) {
+      realHouseConfigList[coinTypes[index]] = houseConfig;
+      continue;
+    }
 
     const houseConfigKeys = Object.keys(houseConfig);
 
@@ -151,28 +164,30 @@ const getUnihouseConfig = async (suiClient: SuiJsonRpcClient, coinTypes: string[
 };
 
 export const getUnihouseData = async (
-  suiClient: SuiJsonRpcClient
+  suiClient: SuiGrpcClient
 ): Promise<UnihouseInfo> => {
-  let cursor = null;
+  let cursor: string | null = null;
   let hasNextPage = true;
-  let dynamicFields: any = [];
+  const dynamicFields: SuiClientTypes.DynamicFieldEntry[] = [];
 
   while (hasNextPage) {
-    const response: any = await suiClient.getDynamicFields({
+    const response: SuiClientTypes.ListDynamicFieldsResponse = await suiClient.listDynamicFields({
       parentId: UNI_HOUSE_OBJ_ID,
       cursor,
     });
 
-    dynamicFields.push(...response.data);
-    cursor = response.nextCursor;
+    dynamicFields.push(...response.dynamicFields);
+    cursor = response.cursor;
     hasNextPage = response.hasNextPage;
   }
 
-  const unihouseList: DynamicFieldInfo[] = dynamicFields?.filter(
-    (field: DynamicFieldInfo) => field?.objectType.includes("house::House<")
+  const unihouseList = dynamicFields.filter((field) =>
+    field.valueType.includes("house::House<")
   );
-  if (!unihouseList) return {};
-  const unihouseIdList = unihouseList.map((house) => house.objectId);
+  if (unihouseList.length === 0) return {};
+  const unihouseIdList = unihouseList.map((house) =>
+    house.$kind === "DynamicObject" ? house.childId : house.fieldId
+  );
 
   const batchSize = 50;
 
@@ -186,64 +201,64 @@ export const getUnihouseData = async (
   }, [] as string[][]);
 
   const houseDataPromises = batchedIds.map((batch) => {
-    return suiClient.multiGetObjects({
-      ids: batch,
-      options: {
-        showContent: true,
-        showType: true,
-      },
+    return suiClient.getObjects({
+      objectIds: batch,
+      include: { json: true },
     });
   });
 
   const houseDataList = await Promise.all(houseDataPromises);
 
-  const houseData: any[] = houseDataList.flat();
+  const houseData = houseDataList.flatMap((response) => response.objects);
 
-  const houseFields = houseData.map((house) => house.data?.content?.fields);
+  const houseFields = houseData.map((house) =>
+    house instanceof Error ? undefined : (house.json as any)
+  );
 
   let houseInfo: UnihouseInfo = {};
   if (!houseFields) return houseInfo;
 
-  const coinTypeList = houseFields.map((field) => {
-    return field?.supply?.type.split("<")[2].split(">")[0];
-  });
+  // valueType is `<housePkg>::house::House<coinType>` — gRPC json carries no
+  // type strings, so coin/token types are derived from the field entry instead
+  const coinTypeList = unihouseList.map((house) =>
+    shortenAddressesInType(house.valueType.split("<")[1].split(">")[0])
+  );
 
   const houseConfig = await getUnihouseConfig(suiClient, coinTypeList);
 
   houseFields.forEach((field, index) => {
-    const tokenSymbol = unihouseList[index].objectType
+    const tokenSymbol = unihouseList[index].valueType
       .split("::")
       .pop()
       ?.split(">")[0];
 
-    const coinType = `${field?.supply?.type.split("<")[2].split(">")[0]}`;
+    const coinType = coinTypeList[index];
 
     if (!tokenSymbol) return;
 
     const houseName = `g${tokenSymbol}`;
-    const tokenType = `0x2::coin::Coin<${field?.supply?.type.split("<")[1]}<${
-      field?.supply?.type.split("<")[2].split(">")[0]
-    }>>`;
+    const housePackageId = unihouseList[index].valueType.split("::house::House<")[0];
+    const tokenType = `0x2::coin::Coin<${housePackageId}::house::StakedHouseCoin<${coinType}>>`;
 
-    const pipeDebt = field?.pipe_debt?.fields?.value;
+    const pipeDebt = field?.pipe_debt?.value;
     //House Pool
     const housePool = Number(field?.house_pool);
     //Stake Pool TVL
     const stakePoolTvl = Number(pipeDebt) + Number(field?.pool);
-    const totalSupply = Number(field?.supply?.fields?.value);
+    const totalSupply = Number(field?.supply?.value);
     const maxSupply = Number(field?.max_supply);
     const maxRisk = stakePoolTvl + housePool;
 
     const config = houseConfig.hasOwnProperty(coinType)
       ? houseConfig[coinType]
       : {
-          houseFeeRate: undefined,
-          riskLimit: undefined,
-          depositFee: undefined,
-        };
+        houseFeeRate: undefined,
+        riskLimit: undefined,
+        depositFee: undefined,
+      };
 
     houseInfo[coinType] = {
-      id: unihouseList[index].objectId,
+      id: unihouseIdList[index],
       coinType: coinType,
       tokenSymbol: tokenSymbol,
       tokenType: tokenType,
@@ -266,43 +281,40 @@ export const getUnihouseData = async (
 };
 
 export const getRedeemRequests = async (
-  suiClient: SuiJsonRpcClient,
+  suiClient: SuiGrpcClient,
   address?: string
 ) => {
-  let cursor = null;
+  let cursor: string | null = null;
   let hasNextPage = true;
-  let dynamicFields: any = [];
+  const dynamicFields: SuiClientTypes.DynamicFieldEntry[] = [];
 
   while (hasNextPage) {
-    const response: any = await suiClient.getDynamicFields({
+    const response: SuiClientTypes.ListDynamicFieldsResponse = await suiClient.listDynamicFields({
       parentId: UNI_HOUSE_OBJ_ID,
       cursor,
     });
-    dynamicFields.push(...response.data);
-    cursor = response.nextCursor;
+    dynamicFields.push(...response.dynamicFields);
+    cursor = response.cursor;
     hasNextPage = response.hasNextPage;
   }
 
-  const redeemRequests: DynamicFieldInfo[] = dynamicFields?.filter(
-    (field: DynamicFieldInfo) => field?.objectType.includes("RedeemRequest")
+  const redeemRequests = dynamicFields.filter((field) =>
+    field.valueType.includes("RedeemRequest")
   );
 
-  if (!redeemRequests) return [];
+  if (redeemRequests.length === 0) return [];
 
-  const redeemRequestsIdList = redeemRequests.map(
-    (request) => request.objectId
+  const redeemRequestsIdList = redeemRequests.map((request) =>
+    request.$kind === "DynamicObject" ? request.childId : request.fieldId
   );
 
-  const allRequestData: any[] = await suiClient.multiGetObjects({
-    ids: redeemRequestsIdList,
-    options: {
-      showContent: true,
-      showType: true,
-    },
+  const { objects: allRequestData } = await suiClient.getObjects({
+    objectIds: redeemRequestsIdList,
+    include: { json: true },
   });
 
-  const allRequestFields = allRequestData.map(
-    (request) => request.data?.content?.fields
+  const allRequestFields = allRequestData.map((request) =>
+    request instanceof Error ? undefined : (request.json as any)
   );
 
   if (!allRequestFields) return [];
@@ -316,9 +328,9 @@ export const getRedeemRequests = async (
   return userRedeemRequests
     .map((request) => {
       return {
-        id: request?.id?.id,
+        id: request?.id,
         createdAt: request?.created_at,
-        balance: request?.s_coin?.fields?.balance,
+        balance: request?.s_coin?.balance,
       };
     })
     .sort((a, b) => {
@@ -327,9 +339,11 @@ export const getRedeemRequests = async (
 };
 
 export const getGTokenBalance = async (
-  suiClient: SuiJsonRpcClient,
+  suiClient: SuiGrpcClient,
   address: string
 ): Promise<BalanceList> => {
+
+  console.log("address", address);
   if (!address) {
     throw Error("Address is required");
   }
@@ -342,26 +356,20 @@ export const getGTokenBalance = async (
     const coinType = house.tokenType;
 
     if (coinType !== undefined) {
-      let cursor = null;
+      let cursor: string | null = null;
       let hasNextPage = true;
       let ownedObjects: any = [];
 
       while (hasNextPage) {
-        const response: any = await suiClient.getOwnedObjects({
+        const response: SuiClientTypes.ListOwnedObjectsResponse = await suiClient.listOwnedObjects({
           owner: address,
-          filter: {
-            StructType: coinType,
-          },
-          options: {
-            showType: true,
-            showContent: true,
-            showDisplay: true,
-          },
+          type: coinType,
+          include: { json: true },
           cursor,
         });
 
-        ownedObjects.push(...response.data);
-        cursor = response.nextCursor;
+        ownedObjects.push(...response.objects);
+        cursor = response.cursor;
         hasNextPage = response.hasNextPage;
       }
 
@@ -371,6 +379,8 @@ export const getGTokenBalance = async (
 
   const ownedObjects = await Promise.all(promiseList);
 
+  console.log("ownedObjects", ownedObjects);
+
   let balances: BalanceList = {};
 
   ownedObjects.forEach((ownedObject, index) => {
@@ -378,12 +388,13 @@ export const getGTokenBalance = async (
       balances[houseNames[index]] = 0;
     } else {
       const house = Object.values(houseInfo).find(
-        (house) => house.tokenType === ownedObject[0]?.data?.type
+        (house) =>
+          house.tokenType === shortenAddressesInType(ownedObject[0]?.type ?? "")
       );
 
       const balance = ownedObject.reduce((acc: number, gTokenObject: any) => {
-        if (gTokenObject?.data?.content?.fields?.balance) {
-          return acc + Number(gTokenObject.data.content.fields.balance);
+        if (gTokenObject?.json?.balance) {
+          return acc + Number(gTokenObject.json.balance);
         }
       }, 0);
 
@@ -394,7 +405,7 @@ export const getGTokenBalance = async (
   return balances;
 };
 
-export const getMaxBet = async (suiClient, coinType): Promise<number> => {
+export const getMaxBet = async (suiClient: SuiGrpcClient, coinType: string): Promise<number> => {
   let houseInfo = await getUnihouseData(suiClient);
 
   if (!houseInfo[coinType]) {

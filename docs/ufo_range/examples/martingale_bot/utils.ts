@@ -3,7 +3,7 @@ import {Secp256k1Keypair} from "@mysten/sui/keypairs/secp256k1"
 import {Secp256r1Keypair} from "@mysten/sui/keypairs/secp256r1"
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
 import * as dotenv from "dotenv";
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { DoubleUpClient } from "doubleup";
 dotenv.config();
 
@@ -18,8 +18,9 @@ export const getSigner = () => {
   }
 };
 
-export const client = new SuiClient({
-    url: getFullnodeUrl("mainnet")
+export const client = new SuiGrpcClient({
+    network: "mainnet",
+    baseUrl: "https://fullnode.mainnet.sui.io:443"
 });
 
 export const DBClient = new DoubleUpClient({

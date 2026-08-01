@@ -1,5 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { SUI_COIN_TYPE } from "../../constants/mainnetConstants";
@@ -7,7 +8,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 export const testRouletteAdd = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const betAmount = 500000000;
@@ -48,23 +49,8 @@ export const testRouletteAdd = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction.");
   } catch (err) {
@@ -74,7 +60,7 @@ export const testRouletteAdd = async (
 
 export const testRouletteCreate = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -87,23 +73,8 @@ export const testRouletteCreate = async (
 
     console.log("Added roulette table create to transaction block.");
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction.");
 
@@ -128,7 +99,7 @@ export const testRouletteCreate = async (
 
 export const testRouletteStart = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const txb = new Transaction();
@@ -138,16 +109,7 @@ export const testRouletteStart = async (
     transaction: txb,
   });
 
-  const transactionResult = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: txb as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult = await signAndExecute(client, keypair, txb);
 
   const txb2 = new Transaction();
 
@@ -158,14 +120,5 @@ export const testRouletteStart = async (
     hostAddress: keypair.toSuiAddress(),
   });
 
-  const transactionResult2 = await client.signAndExecuteTransaction({
-    signer: keypair,
-    transaction: txb2 as any,
-    options: {
-      showRawEffects: true,
-      showEffects: true,
-      showEvents: true,
-      showObjectChanges: true,
-    },
-  });
+  const transactionResult2 = await signAndExecute(client, keypair, txb2);
 };

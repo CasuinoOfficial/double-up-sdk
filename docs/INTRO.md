@@ -48,20 +48,21 @@ This client should be imported across your app, whenever there is a need to call
 
 ### Creating the client
 
-In order to create the client only two arguments are required. The first argument is the is named `partnerNftListId` and it is meant for yet not implemented functionality thus for the moment the value should be just `"0x0"` and the second argument is `suiClient` which is of type `@mysten/sui/client/SuiClient` .
+In order to create the client only two arguments are required. The first argument is named `partnerNftListId` and it is meant for yet not implemented functionality thus for the moment the value should be just `"0x0"` and the second argument is `suiClient` which is of type `SuiGrpcClient` from `@mysten/sui/grpc` (Sui's JSON-RPC API is deprecated, so the SDK talks to fullnodes over gRPC).
 
-Thus, assuming that you have the `@mysten/sui` dependency installed, you should first create a SuiClient, prior to instantiating a DoubleUpClient.
+Thus, assuming that you have the `@mysten/sui` dependency installed, you should first create a SuiGrpcClient, prior to instantiating a DoubleUpClient.
 
 **Sample Code:**
 
 The following code should be saved in a separate file, also you may wish to export the suiClient as well depending on your use case:
 
 ```tsx
-import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { DoubleUpClient } from "doubleup";
 
-const suiMainnetClient = new SuiClient({
-  url: getFullnodeUrl("mainnet")
+const suiMainnetClient = new SuiGrpcClient({
+  network: "mainnet",
+  baseUrl: "https://fullnode.mainnet.sui.io:443",
 });
 
 export const DBClient = new DoubleUpClient({
@@ -70,12 +71,13 @@ export const DBClient = new DoubleUpClient({
 });
 ```
 
-If you have your own fullnode, or a specific fullnode that you want to use then:
+If you have your own fullnode, or a specific fullnode that you want to use, note that it must serve the Sui fullnode gRPC(-web) API (plain JSON-RPC-only endpoints will not work):
 
 ```tsx
-const fullnodeURL = "https://my.fullnode.url"
-const suiClient = new SuiClient({
-	url: fullnodeURL
+const fullnodeURL = "https://my.fullnode.url:443"
+const suiClient = new SuiGrpcClient({
+	network: "mainnet",
+	baseUrl: fullnodeURL
 });
 
 export const DBClient = new DoubleUpClient({
@@ -83,6 +85,8 @@ export const DBClient = new DoubleUpClient({
   suiClient,
 }); 
 ```
+
+> **Note:** kiosk-related functionality still uses a JSON-RPC client internally, because `@mysten/kiosk` does not support the gRPC client yet. By default the SDK creates one pointed at the public mainnet fullnode; you can pass your own `kioskClient` to the DoubleUpClient constructor to override this.
 
 **Errors**
 

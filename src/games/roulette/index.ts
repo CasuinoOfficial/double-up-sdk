@@ -1,5 +1,5 @@
 import { bcs } from "@mysten/sui/bcs";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -342,7 +342,7 @@ export interface GetRouletteTableInput {
 }
 
 interface InternalGetRouletteTableInput extends GetRouletteTableInput {
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 export interface RouletteContractData {
@@ -445,22 +445,23 @@ export const getRouletteTable = async ({
   suiClient,
 }: InternalGetRouletteTableInput): Promise<RouletteContractData | null> => {
   for (const packageId of ROULETTE_ALL_PACKAGES) {
-    const { data } = await suiClient.getDynamicFieldObject({
-      parentId: ROULETTE_CONFIG,
-      name: {
-        type: `${packageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
-        value: {
-          creator: address,
+    try {
+      const { object } = await suiClient.core.getDynamicObjectField({
+        parentId: ROULETTE_CONFIG,
+        name: {
+          type: `${packageId}::${ROULETTE_MODULE_NAME}::GameTag<${coinType}>`,
+          bcs: bcs
+            .struct("GameTag", { creator: bcs.Address })
+            .serialize({ creator: address })
+            .toBytes(),
         },
-      },
-    });
+        include: { json: true },
+      });
 
-    if (data?.content?.dataType !== "moveObject") {
+      return object.json as any;
+    } catch {
       return null;
     }
-
-    const fields = data.content.fields as any;
-    return fields;
   }
 
   return null;

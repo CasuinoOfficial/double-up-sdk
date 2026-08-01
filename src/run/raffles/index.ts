@@ -1,5 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import { signAndExecute } from "../utils";
 import { DoubleUpClient } from "../../client";
 import { Secp256k1Keypair } from "@mysten/sui/keypairs/secp256k1";
 import { U64FromBytes } from "../../utils";
@@ -12,7 +13,7 @@ const raffleId =
 
 export const testRaffleGet = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   try {
@@ -28,7 +29,7 @@ export const testRaffleGet = async (
 
 export const testRaffleGetTickets = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const address =
@@ -47,14 +48,21 @@ export const testRaffleGetTickets = async (
       throw err;
     }
 
-    let resp = await client.devInspectTransactionBlock({
-      transactionBlock: tx,
-      sender,
+    tx.setSender(sender);
+    let resp = await client.simulateTransaction({
+      transaction: tx,
+      checksEnabled: false,
+      include: { commandResults: true },
     });
 
     let tickets = 0;
-    if (resp.results && resp.results[0].returnValues) {
-      tickets = Number(U64FromBytes(resp.results![1].returnValues![0][0]));
+    if (
+      resp.$kind === "Transaction" &&
+      resp.commandResults?.[1]?.returnValues?.[0]
+    ) {
+      tickets = Number(
+        U64FromBytes(resp.commandResults[1].returnValues[0].bcs)
+      );
     }
 
     console.log(tickets);
@@ -65,7 +73,7 @@ export const testRaffleGetTickets = async (
 
 export const testRaffleBuy = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const ticketsAmount = 2;
@@ -89,23 +97,8 @@ export const testRaffleBuy = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction.");
   } catch (err) {
@@ -115,7 +108,7 @@ export const testRaffleBuy = async (
 
 export const testRaffleBuyWithDeal = async (
   dbClient: DoubleUpClient,
-  client: SuiJsonRpcClient,
+  client: SuiGrpcClient,
   keypair: Secp256k1Keypair | Ed25519Keypair
 ) => {
   const ticketsAmount = 2;
@@ -141,23 +134,8 @@ export const testRaffleBuyWithDeal = async (
       throw err;
     }
 
-    const transactionResult = await client.signAndExecuteTransaction({
-      signer: keypair,
-      transaction: txb as any,
-      options: {
-        showRawEffects: true,
-        showEffects: true,
-        showEvents: true,
-        showObjectChanges: true,
-      },
-    });
+    const transactionResult = await signAndExecute(client, keypair, txb);
 
-    if (
-      transactionResult?.effects &&
-      transactionResult?.effects.status.status === "failure"
-    ) {
-      throw new Error(transactionResult.effects.status.error);
-    }
 
     console.log("Signed and sent transaction.");
   } catch (err) {

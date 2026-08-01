@@ -1,4 +1,5 @@
-import { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import {
   TransactionArgument,
   Transaction as TransactionType,
@@ -46,7 +47,7 @@ export interface RPSVoucherInput {
 
 interface InternalRPSVoucherInput extends RPSVoucherInput {
   rpsPackageId: string;
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 
 interface RPSSettlement {
@@ -68,12 +69,12 @@ export interface RPSResultInput {
   coinType: string;
   gameSeed: string;
   pollInterval?: number;
-  transactionResult: SuiTransactionBlockResponse;
+  transactionResult: SuiClientTypes.Transaction<{ effects: true; objectTypes: true }>;
 }
 
 interface InternalRPSResultInput extends RPSResultInput {
   rpsCorePackageId: string;
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
 }
 
 export interface RPSResponse {

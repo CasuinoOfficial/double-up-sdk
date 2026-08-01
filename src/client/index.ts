@@ -1,3 +1,4 @@
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { getJsonRpcFullnodeUrl, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { KioskClient } from "@mysten/kiosk";
 import {
@@ -288,7 +289,7 @@ interface DoubleUpClientInput {
   lotteryCorePackageId?: string;
   marbleRacingCorePackageId?: string;
   marbleRacingPackageId?: string;
-  suiClient?: SuiJsonRpcClient;
+  suiClient?: SuiGrpcClient;
   kioskClient?: KioskClient;
 }
 
@@ -321,10 +322,11 @@ export class DoubleUpClient {
     lotteryCorePackageId = LOTTERY_CORE_PACKAGE_ID,
     marbleRacingCorePackageId = MARBLE_RACING_CORE_PACKAGE_ID,
     marbleRacingPackageId = MARBLE_RACING_PACKAGE_ID,
-    suiClient = new SuiJsonRpcClient({
+    suiClient = new SuiGrpcClient({
       network: "mainnet",
-      url: getJsonRpcFullnodeUrl("mainnet"),
+      baseUrl: "https://fullnode.mainnet.sui.io:443",
     }),
+    kioskClient,
   }: DoubleUpClientInput) {
     this.coinflipCorePackageId = coinflipCorePackageId;
     this.coinflipPackageId = coinflipPackageId;
@@ -354,10 +356,16 @@ export class DoubleUpClient {
     this.marbleRacingCorePackageId = marbleRacingCorePackageId;
     this.marbleRacingPackageId = marbleRacingPackageId;
     this.suiClient = suiClient;
-    this.kioskClient = new KioskClient({
-      client: suiClient,
-      network: "mainnet",
-    });
+    this.kioskClient =
+      kioskClient ??
+      new KioskClient({
+        // @mysten/kiosk only accepts SuiJsonRpcClient | SuiGraphQLClient — no gRPC yet
+        client: new SuiJsonRpcClient({
+          network: "mainnet",
+          url: getJsonRpcFullnodeUrl("mainnet"),
+        }),
+        network: "mainnet",
+      });
   }
 
   partnerNftListId: string | undefined;
@@ -392,7 +400,7 @@ export class DoubleUpClient {
   marbleRacingCorePackageId: string;
   marbleRacingPackageId: string;
 
-  suiClient: SuiJsonRpcClient;
+  suiClient: SuiGrpcClient;
   kioskClient: KioskClient;
 
   // coinflip
@@ -917,7 +925,7 @@ export class DoubleUpClient {
     getRedeemRequests(this.suiClient, address);
   getGTokenBalance = (address: string) =>
     getGTokenBalance(this.suiClient, address);
-  getMaxBet = (coinType) => getMaxBet(this.suiClient, coinType);
+  getMaxBet = (coinType: string) => getMaxBet(this.suiClient, coinType);
 
   // Pump
   getCurves = (input: GetCurvesInput) => getCurves({ ...input });

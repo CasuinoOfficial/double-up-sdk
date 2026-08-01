@@ -1,4 +1,4 @@
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
 import {
   TransactionObjectArgument,
   Transaction as TransactionType,
@@ -93,7 +93,7 @@ export interface GetRaffleInput {
 }
 
 interface InternalGetRaffleInput extends GetRaffleInput {
-  client: SuiJsonRpcClient;
+  client: SuiGrpcClient;
 }
 
 interface RaffleData {
@@ -165,18 +165,12 @@ export const getRaffle = async ({
   const res: RaffleResponse = { ok: true };
 
   try {
-    const raffle = await client.getObject({
-      id: raffleId,
-      options: {
-        showContent: true,
-      },
+    const { object: raffle } = await client.getObject({
+      objectId: raffleId,
+      include: { json: true },
     });
 
-    if (raffle?.data?.content?.dataType !== "moveObject") {
-      throw new Error("Invalid data type, expected moveObject");
-    }
-
-    const raffleData = raffle.data.content.fields as unknown;
+    const raffleData = raffle.json as unknown;
 
     res.result = raffleData as RaffleData;
   } catch (err) {

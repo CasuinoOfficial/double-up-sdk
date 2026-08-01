@@ -1,8 +1,11 @@
-import {
-  SuiJsonRpcClient,
-  SuiTransactionBlockResponse,
-  DynamicFieldInfo,
-} from "@mysten/sui/jsonRpc";
+import { bcs } from "@mysten/sui/bcs";
+import type { SuiClientTypes } from "@mysten/sui/client";
+import { SuiGrpcClient } from "@mysten/sui/grpc";
+
+type ExecutedTransaction = SuiClientTypes.Transaction<{
+  effects: true;
+  objectTypes: true;
+}>;
 
 import {
   BUCK_COIN_TYPE,
@@ -34,19 +37,19 @@ interface GameInfosInput {
   corePackageId: string;
   gameSeed: string;
   moduleName: string;
-  transactionResult: SuiTransactionBlockResponse;
+  transactionResult: ExecutedTransaction;
 }
 
 interface GenericGameInfosInput {
   filterString: string;
   gameSeed: string;
-  transactionResult: SuiTransactionBlockResponse;
+  transactionResult: ExecutedTransaction;
 }
 
 interface RouletteTableInfoInput {
   coinType: string;
   gameSeed: string;
-  transactionResult: SuiTransactionBlockResponse;
+  transactionResult: ExecutedTransaction;
 }
 
 interface RouletteTableInfo {
@@ -56,6 +59,12 @@ interface RouletteTableInfo {
 // Function to sleep for a specified duration
 export const sleep = (ms: number): any =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+// gRPC returns fully-padded addresses in type strings (0x0000...0002::sui::SUI)
+// while JSON-RPC used the short form (0x2::sui::SUI). Strip leading zeros so
+// type keys and comparisons keep their historical shape.
+export const shortenAddressesInType = (type: string): string =>
+  type.replace(/0x0*([0-9a-fA-F]+)/g, "0x$1");
 
 export const extractGenericTypes = (typeName: string): string[] => {
   const x = typeName.split("<");
@@ -71,17 +80,19 @@ const getGenericGameInfos = ({
   gameSeed,
   transactionResult,
 }: GenericGameInfosInput): GameInfo[] => {
-  const objectChanges = transactionResult.objectChanges;
+  const { effects, objectTypes } = transactionResult;
 
-  const gameInfos = (objectChanges as any[])
-    .filter(({ objectType }) => objectType === filterString)
-    .map(({ objectId, objectType }) => {
+  const gameInfos = effects.changedObjects
+    .filter(
+      ({ objectId, idOperation }) =>
+        idOperation === "Created" && objectTypes[objectId] === filterString
+    )
+    .map(({ objectId }) => {
       const [gameCoinType, gameStringType] = extractGenericTypes(
-        objectType ?? ""
+        objectTypes[objectId] ?? ""
       );
-      const gameId = objectId as string;
 
-      return { gameId, gameStringType, gameCoinType, gameSeed };
+      return { gameId: objectId, gameStringType, gameCoinType, gameSeed };
     });
 
   return gameInfos;
@@ -109,14 +120,13 @@ export const getRouletteTableInfo = ({
 }: RouletteTableInfoInput): RouletteTableInfo[] => {
   const filterString = `${ROULETTE_PACKAGE_ID}::${ROULETTE_MODULE_NAME}::RouletteTable<${coinType}>`;
 
-  const objectChanges = transactionResult.objectChanges;
-  const gameInfos = (objectChanges as any[])
-    .filter(({ objectType }) => objectType === filterString)
-    .map(({ objectId }) => {
-      const tableId = objectId as string;
-
-      return { tableId };
-    });
+  const { effects, objectTypes } = transactionResult;
+  const gameInfos = effects.changedObjects
+    .filter(
+      ({ objectId, idOperation }) =>
+        idOperation === "Created" && objectTypes[objectId] === filterString
+    )
+    .map(({ objectId }) => ({ tableId: objectId }));
 
   return gameInfos;
 };
@@ -193,15 +203,12 @@ export const getVoucherBank = (coinType: string): string => {
 
 export const getTypesFromVoucher = async (
   voucherId: string,
-  suiClient: SuiJsonRpcClient
+  suiClient: SuiGrpcClient
 ): Promise<string[]> => {
-  const { data: voucherIdObject } = await suiClient.getObject({
-    id: voucherId,
-    options: {
-      showType: true,
-    },
+  const { object: voucherIdObject } = await suiClient.getObject({
+    objectId: voucherId,
   });
-  const voucherIdType = voucherIdObject.type;
+  const voucherIdType = shortenAddressesInType(voucherIdObject.type);
   return [
     getCoinTypeFromVoucher(voucherIdType),
     getVoucherTypeFromVoucher(voucherIdType),
@@ -217,36 +224,35 @@ const getVoucherTypeFromVoucher = (voucherType: string): string => {
 };
 
 export const getGameSupportedCoinTypes = async (
-  suiClient: SuiJsonRpcClient
+  suiClient: SuiGrpcClient
 ): Promise<string[]> => {
-  let unihouseFields: DynamicFieldInfo[] = [];
-  let cursor;
+  let unihouseFields: SuiClientTypes.DynamicFieldEntry[] = [];
+  let cursor: string | null = null;
   let hasNextPage = true;
 
   while (hasNextPage) {
-    const response: any = await suiClient.getDynamicFields({
+    const response = await suiClient.listDynamicFields({
       parentId: UNI_HOUSE_OBJ_ID,
-      cursor: cursor || null,
+      cursor,
     });
 
-    const dynamicFields = response.data;
-    const unihouseList: DynamicFieldInfo[] = dynamicFields?.filter(
-      (field: DynamicFieldInfo) => field?.objectType.includes("house::House")
+    const unihouseList = response.dynamicFields.filter((field) =>
+      field.valueType.includes("house::House")
     );
 
-    if (unihouseList) {
-      unihouseFields = unihouseFields.concat(unihouseList);
-    }
-    cursor = response.nextCursor;
+    unihouseFields = unihouseFields.concat(unihouseList);
+    cursor = response.cursor;
     hasNextPage = response.hasNextPage;
   }
-  const typeList = unihouseFields.map(
-    (field) => field.objectType.split("<")?.pop()?.split(">")[0] as string
+  const typeList = unihouseFields.map((field) =>
+    shortenAddressesInType(
+      field.valueType.split("<")?.pop()?.split(">")[0] as string
+    )
   );
   return typeList;
 };
 
-export function U64FromBytes(x: number[]) {
+export function U64FromBytes(x: number[] | Uint8Array) {
   let u64 = BigInt(0);
   for (let i = x.length - 1; i >= 0; i--) {
     u64 = (u64 << BigInt(8)) | BigInt(x[i] ?? 0);
@@ -257,7 +263,7 @@ export function U64FromBytes(x: number[]) {
 // Function to check if an object is in a kiosk, so shouldn't give kiosk Id
 export const checkIsInKiosk = async (
   objectId: string,
-  suiClient: SuiJsonRpcClient,
+  suiClient: SuiGrpcClient,
   kioskClient: KioskClient
 ): Promise<{
   isInKiosk: boolean;
@@ -275,22 +281,17 @@ export const checkIsInKiosk = async (
     transferPoilcies: TransferPolicy;
   };
 }> => {
-  const { data: objectData } = await suiClient.getObject({
-    id: objectId,
-    options: {
-      showType: true,
-      showOwner: true,
-    },
-  });
-
-  if (!objectData) {
+  let objectData: SuiClientTypes.Object;
+  try {
+    ({ object: objectData } = await suiClient.getObject({ objectId }));
+  } catch {
     throw new Error("Object not found");
   }
 
-  const objectType = objectData?.type;
-  const owner = objectData?.owner as Record<string, string>;
+  const objectType = shortenAddressesInType(objectData.type);
+  const owner = objectData.owner;
 
-  if (owner.hasOwnProperty("AddressOwner")) {
+  if (owner.$kind === "AddressOwner") {
     return {
       isInKiosk: false,
       objectType: objectType,
@@ -298,26 +299,22 @@ export const checkIsInKiosk = async (
     };
   }
 
-  const ownerId = owner?.ObjectOwner as string;
+  const ownerId = owner.ObjectOwner as string;
 
   if (!ownerId || ownerId === "") {
     throw new Error("Owner not found");
   }
 
-  const { data: ownerObjectData } = await suiClient.getObject({
-    id: ownerId,
-    options: {
-      showType: true,
-      showContent: true,
-      showOwner: true,
-    },
-  });
-
-  if (!ownerObjectData) {
+  let ownerObjectData: SuiClientTypes.Object;
+  try {
+    ({ object: ownerObjectData } = await suiClient.getObject({
+      objectId: ownerId,
+    }));
+  } catch {
     throw new Error("Owner not found");
   }
 
-  const ownerObjectType = ownerObjectData?.type;
+  const ownerObjectType = shortenAddressesInType(ownerObjectData.type);
   const isKioskItem = ownerObjectType.includes(KIOSK_ITEM);
 
   if (!isKioskItem) {
@@ -332,8 +329,8 @@ export const checkIsInKiosk = async (
     type: objectType,
   });
 
-  const itemOwner = ownerObjectData?.owner as any;
-  const kioskId = itemOwner?.ObjectOwner as string;
+  const itemOwner = ownerObjectData.owner;
+  const kioskId = itemOwner.ObjectOwner as string;
 
   const kiosk = await kioskClient.getKiosk({
     id: kioskId,
@@ -399,25 +396,26 @@ export const checkIsInKiosk = async (
     rule.includes(ROYALTY_RULE)
   );
 
-  const royaltyPoliciesDynamicFields = await suiClient.getDynamicFieldObject({
+  const { dynamicField } = await suiClient.getDynamicField({
     parentId: royaltyPolicies[0].id,
     name: {
       type: `0x2::transfer_policy::RuleKey<0x${royaltyRuleType}>`,
-      value: { dummy_field: false },
+      bcs: bcs
+        .struct("RuleKey", { dummy_field: bcs.Bool })
+        .serialize({ dummy_field: false })
+        .toBytes(),
     },
   });
 
-  const royaltyPoliciesContent = royaltyPoliciesDynamicFields.data.content;
-
-  if (royaltyPoliciesContent.dataType !== "moveObject") {
-    throw new Error("Invalid royalty rule object type");
-  }
-
-  const fields = royaltyPoliciesContent.fields as any;
+  const RoyaltyConfig = bcs.struct("Config", {
+    amount_bp: bcs.U16,
+    min_amount: bcs.U64,
+  });
+  const royaltyConfig = RoyaltyConfig.parse(dynamicField.value.bcs);
 
   const royaltyFeeSettings = {
-    amountBp: fields?.value.fields.amount_bp,
-    minAmount: fields?.value.fields.min_amount,
+    amountBp: royaltyConfig.amount_bp,
+    minAmount: royaltyConfig.min_amount,
   };
 
   return {
